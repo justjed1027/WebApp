@@ -1,0 +1,179 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Arial", sans-serif;
+}
+
+body {
+  background: #f7f9fc;
+  color: #333;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  background: #fff;
+  border-right: 1px solid #eee;
+  padding: 20px;
+}
+
+.sidebar .logo {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.sidebar .search input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.sidebar nav a {
+  display: block;
+  padding: 12px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+}
+
+.sidebar nav a.active,
+.sidebar nav a:hover {
+  background: #eef3ff;
+  color: #3a57e8;
+}
+
+.badge {
+  background: #f97316;
+  color: #fff;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 50%;
+  margin-left: 6px;
+}
+
+/* Main */
+.main {
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.navbar nav a {
+  margin-right: 20px;
+  text-decoration: none;
+  color: #444;
+}
+
+.icons span {
+  margin-right: 15px;
+  cursor: pointer;
+}
+
+.avatar {
+  border-radius: 50%;
+}
+
+/* Welcome */
+.welcome {
+  margin-bottom: 20px;
+}
+
+/* Stats */
+.stats {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.stat {
+  background: #fff;
+  flex: 1;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+/* Cards Grid */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.progress-bar {
+  background: #eee;
+  height: 6px;
+  border-radius: 5px;
+  margin: 5px 0;
+}
+
+.progress-bar span {
+  display: block;
+  height: 100%;
+  background: #3a57e8;
+  border-radius: 5px;
+}
+
+/* Calendar */
+.calendar {
+  width: 100%;
+  text-align: center;
+  border-collapse: collapse;
+}
+
+.calendar td {
+  padding: 10px;
+  border: 1px solid #eee;
+  font-size: 14px;
+}
+
+/* Assignments */
+.assignments ul {
+  list-style: none;
+}
+
+.assignments li {
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.assignments li.done {
+  text-decoration: line-through;
+  color: #999;
+}
+
+.assignments small {
+  color: #666;
+  margin-left: 5px;
+}

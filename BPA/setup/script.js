@@ -1,0 +1,1 @@
+// Setup Account JS placeholder

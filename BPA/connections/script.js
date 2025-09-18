@@ -1,0 +1,1 @@
+// Connections page JS placeholder
