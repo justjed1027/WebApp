@@ -3,20 +3,74 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Setup Account</title>
+  <title>Set up your profile</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Setup Account</h1>
-  <form>
-    <input type="text" placeholder="Full Name" required><br>
-    <input type="text" placeholder="School/Organization" required><br>
-    <button type="submit">Finish Setup</button>
-  </form>
-  <nav>
-    <a href="../account/index.html">Back</a>
-    <a href="../dashboard/dashboard.html">Go to Dashboard</a>
-  </nav>
+  <div class="container">
+    <h2>Set up your profile</h2>
+    <p class="subtitle">Complete your profile to get started with SkillShare</p>
+
+    <form id="profileForm">
+      <div class="photo-upload">
+        <div class="photo-placeholder">
+          <span>👤</span>
+        </div>
+        <button type="button" class="upload-btn">Upload Photo</button>
+      </div>
+
+      <div class="form-group row">
+        <input type="text" placeholder="First Name" id="firstName">
+        <input type="text" placeholder="Last Name" id="lastName">
+      </div>
+
+      <div class="form-group">
+        <textarea placeholder="Tell us a little about yourself..." id="bio"></textarea>
+      </div>
+
+      <div class="form-group">
+        <input type="text" placeholder="e.g., Computer Science at XYZ University" id="education">
+      </div>
+
+      <div class="form-group">
+        <label>Skills</label>
+        <div class="skills-box">
+          <span class="skill-tag">JavaScript ✕</span>
+          <span class="skill-tag">React ✕</span>
+          <input type="text" id="skillInput" placeholder="Add a skill...">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Interests</label>
+        <div class="checkbox-grid">
+          <label><input type="checkbox"> Programming</label>
+          <label><input type="checkbox"> Design</label>
+          <label><input type="checkbox"> Mathematics</label>
+          <label><input type="checkbox"> Physics</label>
+          <label><input type="checkbox"> Literature</label>
+          <label><input type="checkbox"> History</label>
+          <label><input type="checkbox"> Art</label>
+          <label><input type="checkbox"> Music</label>
+          <label><input type="checkbox"> Business</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Privacy Settings</label>
+        <label><input type="checkbox"> Make my profile public</label>
+
+        <label><input type="checkbox"> Receive email notifications</label>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="secondary">Skip for now</button>
+        <button type="submit" class="primary">Complete Setup</button>
+      </div>
+    </form>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>
+ 

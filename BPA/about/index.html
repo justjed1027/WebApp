@@ -3,17 +3,131 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>About</title>
+  <title>About SkillShare</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>About InsideBox</h1>
-  <p>This platform connects students and teachers for learning, events, and collaboration.</p>
-  <nav>
-    <a href="../landing/index.html">Home</a>
-    <a href="../signup/index.html">Sign-Up</a>
-    <a href="../login/index.html">Log-In</a>
-  </nav>
+  <!-- Header -->
+  <header>
+    <nav class="navbar">
+      <div class="logo">SkillShare</div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html" class="active">About</a></li>
+        <li><a href="courses.html">Courses</a></li>
+        <li><a href="forums.html">Forums</a></li>
+      </ul>
+      <div class="auth-buttons">
+        <a href="login.html" class="btn-outline">Log In</a>
+        <a href="signup.html" class="btn">Sign Up</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- About Section -->
+  <div class="about-container">
+    <h1>About SkillShare</h1>
+    <div class="mission">
+      <h2>Our Mission</h2>
+      <p>
+        SkillShare is a platform designed to facilitate knowledge sharing and skill development among students and teachers. We believe that collaborative learning and peer-to-peer knowledge exchange are powerful tools for education.
+      </p>
+      <p>
+        Our mission is to create a vibrant community where students can help each other succeed, share resources, collaborate on projects, and build meaningful connections.
+      </p>
+    </div>
+    <div class="how-it-works">
+      <h2>How It Works</h2>
+      <div class="steps">
+        <div class="step">
+          <span class="step-number">1</span>
+          <div class="step-title">Create an Account</div>
+          <div class="step-desc">Sign up as a student or teacher and create your profile to join our community.</div>
+        </div>
+        <div class="step">
+          <span class="step-number">2</span>
+          <div class="step-title">Connect & Share</div>
+          <div class="step-desc">Post questions, share resources, join discussions, and connect with peers.</div>
+        </div>
+        <div class="step">
+          <span class="step-number">3</span>
+          <div class="step-title">Learn & Grow</div>
+          <div class="step-desc">Access courses, participate in events, and develop your skills with community support.</div>
+        </div>
+      </div>
+    </div>
+    <div class="team">
+      <h2>Our Team</h2>
+      <div class="team-members">
+        <div class="member">
+          <div class="avatar"></div>
+          <div class="member-name">Team Member 1</div>
+          <div class="member-role">Position</div>
+        </div>
+        <div class="member">
+          <div class="avatar"></div>
+          <div class="member-name">Team Member 2</div>
+          <div class="member-role">Position</div>
+        </div>
+        <div class="member">
+          <div class="avatar"></div>
+          <div class="member-name">Team Member 3</div>
+          <div class="member-role">Position</div>
+        </div>
+        <div class="member">
+          <div class="avatar"></div>
+          <div class="member-name">Team Member 4</div>
+          <div class="member-role">Position</div>
+        </div>
+      </div>
+    </div>
+    <div class="join-community">
+      <h2>Join Our Community</h2>
+      <p>Ready to start sharing knowledge and building skills? Join SkillShare today!</p>
+      <div class="join-buttons">
+        <a href="signup.html" class="btn">Sign Up</a>
+        <a href="login.html" class="btn-outline">Log In</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-col">
+        <h3>SkillShare</h3>
+        <p>A platform for students and teachers to share knowledge and build skills together.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Platform</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="courses.html">Courses</a></li>
+          <li><a href="forums.html">Forums</a></li>
+          <li><a href="events.html">Events</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="#">Help Center</a></li>
+          <li><a href="#">Contact Us</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <div class="social-icons">
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+    </div>
+    <p class="copyright">© 2023 SkillShare. All rights reserved.</p>
+  </footer>
+
   <script src="script.js"></script>
 </body>
 </html>

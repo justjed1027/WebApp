@@ -7,18 +7,84 @@
   <link rel="stylesheet" href="courses.css">
 </head>
 <body>
-  <h1 id="page-title">General Courses</h1>
-
-  <!-- Course container -->
-  <div id="course-container" class="grid">
-    <!-- Cards inserted by JavaScript -->
+  <div class="courses-container">
+    <div class="courses-main">
+      <h1 id="page-title">General Courses</h1>
+      <div id="course-container" class="grid">
+        <!-- Cards inserted by JavaScript -->
+      </div>
+      <div style="margin-top:20px;">
+        <button id="back-btn" class="btn" style="display:none;">← Back to General Courses</button>
+      </div>
+    </div>
+    <div class="courses-sidebar">
+      <div class="profile-card">
+        <div class="profile-avatar avatar-main"></div>
+        <div class="profile-name">Your Name</div>
+        <div class="profile-role">Computer Science</div>
+        <div class="profile-stats">
+          <div><span>42</span><br>Posts</div>
+          <div><span>128</span><br>Followers</div>
+          <div><span>97</span><br>Following</div>
+        </div>
+      </div>
+      <div class="card nav-card">
+        <div class="nav-title">Navigation</div>
+        <ul class="nav-list">
+          <li><span class="nav-icon">🏠</span> Posts</li>
+          <li><span class="nav-icon">📊</span> Dashboard</li>
+          <li><span class="nav-icon">📚</span> Courses</li>
+          <li><span class="nav-icon">📅</span> Events</li>
+          <li><span class="nav-icon">🗓️</span> Calendar</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="side-title-row">
+          <span>Suggested Collaborators</span>
+          <a href="#" class="side-link">See All</a>
+        </div>
+        <div class="side-collab">
+          <div class="side-collab-item">
+            <div class="conn-avatar avatar6"></div>
+            <div>
+              <div class="conn-name">Emily Chen</div>
+              <div class="conn-role">Data Science</div>
+            </div>
+            <a href="#" class="side-follow">Follow</a>
+          </div>
+          <div class="side-collab-item">
+            <div class="conn-avatar avatar7"></div>
+            <div>
+              <div class="conn-name">Marcus Johnson</div>
+              <div class="conn-role">Mechanical Engineering</div>
+            </div>
+            <a href="#" class="side-follow">Follow</a>
+          </div>
+          <div class="side-collab-item">
+            <div class="conn-avatar avatar8"></div>
+            <div>
+              <div class="conn-name">Sophia Williams</div>
+              <div class="conn-role">Graphic Design</div>
+            </div>
+            <a href="#" class="side-follow">Follow</a>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="side-title-row">
+          <span>Trending Topics</span>
+          <a href="#" class="side-link">See All</a>
+        </div>
+        <ul class="trending-list">
+          <li><a href="#">#machinelearning</a> <span>1243 posts</span></li>
+          <li><a href="#">#reactjs</a> <span>892 posts</span></li>
+          <li><a href="#">#finalexams</a> <span>754 posts</span></li>
+          <li><a href="#">#capstoneprojects</a> <span>621 posts</span></li>
+          <li><a href="#">#internships</a> <span>543 posts</span></li>
+        </ul>
+      </div>
+    </div>
   </div>
-
-  <!-- Back button -->
-  <div style="margin-top:20px;">
-    <button id="back-btn" class="btn" style="display:none;">← Back to General Courses</button>
-  </div>
-
   <script src="courses.js"></script>
 </body>
 </html>

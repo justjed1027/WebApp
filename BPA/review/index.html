@@ -7,13 +7,149 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Review</h1>
-  <p>Rate people for meetings and events.</p>
-  <nav>
-    <a href="../dashboard/dashboard.html">Dashboard</a>
-    <a href="../events/index.html">Events</a>
-    <a href="../connections/index.html">Connections</a>
-  </nav>
+  <div class="review-container">
+    <div class="review-main">
+      <div class="course-card">
+        <img src="course-img.jpg" alt="Course" class="course-img">
+        <div class="course-info">
+          <div class="course-title-row">
+            <span class="course-title">Introduction to Data Structures</span>
+            <div class="course-rating-box">
+              <span class="course-rating">4.2</span>
+              <span class="course-stars">★★★★☆</span>
+              <span class="course-rating-count">156 reviews</span>
+            </div>
+          </div>
+          <div class="course-meta">Prof. Alex Johnson • Computer Science</div>
+          <div class="course-breakdown-row">
+            <div class="course-breakdown">
+              <div class="breakdown-label">Rating Breakdown</div>
+              <div class="breakdown-bar"><span>5 star</span><div class="bar"><div class="bar-fill" style="width:70%"></div></div><span>70%</span></div>
+              <div class="breakdown-bar"><span>4 star</span><div class="bar"><div class="bar-fill" style="width:20%"></div></div><span>20%</span></div>
+              <div class="breakdown-bar"><span>3 star</span><div class="bar"><div class="bar-fill" style="width:5%"></div></div><span>5%</span></div>
+              <div class="breakdown-bar"><span>2 star</span><div class="bar"><div class="bar-fill" style="width:3%"></div></div><span>3%</span></div>
+              <div class="breakdown-bar"><span>1 star</span><div class="bar"><div class="bar-fill" style="width:2%"></div></div><span>2%</span></div>
+            </div>
+            <div class="review-highlights">
+              <div class="highlight">“Clear explanations”</div>
+              <div class="highlight">“Practical examples”</div>
+              <div class="highlight">“Well-structured content”</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="write-review-card">
+        <div class="write-review-title">Write a Review</div>
+        <form class="write-review-form">
+          <div class="write-rating-label">Your Rating</div>
+          <div class="star-rating">
+            <span class="star">☆</span><span class="star">☆</span><span class="star">☆</span><span class="star">☆</span><span class="star">☆</span>
+          </div>
+          <div class="write-review-label">Your Review</div>
+          <textarea placeholder="Share your experience with this course..."></textarea>
+          <button class="btn-primary" type="submit">Submit Review</button>
+        </form>
+      </div>
+      <div class="reviews-section">
+        <div class="reviews-header">
+          <span>Reviews (3)</span>
+          <select class="reviews-sort"><option>Most Recent</option><option>Highest Rated</option></select>
+        </div>
+        <div class="review-list">
+          <div class="review-item">
+            <div class="review-user-row">
+              <div class="review-avatar avatar1"></div>
+              <div>
+                <div class="review-user-name">Alex Johnson <span class="review-user-rating">★★★★★</span></div>
+                <div class="review-date">Oct 10, 2023</div>
+              </div>
+            </div>
+            <div class="review-text">This course was incredibly helpful. The instructor explained complex concepts in a way that was easy to understand. The practical examples were relevant and helped solidify the theoretical knowledge.</div>
+            <div class="review-actions">
+              <span>24</span> <span>👍</span> <span>3</span> <span>💬</span> <span>Share</span>
+            </div>
+          </div>
+          <div class="review-item">
+            <div class="review-user-row">
+              <div class="review-avatar avatar2"></div>
+              <div>
+                <div class="review-user-name">Morgan Lee <span class="review-user-rating">★★★★☆</span></div>
+                <div class="review-date">Oct 5, 2023</div>
+              </div>
+            </div>
+            <div class="review-text">Great content and well-structured course. I would have appreciated more in-depth explanations on some of the advanced topics, but overall it was very valuable for my learning journey.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="review-sidebar">
+      <div class="profile-card">
+        <div class="profile-avatar avatar-main"></div>
+        <div class="profile-name">Your Name</div>
+        <div class="profile-role">Computer Science</div>
+        <div class="profile-stats">
+          <div><span>42</span><br>Posts</div>
+          <div><span>128</span><br>Followers</div>
+          <div><span>97</span><br>Following</div>
+        </div>
+      </div>
+      <div class="card nav-card">
+        <div class="nav-title">Navigation</div>
+        <ul class="nav-list">
+          <li><span class="nav-icon">🏠</span> Posts</li>
+          <li><span class="nav-icon">📊</span> Dashboard</li>
+          <li><span class="nav-icon">📚</span> Courses</li>
+          <li><span class="nav-icon">📅</span> Events</li>
+          <li><span class="nav-icon">🗓️</span> Calendar</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="side-title-row">
+          <span>Suggested Collaborators</span>
+          <a href="#" class="side-link">See All</a>
+        </div>
+        <div class="side-collab">
+          <div class="side-collab-item">
+            <div class="conn-avatar avatar6"></div>
+            <div>
+              <div class="conn-name">Emily Chen</div>
+              <div class="conn-role">Data Science</div>
+            </div>
+            <a href="#" class="side-follow">Follow</a>
+          </div>
+          <div class="side-collab-item">
+            <div class="conn-avatar avatar7"></div>
+            <div>
+              <div class="conn-name">Marcus Johnson</div>
+              <div class="conn-role">Mechanical Engineering</div>
+            </div>
+            <a href="#" class="side-follow">Follow</a>
+          </div>
+          <div class="side-collab-item">
+            <div class="conn-avatar avatar8"></div>
+            <div>
+              <div class="conn-name">Sophia Williams</div>
+              <div class="conn-role">Graphic Design</div>
+            </div>
+            <a href="#" class="side-follow">Follow</a>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="side-title-row">
+          <span>Trending Topics</span>
+          <a href="#" class="side-link">See All</a>
+        </div>
+        <ul class="trending-list">
+          <li><a href="#">#machinelearning</a> <span>1243 posts</span></li>
+          <li><a href="#">#reactjs</a> <span>892 posts</span></li>
+          <li><a href="#">#finalexams</a> <span>754 posts</span></li>
+          <li><a href="#">#capstoneprojects</a> <span>621 posts</span></li>
+          <li><a href="#">#internships</a> <span>543 posts</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
   <script src="script.js"></script>
 </body>
 </html>
