@@ -7,10 +7,166 @@
   <link rel="stylesheet" href="forums.css">
 </head>
 <body>
-  <h1>Community Forums</h1>
-
-  <div id="forum-list" class="grid"></div>
-
+  <div class="forum-container">
+    <div class="forum-main">
+      <div class="forum-topbar">
+        <input type="text" class="forum-search" placeholder="Search forums...">
+        <button class="btn-primary">New Topic</button>
+      </div>
+      <div class="forum-card">
+        <div class="forum-section-title">Categories</div>
+        <div class="forum-categories">
+          <a href="forum-math.html" class="forum-category-link">
+            <div>
+              <div class="forum-category-title">Academic Subjects</div>
+              <div class="forum-category-desc">Discussions related to specific academic fields</div>
+            </div>
+            <div class="forum-category-meta">124 topics<br>1872 posts</div>
+          </a>
+          <a href="forum-general.html" class="forum-category-link">
+            <div>
+              <div class="forum-category-title">Programming & Development</div>
+              <div class="forum-category-desc">Coding questions, projects, and resources</div>
+            </div>
+            <div class="forum-category-meta">98 topics<br>1543 posts</div>
+          </a>
+          <a href="forum-english.html" class="forum-category-link">
+            <div>
+              <div class="forum-category-title">Study Tips & Techniques</div>
+              <div class="forum-category-desc">Share effective learning strategies and study methods</div>
+            </div>
+            <div class="forum-category-meta">76 topics<br>982 posts</div>
+          </a>
+          <a href="forum-science.html" class="forum-category-link">
+            <div>
+              <div class="forum-category-title">Career & Professional Development</div>
+              <div class="forum-category-desc">Internships, job opportunities, and career advice</div>
+            </div>
+            <div class="forum-category-meta">54 topics<br>734 posts</div>
+          </a>
+          <a href="forum-general.html" class="forum-category-link">
+            <div>
+              <div class="forum-category-title">Campus Life</div>
+              <div class="forum-category-desc">Events, activities, and campus-related discussions</div>
+            </div>
+            <div class="forum-category-meta">87 topics<br>1245 posts</div>
+          </a>
+        </div>
+      </div>
+      <div class="forum-card">
+        <div class="forum-section-title">Recent Topics</div>
+        <table class="forum-topics-table">
+          <thead>
+            <tr>
+              <th>TOPIC</th>
+              <th>CATEGORY</th>
+              <th>REPLIES</th>
+              <th>VIEWS</th>
+              <th>ACTIVITY</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="#" class="topic-link">Tips for mastering data structures and algorithms</a><br><span class="topic-by">by Alex Johnson</span></td>
+              <td>Programming & Development</td>
+              <td>24</td>
+              <td>156</td>
+              <td>2 hours ago</td>
+            </tr>
+            <tr>
+              <td><a href="#" class="topic-link">How to prepare for finals in just two weeks</a><br><span class="topic-by">by Morgan Lee</span></td>
+              <td>Study Tips & Techniques</td>
+              <td>18</td>
+              <td>203</td>
+              <td>4 hours ago</td>
+            </tr>
+            <tr>
+              <td><a href="#" class="topic-link">Looking for study group partners for Calculus II</a><br><span class="topic-by">by Taylor Wilson</span></td>
+              <td>Academic Subjects</td>
+              <td>7</td>
+              <td>89</td>
+              <td>1 day ago</td>
+            </tr>
+            <tr>
+              <td><a href="#" class="topic-link">Summer internship opportunities in tech</a><br><span class="topic-by">by Jamie Rivera</span></td>
+              <td>Career & Professional Development</td>
+              <td>32</td>
+              <td>412</td>
+              <td>2 days ago</td>
+            </tr>
+          </tbody>
+        </table>
+        <a href="#" class="view-all-link">View all topics →</a>
+      </div>
+    </div>
+    <div class="forum-sidebar">
+      <div class="profile-card">
+        <div class="profile-avatar avatar-main"></div>
+        <div class="profile-name">Your Name</div>
+        <div class="profile-role">Computer Science</div>
+        <div class="profile-stats">
+          <div><span>42</span><br>Posts</div>
+          <div><span>128</span><br>Followers</div>
+          <div><span>97</span><br>Following</div>
+        </div>
+      </div>
+      <div class="card nav-card">
+        <div class="nav-title">Navigation</div>
+        <ul class="nav-list">
+          <li><span class="nav-icon">🏠</span> Posts</li>
+          <li><span class="nav-icon">📊</span> Dashboard</li>
+          <li><span class="nav-icon">📚</span> Courses</li>
+          <li><span class="nav-icon">📅</span> Events</li>
+          <li><span class="nav-icon">🗓️</span> Calendar</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="side-title-row">
+          <span>Suggested Collaborators</span>
+          <a href="#" class="side-link">See All</a>
+        </div>
+        <div class="side-collab">
+          <div class="side-collab-item">
+            <div class="conn-avatar avatar6"></div>
+            <div>
+              <div class="conn-name">Emily Chen</div>
+              <div class="conn-role">Data Science</div>
+            </div>
+            <a href="#" class="side-follow">Follow</a>
+          </div>
+          <div class="side-collab-item">
+            <div class="conn-avatar avatar7"></div>
+            <div>
+              <div class="conn-name">Marcus Johnson</div>
+              <div class="conn-role">Mechanical Engineering</div>
+            </div>
+            <a href="#" class="side-follow">Follow</a>
+          </div>
+          <div class="side-collab-item">
+            <div class="conn-avatar avatar8"></div>
+            <div>
+              <div class="conn-name">Sophia Williams</div>
+              <div class="conn-role">Graphic Design</div>
+            </div>
+            <a href="#" class="side-follow">Follow</a>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="side-title-row">
+          <span>Trending Topics</span>
+          <a href="#" class="side-link">See All</a>
+        </div>
+        <ul class="trending-list">
+          <li><a href="#">#machinelearning</a> <span>1243 posts</span></li>
+          <li><a href="#">#reactjs</a> <span>892 posts</span></li>
+          <li><a href="#">#finalexams</a> <span>754 posts</span></li>
+          <li><a href="#">#capstoneprojects</a> <span>621 posts</span></li>
+          <li><a href="#">#internships</a> <span>543 posts</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
   <script src="forums.js"></script>
 </body>
 </html>
