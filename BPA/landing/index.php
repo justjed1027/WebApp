@@ -1,0 +1,135 @@
+<?php
+
+
+
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SkillShare — Share Knowledge</title>
+  <meta name="theme-color" content="#2F4454">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body id="vanta-bg">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#">SkillShare</a>
+
+
+      <nav class="header-links" aria-label="Header">
+        <a class="auth-link" href="../login/index.html">Log In</a>
+        <a class="btn btn-primary" href="../signup/index.html">Sign Up</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <img class="img1" src="../images/header1.svg" alt="Share Knowledge — Build Skills — Connect with Peers" class="hero-header-img">
+
+
+          <div class="hero-ctas">
+            <a class="btn btn-primary" href="../signup/index.html">Get Started</a>
+            <a class="btn btn-outline" href="#features">Learn More</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section id="features" class="features container">
+      <div class="feature-cards">
+        <article class="feature-card">
+          <div class="icon-wrap">
+            <!-- book icon -->
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v13a1 1 0 0 1-1 1h-1.5a3.5 3.5 0 0 0-3.5 3.5V22H5a2 2 0 0 1-2-2V5z"></path></svg>
+          </div>
+          <h3>Courses &amp; Resources</h3>
+          <p>Access a wide range of courses and learning resources shared by peers and teachers.</p>
+        </article>
+
+
+        <article class="feature-card">
+          <div class="icon-wrap">
+            <!-- chat icon -->
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          </div>
+          <h3>Forums &amp; Discussions</h3>
+          <p>Participate in forums to ask questions, share insights, and collaborate with peers.</p>
+        </article>
+
+
+        <article class="feature-card">
+          <div class="icon-wrap">
+            <!-- calendar icon -->
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 10h5v5H7zM19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path></svg>
+          </div>
+          <h3>Events &amp; Calendar</h3>
+          <p>Stay organized with our calendar and never miss important events, deadlines, or study sessions.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <h4>SkillShare</h4>
+        <p class="muted">A platform for students and teachers to share knowledge and build skills together.</p>
+      </div>
+
+
+      <div class="footer-col">
+        <h5>Platform</h5>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Courses</a></li>
+          <li><a href="#">Forums</a></li>
+          <li><a href="#">Events</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5>Support</h5>
+        <ul>
+          <li><a href="#">Help Center</a></li>
+          <li><a href="#">Contact Us</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5>Connect</h5>
+        <div class="socials">
+          <a href="#" aria-label="Twitter">Twitter</a>
+          <a href="#" aria-label="Facebook">Facebook</a>
+          <a href="#" aria-label="Instagram">Instagram</a>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="footer-bottom">
+      <div class="container">
+        <hr />
+        <p class="copyright">© 2023 SkillShare. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- Load Three.js and Vanta (must load before our init) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@0.5.21/dist/vanta.fog.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
