@@ -1,16 +1,26 @@
 <?php
 
 
-
 ?>
+
 <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  
+</body>
+</html>DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SkillShare — Share Knowledge</title>
   <meta name="theme-color" content="#2F4454">
-  <link rel="stylesheet" href="style.css">
+ <link rel="stylesheet" href="landing.css?v=<?php echo time(); ?>">
 </head>
 <body id="vanta-bg">
   <header class="site-header">
@@ -19,8 +29,8 @@
 
 
       <nav class="header-links" aria-label="Header">
-        <a class="auth-link" href="../login/index.html">Log In</a>
-        <a class="btn btn-primary" href="../signup/index.html">Sign Up</a>
+         <a class="btn btn-primary" href="../login/login.php">Log In</a>
+        <a class="btn btn-primary" href="../signup/signup.php">Sign Up</a>
       </nav>
     </div>
   </header>
@@ -34,7 +44,7 @@
 
 
           <div class="hero-ctas">
-            <a class="btn btn-primary" href="../signup/index.html">Get Started</a>
+            <a class="btn btn-primary" href="../signup/signup.php">Get Started</a>
             <a class="btn btn-outline" href="#features">Learn More</a>
           </div>
         </div>
@@ -130,6 +140,6 @@
   <!-- Load Three.js and Vanta (must load before our init) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vanta@0.5.21/dist/vanta.fog.min.js"></script>
-  <script src="script.js"></script>
+  <script src="landing.js"></script>
 </body>
 </html>

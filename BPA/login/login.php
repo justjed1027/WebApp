@@ -1,0 +1,51 @@
+<?php
+
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkillShare - Log In</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="login.css">
+</head>
+<body>
+<div class="container">
+<h1>SkillShare</h1>
+<p class="sub">Log in to your account <br> Don’t have an account? <a href="../signup/signup.php">Sign up</a></p>
+
+
+<form id="loginForm">
+<label for="email">Email address</label>
+<input type="email" id="email" name="email" required>
+
+
+<label for="password">Password</label>
+<input type="password" id="password" name="password" required>
+
+
+<div class="options">
+<div>
+<input type="checkbox" id="remember">
+<label for="remember">Remember me</label>
+</div>
+<a href="#" class="forgot">Forgot your password?</a>
+</div>
+
+
+<button type="submit">Log in</button>
+</form>
+
+
+<div class="divider">Or continue with</div>
+<div class="socials">
+<button class="social-btn github">GitHub</button>
+<button class="social-btn linkedin">LinkedIn</button>
+</div>
+</div>
+
+
+<script src="login.js"></script>
+</body>
+</html>

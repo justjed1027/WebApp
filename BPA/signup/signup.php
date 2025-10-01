@@ -1,0 +1,58 @@
+<?php
+
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkillShare - Create Account</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="signup.css">
+</head>
+<body>
+<div class="container">
+<h1>SkillShare</h1>
+<p class="sub">Create your account <br> Already have an account? <a href="../login/login.php">Log in</a></p>
+
+
+<form id="signupForm">
+<label for="fullName">User Name</label>
+<input type="text" id="fullName" name="fullName" required>
+
+
+<label for="email">Email address</label>
+<input type="email" id="email" name="email" required>
+
+
+<label for="password">Password</label>
+<input type="password" id="password" name="password" required>
+
+
+<label for="accountType">Account Type</label>
+<select id="accountType" name="accountType">
+<option value="student">Student</option>
+<option value="teacher">Teacher</option>
+<option value="professional">Professional</option>
+</select>
+
+
+<div class="checkbox">
+<input type="checkbox" id="terms" required>
+<label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+</div>
+
+
+<button type="submit">Sign up</button>
+</form>
+
+
+<div class="divider">Or continue with</div>
+<div class="socials">
+<button class="social-btn github">GitHub</button>
+<button class="social-btn linkedin">LinkedIn</button>
+</div>
+</div>
+<script src="signup.js"></script>
+</body>
+</html>

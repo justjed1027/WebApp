@@ -39,7 +39,8 @@ html,body{height:100%}
   left: 0;
   right: 0;                         /* ensure full-width */
   width: auto;                      /* avoid conflicting width settings */
-  height: 80px;                     /* set a fixed height */
+  height: 80px;
+  margin-bottom: 20px;                     /* set a fixed height */
   z-index: 100000;                  /* above Vanta canvas and other content */
   background: linear-gradient(90deg, rgba(0,0,0,0.25), rgba(28,28,28,0.25));
   padding: 0 20px;
@@ -70,7 +71,7 @@ html,body{height:100%}
   margin-right: auto;
   font-weight: 900;
   font-size: 1.5rem; /* Larger font size for emphasis */
-  color: #ffffff; /* White text */
+  color: #ebebeb; /* White text */
   text-decoration: none;
   letter-spacing: 1.2px;
 }
@@ -181,7 +182,7 @@ html,body{height:100%}
 /* make the header SVG dominant and constrained by viewport height */
 .hero-header-img{
   display:block;
-  margin: 0 auto;
+  padding-top: 100px;
   width: 100%;
   max-width: 1400px;
   height: auto;

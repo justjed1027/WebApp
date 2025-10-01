@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendar</title>
+  <link rel="stylesheet" href="calendar.css">
+</head>
+<body>
+  <div class="calendar-container">
+    <div class="calendar-main">
+      <div class="calendar-card">
+        <div class="calendar-header">
+          <span class="calendar-title">September 2025</span>
+          <div class="calendar-controls">
+            <button class="calendar-btn">&#60;</button>
+            <button class="calendar-today">Today</button>
+            <button class="calendar-btn">&#62;</button>
+          </div>
+        </div>
+        <table class="calendar-table">
+          <thead>
+            <tr>
+              <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td></td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td></tr>
+            <tr><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td><td>13</td></tr>
+            <tr><td>14</td><td>15</td><td>16</td><td>17</td><td>18</td><td>19</td><td>20</td></tr>
+            <tr><td>21</td><td>22</td><td><span class="calendar-today-cell">23</span></td><td>24</td><td>25</td><td>26</td><td>27</td></tr>
+            <tr><td>28</td><td>29</td><td>30</td><td></td><td></td><td></td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="events-card">
+        <h3>Upcoming Events</h3>
+        <ul class="events-list">
+          <li>
+            <span class="event-dot event-dot-red"></span>
+            <span class="event-title">Data Structures Final Exam</span>
+            <span class="event-tag event-tag-red">Exam</span><br>
+            <span class="event-detail">Saturday, October 14<br>10:00 AM - 12:00 PM<br>Course: CS 201</span>
+          </li>
+          <li>
+            <span class="event-dot event-dot-blue"></span>
+            <span class="event-title">Group Project Meeting</span>
+            <span class="event-tag event-tag-blue">Meeting</span><br>
+            <span class="event-detail">Wednesday, October 11<br>3:00 PM - 4:30 PM<br>Course: UX 340</span>
+          </li>
+          <li>
+            <span class="event-dot event-dot-yellow"></span>
+            <span class="event-title">Research Paper Deadline</span>
+            <span class="event-tag event-tag-yellow">Assignment</span><br>
+            <span class="event-detail">Thursday, October 19<br>11:59 PM<br>Course: PHYS 401</span>
+          </li>
+          <li>
+            <span class="event-dot event-dot-green"></span>
+            <span class="event-title">Web Development Workshop</span>
+            <span class="event-tag event-tag-green">Workshop</span><br>
+            <span class="event-detail">Tuesday, October 17<br>2:00 PM - 5:00 PM<br>Location: Tech Center Room 302</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="calendar-sidebar">
+      <div class="profile-card">
+        <div class="profile-avatar avatar-main"></div>
+        <div class="profile-name">Your Name</div>
+        <div class="profile-role">Computer Science</div>
+        <div class="profile-stats">
+          <div><span>42</span><br>Posts</div>
+          <div><span>128</span><br>Followers</div>
+          <div><span>97</span><br>Following</div>
+        </div>
+      </div>
+      <div class="card nav-card">
+        <div class="nav-title">Navigation</div>
+        <ul class="nav-list">
+          <li><span class="nav-icon">🏠</span> Posts</li>
+          <li><span class="nav-icon">📊</span> Dashboard</li>
+          <li><span class="nav-icon">📚</span> Courses</li>
+          <li><span class="nav-icon">📅</span> Events</li>
+          <li><span class="nav-icon">🗓️</span> Calendar</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="side-title-row">
+          <span>Suggested Collaborators</span>
+          <a href="#" class="side-link">See All</a>
+        </div>
+        <div class="side-collab">
+          <div class="side-collab-item">
+            <div class="conn-avatar avatar6"></div>
+            <div>
+              <div class="conn-name">Emily Chen</div>
+              <div class="conn-role">Data Science</div>
+            </div>
+            <a href="#" class="side-follow">Follow</a>
+          </div>
+          <div class="side-collab-item">
+            <div class="conn-avatar avatar7"></div>
+            <div>
+              <div class="conn-name">Marcus Johnson</div>
+              <div class="conn-role">Mechanical Engineering</div>
+            </div>
+            <a href="#" class="side-follow">Follow</a>
+          </div>
+          <div class="side-collab-item">
+            <div class="conn-avatar avatar8"></div>
+            <div>
+              <div class="conn-name">Sophia Williams</div>
+              <div class="conn-role">Graphic Design</div>
+            </div>
+            <a href="#" class="side-follow">Follow</a>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="side-title-row">
+          <span>Trending Topics</span>
+          <a href="#" class="side-link">See All</a>
+        </div>
+        <ul class="trending-list">
+          <li><a href="#">#machinelearning</a> <span>1243 posts</span></li>
+          <li><a href="#">#reactjs</a> <span>892 posts</span></li>
+          <li><a href="#">#finalexams</a> <span>754 posts</span></li>
+          <li><a href="#">#capstoneprojects</a> <span>621 posts</span></li>
+          <li><a href="#">#internships</a> <span>543 posts</span></li>
+        </ul>
+      </div>
+      <footer class="calendar-footer">
+        <div class="footer-links">
+          <a href="#">About</a> <a href="#">Help</a> <a href="#">Privacy</a> <a href="#">Terms</a>
+        </div>
+        <div class="footer-copy">© 2023 SkillShare Student Platform</div>
+      </footer>
+    </div>
+  </div>
+  <script src="calendar.js"></script>
+</body>
+</html>
