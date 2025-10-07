@@ -92,7 +92,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 </div>
 
 
-<button type="submit">Sign up</button>
+<button type="submit" name="submit" value="Submit" >Sign up</button>
 </form>
 
 
