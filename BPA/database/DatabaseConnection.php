@@ -4,7 +4,7 @@ class DatabaseConnection {
     private $host = "localhost";
     private $username = "root";
     private $password = "password";
-    private $database = "skillswap";
+    private $database = "bpa_skillswap";
 
     public $connection;
 

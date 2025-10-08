@@ -16,7 +16,7 @@
             $db = new DatabaseConnection();
 
             // Prepare the SELECT statement with a placeholder for the user ID
-            $sql = "SELECT * FROM skillswap.user where user_id=?;";
+            $sql = "SELECT * FROM bpa_skillswap.user where user_id=?;";
             $stmt = $db->connection->prepare($sql);
 
             // Check if the statement preparation was successful
@@ -51,7 +51,7 @@
             $db = new DatabaseConnection();
 
             // Prepare the SELECT statement with a placeholder for the user ID
-            $sql = "INSERT INTO skillswap.user (user_username, user_password, user_email, user_is_admin, user_create_date) VALUES (?,?,?,?, NOW());";
+            $sql = "INSERT INTO bpa_skillswap.user (user_username, user_password, user_email, user_is_admin, user_create_date) VALUES (?,?,?,?, NOW());";
             $stmt = $db->connection->prepare($sql);
 
             // Check if the statement preparation was successful
@@ -84,7 +84,7 @@
             $db = new DatabaseConnection();
 
             // Prepare the SELECT statement with a placeholder for the user ID
-            $sql = "SELECT * FROM skillswap.user where user_username=?;";
+            $sql = "SELECT * FROM bpa_skillswap.user where user_username=?;";
             $stmt = $db->connection->prepare($sql);
 
             // Check if the statement preparation was successful
