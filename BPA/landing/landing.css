@@ -1,384 +1,347 @@
-:root{
-  /* palette from the image (no transparency) */
-  --bg-page: #2F4454;   /* main page background */
-  --deep-maroon: #2E151B;
-  --pink-accent: #DA7B93;
-  --teal: #376E6F;
-  --dark-teal: #1C3334;
-  --muted: #C9D3D5;     /* replaced rgba(255,255,255,0.7) */
-  --muted-2: #A9B6B8;   /* replaced rgba(255,255,255,0.55) */
-  --card-bg: #25373A;   /* replaced very-faint white overlay */
-  --border-weak: #283739;/* subtle border substitute for faint white borders */
-  --shadow-strong: #0C1418; /* solid shadow color (no alpha) */
-  --shadow-soft: #223238;
-  --radius: 10px;
-  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+/* ===== RESET & BASE STYLES ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
 }
 
-*{box-sizing:border-box}
-html,body{height:100%}
-  body {
-  margin: 0;
-  background: var(--bg-page);
-  color: #f7f9fa;
-  -webkit-font-smoothing: antialiased;
-  line-height: 1.45;
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    line-height: 1.6;
+    color: white;
+    overflow-x: hidden;
 }
 
-
-
-
-.container{margin:0 auto;padding:0 32px}
-
-
-/* Header */
-.site-header {
-  /* make header truly fixed across the viewport and always on top */
-  position: fixed !important;       /* fixed to viewport */
-  top: 0;
-  left: 0;
-  right: 0;                         /* ensure full-width */
-  width: auto;                      /* avoid conflicting width settings */
-  height: 80px;
-  margin-bottom: 20px;                     /* set a fixed height */
-  z-index: 100000;                  /* above Vanta canvas and other content */
-  background: linear-gradient(90deg, rgba(0,0,0,0.25), rgba(28,28,28,0.25));
-  padding: 0 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.12);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  border-bottom: 1px solid rgba(255,255,255,0.02);
+/* ===== SCROLLBAR STYLES ===== */
+::-webkit-scrollbar {
+    width: 15px;
 }
 
-
-.header-inner {
-  /* keep items left-to-right; allow brand to push others right */
-  display: flex;
-  align-items: center;
-  justify-content: flex-start; /* changed from space-between */
-  padding: 0 5px;
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  gap: 16px;
+::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.6);
 }
 
-
-.brand {
-  margin-right: auto;
-  font-weight: 900;
-  font-size: 1.5rem; /* Larger font size for emphasis */
-  color: #ebebeb; /* White text */
-  text-decoration: none;
-  letter-spacing: 1.2px;
+::-webkit-scrollbar-track {
+    background-color: silver;
 }
 
-
-/* Optional: group auth links (login / signup) on the far right with consistent spacing.
-   If your HTML uses a wrapper like <div class="auth"> put the links inside it.
-   These rules also target direct auth anchors/buttons if present. */
-.header-inner .auth,
-.header-inner .auth-group {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  /* ensure group stays after brand */
-  order: 3;
+/* ===== HEADER STYLES ===== */
+.Header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 25px 5%;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
 }
 
-
-/* Fallback: if auth items are direct children (links/buttons), make them appear after the brand */
-.header-inner > .auth-link,
-.header-inner > .btn-primary {
-  order: 3;
+.navbar {
+    display: flex;
+    gap: 50px;
+    align-items: center;
 }
 
-
-.header-links {
-  display: flex;
-  align-items: center;
-  gap: 32px; /* Increased gap for better spacing */
+.logo {
+    font-size: 25px;
+    color: white;
+    font-weight: 600;
+    transition: 0.3s ease;
+    font-family: 'League Spartan', sans-serif;
+    font-weight: 800;
+}
+.highlight {
+    color: #1fff93;
+}
+.logo:hover {
+    color: #1fff93;
+    text-shadow: 0 0 25px #1fff93, 0 0 50px #1fff93;
+    transform: scale(1.1);
 }
 
-
-.header-links a {
-  color: #ffffff; /* White text */
-  text-decoration: none;
-  font-weight: 600; /* Bold text */
-  font-size: 1rem; /* Slightly larger font size */
-  transition: color 0.3s ease; /* Smooth hover effect */
+span {
+    color: #1fff93;
 }
 
-
-.header-links a:hover {
-  color: #FF6B8A; /* Pink hover effect */
+/* ===== HEADER BUTTON STYLES ===== */
+.sign-up,
+.login {
+    padding: 10px 28px;
+    background-color: black;
+    color: white;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    font-size: 16px;
+    letter-spacing: 1px;
+    font-weight: 600;
+    transition: 0.3s ease;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 
-
-.auth-link {
-  color: #ffffff;
-  text-decoration: none;
-  font-weight: 700; /* Bold text */
+.sign-up:hover,
+.login:hover {
+    background-color: #1fff93;
+    box-shadow: 0 0 25px #1fff93;
+    color: black;
 }
 
+/* ===== HERO SECTION STYLES ===== */
+.hero-section {
+    padding-top: 200px;
+    padding-bottom: 50px;
+    background: url('img/landing_header_img1.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    flex-direction: column;
+}
+
+.hero-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+    z-index: 10;
+}
+
+.hero-text {
+    margin-bottom: 75px;
+    font-family: league spartan, sans-serif;
+    font-weight: 800;
+}
+
+.hero-text h1,
+.hero-text h3 {
+    font-size: clamp(3rem, 5vw, 6rem);
+    font-weight: 800;
+    color: white;
+    margin-bottom: 10px;
+    line-height: 1.1;
+}
+
+.hero-text h2 {
+    font-size: clamp(3rem, 5vw, 6rem);
+    font-weight: 800;
+    color: #1fff93;
+    margin-bottom: 10px;
+    line-height: 1.1;
+}
+
+.tagline {
+    font-size: 18px;
+    color: #1fff93;
+    font-weight: 600;
+    letter-spacing: 2px;
+    margin-bottom: 40px;
+}
+
+/* ===== BUTTON STYLES ===== */
+.btn-box {
+    width: 400px;
+    display: flex;
+    gap: 2cm;
+}
+
+.btn-1,
+.btn-2 {
+    padding: 15px 28px;
+    background-color: black;
+    color: white;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    font-size: 18px;
+    letter-spacing: 1px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease;
+  }
+
+.btn-1:hover,
+.btn-2:hover {
+    background-color: #1fff93;
+    box-shadow: 0 0 25px #1fff93;
+    color: black;
+}
+
+/* Hero Button Styles */
+.hero-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+}
+
+.btn {
+    padding: 16px 32px;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+    text-decoration: none;
+    display: inline-block;
+    min-width: 150px;
+    letter-spacing: 1px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
 
 .btn-primary {
-  background: linear-gradient(90deg, #FF6B8A, #FF3D71); /* Gradient pink background */
-  color: #ffffff; /* White text */
-  padding: 12px 20px;
-  border-radius: 50px; /* Fully rounded corners */
-  font-weight: 700; /* Bold text */
-  text-decoration: none;
-  font-size: 1rem; /* Slightly larger font size */
-  box-shadow: 0 4px 12px rgba(255, 107, 138, 0.3); /* Subtle shadow */
-  transition: transform 0.2s ease, box-shadow 0.2s ease; /* Smooth hover effect */
+    background-color: #1fff93;
+    color: black;
+    box-shadow: 0 0 25px rgba(31, 255, 147, 0.3);
 }
-
 
 .btn-primary:hover {
-  transform: translateY(-2px); /* Lift effect on hover */
-  box-shadow: 0 6px 16px rgba(255, 107, 138, 0.4); /* Stronger shadow on hover */
+    background-color: #1fff93;
+    box-shadow: 0 0 25px #1fff93;
+    color: black;
+    transform: translateY(-2px);
 }
 
-
-/* Buttons */
-.btn{display:inline-block;padding:10px 16px;border-radius:8px;font-weight:700;text-decoration:none;cursor:pointer}
-.btn-primary{
-  background: linear-gradient(90deg, var(--pink-accent), #e88aa0);
-  color: var(--deep-maroon);
-  /* replaced translucent shadow with a solid darker shadow color */
-  box-shadow: 0 10px 30px #7A3A45;
-  border: 1px solid #2C3C3E; /* replaced rgba(255,255,255,0.04) */
-}
-.btn-outline{
-  background: transparent;
-  color: #fff;
-  border: 1px solid #3A4A4C; /* replaced rgba(255,255,255,0.08) */
-  backdrop-filter: none; /* keep appearance without transparency */
+.btn-secondary {
+    background-color: black;
+    color: white;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
 }
 
-
-/* Hero */
-.hero{
-  padding:18px 0;               /* reduce top/bottom padding so image fills more space */
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  min-height:92vh;              /* make hero occupy most of the viewport */
-}
-.hero-grid{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:16px;
-  width:100%;
+.btn-secondary:hover {
+    background-color: white;
+    color: black;
+    transform: translateY(-2px);
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
 }
 
-
-/* make the header SVG dominant and constrained by viewport height */
-.hero-header-img{
-  display:block;
-  padding-top: 100px;
-  width: 100%;
-  max-width: 1400px;
-  height: auto;
-  max-height: 85vh;            /* allow image to take most of viewport height */
-  object-fit: contain;
+/* ===== 3D CARD STYLES ===== */
+.container {
+    min-width: 400px;
+    min-height: 500px;
+    border-radius: 20px;
+    position: relative;
+    transition: 1.5s ease-in-out;
+    transform-style: preserve-3d;
+    margin: 20px;
 }
 
-
-/* medium screens */
-@media (max-width:980px){
-  .hero{min-height:84vh}
-  .hero-header-img{ max-width: 1100px; max-height: 78vh; }
+.side {
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    padding: 20px 50px;
+    color: #fff;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+    border-radius: 20px;
 }
 
-
-/* small screens */
-@media (max-width:640px){
-  .hero{min-height:64vh; padding:14px 0}
-  .hero-header-img{ max-width: 95vw; max-height: 62vh; margin-bottom:10px; }
+.content {
+    transform: translatez(70px) scale(0.8);
+    line-height: 1.5em;
 }
 
-
-.hero-title{
-  font-size: 72px; /* Base font size */
-  line-height: 1.2;
-  font-weight: 900;
-  text-align: center;
-  margin: 0 0 24px;
+.content h1 {
+    position: relative;
 }
 
-
-/* Style for the first line */
-.hero-title .line1 {
-  font-size: 80px; /* Larger font size for emphasis */
-  font-weight: 900; /* Extra bold */
-  color: #FFFFFF; /* White text */
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Subtle shadow for depth */
+.content p {
+    margin-top: 50px;
+    line-height: 2em;
 }
 
-
-/* Style for the second line */
-.hero-title .line2 {
-  font-size: 64px; /* Slightly smaller */
-  font-weight: 700; /* Bold */
-  color: #FF6B8A; /* Pink text */
-  text-transform: uppercase; /* Uppercase for emphasis */
-  letter-spacing: 2px; /* Increased spacing */
+.content h1:before {
+    content: "";
+    position: absolute;
+    bottom: -20px;
+    height: 3px;
+    background-color: #3e3;
+    width: 70px;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
-
-/* Style for the third line */
-.hero-title .line3 {
-  font-size: 72px; /* Same size as the first line */
-  font-weight: 800; /* Semi-bold */
-  color: #FFFF00; /* Yellow text */
-  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4); /* Shadow for contrast */
+.front {
+    z-index: 2;
+    background-size: cover;
+    background-image: url(https://userscontent2.emaze.com/images/f9538183-0ff9-478f-b964-c8ab90421e3b/3d28e192fda5c17250f96a2779c84475.jpg);
 }
 
-
-.hero-sub{
-  font-size: 18px;
-  color: #FFFFFF; /* White text */
-  max-width: 600px;
-  text-align: center; /* Center the subheading */
+.back {
+    background-color: #333;
+    transform: rotateY(180deg);
+    z-index: 0;
+    padding-top: 10px;
+    background-image: url(https://userscontent2.emaze.com/images/f9538183-0ff9-478f-b964-c8ab90421e3b/3d28e192fda5c17250f96a2779c84475.jpg);
 }
 
-
-/* Adjust CTA buttons to center */
-.hero-ctas{
-  display:flex;
-  gap:16px;
-  justify-content:center;
+.container:hover {
+    transform: rotateY(180deg);
 }
 
-
-/* Remove platform screenshot styles */
-.platform-screenshot{
-  display:none;
+/* ===== FORM STYLES ===== */
+form {
+    text-align: left;
 }
 
-
-/* Features section */
-.features{padding:36px 0}
-.feature-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.feature-card{
-  /* use solid hex stops for feature card gradient */
-  background: linear-gradient(180deg, var(--deep-maroon), var(--dark-teal));
-  padding:20px;
-  border-radius:12px;
-  color: #fff;
-  border:1px solid #293735; /* replaced rgba(255,255,255,0.03) */
-  box-shadow: 0 8px 30px var(--shadow-strong); /* replaced rgba(...) */
-}
-.icon-wrap{
-  width:44px;height:44px;border-radius:10px;
-  background: #2F4142; /* replaced rgba(255,255,255,0.06) */
-  display:flex;align-items:center;justify-content:center;color:var(--pink-accent);margin-bottom:12px;
-}
-.feature-card h3{margin:0 0 8px;font-size:16px;color:#fff}
-.feature-card p{margin:0;color:var(--muted);font-size:14px}
-
-
-/* Footer */
-.site-footer{
-  margin-top:48px;
-  background: var(--dark-teal);
-  color:#fff;
-  padding-top:36px;
-  border-top: 6px solid var(--pink-accent);
-}
-.footer-grid{display:grid;grid-template-columns:1fr 120px 140px 140px;gap:28px;padding:36px 32px}
-.footer-brand h4{margin:0 0 8px;color:#fff}
-.footer-brand p{margin:0;color:rgba(255,255,255,0.75);font-size:14px}
-.footer-col h5{margin:0 0 8px;font-size:14px;color:#fff}
-.footer-col ul{list-style:none;padding:0;margin:0}
-.footer-col a{color:rgba(255,255,255,0.78);text-decoration:none;font-size:14px;display:block;margin:6px 0}
-.socials a{color:rgba(255,255,255,0.78);text-decoration:none;display:inline-block;margin-right:12px}
-
-
-/* bottom line */
-.footer-bottom{padding:18px 0;color:#c9d3d5}
-.footer-bottom hr{border:0;border-top:1px solid #223238;margin-bottom:12px} /* replaced rgba(255,255,255,0.06) */
-.footer-bottom .copyright{margin:0;color:#A9B6B8;font-size:13px}
-
-
-/* ensure Vanta canvas covers the element */
-#vanta-bg { min-height: 100vh; position: relative; }
-
-
-/* make page content render above the Vanta canvas */
-#vanta-bg > * {
-  position: relative;
-  z-index: 2;
+.back h1 {
+    margin: 0;
 }
 
-
-/* Vanta inserts a canvas sibling; make sure it sits behind */
-#vanta-bg canvas {
-  position: absolute !important;
-  inset: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  z-index: 1 !important;
+form label,
+form input {
+    display: block;
 }
 
-
-/* small tweak: keep sticky header above canvas */
-
-
-/* Fix: prevent #vanta-bg (or its script) from creating a stacking context that breaks fixed positioning.
-   Keep this limited to #vanta-bg so it doesn't interfere with other layout behavior. */
-#vanta-bg {
-  transform: none !important;
-  -webkit-transform: none !important;
+form input,
+form textarea {
+    background: transparent;
+    border: 0;
+    border-bottom: 2px solid #444;
+    padding: 5px;
+    width: 100%;
+    color: #fff;
 }
 
-
-/* Hero image */
-.hero-header-img{
-  display:block;
-  margin: 0 auto;
-  width: 100%;
-  height: auto;
-  max-height: 85vh;            /* allow image to take most of viewport height */
-  object-fit: contain;
+form label {
+    margin: 15px 0;
 }
 
-
-/* Slightly tighter spacing under the image on small screens */
-@media (max-width:640px){
-  .hero-header-img{ max-height:140px; margin-bottom:12px }
+form input[type="submit"] {
+    display: block;
+    width: auto;
+    margin: 10px auto;
+    padding: 5px 10px;
+    border: 3px solid #555;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
 }
 
-
-/* Responsive */
-@media (max-width:980px){
-  .hero{min-height:84vh}
-  .hero-header-img{ max-width: 1100px; max-height: 78vh; }
-  .feature-cards{grid-template-columns:repeat(2,1fr)}
-  .footer-grid{grid-template-columns:1fr 1fr;gap:20px}
+/* ===== UTILITY STYLES ===== */
+.white-mode {
+    text-decoration: none;
+    padding: 7px 10px;
+    background-color: #122;
+    border-radius: 3px;
+    color: #fff;
+    transition: 0.35s ease-in-out;
+    position: fixed;
+    left: 15px;
+    bottom: 15px;
+    font-family: "Montserrat";
 }
 
-
-@media (max-width:640px){
-  .container{padding:0 20px}
-  .hero{min-height:64vh; padding:14px 0}
-  .hero-header-img{ max-width: 95vw; max-height: 62vh; margin-bottom:10px; }
-  .platform-screenshot{height:180px}
-  .feature-cards{grid-template-columns:1fr}
-  .header-inner{padding:0 16px}
-  .header-links{gap:10px}
-  .hero-title{font-size:32px;    /* Scale down for small screens */}
-  .hero-title .line1, .hero-title .line2, .hero-title .line3 {
-    text-shadow:
-      -1px -1px 0 #000000,
-      1px 1px 0 #FFFF00; /* Adjust shadow for smaller text */
-  }
-  .footer-grid{grid-template-columns:1fr;gap:12px}
+.white-mode:hover {
+    background-color: #fff;
+    color: #122;
 }
