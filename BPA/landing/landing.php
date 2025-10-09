@@ -25,7 +25,7 @@
                   <p class="tagline">BUILT BY STUDENTS FOR STUDENTS</p>
               </div>
               <div class="hero-buttons">
-                  <a href="../signup/index.html" class="btn btn-primary">Get Started</a>
+                  <a href="..//signup/signup.php" class="btn btn-primary">Get Started</a>
                   <a href="#features" class="btn btn-secondary">Learn More</a>
               </div>
           </div>
