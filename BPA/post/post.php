@@ -37,7 +37,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    Welcome back, <?=$user->user_username?>
+  
     <br><br>
     <a href="post.php?action=logout">Sign Out</a>
   <!-- Header -->
@@ -87,7 +87,7 @@
       <!-- Profile -->
       <div class="profile-card">
         <img src="profile.jpg" alt="User" class="profile-pic">
-        <h3>Your Name</h3>
+        <h3><?=$user->user_username?></h3>
         <p class="field">Computer Science</p>
         <div class="stats">
           <span><strong>42</strong> Posts</span>
