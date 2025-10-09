@@ -1,8 +1,8 @@
 <?php
 
 class DatabaseConnection {
-    private $host = "localhost";
-    private $username = "root";
+    private $host = "10.4.52.27";
+    private $username = "skillsuser";
     private $password = "password";
     private $database = "bpa_skillswap";
 
