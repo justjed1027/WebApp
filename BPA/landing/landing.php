@@ -11,11 +11,11 @@
       <header class="Header">
           <a href="a" class="logo"><span class="highlight">SKILL</span>SWAP</a>
           <nav class="navbar">
-            <a href="../login/login.php" class="login">Login</a>
-            <a href="../signup/signup.php" class="sign-up">Sign Up</a>
+            <a href="a" class="login">Login</a>
+            <a href="a" class="sign-up">Sign Up</a>
           </nav>
       </header>
-       
+      
       <main class="hero-section sticky-section">
           <div class="hero-content">
               <div class="hero-text">
@@ -33,11 +33,6 @@
         
       <section class="features-section sticky-section" id="features">
         <div class="features-container">
-          <div class="features-header">
-            <h2>Students Help Students</h2>
-            <p class="features-subtitle">Elevate Education</p>
-          </div>
-          
           <div class="features-grid">
             <div class="feature-card">
               <div class="feature-image">
@@ -75,25 +70,73 @@
 
     <script>
         let ticking = false;
+        let currentScale = 0;
+        let targetScale = 0;
+        let lastScrollTop = 0;
+        let navbar = null;
+        
+        // Initialize navbar reference when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            navbar = document.querySelector('.Header');
+        });
+        
+        function lerp(start, end, factor) {
+            return start + (end - start) * factor;
+        }
         
         function updateScrollEffect() {
             const scrollY = window.scrollY;
-            if (scrollY > 50) { // Only start scaling after scrolling 50px
-                const maxScroll = window.innerHeight; // Scale over one viewport height
-                const scrollProgress = Math.min((scrollY - 50) / maxScroll, 2); // Max 2x scale
-                document.documentElement.style.setProperty('--scroll-scale', scrollProgress);
-            } else {
-                document.documentElement.style.setProperty('--scroll-scale', 0);
+            
+            // Handle navbar visibility
+            if (navbar) {
+                const scrollThreshold = 100; // Start hiding after 100px scroll
+                
+                if (scrollY > scrollThreshold) {
+                    if (scrollY > lastScrollTop && scrollY > scrollThreshold) {
+                        // Scrolling down - hide navbar
+                        navbar.classList.add('hidden');
+                        navbar.classList.remove('visible');
+                    } else if (scrollY < lastScrollTop) {
+                        // Scrolling up - show navbar
+                        navbar.classList.remove('hidden');
+                        navbar.classList.add('visible');
+                    }
+                } else {
+                    // Always show navbar at top of page
+                    navbar.classList.remove('hidden');
+                    navbar.classList.add('visible');
+                }
+                
+                lastScrollTop = scrollY;
             }
-            ticking = false;
+            
+            // Handle text scaling
+            if (scrollY > 50) {
+                const maxScroll = window.innerHeight;
+                targetScale = Math.min((scrollY - 50) / maxScroll, 2);
+            } else {
+                targetScale = 0;
+            }
+            
+            // Smooth interpolation
+            currentScale = lerp(currentScale, targetScale, 0.1);
+            document.documentElement.style.setProperty('--scroll-scale', currentScale);
+            
+            if (Math.abs(currentScale - targetScale) > 0.001) {
+                requestAnimationFrame(updateScrollEffect);
+            } else {
+                ticking = false;
+            }
         }
         
         window.addEventListener('scroll', () => {
             if (!ticking) {
-                requestAnimationFrame(updateScrollEffect);
                 ticking = true;
+                requestAnimationFrame(updateScrollEffect);
             }
         }, { passive: true });
     </script>
 </body>
 </html>
+<?php 
+?>

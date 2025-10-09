@@ -34,8 +34,8 @@
       <section class="features-section sticky-section" id="features">
         <div class="features-container">
           <div class="features-header">
-            <h2>Students Help Students</h2>
             <p class="features-subtitle">Elevate Education</p>
+            <h2>Students Help Students</h2>
           </div>
           
           <div class="features-grid">
@@ -75,9 +75,41 @@
 
     <script>
         let ticking = false;
+        let lastScrollTop = 0;
+        let navbar = null;
+        
+        // Initialize navbar reference when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            navbar = document.querySelector('.Header');
+        });
         
         function updateScrollEffect() {
             const scrollY = window.scrollY;
+            
+            // Handle navbar visibility
+            if (navbar) {
+                const scrollThreshold = 100; // Start hiding after 100px scroll
+                
+                if (scrollY > scrollThreshold) {
+                    if (scrollY > lastScrollTop && scrollY > scrollThreshold) {
+                        // Scrolling down - hide navbar
+                        navbar.classList.add('hidden');
+                        navbar.classList.remove('visible');
+                    } else if (scrollY < lastScrollTop) {
+                        // Scrolling up - show navbar
+                        navbar.classList.remove('hidden');
+                        navbar.classList.add('visible');
+                    }
+                } else {
+                    // Always show navbar at top of page
+                    navbar.classList.remove('hidden');
+                    navbar.classList.add('visible');
+                }
+                
+                lastScrollTop = scrollY;
+            }
+            
+            // Handle text scaling
             if (scrollY > 50) { // Only start scaling after scrolling 50px
                 const maxScroll = window.innerHeight; // Scale over one viewport height
                 const scrollProgress = Math.min((scrollY - 50) / maxScroll, 2); // Max 2x scale
