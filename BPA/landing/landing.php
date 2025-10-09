@@ -11,11 +11,11 @@
       <header class="Header">
           <a href="a" class="logo"><span class="highlight">SKILL</span>SWAP</a>
           <nav class="navbar">
-            <a href="a" class="login">Login</a>
-            <a href="a" class="sign-up">Sign Up</a>
+            <a href="../login/login.php" class="login">Login</a>
+            <a href="../signup/signup.php" class="sign-up">Sign Up</a>
           </nav>
       </header>
-      
+       
       <main class="hero-section sticky-section">
           <div class="hero-content">
               <div class="hero-text">
