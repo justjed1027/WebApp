@@ -1,145 +1,99 @@
-<?php
-
-
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillSwap — Share Knowledge</title>
+    <link rel="stylesheet" href="landing.css">
 </head>
 <body>
-  
-</body>
-</html>DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SkillShare — Share Knowledge</title>
-  <meta name="theme-color" content="#2F4454">
- <link rel="stylesheet" href="landing.css?v=<?php echo time(); ?>">
-</head>
-<body id="vanta-bg">
-  <header class="site-header">
-    <div class="container header-inner">
-      <a class="brand" href="#">SkillShare</a>
-
-
-      <nav class="header-links" aria-label="Header">
-         <a class="btn btn-primary" href="../login/login.php">Log In</a>
-        <a class="btn btn-primary" href="../signup/signup.php">Sign Up</a>
-      </nav>
-    </div>
-  </header>
-
-
-  <main>
-    <section class="hero">
-      <div class="container hero-grid">
-        <div class="hero-content">
-          <img class="img1" src="../images/header1.svg" alt="Share Knowledge — Build Skills — Connect with Peers" class="hero-header-img">
-
-
-          <div class="hero-ctas">
-            <a class="btn btn-primary" href="../signup/signup.php">Get Started</a>
-            <a class="btn btn-outline" href="#features">Learn More</a>
+    <div class="scroll-container">
+      <header class="Header">
+          <a href="a" class="logo"><span class="highlight">SKILL</span>SWAP</a>
+          <nav class="navbar">
+            <a href="a" class="login">Login</a>
+            <a href="a" class="sign-up">Sign Up</a>
+          </nav>
+      </header>
+      
+      <main class="hero-section sticky-section">
+          <div class="hero-content">
+              <div class="hero-text">
+                  <h1>Share Knowledge</h1>
+                  <h2>Build Skills</h2>
+                  <h3>Connect With Peers</h3>
+                  <p class="tagline">BUILT BY STUDENTS FOR STUDENTS</p>
+              </div>
+              <div class="hero-buttons">
+                  <a href="../signup/index.html" class="btn btn-primary">Get Started</a>
+                  <a href="#features" class="btn btn-secondary">Learn More</a>
+              </div>
+          </div>
+      </main>
+        
+      <section class="features-section sticky-section" id="features">
+        <div class="features-container">
+          <div class="features-header">
+            <h2>Students Help Students</h2>
+            <p class="features-subtitle">Elevate Education</p>
+          </div>
+          
+          <div class="features-grid">
+            <div class="feature-card">
+              <div class="feature-image">
+                <!-- Image placeholder -->
+              </div>
+              <div class="feature-content">
+                <h3>Learn</h3>
+                <p>Let's fix up your dashboards and get you the data you need to make crucial decisions.</p>
+              </div>
+            </div>
+            
+            <div class="feature-card">
+              <div class="feature-image">
+                <!-- Image placeholder -->
+              </div>
+              <div class="feature-content">
+                <h3>Collaborate</h3>
+                <p>Let me point your business in the right direction, using a mix of foresight and insight.</p>
+              </div>
+            </div>
+            
+            <div class="feature-card">
+              <div class="feature-image">
+                <!-- Image placeholder -->
+              </div>
+              <div class="feature-content">
+                <h3>Share</h3>
+                <p>Use my years of experience and invite me as a speaker to your next seminar or conference.</p>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
-
-
-    <section id="features" class="features container">
-      <div class="feature-cards">
-        <article class="feature-card">
-          <div class="icon-wrap">
-            <!-- book icon -->
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v13a1 1 0 0 1-1 1h-1.5a3.5 3.5 0 0 0-3.5 3.5V22H5a2 2 0 0 1-2-2V5z"></path></svg>
-          </div>
-          <h3>Courses &amp; Resources</h3>
-          <p>Access a wide range of courses and learning resources shared by peers and teachers.</p>
-        </article>
-
-
-        <article class="feature-card">
-          <div class="icon-wrap">
-            <!-- chat icon -->
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-          </div>
-          <h3>Forums &amp; Discussions</h3>
-          <p>Participate in forums to ask questions, share insights, and collaborate with peers.</p>
-        </article>
-
-
-        <article class="feature-card">
-          <div class="icon-wrap">
-            <!-- calendar icon -->
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 10h5v5H7zM19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path></svg>
-          </div>
-          <h3>Events &amp; Calendar</h3>
-          <p>Stay organized with our calendar and never miss important events, deadlines, or study sessions.</p>
-        </article>
-      </div>
-    </section>
-  </main>
-
-
-  <footer class="site-footer">
-    <div class="container footer-grid">
-      <div class="footer-brand">
-        <h4>SkillShare</h4>
-        <p class="muted">A platform for students and teachers to share knowledge and build skills together.</p>
-      </div>
-
-
-      <div class="footer-col">
-        <h5>Platform</h5>
-        <ul>
-          <li><a href="#">About</a></li>
-          <li><a href="#">Courses</a></li>
-          <li><a href="#">Forums</a></li>
-          <li><a href="#">Events</a></li>
-        </ul>
-      </div>
-
-
-      <div class="footer-col">
-        <h5>Support</h5>
-        <ul>
-          <li><a href="#">Help Center</a></li>
-          <li><a href="#">Contact Us</a></li>
-          <li><a href="#">Terms of Service</a></li>
-          <li><a href="#">Privacy Policy</a></li>
-        </ul>
-      </div>
-
-
-      <div class="footer-col">
-        <h5>Connect</h5>
-        <div class="socials">
-          <a href="#" aria-label="Twitter">Twitter</a>
-          <a href="#" aria-label="Facebook">Facebook</a>
-          <a href="#" aria-label="Instagram">Instagram</a>
-        </div>
-      </div>
+      </section>
     </div>
 
-
-    <div class="footer-bottom">
-      <div class="container">
-        <hr />
-        <p class="copyright">© 2023 SkillShare. All rights reserved.</p>
-      </div>
-    </div>
-  </footer>
-
-
-  <!-- Load Three.js and Vanta (must load before our init) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vanta@0.5.21/dist/vanta.fog.min.js"></script>
-  <script src="landing.js"></script>
+    <script>
+        let ticking = false;
+        
+        function updateScrollEffect() {
+            const scrollY = window.scrollY;
+            if (scrollY > 50) { // Only start scaling after scrolling 50px
+                const maxScroll = window.innerHeight; // Scale over one viewport height
+                const scrollProgress = Math.min((scrollY - 50) / maxScroll, 2); // Max 2x scale
+                document.documentElement.style.setProperty('--scroll-scale', scrollProgress);
+            } else {
+                document.documentElement.style.setProperty('--scroll-scale', 0);
+            }
+            ticking = false;
+        }
+        
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                requestAnimationFrame(updateScrollEffect);
+                ticking = true;
+            }
+        }, { passive: true });
+    </script>
 </body>
 </html>
