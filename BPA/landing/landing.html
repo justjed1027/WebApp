@@ -33,39 +33,31 @@
         
       <section class="features-section sticky-section" id="features">
         <div class="features-container">
-          <div class="features-header">
-            <p class="features-subtitle">Elevate Education</p>
-            <h2>Students Help Students</h2>
-          </div>
-          
-          <div class="features-grid">
-            <div class="feature-card">
-              <div class="feature-image">
-                <!-- Image placeholder -->
-              </div>
-              <div class="feature-content">
-                <h3>Learn</h3>
-                <p>Let's fix up your dashboards and get you the data you need to make crucial decisions.</p>
-              </div>
+          <div class="capabilities">
+            <div class="caps-left">
+              <h2 class="caps-kicker">Our</h2>
+              <h2 class="features-title">Capabilities</h2>
             </div>
-            
-            <div class="feature-card">
-              <div class="feature-image">
-                <!-- Image placeholder -->
-              </div>
-              <div class="feature-content">
-                <h3>Collaborate</h3>
-                <p>Let me point your business in the right direction, using a mix of foresight and insight.</p>
-              </div>
-            </div>
-            
-            <div class="feature-card">
-              <div class="feature-image">
-                <!-- Image placeholder -->
-              </div>
-              <div class="feature-content">
-                <h3>Share</h3>
-                <p>Use my years of experience and invite me as a speaker to your next seminar or conference.</p>
+            <div class="caps-right">
+              <div class="accordion" role="region" aria-label="Capabilities">
+                <details class="acc-item" open>
+                  <summary>Connected Packaging</summary>
+                </details>
+                <details class="acc-item">
+                  <summary>Web &amp; Mobile Apps</summary>
+                </details>
+                <details class="acc-item">
+                  <summary>Blockchain</summary>
+                </details>
+                <details class="acc-item">
+                  <summary>UX &amp; UI design</summary>
+                </details>
+                <details class="acc-item">
+                  <summary>Branding</summary>
+                </details>
+                <details class="acc-item">
+                  <summary>Consulting</summary>
+                </details>
               </div>
             </div>
           </div>
@@ -73,59 +65,42 @@
       </section>
     </div>
 
-    <script>
-        let ticking = false;
-        let lastScrollTop = 0;
-        let navbar = null;
+  <script>
+    let ticking = false;
+    let lastScrollTop = 0;
+    let navbar = null;
         
-        // Initialize navbar reference when DOM is loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            navbar = document.querySelector('.Header');
-        });
+    document.addEventListener('DOMContentLoaded', function() {
+      navbar = document.querySelector('.Header');
+    });
         
-        function updateScrollEffect() {
-            const scrollY = window.scrollY;
-            
-            // Handle navbar visibility
-            if (navbar) {
-                const scrollThreshold = 100; // Start hiding after 100px scroll
-                
-                if (scrollY > scrollThreshold) {
-                    if (scrollY > lastScrollTop && scrollY > scrollThreshold) {
-                        // Scrolling down - hide navbar
-                        navbar.classList.add('hidden');
-                        navbar.classList.remove('visible');
-                    } else if (scrollY < lastScrollTop) {
-                        // Scrolling up - show navbar
-                        navbar.classList.remove('hidden');
-                        navbar.classList.add('visible');
-                    }
-                } else {
-                    // Always show navbar at top of page
-                    navbar.classList.remove('hidden');
-                    navbar.classList.add('visible');
-                }
-                
-                lastScrollTop = scrollY;
-            }
-            
-            // Handle text scaling
-            if (scrollY > 50) { // Only start scaling after scrolling 50px
-                const maxScroll = window.innerHeight; // Scale over one viewport height
-                const scrollProgress = Math.min((scrollY - 50) / maxScroll, 2); // Max 2x scale
-                document.documentElement.style.setProperty('--scroll-scale', scrollProgress);
-            } else {
-                document.documentElement.style.setProperty('--scroll-scale', 0);
-            }
-            ticking = false;
+    function updateScrollEffect() {
+      const scrollY = window.scrollY;
+      if (navbar) {
+        const scrollThreshold = 100;
+        if (scrollY > scrollThreshold) {
+          if (scrollY > lastScrollTop) {
+            navbar.classList.add('hidden');
+            navbar.classList.remove('visible');
+          } else if (scrollY < lastScrollTop) {
+            navbar.classList.remove('hidden');
+            navbar.classList.add('visible');
+          }
+        } else {
+          navbar.classList.remove('hidden');
+          navbar.classList.add('visible');
         }
+        lastScrollTop = scrollY;
+      }
+      ticking = false;
+    }
         
-        window.addEventListener('scroll', () => {
-            if (!ticking) {
-                requestAnimationFrame(updateScrollEffect);
-                ticking = true;
-            }
-        }, { passive: true });
-    </script>
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(updateScrollEffect);
+        ticking = true;
+      }
+    }, { passive: true });
+  </script>
 </body>
 </html>

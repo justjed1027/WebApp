@@ -4,7 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SkillSwap — Share Knowledge</title>
-    <link rel="stylesheet" href="landing.css">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@700;800;900&display=swap" rel="stylesheet">
+  <!-- Stylesheet (cache-busted) -->
+  <link rel="stylesheet" href="landing.css?v=polish-20251013-4">
 </head>
 <body>
     <div class="scroll-container">
@@ -33,34 +38,97 @@
         
       <section class="features-section sticky-section" id="features">
         <div class="features-container">
-          <div class="features-grid">
-            <div class="feature-card">
-              <div class="feature-image">
-                <!-- Image placeholder -->
-              </div>
-              <div class="feature-content">
-                <h3>Learn</h3>
-                <p>Let's fix up your dashboards and get you the data you need to make crucial decisions.</p>
-              </div>
+          <div class="capabilities">
+            <div class="caps-left">
+              <h2 class="caps-kicker">Our</h2>
+              <h2 class="features-title">Student Learning Toolkit</h2>
             </div>
-            
-            <div class="feature-card">
-              <div class="feature-image">
-                <!-- Image placeholder -->
-              </div>
-              <div class="feature-content">
-                <h3>Collaborate</h3>
-                <p>Let me point your business in the right direction, using a mix of foresight and insight.</p>
-              </div>
-            </div>
-            
-            <div class="feature-card">
-              <div class="feature-image">
-                <!-- Image placeholder -->
-              </div>
-              <div class="feature-content">
-                <h3>Share</h3>
-                <p>Use my years of experience and invite me as a speaker to your next seminar or conference.</p>
+            <div class="caps-right">
+              <div class="accordion" role="region" aria-label="Site Features">
+                <details class="acc-item">
+                  <summary><span class="summary-dot" aria-hidden="true"></span>Courses</summary>
+                  <div class="acc-content"><div class="acc-inner">
+                    <p>Discover classes and connect with classmates. Explore rosters, instructors, and everything tied to each course.</p>
+                    <ul class="acc-list">
+                      <li>Join course spaces with discussions and shared materials</li>
+                      <li>See classmates and organize study groups</li>
+                      <li>Browse modules, sessions, and key topics</li>
+                      <li>Jump into related forums and notes from the same page</li>
+                    </ul>
+                  </div></div>
+                </details>
+                <details class="acc-item">
+                  <summary><span class="summary-dot" aria-hidden="true"></span>Forums</summary>
+                  <div class="acc-content"><div class="acc-inner">
+                    <p>Ask questions and share answers across focused channels for every subject.</p>
+                    <ul class="acc-list">
+                      <li>Math, Science, English, and General discussion spaces</li>
+                      <li>Tag questions, accept answers, and upvote helpful replies</li>
+                      <li>Clean formatting with code blocks and inline math</li>
+                      <li>Light moderation to keep conversations constructive</li>
+                    </ul>
+                  </div></div>
+                </details>
+                <details class="acc-item">
+                  <summary><span class="summary-dot" aria-hidden="true"></span>Calendar</summary>
+                  <div class="acc-content"><div class="acc-inner">
+                    <p>Keep everything on schedule—from study sessions to assignment deadlines—all in one view.</p>
+                    <ul class="acc-list">
+                      <li>Personal and group events with reminders</li>
+                      <li>Color-coded subjects and quick add</li>
+                      <li>RSVP to study sessions and track attendance</li>
+                      <li>Optional export to your device calendar</li>
+                    </ul>
+                  </div></div>
+                </details>
+                <details class="acc-item">
+                  <summary><span class="summary-dot" aria-hidden="true"></span>Connections</summary>
+                  <div class="acc-content"><div class="acc-inner">
+                    <p>Grow a network of peers who learn the way you do—find classmates by course and interest.</p>
+                    <ul class="acc-list">
+                      <li>Follow students and form private or public groups</li>
+                      <li>Profiles highlight skills, interests, and badges</li>
+                      <li>Smart suggestions to meet your next study partner</li>
+                      <li>Simple privacy controls for a safe experience</li>
+                    </ul>
+                  </div></div>
+                </details>
+                <details class="acc-item">
+                  <summary><span class="summary-dot" aria-hidden="true"></span>Notes</summary>
+                  <div class="acc-content"><div class="acc-inner">
+                    <p>Capture ideas fast and keep them organized by class—share read‑only or collaborate in real time.</p>
+                    <ul class="acc-list">
+                      <li>Folders and notebooks per course</li>
+                      <li>Attach images, PDFs, and helpful links</li>
+                      <li>Powerful search across all your notes</li>
+                      <li>Granular share settings for teams</li>
+                    </ul>
+                  </div></div>
+                </details>
+                <details class="acc-item">
+                  <summary><span class="summary-dot" aria-hidden="true"></span>Direct Messages (DMS)</summary>
+                  <div class="acc-content"><div class="acc-inner">
+                    <p>Keep conversations moving with classmates and groups—right where you already study.</p>
+                    <ul class="acc-list">
+                      <li>1:1 and group chats with quick reactions</li>
+                      <li>Share files, images, and links inline</li>
+                      <li>Message requests and mute controls</li>
+                      <li>Fast and reliable across devices</li>
+                    </ul>
+                  </div></div>
+                </details>
+                <details class="acc-item">
+                  <summary><span class="summary-dot" aria-hidden="true"></span>Resources</summary>
+                  <div class="acc-content"><div class="acc-inner">
+                    <p>A community library of study guides, examples, and tools to help you learn faster.</p>
+                    <ul class="acc-list">
+                      <li>Post files, links, and embedded media</li>
+                      <li>Curated collections by subject</li>
+                      <li>Version updates with comments</li>
+                      <li>Simple reporting to keep quality high</li>
+                    </ul>
+                  </div></div>
+                </details>
               </div>
             </div>
           </div>
@@ -70,8 +138,6 @@
 
     <script>
         let ticking = false;
-        let currentScale = 0;
-        let targetScale = 0;
         let lastScrollTop = 0;
         let navbar = null;
         
@@ -79,10 +145,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             navbar = document.querySelector('.Header');
         });
-        
-        function lerp(start, end, factor) {
-            return start + (end - start) * factor;
-        }
         
         function updateScrollEffect() {
             const scrollY = window.scrollY;
@@ -110,23 +172,7 @@
                 lastScrollTop = scrollY;
             }
             
-            // Handle text scaling
-            if (scrollY > 50) {
-                const maxScroll = window.innerHeight;
-                targetScale = Math.min((scrollY - 50) / maxScroll, 2);
-            } else {
-                targetScale = 0;
-            }
-            
-            // Smooth interpolation
-            currentScale = lerp(currentScale, targetScale, 0.1);
-            document.documentElement.style.setProperty('--scroll-scale', currentScale);
-            
-            if (Math.abs(currentScale - targetScale) > 0.001) {
-                requestAnimationFrame(updateScrollEffect);
-            } else {
-                ticking = false;
-            }
+            ticking = false;
         }
         
         window.addEventListener('scroll', () => {
@@ -135,7 +181,7 @@
                 requestAnimationFrame(updateScrollEffect);
             }
         }, { passive: true });
-    </script>
+  </script>
 </body>
 </html>
 <?php 
