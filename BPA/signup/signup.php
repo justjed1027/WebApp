@@ -75,7 +75,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 <p class="sub">Create your account <br> Already have an account? <a href="../login/login.php">Log in</a></p>
 
 
-<form id="signupForm" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST"> 
+<form id="signupForm" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">
+<?php
+    if ($errors[] = "Username or email already exists!") {
+        echo "Username or email already exists!";
+    }
+
+?> 
+
 <label for="fullName">User Name</label>
 <input type="text" id="fullName" name="fullName" required>
 
