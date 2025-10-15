@@ -75,6 +75,9 @@
           <button>📷 Photo</button>
           <button>🎥 Video</button>
           <button>📄 Document</button>
+          <a href="create-post.php">
+  <button class="create-post-btn">Create New Post</button>
+    </a>
         </div>
       </div>
 
