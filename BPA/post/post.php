@@ -1,45 +1,64 @@
 <?php
-    session_start();
-    require_once '../database/User.php';
-    
-    $user = new User(); 
+session_start();
+require_once '../database/User.php';
+require_once '../database/DatabaseConnection.php';
+$db = new DatabaseConnection();
+$conn = $db->connection;
 
-    //If userid exists in $_SESSION, then account is being updated. 
-    //Otherwise, a new account is being created. 
-    //We will use this page to insert and update user accounts. 
-    if(!empty($_SESSION['user_id'])){
+// Fetch all posts + username
+$sql = "SELECT posts.content, posts.created_at, user.user_username 
+        FROM posts 
+        JOIN user ON posts.user_id = user.user_id
+        ORDER BY posts.created_at DESC";
+$result = $conn->query($sql);
 
-        $user->populate($_SESSION['user_id']);  
-    }else{
-        header ('location: ../landing/landing.php');
-    }
+$posts = [];
+if ($result && $result->num_rows > 0) {
+  while ($row = $result->fetch_assoc()) {
+    $posts[] = $row;
+  }
+}
 
-    if($_SERVER["REQUEST_METHOD"] == "GET") {
+$user = new User();
 
-        if(!empty($_GET['action']) && $_GET['action'] == 'logout'){
+//If userid exists in $_SESSION, then account is being updated. 
+//Otherwise, a new account is being created. 
+//We will use this page to insert and update user accounts. 
+if (!empty($_SESSION['user_id'])) {
 
-            $_SESSION = [];
-            session_destroy();
-            setcookie("PHPSESSID", "", time()-3600, "/");
-            header('location: ../landing/landing.php');
-        }
-    }
+  $user->populate($_SESSION['user_id']);
+} else {
+  header('location: ../landing/landing.php');
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+
+  if (!empty($_GET['action']) && $_GET['action'] == 'logout') {
+
+    $_SESSION = [];
+    session_destroy();
+    setcookie("PHPSESSID", "", time() - 3600, "/");
+    header('location: ../landing/landing.php');
+  }
+}
 
 
 
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SkillShare</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  
-    <br><br>
-    <a href="post.php?action=logout">Sign Out</a>
+
+  <br><br>
+  <a href="post.php?action=logout">Sign Out</a>
   <!-- Header -->
   <header class="header">
     <div class="logo">SkillShare</div>
@@ -76,21 +95,32 @@
           <button>🎥 Video</button>
           <button>📄 Document</button>
           <a href="create-post.php">
-  <button class="create-post-btn">Create New Post</button>
-    </a>
+            <button class="create-post-btn">Create New Post</button>
+          </a>
         </div>
       </div>
 
       <!-- Posts Feed -->
-      <div id="posts-container"></div>
+      <div id="posts-container"><?php foreach ($posts as $post): ?>
+    <div class="post">
+      <div class="post-header">
+        <span class="post-user"><?= htmlspecialchars($post['user_username']) ?></span>
+        <span class="post-time"><?= htmlspecialchars($post['created_at']) ?></span>
+      </div>
+      <div class="post-content">
+        <p><?= nl2br(htmlspecialchars($post['content'])) ?></p>
+      </div>
+    </div>
+  <?php endforeach; ?></div>
     </section>
+   
 
     <!-- Right Panel -->
     <aside class="right-panel">
       <!-- Profile -->
       <div class="profile-card">
         <img src="profile.jpg" alt="User" class="profile-pic">
-        <h3><?=$user->user_username?></h3>
+        <h3><?= $user->user_username ?></h3>
         <p class="field">Computer Science</p>
         <div class="stats">
           <span><strong>42</strong> Posts</span>
@@ -122,4 +152,5 @@
 
   <script src="script.js"></script>
 </body>
+
 </html>
