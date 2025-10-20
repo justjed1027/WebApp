@@ -77,9 +77,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
 <form id="signupForm" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">
 <?php
-    if ($errors[] = "Username or email already exists!") {
-        echo "Username or email already exists!";
-    }
+var_dump($errors);
+
 
 ?> 
 
