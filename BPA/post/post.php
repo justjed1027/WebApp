@@ -100,6 +100,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
   <br><br>
   <a href="post.php?action=logout">Sign Out</a>
+  <form action="delete_oldest_post.php" method="POST" style="display:inline;">
+    <button type="submit" style="margin-left:16px;">Delete Oldest Post</button>
+  </form>
   <!-- Header -->
   <header class="header">
     <div class="logo">SkillSwap</div>
