@@ -33,7 +33,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SkillShare</title>
+  <title>SkillSwap</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -42,7 +42,7 @@
     <a href="post.php?action=logout">Sign Out</a>
   <!-- Header -->
   <header class="header">
-    <div class="logo">SkillShare</div>
+    <div class="logo">SkillSwap</div>
     <input type="text" class="search-bar" placeholder="Search for skills, topics, or users...">
     <div class="header-icons">
       <button>🔔</button>

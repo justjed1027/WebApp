@@ -51,13 +51,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SkillShare - Log In</title>
+<title>SkillSwap - Log In</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="login.css">
 </head>
 <body>
 <div class="container">
-<h1>SkillShare</h1>
+<h1>SkillSwap</h1>
 <p class="sub">Log in to your account <br> Don’t have an account? <a href="../signup/signup.php">Sign up</a></p>
 
 <?php if($invalid_login == true) {
