@@ -159,5 +159,10 @@ button[type="submit"]:hover {
 .social-btn.linkedin:hover {
   background: #005582;
 }
-
+.error {
+    color: #e74c3c;
+    font-size: 0.9rem;
+    margin-top: 4px;
+    margin-bottom: 8px;
+}
 

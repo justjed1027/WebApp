@@ -56,7 +56,7 @@ class User
 
     // --- STEP 1: Validate password strength ---
     if (!$this->isValidPassword($this->user_password)) {
-        $errors[] = "Password does not meet requirements!";
+        $errors['password'] = "Password does not meet requirements!";
         return false;
     }
 
@@ -72,7 +72,7 @@ class User
     $checkStmt->store_result();
 
     if ($checkStmt->num_rows > 0) {
-        $errors[] = "Username or email already exists!";
+        $errors['fullName'&'email'] = "Username or email already exists!";
         $checkStmt->close();
         $db->closeConnection();
         return false;
@@ -145,31 +145,31 @@ class User
     private function isValidPassword($password) {
     // Check minimum length (8+ characters)
     if (strlen($password) < 8) {
-        $errors[] = "Password must be at least 8 characters long.<br>";
+        $errors['password'] = "Password must be at least 8 characters long.<br>";
         return false;
     }
 
     // Require at least one uppercase letter
     if (!preg_match('/[A-Z]/', $password)) {
-        $errors[] = "Password must contain at least one uppercase letter.<br>";
+        $errors['password'] = "Password must contain at least one uppercase letter.<br>";
         return false;
     }
 
     // Require at least one lowercase letter
     if (!preg_match('/[a-z]/', $password)) {
-        $errors[] = "Password must contain at least one lowercase letter.<br>";
+        $errors['password'] = "Password must contain at least one lowercase letter.<br>";
         return false;
     }
 
     // Require at least one digit
     if (!preg_match('/[0-9]/', $password)) {
-        $errors[] = "Password must contain at least one number.<br>";
+        $errors['password'] = "Password must contain at least one number.<br>";
         return false;
     }
 
     // Require at least one special character
     if (!preg_match('/[\W_]/', $password)) {
-        $errors[] = "Password must contain at least one special character.<br>";
+        $errors['password'] = "Password must contain at least one special character.<br>";
         return false;
     }
 

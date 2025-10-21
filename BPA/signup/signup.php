@@ -22,7 +22,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     if(!empty($_POST['fullName'])){
         $user_username = sanitize_input($_POST['fullName']);
     }else{
-        $errors[] = "Username is required.";
+        $errors['fullName'] = "Username is required.";
     }
     
     $user_password = sanitize_input($_POST['password']);
@@ -31,10 +31,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
 
     if(empty($user_password)){
-        $errors[] = "Password is required.";
+        $errors['password'] = "Password is required.";
     }
     if(empty($user_email) || !filter_var($user_email, FILTER_VALIDATE_EMAIL)){
-        $errors[] = "A valid email is required.";
+        $errors['email'] = "A valid email is required.";
     }
 
     //If no errors, proceed to create user
@@ -52,8 +52,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             //Success - redirect to login or dashboard
             $_SESSION['user_id'] = $newUser->user_id;
             header("Location: ../post/post.php");
+            exit;
         } else {
-            $errors[] = "Error creating account. Please try again.";
+            $errors['general'] = "Error creating account. Please try again.";
         }
     }
 } 
@@ -74,35 +75,38 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 <h1>SkillShare</h1>
 <p class="sub">Create your account <br> Already have an account? <a href="../login/login.php">Log in</a></p>
 
-
 <form id="signupForm" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">
-<?php
-var_dump($errors);
 
-
-?> 
 
 <label for="fullName">User Name</label>
-<input type="text" id="fullName" name="fullName" required>
-
+<input type="text" id="fullName" name="fullName" value="<?php echo htmlspecialchars($user_username); ?>" required>
+<?php if (!empty($errors['fullName'])): ?>
+    <p class="error"><?php echo $errors['fullName']; ?></p>
+<?php endif; ?>
 
 <label for="email">Email address</label>
-<input type="email" id="email" name="email" required>
-
+<input type="email" id="email" name="email" value="<?php echo htmlspecialchars($user_email); ?>" required>
+<?php if (!empty($errors['email'])): ?>
+    <p class="error"><?php echo $errors['email']; ?></p>
+<?php endif; ?>
 
 <label for="password">Password</label>
 <input type="password" id="password" name="password" required>
-
+<?php if (!empty($errors['password'])): ?>
+    <p class="error"><?php echo $errors['password']; ?></p>
+<?php endif; ?>
 
 <label for="accountType">Account Type</label>
 <select id="accountType" name="accountType">
-<option value="0">Student</option>
+    <option value="0">Student</option>
 </select>
 
-
-
-
 <button type="submit">Sign up</button>
+
+<?php if (!empty($errors['general'])): ?>
+    <p class="error"><?php echo $errors['general']; ?></p>
+<?php endif; ?>
+
 </form>
 
 
