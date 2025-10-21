@@ -2,15 +2,56 @@
 session_start();
 require_once '../database/User.php';
 require_once '../database/DatabaseConnection.php';
+
+// Function to convert timestamp to "time ago" format
+function timeAgo($timestamp) {
+  $datetime = new DateTime($timestamp);
+  $now = new DateTime();
+  $interval = $now->diff($datetime);
+    
+  if ($interval->y > 0) {
+    return $interval->y . " year" . ($interval->y > 1 ? "s" : "");
+  }
+  if ($interval->m > 0) {
+    return $interval->m . " month" . ($interval->m > 1 ? "s" : "");
+  }
+  if ($interval->d > 0) {
+    return $interval->d . " day" . ($interval->d > 1 ? "s" : "");
+  }
+  if ($interval->h > 0) {
+    return $interval->h . " hour" . ($interval->h > 1 ? "s" : "");
+  }
+  if ($interval->i > 0) {
+    return $interval->i . " minute" . ($interval->i > 1 ? "s" : "");
+  }
+  return "just now";
+}
+
 $db = new DatabaseConnection();
 $conn = $db->connection;
 
-// Fetch all posts + username
-$sql = "SELECT posts.content, posts.created_at, user.user_username 
-        FROM posts 
-        JOIN user ON posts.user_id = user.user_id
-        ORDER BY posts.created_at DESC";
+$sql = "SELECT posts.post_id, posts.user_id, posts.content, posts.created_at, COALESCE(user.user_username, '') AS user_username 
+  FROM posts 
+  LEFT JOIN user ON posts.user_id = user.user_id
+  ORDER BY posts.created_at DESC";
 $result = $conn->query($sql);
+
+// Debug helper: append ?debug=1 to URL to see query status
+if (isset($_GET['debug']) && $_GET['debug'] == '1') {
+  if ($result === false) {
+    echo '<pre>SQL Error: ' . htmlspecialchars($conn->error) . '</pre>';
+  } else {
+    echo '<pre>SQL OK — rows: ' . intval($result->num_rows) . "\n";
+    // show first row sample
+    if ($result->num_rows > 0) {
+      $row = $result->fetch_assoc();
+      echo 'First row: ' . htmlspecialchars(print_r($row, true));
+      // rewind result pointer
+      $result->data_seek(0);
+    }
+    echo '</pre>';
+  }
+}
 
 $posts = [];
 if ($result && $result->num_rows > 0) {
@@ -101,17 +142,25 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
       </div>
 
       <!-- Posts Feed -->
-      <div id="posts-container"><?php foreach ($posts as $post): ?>
-    <div class="post">
-      <div class="post-header">
-        <span class="post-user"><?= htmlspecialchars($post['user_username']) ?></span>
-        <span class="post-time"><?= htmlspecialchars($post['created_at']) ?></span>
+      <div id="posts-container">
+        <?php if (count($posts) === 0): ?>
+          <div class="post" style="background:#fff3cd;border:1px solid #ffeeba;padding:16px;margin-bottom:16px;">No posts yet.</div>
+        <?php else: ?>
+          <?php foreach ($posts as $post): ?>
+            <div class="post" style="background:#fff;border-radius:8px;padding:16px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+              <div class="post-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                <?php $displayName = !empty($post['user_username']) ? $post['user_username'] : ('User #' . intval($post['user_id'])); ?>
+                <span class="post-user" style="font-weight:bold;"><?= htmlspecialchars($displayName) ?></span>
+                <?php $t = timeAgo($post['created_at']); ?>
+                <span class="post-time" style="color:#666;font-size:0.9em;"><?= $t === 'just now' ? $t : htmlspecialchars($t . ' ago') ?></span>
+              </div>
+              <div class="post-content" style="color:#333;line-height:1.5;">
+                <p style="margin:0;"><?= nl2br(htmlspecialchars($post['content'])) ?></p>
+              </div>
+            </div>
+          <?php endforeach; ?>
+        <?php endif; ?>
       </div>
-      <div class="post-content">
-        <p><?= nl2br(htmlspecialchars($post['content'])) ?></p>
-      </div>
-    </div>
-  <?php endforeach; ?></div>
     </section>
    
 
@@ -150,7 +199,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     </aside>
   </main>
 
-  <script src="script.js"></script>
+  
 </body>
 
 </html>
