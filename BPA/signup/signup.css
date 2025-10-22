@@ -159,5 +159,28 @@ button[type="submit"]:hover {
 .social-btn.linkedin:hover {
   background: #005582;
 }
-
-
+.error {
+    color: #e74c3c;
+    font-size: 0.9rem;
+    margin-top: 4px;
+    margin-bottom: 8px;
+}
+.passwd-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: fit-content;
+}
+.passwd-wrap button {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    height: fit-content;
+    margin-bottom: 12px;
+}
+.hidden {
+    display: none;
+}
