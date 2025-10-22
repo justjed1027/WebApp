@@ -165,4 +165,22 @@ button[type="submit"]:hover {
     margin-top: 4px;
     margin-bottom: 8px;
 }
-
+.passwd-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: fit-content;
+}
+.passwd-wrap button {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    height: fit-content;
+    margin-bottom: 12px;
+}
+.hidden {
+    display: none;
+}
