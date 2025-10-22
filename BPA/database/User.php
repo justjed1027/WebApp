@@ -49,60 +49,55 @@ class User
 
 
 
-    function insert()
-    {
-        // Create new connection
+    function insert() {
     $db = new DatabaseConnection();
 
-    // --- STEP 1: Validate password strength ---
-    if (!$this->isValidPassword($this->user_password)) {
-        $errors['password'] = "Password does not meet requirements!";
-        return false;
-    }
-
-    // --- STEP 2: Check for existing username or email ---
+    // Check for existing username/email
     $checkSql = "SELECT user_id FROM bpa_skillswap.user WHERE user_username = ? OR user_email = ? LIMIT 1;";
     $checkStmt = $db->connection->prepare($checkSql);
-    if ($checkStmt === false) {
-        die("Error preparing check statement: " . $db->connection->error);
-    }
-
     $checkStmt->bind_param("ss", $this->user_username, $this->user_email);
     $checkStmt->execute();
     $checkStmt->store_result();
 
     if ($checkStmt->num_rows > 0) {
-        $errors['fullName'&'email'] = "Username or email already exists!";
         $checkStmt->close();
         $db->closeConnection();
-        return false;
+        return [
+            "success" => false,
+            "message" => "Username or email already exists."
+        ];
     }
     $checkStmt->close();
 
-    // --- STEP 3: Insert new user ---
+    // Validate password
+    if (!$this->isValidPassword($this->user_password)) {
+        return [
+            "success" => false,
+            "message" => "Password does not meet security requirements."
+        ];
+    }
+
+    // Insert new user
     $sql = "INSERT INTO bpa_skillswap.user (user_username, user_password, user_email, user_is_admin, user_create_date)
             VALUES (?, ?, ?, ?, NOW());";
     $stmt = $db->connection->prepare($sql);
-    if ($stmt === false) {
-        die("Error preparing insert statement: " . $db->connection->error);
-    }
-
     $hashedPassword = password_hash($this->user_password, PASSWORD_DEFAULT);
-
     $stmt->bind_param("sssi", $this->user_username, $hashedPassword, $this->user_email, $this->user_is_admin);
 
     if ($stmt->execute()) {
         $this->user_id = $stmt->insert_id;
-        echo "User registered successfully!";
+        $stmt->close();
+        $db->closeConnection();
+        return ["success" => true];
     } else {
-        echo "Insert failed: " . $stmt->error;
+        $stmt->close();
+        $db->closeConnection();
+        return [
+            "success" => false,
+            "message" => "Database error: " . $stmt->error
+        ];
     }
-
-    $stmt->close();
-    $db->closeConnection();
-
-    return true;
-    }
+}
     
     
     public static function validateUser($p_username, $p_password)
@@ -143,36 +138,11 @@ class User
     }
 
     private function isValidPassword($password) {
-    // Check minimum length (8+ characters)
-    if (strlen($password) < 8) {
-        $errors['password'] = "Password must be at least 8 characters long.<br>";
-        return false;
-    }
-
-    // Require at least one uppercase letter
-    if (!preg_match('/[A-Z]/', $password)) {
-        $errors['password'] = "Password must contain at least one uppercase letter.<br>";
-        return false;
-    }
-
-    // Require at least one lowercase letter
-    if (!preg_match('/[a-z]/', $password)) {
-        $errors['password'] = "Password must contain at least one lowercase letter.<br>";
-        return false;
-    }
-
-    // Require at least one digit
-    if (!preg_match('/[0-9]/', $password)) {
-        $errors['password'] = "Password must contain at least one number.<br>";
-        return false;
-    }
-
-    // Require at least one special character
-    if (!preg_match('/[\W_]/', $password)) {
-        $errors['password'] = "Password must contain at least one special character.<br>";
-        return false;
-    }
-
+    if (strlen($password) < 8) return false;
+    if (!preg_match('/[A-Z]/', $password)) return false;
+    if (!preg_match('/[a-z]/', $password)) return false;
+    if (!preg_match('/[0-9]/', $password)) return false;
+    if (!preg_match('/[\W_]/', $password)) return false;
     return true;
 }
 

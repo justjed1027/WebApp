@@ -46,15 +46,15 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $newUser->user_is_admin = 0; 
 
         //Insert user into database
-        $newUser->insert();
+        $result = $newUser->insert();
 
-        if($newUser->user_id > 0){
+        if($result['success']){
             //Success - redirect to login or dashboard
             $_SESSION['user_id'] = $newUser->user_id;
             header("Location: ../post/post.php");
             exit;
         } else {
-            $errors['general'] = "Error creating account. Please try again.";
+            $errors['general'] = $result['message'];
         }
     }
 } 
