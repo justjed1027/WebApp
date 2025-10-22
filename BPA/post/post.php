@@ -135,9 +135,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         <img src="profile.jpg" alt="User" class="profile-pic">
         <input type="text" placeholder="Ask a question or share something helpful...">
         <div class="post-options">
-          <button>📷 Photo</button>
-          <button>🎥 Video</button>
-          <button>📄 Document</button>
+          <button type="button" class="post-type-btn" data-type="photo">📷 Photo</button>
+          <button type="button" class="post-type-btn" data-type="video">🎥 Video</button>
+          <button type="button" class="post-type-btn" data-type="document">📄 Document</button>
           <a href="create-post.php">
             <button class="create-post-btn">Create New Post</button>
           </a>
@@ -202,7 +202,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     </aside>
   </main>
 
-  
+  <script src="script.js"></script>
 </body>
 
 </html>
