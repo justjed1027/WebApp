@@ -18,7 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt->bind_param("is", $user_id, $content);
 
         if ($stmt->execute()) {
-            header("Location: post.php"); // redirect to the main forum
+            header("Location: post.php"); // redirect to the main post
             exit;
         } else {
             echo "Error posting: " . $stmt->error;

@@ -31,6 +31,55 @@ function timeAgo($timestamp)
 $db = new DatabaseConnection();
 $conn = $db->connection;
 
+// Handle inline post submission (text-only)
+if ($_SERVER["REQUEST_METHOD"] === 'POST') {
+  if (empty($_SESSION['user_id'])) {
+    header('Location: ../landing/landing.php');
+    exit;
+  }
+
+  $user_id = $_SESSION['user_id'];
+  $content = isset($_POST['content']) ? trim($_POST['content']) : '';
+
+  if ($content !== '') {
+    // If the posts table has a created_at column, set it explicitly using PHP's current time
+    $hasCreatedAt = false;
+    $colRes = $conn->query("SHOW COLUMNS FROM posts LIKE 'created_at'");
+    if ($colRes && $colRes->num_rows > 0) {
+      $hasCreatedAt = true;
+      $colRes->free();
+    }
+
+    if ($hasCreatedAt) {
+      $now = date('Y-m-d H:i:s');
+      $stmt = $conn->prepare("INSERT INTO posts (user_id, content, created_at) VALUES (?, ?, ?)");
+      if ($stmt) {
+        $stmt->bind_param("iss", $user_id, $content, $now);
+      }
+    } else {
+      $stmt = $conn->prepare("INSERT INTO posts (user_id, content) VALUES (?, ?)");
+      if ($stmt) {
+        $stmt->bind_param("is", $user_id, $content);
+      }
+    }
+
+    if (isset($stmt) && $stmt) {
+      if ($stmt->execute()) {
+        $stmt->close();
+        header('Location: post.php');
+        exit;
+      } else {
+        $error = 'Error saving post: ' . htmlspecialchars($stmt->error);
+        $stmt->close();
+      }
+    } else {
+      $error = 'Database error preparing statement.';
+    }
+  } else {
+    $error = 'Post content cannot be empty.';
+  }
+}
+
 $sql = "SELECT posts.post_id, posts.user_id, posts.content, posts.created_at, COALESCE(user.user_username, '') AS user_username 
   FROM posts 
   LEFT JOIN user ON posts.user_id = user.user_id
@@ -181,6 +230,29 @@ profile svg
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SkillSwap — Posts</title>
   <link rel="stylesheet" href="style.css?v=nav-20251022">
+  <style>
+    /* Fixed-ish textarea that can still be expanded vertically */
+    .create-post-input {
+      display: block;
+      width: 360px; /* desired initial width similar to screenshot */
+      max-width: 100%;
+      min-height: 72px;
+      height: 72px; /* initial fixed size */
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.03);
+      color: inherit;
+      border: 1px solid rgba(255,255,255,0.06);
+      resize: vertical; /* allow user to expand vertically */
+      overflow: auto;
+      font-family: inherit;
+      font-size: 0.95rem;
+      line-height: 1.3;
+    }
+
+    /* Slight tweak for the submit button spacing */
+    .create-post-actions { margin-top: 8px; }
+  </style>
 </head>
 
 <body>
@@ -348,7 +420,7 @@ profile svg
 
   <!-- Main Content Area -->
   <main class="main-content">
-    <!-- Create Post -->
+    <!-- Create Post (inline form) -->
     <div class="create-post-card">
       <div class="create-post-header">
         <div class="user-avatar-small">
@@ -356,23 +428,13 @@ profile svg
             <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
           </svg>
         </div>
-        <input type="text" class="create-post-input" placeholder="Ask a question or share something helpful...">
+            <form id="inline-post-form" action="post.php" method="POST">
+              <textarea name="content" class="create-post-input" placeholder="Ask a question or share something helpful..." rows="3"></textarea>
       </div>
-      <div class="create-post-actions">
-        <button class="action-btn">
-         <a href="create-post.php"> <span>📷</span> Photo</a>
-        </button>
-        <button class="action-btn">
-          <span>🎥</span> Video
-        </button>
-        <button class="action-btn">
-          <span>📄</span> Document
-        </button>
-        <a href="create-post.php" class="action-btn">
-            <button class="create-post-btn">Create New Post</button>
-        </a>
-
-      </div>
+          <div class="create-post-actions">
+            <button type="submit" class="create-post-btn">Submit</button>
+            </form>
+          </div>
     </div>
 
     <!-- Posts Feed -->
