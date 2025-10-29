@@ -237,17 +237,18 @@ profile svg
       width: 360px; /* desired initial width similar to screenshot */
       max-width: 100%;
       min-height: 72px;
-      height: 72px; /* initial fixed size */
+      height: auto; /* let JS set initial height based on content */
       padding: 12px 14px;
       border-radius: 12px;
       background: rgba(255,255,255,0.03);
       color: inherit;
       border: 1px solid rgba(255,255,255,0.06);
-      resize: vertical; /* allow user to expand vertically */
-      overflow: auto;
+      resize: none; /* disable manual resize to rely on auto-grow */
+      overflow: hidden; /* hide scrollbars while auto-growing */
       font-family: inherit;
-      font-size: 0.95rem;
+      font-size: 1.3rem;
       line-height: 1.3;
+      field-sizing: content;    
     }
 
     /* Slight tweak for the submit button spacing */
