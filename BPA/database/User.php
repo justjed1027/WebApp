@@ -100,7 +100,7 @@ class User
 }
     
     
-    public static function validateUser($p_username, $p_password)
+    public static function validateUser($p_email, $p_password)
     {
         $userId = 0;
 
@@ -108,7 +108,7 @@ class User
         $db = new DatabaseConnection();
 
         // Prepare the SELECT statement with a placeholder for the user ID
-        $sql = "SELECT * FROM bpa_skillswap.user where user_username=?;";
+        $sql = "SELECT * FROM bpa_skillswap.user where user_email=?;";
         $stmt = $db->connection->prepare($sql);
 
         // Check if the statement preparation was successful
@@ -116,7 +116,7 @@ class User
             die("Error preparing statement: " . $db->connection->error);
         }
         //Bind parameters to sql statement 
-        $stmt->bind_param("s", $p_username);
+        $stmt->bind_param("s", $p_email);
         //Execute query
         $stmt->execute();
         // get the mysqli result
