@@ -231,27 +231,27 @@ profile svg
   <title>SkillSwap — Posts</title>
   <link rel="stylesheet" href="style.css?v=nav-20251022">
   <style>
-    /* Fixed-ish textarea that can still be expanded vertically */
+    
     .create-post-input {
       display: block;
-      width: 360px; /* desired initial width similar to screenshot */
+      width: 360px;
       max-width: 100%;
       min-height: 72px;
-      height: auto; /* let JS set initial height based on content */
+      height: auto; 
       padding: 12px 14px;
       border-radius: 12px;
       background: rgba(255,255,255,0.03);
       color: inherit;
       border: 1px solid rgba(255,255,255,0.06);
-      resize: none; /* disable manual resize to rely on auto-grow */
-      overflow: hidden; /* hide scrollbars while auto-growing */
+      resize: none; 
+      overflow: hidden; 
       font-family: inherit;
       font-size: 1.3rem;
       line-height: 1.3;
       field-sizing: content;    
     }
 
-    /* Slight tweak for the submit button spacing */
+   
     .create-post-actions { margin-top: 8px; }
   </style>
 </head>
@@ -431,6 +431,7 @@ profile svg
         </div>
             <form id="inline-post-form" action="post.php" method="POST">
               <textarea name="content" class="create-post-input" placeholder="Ask a question or share something helpful..." rows="3"></textarea>
+              <input type="file" id="avatar" name="avatar" accept="image/*" />
       </div>
           <div class="create-post-actions">
             <button type="submit" class="create-post-btn">Submit</button>
