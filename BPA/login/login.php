@@ -2,7 +2,7 @@
     session_start();
     require_once '../database/User.php';
     
-    $username = ""; 
+    $email = ""; 
     $password = ""; 
     
     $uerror = false;
@@ -18,10 +18,10 @@
 
     if($_SERVER['REQUEST_METHOD'] == "POST"){
 
-        if(empty($_POST['username'])){
+        if(empty($_POST['email'])){
             $uerror = true;
         }else{
-            $username = sanitize_input($_POST['username']);
+            $email = sanitize_input($_POST['email']);
         }
 
         if(empty($_POST['password'])){
@@ -33,7 +33,7 @@
         if(!$uerror && !$perror){
             //No errors. Attempt to authenticate user. 
 
-            $userid = User::validateUser($username, $password);
+            $userid = User::validateUser($email, $password);
 
             if($userid != 0){
                 $_SESSION['user_id'] = $userid;
@@ -85,7 +85,7 @@
 </div>
 <form id="emailLoginForm" class="email-form" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">
 <label for="email">EMAIL</label>
-<input type="text" id="email" name="username" value="<?=$username?>" placeholder="hello@reallygreatsite.com" required>
+<input type="text" id="email" name="email" value="<?=$email?>" placeholder="hello@reallygreatsite.com" required>
 
 <label for="password">PASSWORD</label>
 <input type="password" id="password" name="password" placeholder="******" required>
