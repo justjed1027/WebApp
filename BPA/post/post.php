@@ -254,6 +254,44 @@ profile svg
    
     .create-post-actions { margin-top: 8px; }
   </style>
+  <style>
+    /* Modal for file preview */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    .modal-backdrop.active { display:flex; }
+    .modal-box {
+      background: #111;
+      color: #fff;
+      padding: 18px;
+      border-radius: 10px;
+      max-width: 90%;
+      max-height: 85%;
+      overflow: auto;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+    }
+    .modal-box img, .modal-box video {
+      max-width: 100%;
+      max-height: 70vh;
+      display:block;
+      margin: 0 auto;
+    }
+    .modal-close {
+      display:inline-block;
+      margin-top:8px;
+      padding:6px 10px;
+      background:#333;
+      color:#fff;
+      border-radius:6px;
+      cursor:pointer;
+    }
+  </style>
 </head>
 
 <body>
@@ -380,6 +418,14 @@ profile svg
     </div>
   </aside>
 
+  <!-- File preview modal -->
+  <div id="filePreviewModal" class="modal-backdrop" role="dialog" aria-hidden="true">
+    <div class="modal-box" id="filePreviewContent">
+      <div id="filePreviewInner"></div>
+      <div style="text-align:center;"><button id="modalCloseBtn" class="modal-close">Close</button></div>
+    </div>
+  </div>
+
   <!-- Top Bar Navigation -->
   <header class="topbar">
     <div class="topbar-left"></div>
@@ -431,7 +477,11 @@ profile svg
         </div>
             <form id="inline-post-form" action="post.php" method="POST">
               <textarea name="content" class="create-post-input" placeholder="Ask a question or share something helpful..." rows="3"></textarea>
-              <input type="file" id="avatar" name="avatar" accept="image/*" />
+              <div class="file-row" style="margin-top:8px; display:flex; align-items:center; gap:8px;">
+                <input type="file" id="avatar" name="avatar" accept="image/*" style="display:inline-block;">
+                <span id="fileLabel" style="color:#ddd;">Pick a file to upload</span>
+                <button type="button" id="filePreviewBtn" class="create-post-btn" style="padding:6px 10px;">Preview</button>
+              </div>
       </div>
           <div class="create-post-actions">
             <button type="submit" class="create-post-btn">Submit</button>
