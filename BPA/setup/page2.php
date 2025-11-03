@@ -7,7 +7,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SkillSwap — Creating your Account (2/3)</title>
-  <link rel="stylesheet" href="style.css?v=20251029" />
+  <link rel="stylesheet" href="style.css?v=<?php echo filemtime(__DIR__ . '/style.css'); ?>" />
 </head>
 <body data-step="2">
   <div class="setup-shell">
@@ -15,9 +15,11 @@
     <h1 class="step-title">Creating your Account</h1>
     <p class="subtitle">Choose your Interests and Areas of Study</p>
 
-    <div class="panel-wrap">
-      <div class="courses-panel" id="coursesPanel" tabindex="0">
-        <div class="search-row">
+    <div class="form-stack">
+      <div class="input-card">
+        <div class="panel-wrap">
+          <div class="courses-panel" id="coursesPanel" tabindex="0">
+            <div class="search-row">
           <input id="courseSearch" type="text" placeholder="Search courses by name..." aria-label="Search courses" />
           <div class="filters">
             <select id="topicFilter" aria-label="Filter by topic">
@@ -33,9 +35,9 @@
               <option value="new">Newest</option>
             </select>
           </div>
-        </div>
+            </div>
 
-        <div id="categories" class="grid">
+            <div id="categories" class="grid">
           <div class="category" data-topic="STEM">
             <h3>Mathematics</h3>
             <label class="course" data-name="Algebra"><input type="checkbox" /> Algebra <span class="desc">— Variables, equations, functions</span></label>
@@ -91,12 +93,14 @@
             <label class="course" data-name="Sculpture"><input type="checkbox" /> Sculpture <span class="desc">— Clay, stone, modern</span></label>
             <label class="course" data-name="Photography"><input type="checkbox" /> Photography <span class="desc">— Composition, lighting</span></label>
           </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="nav-bar">
-      <a class="btn" href="page1.php">Back</a>
+      <a class="btn btn-primary" href="page1.php">Back</a>
       <a class="btn btn-ghost" href="page3.php">Skip for Now</a>
       <div class="spacer"></div>
       <a class="btn btn-primary" href="page3.php">Next</a>
@@ -106,6 +110,6 @@
       <span class="dot"></span><span class="dot active"></span><span class="dot"></span>
     </div>
   </div>
-  <script src="script.js?v=20251029"></script>
+  <script src="script.js?v=<?php echo filemtime(__DIR__ . '/script.js'); ?>"></script>
 </body>
 </html>

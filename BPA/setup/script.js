@@ -14,6 +14,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const err = document.getElementById('usernameError');
     const file = document.getElementById('avatar');
     const preview = document.getElementById('avatarPreview');
+  const shell = document.querySelector('.setup-shell');
+
+    // Fit the whole page 1 content within the viewport without scrolling
+    const fitToViewport = () => {
+      if (!shell) return;
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      const cs = getComputedStyle(document.body);
+      const padTop = parseFloat(cs.paddingTop) || 0;
+      const padBottom = parseFloat(cs.paddingBottom) || 0;
+      const available = vh - (padTop + padBottom) - 8; // small breathing room
+
+      // Reset any previous scale to measure natural height
+      shell.style.transform = '';
+      shell.style.transformOrigin = 'center center';
+      const needed = shell.scrollHeight;
+      const scale = Math.min(1, available / needed);
+      if (scale < 1) {
+        shell.style.transform = `scale(${scale})`;
+      } else {
+        shell.style.transform = '';
+      }
+    };
+    // Initial and on-resize fitting
+    fitToViewport();
+    window.addEventListener('resize', fitToViewport);
 
     if (file && preview) {
       file.addEventListener('change', () => {
