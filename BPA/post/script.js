@@ -1,4 +1,4 @@
-// No JS rendering needed; posts are rendered by PHP
+// All handlers run after DOM is ready
 document.addEventListener('DOMContentLoaded', function () {
     // Auto-resize behavior for the top textarea (.create-post-input)
     function autoResizeTextarea(el) {
@@ -19,13 +19,14 @@ document.addEventListener('DOMContentLoaded', function () {
         // Optional: on window resize recompute (keeps width changes in mind)
         window.addEventListener('resize', function () { autoResizeTextarea(textarea); });
     });
-});
+
     // File label and preview modal logic
     const fileInput = document.getElementById('avatar');
     const fileLabel = document.getElementById('fileLabel');
     const previewBtn = document.getElementById('filePreviewBtn');
+    const removeBtn = document.getElementById('fileRemoveBtn');
     const modal = document.getElementById('filePreviewModal');
-    const modalInner = document.getElementById('filePreviewInner');
+    const modalInner = document.getElementById('filePreviewInner') || document.getElementById('filePreviewContent');
     const modalClose = document.getElementById('modalCloseBtn');
 
     function resetModal() {
@@ -38,13 +39,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
         fileInput.addEventListener('change', function () {
             if (this.files && this.files.length > 0) {
-                fileLabel.textContent = this.files[0].name;
+                const f = this.files[0];
+                fileLabel.textContent = f.name + ' (' + Math.round(f.size / 1024) + ' KB)';
                 if (previewBtn) previewBtn.disabled = false;
+                if (removeBtn) removeBtn.disabled = false;
             } else {
                 fileLabel.textContent = 'Pick a file to upload';
                 if (previewBtn) previewBtn.disabled = true;
+                if (removeBtn) removeBtn.disabled = true;
             }
         });
+    }
+
+    if (removeBtn) {
+        removeBtn.addEventListener('click', function () {
+            if (!fileInput) return;
+            fileInput.value = '';
+            if (fileLabel) fileLabel.textContent = 'Pick a file to upload';
+            if (previewBtn) previewBtn.disabled = true;
+            removeBtn.disabled = true;
+        });
+        // start disabled until file selected
+        removeBtn.disabled = true;
     }
 
     if (previewBtn) {
@@ -80,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 // Other types: show filename and download link
                 const info = document.createElement('div');
-                info.textContent = 'File: ' + f.name;
+                info.textContent = 'File: ' + f.name + ' (' + Math.round(f.size / 1024) + ' KB)';
                 const link = document.createElement('a');
                 link.textContent = 'Download';
                 link.href = URL.createObjectURL(f);
@@ -101,4 +117,5 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     if (modal) modal.addEventListener('click', function (e) { if (e.target === modal) { modal.classList.remove('active'); resetModal(); modal.setAttribute('aria-hidden', 'true'); } });
     window.addEventListener('keydown', function (e) { if (e.key === 'Escape' && modal && modal.classList.contains('active')) { modal.classList.remove('active'); resetModal(); modal.setAttribute('aria-hidden', 'true'); } });
+});
 

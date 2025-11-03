@@ -42,38 +42,89 @@ if ($_SERVER["REQUEST_METHOD"] === 'POST') {
   $content = isset($_POST['content']) ? trim($_POST['content']) : '';
 
   if ($content !== '') {
-    // If the posts table has a created_at column, set it explicitly using PHP's current time
+    // Detect columns we can write to (created_at, file_path)
     $hasCreatedAt = false;
+    $hasFilePath = false;
     $colRes = $conn->query("SHOW COLUMNS FROM posts LIKE 'created_at'");
-    if ($colRes && $colRes->num_rows > 0) {
-      $hasCreatedAt = true;
-      $colRes->free();
-    }
+    if ($colRes && $colRes->num_rows > 0) { $hasCreatedAt = true; $colRes->free(); }
+    $colRes2 = $conn->query("SHOW COLUMNS FROM posts LIKE 'file_path'");
+    if ($colRes2 && $colRes2->num_rows > 0) { $hasFilePath = true; $colRes2->free(); }
 
-    if ($hasCreatedAt) {
-      $now = date('Y-m-d H:i:s');
-      $stmt = $conn->prepare("INSERT INTO posts (user_id, content, created_at) VALUES (?, ?, ?)");
-      if ($stmt) {
-        $stmt->bind_param("iss", $user_id, $content, $now);
-      }
-    } else {
-      $stmt = $conn->prepare("INSERT INTO posts (user_id, content) VALUES (?, ?)");
-      if ($stmt) {
-        $stmt->bind_param("is", $user_id, $content);
-      }
-    }
-
-    if (isset($stmt) && $stmt) {
-      if ($stmt->execute()) {
-        $stmt->close();
-        header('Location: post.php');
-        exit;
+    // Prepare to handle an uploaded file (optional)
+    $fileSaved = false;
+    $dbFilePath = null; // path to store in DB if available
+    if (isset($_FILES['avatar']) && isset($_FILES['avatar']['error']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
+      $f = $_FILES['avatar'];
+      // Basic validation: max 10MB
+      $maxBytes = 10 * 1024 * 1024;
+      if ($f['size'] > $maxBytes) {
+        $error = 'File is too large. Max 10 MB.';
       } else {
-        $error = 'Error saving post: ' . htmlspecialchars($stmt->error);
-        $stmt->close();
+        // Determine mime type using finfo
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $mime = $finfo->file($f['tmp_name']);
+        $allowed = [
+          'image/jpeg','image/png','image/gif','image/webp',
+          'video/mp4','video/webm','video/ogg',
+          'application/pdf','text/plain',
+          'application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        ];
+        if (!in_array($mime, $allowed)) {
+          $error = 'Unsupported file type for upload.';
+        } else {
+          // Ensure uploads directory exists
+          $uploadDir = __DIR__ . '/uploads/';
+          if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
+          // Sanitize original name and create unique filename
+          $orig = basename($f['name']);
+          $ext = pathinfo($orig, PATHINFO_EXTENSION);
+          $safeBase = preg_replace('/[^A-Za-z0-9_-]/', '_', pathinfo($orig, PATHINFO_FILENAME));
+          $newName = time() . '_' . bin2hex(random_bytes(6)) . ($ext ? ('.' . $ext) : '');
+          $target = $uploadDir . $newName;
+          if (move_uploaded_file($f['tmp_name'], $target)) {
+            $fileSaved = true;
+            // Store a web-relative path (from project root). Adjust if your routing differs.
+            $dbFilePath = 'BPA/post/uploads/' . $newName;
+          } else {
+            $error = 'Failed to move uploaded file.';
+          }
+        }
       }
+    }
+
+    // If there was an upload error, don't attempt DB insert
+    if (isset($error) && $error !== '') {
+      // fall through to rendering page and showing error
     } else {
-      $error = 'Database error preparing statement.';
+      // Build INSERT depending on available columns
+      if ($hasCreatedAt && $hasFilePath) {
+        $now = date('Y-m-d H:i:s');
+        $stmt = $conn->prepare("INSERT INTO posts (user_id, content, file_path, created_at) VALUES (?, ?, ?, ?)");
+        if ($stmt) { $stmt->bind_param("isss", $user_id, $content, $dbFilePath, $now); }
+      } elseif ($hasCreatedAt && !$hasFilePath) {
+        $now = date('Y-m-d H:i:s');
+        $stmt = $conn->prepare("INSERT INTO posts (user_id, content, created_at) VALUES (?, ?, ?)");
+        if ($stmt) { $stmt->bind_param("iss", $user_id, $content, $now); }
+      } elseif (!$hasCreatedAt && $hasFilePath) {
+        $stmt = $conn->prepare("INSERT INTO posts (user_id, content, file_path) VALUES (?, ?, ?)");
+        if ($stmt) { $stmt->bind_param("iss", $user_id, $content, $dbFilePath); }
+      } else {
+        $stmt = $conn->prepare("INSERT INTO posts (user_id, content) VALUES (?, ?)");
+        if ($stmt) { $stmt->bind_param("is", $user_id, $content); }
+      }
+
+      if (isset($stmt) && $stmt) {
+        if ($stmt->execute()) {
+          $stmt->close();
+          header('Location: post.php');
+          exit;
+        } else {
+          $error = 'Error saving post: ' . htmlspecialchars($stmt->error);
+          $stmt->close();
+        }
+      } else {
+        $error = 'Database error preparing statement.';
+      }
     }
   } else {
     $error = 'Post content cannot be empty.';
@@ -475,12 +526,13 @@ profile svg
             <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
           </svg>
         </div>
-            <form id="inline-post-form" action="post.php" method="POST">
+            <form id="inline-post-form" action="post.php" method="POST" enctype="multipart/form-data">
               <textarea name="content" class="create-post-input" placeholder="Ask a question or share something helpful..." rows="3"></textarea>
               <div class="file-row" style="margin-top:8px; display:flex; align-items:center; gap:8px;">
                 <input type="file" id="avatar" name="avatar" accept="image/*" style="display:inline-block;">
                 <span id="fileLabel" style="color:#ddd;">Pick a file to upload</span>
                 <button type="button" id="filePreviewBtn" class="create-post-btn" style="padding:6px 10px;">Preview</button>
+                <button type="button" id="fileRemoveBtn" class="create-post-btn" style="padding:6px 10px; background:#551A8B;">Remove</button>
               </div>
       </div>
           <div class="create-post-actions">
@@ -515,4 +567,7 @@ profile svg
 
 </body>
 
-</html>
+    <script src="script.js?v=20251103"></script>
+  </body>
+
+  </html>
