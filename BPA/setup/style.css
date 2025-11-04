@@ -248,6 +248,10 @@ input[type="text"],input[type="tel"],textarea,select{
   background:#fff;
   border-color:rgba(0,0,0,.1);
 }
+.input-card:hover .search-row input,
+.input-card:hover .search-row select{
+  color:#0a0a0a;
+}
 input:focus,textarea:focus,select:focus{
   background:#fff;
   border-color:var(--ink);
@@ -421,7 +425,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
   color:#f3f4f6;
   border-radius:18px;
   width:100%;
-  max-width:900px;
+  max-width:100%;
   padding:20px;
   transition:all .3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow:
@@ -508,7 +512,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
 }
 
 /* Page 3: color row & themes */
-.colors-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:24px;justify-content:space-between;width:100%;padding-inline:24px;box-sizing:border-box}
+.colors-row{display:flex;gap:96px;flex-wrap:wrap;margin-bottom:24px;justify-content:center;width:100%;padding-inline:24px;box-sizing:border-box}
 .swatch{
   width:52px;
   height:52px;
@@ -647,10 +651,135 @@ body[data-step="1"] .setup-shell::before{
 body[data-step="1"] .header{margin-bottom:8px}
 body[data-step="1"] .step-title{font-size:1.6rem;margin:6px 0 4px}
 body[data-step="1"] .subtitle{font-size:1rem;margin:0 0 14px}
-body[data-step="1"] .form-stack{gap:14px}
+body[data-step="1"] .form-stack{gap:14px;flex:1;display:flex;flex-direction:column}
 body[data-step="1"] .input-card{padding:16px}
 body[data-step="1"] .two-cols{gap:14px}
 body[data-step="1"] .avatar{width:64px;height:64px}
-body[data-step="1"] textarea{min-height:80px}
-body[data-step="1"] .nav-bar{margin-top:10px}
+body[data-step="1"] textarea{min-height:138px;flex:1}
+body[data-step="1"] form{display:flex;flex-direction:column;flex:1;min-height:0}
+body[data-step="1"] .nav-bar{margin-top:auto;padding-top:20px}
 body[data-step="1"] .progress{margin-top:10px}
+
+/* Page 2: fit to viewport with internal panel scroll */
+body[data-step="2"]{
+  padding:16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+  max-height:100vh;
+  overflow:hidden; /* no page scroll */
+}
+body[data-step="2"] .setup-shell{
+  width:min(96vw, 1600px);
+  max-width:1600px;
+  margin:0;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  border-radius:20px;
+  border:1.5px solid rgba(0,0,0,.06);
+  padding:clamp(16px, 2.5vw, 32px);
+  background:rgba(255,255,255,.99);
+  backdrop-filter:blur(24px);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.9) inset,
+    0 4px 12px rgba(0,0,0,.05),
+    0 16px 48px rgba(0,0,0,.1),
+    0 32px 80px rgba(0,0,0,.08);
+}
+/* compact vertical rhythm like page 1 */
+body[data-step="2"] .header{margin-bottom:8px}
+body[data-step="2"] .step-title{font-size:1.6rem;margin:6px 0 4px}
+body[data-step="2"] .subtitle{font-size:1rem;margin:0 0 14px}
+
+/* Let the card with the panel expand and scroll internally */
+body[data-step="2"] .form-stack{display:flex;flex-direction:column;gap:14px;flex:1;min-height:0}
+body[data-step="2"] .input-card{padding:16px;margin-bottom:0;display:flex;flex-direction:column;flex:1;min-height:0}
+body[data-step="2"] .panel-wrap{flex:1;display:flex;min-height:0}
+body[data-step="2"] .courses-panel{flex:1;overflow:auto;min-height:0}
+body[data-step="2"] .nav-bar{margin-top:10px}
+body[data-step="2"] .progress{margin-top:10px}
+
+/* Page 3: same as page 2 - courses to learn with scrollable panel */
+body[data-step="3"]{
+  padding:16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+  max-height:100vh;
+  overflow:hidden; /* no page scroll */
+}
+body[data-step="3"] .setup-shell{
+  width:min(96vw, 1600px);
+  max-width:1600px;
+  margin:0;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  border-radius:20px;
+  border:1.5px solid rgba(0,0,0,.06);
+  padding:clamp(16px, 2.5vw, 32px);
+  background:rgba(255,255,255,.99);
+  backdrop-filter:blur(24px);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.9) inset,
+    0 4px 12px rgba(0,0,0,.05),
+    0 16px 48px rgba(0,0,0,.1),
+    0 32px 80px rgba(0,0,0,.08);
+}
+/* compact vertical rhythm like page 2 */
+body[data-step="3"] .header{margin-bottom:8px}
+body[data-step="3"] .step-title{font-size:1.6rem;margin:6px 0 4px}
+body[data-step="3"] .subtitle{font-size:1rem;margin:0 0 14px}
+
+/* Let the card with the panel expand and scroll internally */
+body[data-step="3"] .form-stack{display:flex;flex-direction:column;gap:14px;flex:1;min-height:0}
+body[data-step="3"] .input-card{padding:16px;margin-bottom:0;display:flex;flex-direction:column;flex:1;min-height:0}
+body[data-step="3"] .panel-wrap{flex:1;display:flex;min-height:0}
+body[data-step="3"] .courses-panel{flex:1;overflow:auto;min-height:0}
+body[data-step="3"] .nav-bar{margin-top:10px}
+body[data-step="3"] .progress{margin-top:10px}
+
+/* Page 4: colors and theme (previously page 3) */
+body[data-step="4"]{
+  padding:16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+  max-height:100vh;
+  overflow:hidden; /* no page scroll */
+}
+body[data-step="4"] .setup-shell{
+  width:min(96vw, 1600px);
+  max-width:1600px;
+  margin:0;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  border-radius:20px;
+  border:1.5px solid rgba(0,0,0,.06);
+  padding:clamp(16px, 2.5vw, 32px);
+  background:rgba(255,255,255,.99);
+  backdrop-filter:blur(24px);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.9) inset,
+    0 4px 12px rgba(0,0,0,.05),
+    0 16px 48px rgba(0,0,0,.1),
+    0 32px 80px rgba(0,0,0,.08);
+}
+/* compact vertical rhythm */
+body[data-step="4"] .header{margin-bottom:8px}
+body[data-step="4"] .step-title{font-size:1.6rem;margin:6px 0 4px}
+body[data-step="4"] .subtitle{font-size:1rem;margin:0 0 14px}
+body[data-step="4"] .form-stack{gap:20px;flex:1;display:flex;flex-direction:column;justify-content:center}
+body[data-step="4"] .input-card{padding:24px;display:flex;flex-direction:column;justify-content:center}
+body[data-step="4"] .colors-row{margin-bottom:0;padding-inline:44px}
+body[data-step="4"] .swatch{width:64px;height:64px}
+body[data-step="4"] .theme-previews{gap:20px}
+body[data-step="4"] .theme-card{padding:24px}
+body[data-step="4"] .preview{height:180px;margin-bottom:16px}
+body[data-step="4"] .nav-bar{margin-top:auto;padding-top:10px}
+body[data-step="4"] .progress{margin-top:10px}

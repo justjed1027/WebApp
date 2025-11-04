@@ -1,35 +1,35 @@
 <?php
-// Page 2 — Choose Interests and Courses
+// Page 2 — Choose What You Already Know
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SkillSwap — Creating your Account (2/3)</title>
+  <title>SkillSwap — Creating your Account (2/4)</title>
   <link rel="stylesheet" href="style.css?v=<?php echo filemtime(__DIR__ . '/style.css'); ?>" />
 </head>
 <body data-step="2">
   <div class="setup-shell">
     <div class="header"><div class="logo">SkillSwap</div></div>
     <h1 class="step-title">Creating your Account</h1>
-    <p class="subtitle">Choose your Interests and Areas of Study</p>
+    <p class="subtitle">What do you already know?</p>
 
     <div class="form-stack">
       <div class="input-card">
         <div class="panel-wrap">
-          <div class="courses-panel" id="coursesPanel" tabindex="0">
+          <div class="courses-panel" id="knownCoursesPanel" tabindex="0">
             <div class="search-row">
-          <input id="courseSearch" type="text" placeholder="Search courses by name..." aria-label="Search courses" />
+          <input id="knownCourseSearch" type="text" placeholder="Search skills by name..." aria-label="Search skills" />
           <div class="filters">
-            <select id="topicFilter" aria-label="Filter by topic">
+            <select id="knownTopicFilter" aria-label="Filter by topic">
               <option value="all">All Topics</option>
               <option value="STEM">STEM</option>
               <option value="Arts">Arts</option>
               <option value="Languages">Languages</option>
               <option value="Business">Business</option>
             </select>
-            <select id="sortBy" aria-label="Sort courses">
+            <select id="knownSortBy" aria-label="Sort skills">
               <option value="popular">Most Popular</option>
               <option value="alpha">Alphabetical</option>
               <option value="new">Newest</option>
@@ -37,7 +37,7 @@
           </div>
             </div>
 
-            <div id="categories" class="grid">
+            <div id="knownCategories" class="grid">
           <div class="category" data-topic="STEM">
             <h3>Mathematics</h3>
             <label class="course" data-name="Algebra"><input type="checkbox" /> Algebra <span class="desc">— Variables, equations, functions</span></label>
@@ -107,7 +107,7 @@
     </div>
 
     <div class="progress" aria-label="Progress">
-      <span class="dot"></span><span class="dot active"></span><span class="dot"></span>
+      <span class="dot"></span><span class="dot active"></span><span class="dot"></span><span class="dot"></span>
     </div>
   </div>
   <script src="script.js?v=<?php echo filemtime(__DIR__ . '/script.js'); ?>"></script>

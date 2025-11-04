@@ -6,7 +6,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SkillSwap — Creating your Account (1/3)</title>
+  <title>SkillSwap — Creating your Account (1/4)</title>
   <link rel="stylesheet" href="style.css?v=<?php echo filemtime(__DIR__ . '/style.css'); ?>" />
 </head>
 <body data-step="1">
@@ -20,11 +20,17 @@
 
     <form id="basicInfoForm" action="page2.php" method="get" enctype="multipart/form-data" novalidate>
       <div class="form-stack">
-        <div class="input-card">
-          <label class="input-label" for="username">Username <span class="req">*</span></label>
-          <input id="username" name="username" type="text" placeholder="Choose a unique username" required />
-          <div class="hint">This name will be visible to others.</div>
-          <div class="error-msg" id="usernameError" hidden>Please enter a username.</div>
+        <div class="two-cols">
+          <div class="input-card">
+            <label class="input-label" for="firstName">First Name <span class="optional">optional</span></label>
+            <input id="firstName" name="firstName" type="text" placeholder="Enter your first name" />
+            <div class="hint">Add your first name if you want it shown on your profile.</div>
+          </div>
+          <div class="input-card">
+            <label class="input-label" for="lastName">Last Name <span class="optional">optional</span></label>
+            <input id="lastName" name="lastName" type="text" placeholder="Enter your last name" />
+            <div class="hint">Add your last name if you want it shown on your profile.</div>
+          </div>
         </div>
 
         <div class="two-cols">
@@ -56,7 +62,7 @@
       </div>
 
       <div class="progress" aria-label="Progress">
-        <span class="dot active"></span><span class="dot"></span><span class="dot"></span>
+        <span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
       </div>
     </form>
   </div>
