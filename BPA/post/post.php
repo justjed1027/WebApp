@@ -131,7 +131,7 @@ if ($_SERVER["REQUEST_METHOD"] === 'POST') {
   }
 }
 
-$sql = "SELECT posts.post_id, posts.user_id, posts.content, posts.created_at, COALESCE(user.user_username, '') AS user_username 
+ $sql = "SELECT posts.post_id, posts.user_id, posts.content, posts.created_at, posts.file_path, COALESCE(user.user_username, '') AS user_username 
   FROM posts 
   LEFT JOIN user ON posts.user_id = user.user_id
   ORDER BY posts.created_at DESC";
@@ -550,18 +550,74 @@ profile svg
             <div class="post" style="background:#fff;border-radius:8px;padding:16px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
               <div class="post-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
                 <?php $displayName = !empty($post['user_username']) ? $post['user_username'] : ('User #' . intval($post['user_id'])); ?>
-                <span class="post-user" style="font-weight:bold;color:black;"><?= htmlspecialchars($displayName) ?></span>
-                <?php $t = timeAgo($post['created_at']); ?>
-                <span class="post-time" style="color:#666;font-size:0.9em;"><?= $t === 'just now' ? $t : htmlspecialchars($t . ' ago') ?></span>
+                <div style="display:flex;align-items:center;gap:12px;">
+                  <div class="post-author-avatar" style="width:40px;height:40px;border-radius:50%;background:#e9ecef;color:#333;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:1rem;">
+                    <?php
+                      $initial = '';
+                      if (!empty($post['user_username'])) {
+                        $initial = mb_strtoupper(mb_substr($post['user_username'], 0, 1));
+                      } else {
+                        $initial = 'U';
+                      }
+                      echo htmlspecialchars($initial);
+                    ?>
+                  </div>
+                  <div style="display:flex;flex-direction:column;">
+                    <div style="font-weight:600;color:#111"><?php echo htmlspecialchars($displayName); ?></div>
+                    <div style="font-size:0.85rem;color:#666"><?php echo isset($post['created_at']) ? htmlspecialchars(timeAgo($post['created_at'])) : 'just now'; ?></div>
+                  </div>
+                </div>
+
+                <?php
+                  $payload = [
+                    'content' => $post['content'] ?? '',
+                    'file_path' => $post['file_path'] ?? '',
+                    'username' => $displayName,
+                    'created_at' => $post['created_at'] ?? ''
+                  ];
+                  $payloadAttr = htmlspecialchars(json_encode($payload), ENT_QUOTES, 'UTF-8');
+                ?>
+
+                <div>
+                  <button type="button" class="view-post-btn create-post-btn" data-post="<?php echo $payloadAttr; ?>" style="padding:6px 10px;">View</button>
+                </div>
               </div>
               <div class="post-content" style="color:#333;line-height:1.5;">
-                <p style="margin:0;"><?= nl2br(htmlspecialchars($post['content'])) ?></p>
+                <p style="margin:0;"><?php echo nl2br(htmlspecialchars(mb_strlen($post['content']) > 400 ? mb_substr($post['content'],0,400) . '...' : $post['content'])); ?></p>
+                <?php if (!empty($post['file_path'])): ?>
+                  <div style="margin-top:8px;">
+                    <?php $ext = strtolower(pathinfo($post['file_path'], PATHINFO_EXTENSION)); ?>
+                    <?php if (in_array($ext, ['jpg','jpeg','png','gif','webp'])): ?>
+                      <img src="<?php echo htmlspecialchars($post['file_path']); ?>" alt="attachment" style="max-width:200px;border-radius:8px;display:block;margin-top:8px;" />
+                    <?php else: ?>
+                      <div style="margin-top:8px;color:#555;font-size:0.9rem;">Attachment: <a href="<?php echo htmlspecialchars($post['file_path']); ?>" target="_blank">Open</a></div>
+                    <?php endif; ?>
+                  </div>
+                <?php endif; ?>
               </div>
             </div>
           <?php endforeach; ?>
         <?php endif; ?>
 
     </div>
+
+    <!-- Post Detail Modal -->
+    <div id="postDetailModal" class="modal-backdrop" role="dialog" aria-hidden="true">
+      <div class="modal-box" id="postDetailBox">
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px;">
+          <div id="postDetailAvatar" style="width:48px;height:48px;border-radius:50%;background:#e9ecef;display:flex;align-items:center;justify-content:center;font-weight:600;color:#333;font-size:1.1rem;"></div>
+          <div>
+            <div id="postDetailUser" style="font-weight:700;color:#fff"></div>
+            <div id="postDetailTime" style="font-size:0.85rem;color:#bbb"></div>
+          </div>
+        </div>
+        <div id="postDetailContent" style="color:#fff;line-height:1.5;margin-bottom:12px;"></div>
+        <div id="postDetailMedia" style="text-align:center;">
+        </div>
+        <div style="text-align:center;margin-top:12px;"><button id="postDetailClose" class="modal-close">Close</button></div>
+      </div>
+    </div>
+
   </main>
 
 

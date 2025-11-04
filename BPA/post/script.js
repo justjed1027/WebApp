@@ -117,5 +117,70 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     if (modal) modal.addEventListener('click', function (e) { if (e.target === modal) { modal.classList.remove('active'); resetModal(); modal.setAttribute('aria-hidden', 'true'); } });
     window.addEventListener('keydown', function (e) { if (e.key === 'Escape' && modal && modal.classList.contains('active')) { modal.classList.remove('active'); resetModal(); modal.setAttribute('aria-hidden', 'true'); } });
+
+    // Post detail modal handlers (open full post view)
+    const postDetailModal = document.getElementById('postDetailModal');
+    const postDetailAvatar = document.getElementById('postDetailAvatar');
+    const postDetailUser = document.getElementById('postDetailUser');
+    const postDetailTime = document.getElementById('postDetailTime');
+    const postDetailContent = document.getElementById('postDetailContent');
+    const postDetailMedia = document.getElementById('postDetailMedia');
+    const postDetailClose = document.getElementById('postDetailClose');
+
+    function resetPostDetail() {
+        if (postDetailContent) postDetailContent.innerHTML = '';
+        if (postDetailMedia) postDetailMedia.innerHTML = '';
+        if (postDetailAvatar) postDetailAvatar.textContent = '';
+        if (postDetailUser) postDetailUser.textContent = '';
+        if (postDetailTime) postDetailTime.textContent = '';
+    }
+
+    document.querySelectorAll('.view-post-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const raw = this.getAttribute('data-post');
+            if (!raw) return;
+            let payload = null;
+            try { payload = JSON.parse(raw); } catch (err) { console.error('Invalid post payload', err); return; }
+
+            const uname = payload.username || 'User';
+            const initial = uname && uname.length ? uname.charAt(0).toUpperCase() : 'U';
+            if (postDetailAvatar) postDetailAvatar.textContent = initial;
+            if (postDetailUser) postDetailUser.textContent = uname;
+            if (postDetailTime) postDetailTime.textContent = payload.created_at ? payload.created_at : '';
+            if (postDetailContent) postDetailContent.innerHTML = payload.content ? payload.content.replace(/\n/g, '<br>') : '';
+
+            if (postDetailMedia) {
+                postDetailMedia.innerHTML = '';
+                if (payload.file_path) {
+                    const ext = String(payload.file_path).split('.').pop().toLowerCase();
+                    if (['jpg','jpeg','png','gif','webp'].includes(ext)) {
+                        const img = document.createElement('img');
+                        img.src = payload.file_path;
+                        img.style.maxWidth = '100%';
+                        img.style.borderRadius = '8px';
+                        postDetailMedia.appendChild(img);
+                    } else if (['mp4','webm','ogg'].includes(ext)) {
+                        const video = document.createElement('video');
+                        video.src = payload.file_path;
+                        video.controls = true;
+                        video.style.maxWidth = '100%';
+                        postDetailMedia.appendChild(video);
+                    } else {
+                        const a = document.createElement('a');
+                        a.href = payload.file_path;
+                        a.target = '_blank';
+                        a.textContent = 'Open attachment';
+                        postDetailMedia.appendChild(a);
+                    }
+                }
+            }
+
+            if (postDetailModal) { postDetailModal.classList.add('active'); postDetailModal.setAttribute('aria-hidden', 'false'); }
+        });
+    });
+
+    if (postDetailClose) postDetailClose.addEventListener('click', function () { if (postDetailModal) { postDetailModal.classList.remove('active'); resetPostDetail(); postDetailModal.setAttribute('aria-hidden', 'true'); } });
+    if (postDetailModal) postDetailModal.addEventListener('click', function (e) { if (e.target === postDetailModal) { postDetailModal.classList.remove('active'); resetPostDetail(); postDetailModal.setAttribute('aria-hidden', 'true'); } });
+    window.addEventListener('keydown', function (e) { if (e.key === 'Escape' && postDetailModal && postDetailModal.classList.contains('active')) { postDetailModal.classList.remove('active'); resetPostDetail(); postDetailModal.setAttribute('aria-hidden', 'true'); } });
 });
 
