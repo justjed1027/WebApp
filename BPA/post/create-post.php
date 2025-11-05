@@ -13,17 +13,25 @@ $type = isset($_GET['type']) ? htmlspecialchars($_GET['type']) : '';
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Create Post</title>
+  <title>SkillSwap - Create Post</title>
+  <link rel="stylesheet" href="style.css?v=nav-20251022">
 </head>
 <body>
   <h2>Write a New Post</h2>
-  <form action="post_submit.php" method="POST">
-    
-    <textarea name="content" rows="5" cols="50" placeholder="Write your post here..." required></textarea>
-    
-    <br>
-    <button type="submit">Post</button>
-  </form>
-  
+      <div class="create-post-card">
+      <div class="create-post-header">
+        <div class="user-avatar-small">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
+          </svg>
+        </div>
+            <form id="inline-post-form" action="create-post.php" method="POST">
+              <textarea name="content" class="create-post-input" placeholder="Ask a question or share something helpful..." rows="3"></textarea>
+      </div>
+          <div class="create-post-actions">
+            <button type="submit" class="create-post-btn">Post</button>
+            </form>
+          </div>
+    </div>
 </body>
 </html>
