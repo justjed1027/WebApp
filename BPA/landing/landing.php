@@ -20,7 +20,6 @@
             <a href="..//signup/signup.php" class="sign-up">Sign Up</a>
           </nav>
       </header>
-      
       <main class="hero-section sticky-section">
           <div class="hero-content">
               <div class="hero-text">
@@ -134,55 +133,159 @@
           </div>
         </div>
       </section>
-    </div>
+      <script>
+          let ticking = false;
+          let lastScrollTop = 0;
+          let navbar = null;
+          
+          // Initialize navbar reference when DOM is loaded
+          document.addEventListener('DOMContentLoaded', function() {
+              navbar = document.querySelector('.Header');
+          });
+          
+          function updateScrollEffect() {
+              const scrollY = window.scrollY;
+              
+              // Handle navbar visibility
+              if (navbar) {
+                  const scrollThreshold = 100; // Start hiding after 100px scroll
+                  
+                  if (scrollY > scrollThreshold) {
+                      if (scrollY > lastScrollTop && scrollY > scrollThreshold) {
+                          // Scrolling down - hide navbar
+                          navbar.classList.add('hidden');
+                          navbar.classList.remove('visible');
+                      } else if (scrollY < lastScrollTop) {
+                          // Scrolling up - show navbar
+                          navbar.classList.remove('hidden');
+                          navbar.classList.add('visible');
+                      }
+                  } else {
+                      // Always show navbar at top of page
+                      navbar.classList.remove('hidden');
+                      navbar.classList.add('visible');
+                  }
+                  
+                  lastScrollTop = scrollY;
+              }
+              
+              ticking = false;
+          }
+          
+          window.addEventListener('scroll', () => {
+              if (!ticking) {
+                  ticking = true;
+                  requestAnimationFrame(updateScrollEffect);
+              }
+          }, { passive: true });
 
-    <script>
-        let ticking = false;
-        let lastScrollTop = 0;
-        let navbar = null;
-        
-        // Initialize navbar reference when DOM is loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            navbar = document.querySelector('.Header');
-        });
-        
-        function updateScrollEffect() {
-            const scrollY = window.scrollY;
-            
-            // Handle navbar visibility
-            if (navbar) {
-                const scrollThreshold = 100; // Start hiding after 100px scroll
-                
-                if (scrollY > scrollThreshold) {
-                    if (scrollY > lastScrollTop && scrollY > scrollThreshold) {
-                        // Scrolling down - hide navbar
-                        navbar.classList.add('hidden');
-                        navbar.classList.remove('visible');
-                    } else if (scrollY < lastScrollTop) {
-                        // Scrolling up - show navbar
-                        navbar.classList.remove('hidden');
-                        navbar.classList.add('visible');
-                    }
-                } else {
-                    // Always show navbar at top of page
-                    navbar.classList.remove('hidden');
-                    navbar.classList.add('visible');
-                }
-                
-                lastScrollTop = scrollY;
-            }
-            
-            ticking = false;
-        }
-        
-        window.addEventListener('scroll', () => {
-            if (!ticking) {
-                ticking = true;
-                requestAnimationFrame(updateScrollEffect);
-            }
-        }, { passive: true });
-  </script>
+          // Intersection Observer for review boxes
+          const reviewObserver = new IntersectionObserver((entries) => {
+              entries.forEach(entry => {
+                  if (entry.isIntersecting) {
+                      entry.target.classList.add('visible');
+                      // Optional: Unobserve after animation
+                      // reviewObserver.unobserve(entry.target);
+                  }
+              });
+          }, {
+              threshold: 0.2 // Trigger when 20% of the element is visible
+          });
+
+          // Observe all review boxes
+          document.querySelectorAll('.review').forEach(review => {
+              reviewObserver.observe(review);
+          });
+    </script>
+    <style>
+      .reviews-section{
+    background-color:#111111;
+    z-index:5;
+}
+.reviews-title{
+    text-align:center;
+    padding:25px;
+    font-family: 'League Spartan', sans-serif;
+}
+.reviews-title-sub{
+    color:#1fff93;
+    font-family: 'League Spartan', sans-serif;
+}
+.review-holder{
+    display:flex;
+    flex-direction:row;
+    height:auto;
+    width: 100%;
+    padding:10px;
+    flex-wrap:wrap;
+    justify-content:center;
+    background-color:#111111
+}
+.review{
+    display:block;
+    background-color:black;
+    height:fit-content;
+    min-height:200px;
+    width:30%;
+    min-width:200px;
+    margin:5px;
+    padding:15px;
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.review.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+.review h2{
+    font-size:clamp(1rem, 1.6vw, 1.7rem);
+    color:#1fff93;
+    font-family: 'League Spartan', sans-serif;
+}
+.review h3{
+    font-size:clamp(1rem, 1.4vw, 1.5rem);
+    font-family: 'League Spartan', sans-serif;
+}
+.review p{
+    font-size:clamp(0.75rem, 1vw, 1rem);
+    font-family: 'League Spartan', sans-serif;
+}
+    </style>
+      <section class="reviews-section sticky-section">
+        <div class="reviews-title">
+          <h1 class="reviews-title-main">Latest Reviews From Our <b class="reviews-title-sub">Own Users!</b></h1>
+          <h3>Some of our own clients reviewing our site.</h3>
+        </div>
+        <div class="review-holder">
+          <div class="review">
+            <h2>Thanks, very cool.</h2>
+            <h3>Name</h3>
+            <p>Site's cool. Neque vitae semper egestas, urna justo faucibus lectus, a sollicitudin orci sem eget massa. Suspendisse eleifend. Cras sed leo. Cras.</p>
+          </div>
+          <div class="review">
+            <h2>Color pallette looks neet.</h2>
+            <h3>Name</h3>
+            <p>Colors remind me of a clothing company. (?)</p>
+          </div>
+          <div class="review">
+            <h2>I don't know what to say.</h2>
+            <h3>Name</h3>
+            <p>I'm just gonna fill this with latin as a placeholder, I hope you don't mind. Etiam bibendum fermentum metus. Aenean sed pede nec ante blandit viverra. Donec tempus, lorem fringilla ornare placerat, orci lacus vestibulum.</p>
+          </div>
+          <div class="review">
+            <h2>Math is cool.</h2>
+            <h3>Name</h3>
+            <p>I found some new friends, and I now know more about algebra! Brilliant.</p>
+          </div>
+          <div class="review">
+            <h2>5 Stars out of 5 Stars.</h2>
+            <h3>Name</h3>
+            <p>I'm honestly impressed with myself that I managed to conjour this up.... that sounds really pathetic now that I think about it.</p>
+          </div>
+      </div>
+    </section>
+  </div> <!-- Closing scroll-container -->
+    
 </body>
 </html>
-<?php 
-?>

@@ -264,7 +264,6 @@ span {
     background: linear-gradient(90deg, rgba(31,255,147,0), #1fff93, rgba(31,255,147,0));
     box-shadow: 0 0 16px rgba(31,255,147,0.5);
 }
-
 /* ===== BUTTON STYLES ===== */
 .btn-box {
     width: 400px;
@@ -891,4 +890,57 @@ form input[type="submit"] {
         background-image: url('img/landing_header_img2.png');
         opacity: 0;
     }
+}
+.reviews-section{
+    background-color:#111111;
+    z-index:100;
+}
+.reviews-title{
+    text-align:center;
+    padding:25px;
+    font-family: 'League Spartan', sans-serif;
+}
+.reviews-title-sub{
+    color:#1fff93;
+    font-family: 'League Spartan', sans-serif;
+}
+.review-holder{
+    display:flex;
+    flex-direction:row;
+    height:auto;
+    width: 100%;
+    padding:10px;
+    flex-wrap:wrap;
+    justify-content:center;
+    background-color:#111111
+}
+.review{
+    display:block;
+    background-color:black;
+    height:fit-content;
+    min-height:200px;
+    width:30%;
+    min-width:200px;
+    margin:5px;
+    padding:15px;
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.review.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+.review h2{
+    font-size:clamp(1rem, 1.6vw, 1.7rem);
+    color:#1fff93;
+    font-family: 'League Spartan', sans-serif;
+}
+.review h3{
+    font-size:clamp(1rem, 1.4vw, 1.5rem);
+    font-family: 'League Spartan', sans-serif;
+}
+.review p{
+    font-size:clamp(0.75rem, 1vw, 1rem);
+    font-family: 'League Spartan', sans-serif;
 }
