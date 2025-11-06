@@ -42,45 +42,96 @@ if ($_SERVER["REQUEST_METHOD"] === 'POST') {
   $content = isset($_POST['content']) ? trim($_POST['content']) : '';
 
   if ($content !== '') {
-    // If the posts table has a created_at column, set it explicitly using PHP's current time
+    // Detect columns we can write to (created_at, file_path)
     $hasCreatedAt = false;
+    $hasFilePath = false;
     $colRes = $conn->query("SHOW COLUMNS FROM posts LIKE 'created_at'");
-    if ($colRes && $colRes->num_rows > 0) {
-      $hasCreatedAt = true;
-      $colRes->free();
-    }
+    if ($colRes && $colRes->num_rows > 0) { $hasCreatedAt = true; $colRes->free(); }
+    $colRes2 = $conn->query("SHOW COLUMNS FROM posts LIKE 'file_path'");
+    if ($colRes2 && $colRes2->num_rows > 0) { $hasFilePath = true; $colRes2->free(); }
 
-    if ($hasCreatedAt) {
-      $now = date('Y-m-d H:i:s');
-      $stmt = $conn->prepare("INSERT INTO posts (user_id, content, created_at) VALUES (?, ?, ?)");
-      if ($stmt) {
-        $stmt->bind_param("iss", $user_id, $content, $now);
-      }
-    } else {
-      $stmt = $conn->prepare("INSERT INTO posts (user_id, content) VALUES (?, ?)");
-      if ($stmt) {
-        $stmt->bind_param("is", $user_id, $content);
-      }
-    }
-
-    if (isset($stmt) && $stmt) {
-      if ($stmt->execute()) {
-        $stmt->close();
-        header('Location: post.php');
-        exit;
+    // Prepare to handle an uploaded file (optional)
+    $fileSaved = false;
+    $dbFilePath = null; // path to store in DB if available
+    if (isset($_FILES['avatar']) && isset($_FILES['avatar']['error']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
+      $f = $_FILES['avatar'];
+      // Basic validation: max 10MB
+      $maxBytes = 10 * 1024 * 1024;
+      if ($f['size'] > $maxBytes) {
+        $error = 'File is too large. Max 10 MB.';
       } else {
-        $error = 'Error saving post: ' . htmlspecialchars($stmt->error);
-        $stmt->close();
+        // Determine mime type using finfo
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $mime = $finfo->file($f['tmp_name']);
+        $allowed = [
+          'image/jpeg','image/png','image/gif','image/webp',
+          'video/mp4','video/webm','video/ogg',
+          'application/pdf','text/plain',
+          'application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        ];
+        if (!in_array($mime, $allowed)) {
+          $error = 'Unsupported file type for upload.';
+        } else {
+          // Ensure uploads directory exists
+          $uploadDir = __DIR__ . '/uploads/';
+          if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
+          // Sanitize original name and create unique filename
+          $orig = basename($f['name']);
+          $ext = pathinfo($orig, PATHINFO_EXTENSION);
+          $safeBase = preg_replace('/[^A-Za-z0-9_-]/', '_', pathinfo($orig, PATHINFO_FILENAME));
+          $newName = time() . '_' . bin2hex(random_bytes(6)) . ($ext ? ('.' . $ext) : '');
+          $target = $uploadDir . $newName;
+          if (move_uploaded_file($f['tmp_name'], $target)) {
+            $fileSaved = true;
+            // Store a web-relative path (from project root). Adjust if your routing differs.
+            $dbFilePath = 'BPA/post/uploads/' . $newName;
+          } else {
+            $error = 'Failed to move uploaded file.';
+          }
+        }
       }
+    }
+
+    // If there was an upload error, don't attempt DB insert
+    if (isset($error) && $error !== '') {
+      // fall through to rendering page and showing error
     } else {
-      $error = 'Database error preparing statement.';
+      // Build INSERT depending on available columns
+      if ($hasCreatedAt && $hasFilePath) {
+        $now = date('Y-m-d H:i:s');
+        $stmt = $conn->prepare("INSERT INTO posts (user_id, content, file_path, created_at) VALUES (?, ?, ?, ?)");
+        if ($stmt) { $stmt->bind_param("isss", $user_id, $content, $dbFilePath, $now); }
+      } elseif ($hasCreatedAt && !$hasFilePath) {
+        $now = date('Y-m-d H:i:s');
+        $stmt = $conn->prepare("INSERT INTO posts (user_id, content, created_at) VALUES (?, ?, ?)");
+        if ($stmt) { $stmt->bind_param("iss", $user_id, $content, $now); }
+      } elseif (!$hasCreatedAt && $hasFilePath) {
+        $stmt = $conn->prepare("INSERT INTO posts (user_id, content, file_path) VALUES (?, ?, ?)");
+        if ($stmt) { $stmt->bind_param("iss", $user_id, $content, $dbFilePath); }
+      } else {
+        $stmt = $conn->prepare("INSERT INTO posts (user_id, content) VALUES (?, ?)");
+        if ($stmt) { $stmt->bind_param("is", $user_id, $content); }
+      }
+
+      if (isset($stmt) && $stmt) {
+        if ($stmt->execute()) {
+          $stmt->close();
+          header('Location: post.php');
+          exit;
+        } else {
+          $error = 'Error saving post: ' . htmlspecialchars($stmt->error);
+          $stmt->close();
+        }
+      } else {
+        $error = 'Database error preparing statement.';
+      }
     }
   } else {
     $error = 'Post content cannot be empty.';
   }
 }
 
-$sql = "SELECT posts.post_id, posts.user_id, posts.content, posts.created_at, COALESCE(user.user_username, '') AS user_username 
+ $sql = "SELECT posts.post_id, posts.user_id, posts.content, posts.created_at, posts.file_path, COALESCE(user.user_username, '') AS user_username 
   FROM posts 
   LEFT JOIN user ON posts.user_id = user.user_id
   ORDER BY posts.created_at DESC";
@@ -231,28 +282,66 @@ profile svg
   <title>SkillSwap — Posts</title>
   <link rel="stylesheet" href="style.css?v=nav-20251022">
   <style>
-    /* Fixed-ish textarea that can still be expanded vertically */
+    
     .create-post-input {
       display: block;
-      width: 360px; /* desired initial width similar to screenshot */
+      width: 360px;
       max-width: 100%;
       min-height: 72px;
-      height: auto; /* let JS set initial height based on content */
+      height: auto; 
       padding: 12px 14px;
       border-radius: 12px;
       background: rgba(255,255,255,0.03);
       color: inherit;
       border: 1px solid rgba(255,255,255,0.06);
-      resize: none; /* disable manual resize to rely on auto-grow */
-      overflow: hidden; /* hide scrollbars while auto-growing */
+      resize: none; 
+      overflow: hidden; 
       font-family: inherit;
       font-size: 1.3rem;
       line-height: 1.3;
       field-sizing: content;    
     }
 
-    /* Slight tweak for the submit button spacing */
+   
     .create-post-actions { margin-top: 8px; }
+  </style>
+  <style>
+    /* Modal for file preview */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    .modal-backdrop.active { display:flex; }
+    .modal-box {
+      background: #111;
+      color: #fff;
+      padding: 18px;
+      border-radius: 10px;
+      max-width: 90%;
+      max-height: 85%;
+      overflow: auto;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+    }
+    .modal-box img, .modal-box video {
+      max-width: 100%;
+      max-height: 70vh;
+      display:block;
+      margin: 0 auto;
+    }
+    .modal-close {
+      display:inline-block;
+      margin-top:8px;
+      padding:6px 10px;
+      background:#333;
+      color:#fff;
+      border-radius:6px;
+      cursor:pointer;
+    }
   </style>
 </head>
 
@@ -380,6 +469,14 @@ profile svg
     </div>
   </aside>
 
+  <!-- File preview modal -->
+  <div id="filePreviewModal" class="modal-backdrop" role="dialog" aria-hidden="true">
+    <div class="modal-box" id="filePreviewContent">
+      <div id="filePreviewInner"></div>
+      <div style="text-align:center;"><button id="modalCloseBtn" class="modal-close">Close</button></div>
+    </div>
+  </div>
+
   <!-- Top Bar Navigation -->
   <header class="topbar">
     <div class="topbar-left"></div>
@@ -429,8 +526,14 @@ profile svg
             <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
           </svg>
         </div>
-            <form id="inline-post-form" action="post.php" method="POST">
+            <form id="inline-post-form" action="post.php" method="POST" enctype="multipart/form-data">
               <textarea name="content" class="create-post-input" placeholder="Ask a question or share something helpful..." rows="3"></textarea>
+              <div class="file-row" style="margin-top:8px; display:flex; align-items:center; gap:8px;">
+                <input type="file" id="avatar" name="avatar" accept="image/*" style="display:inline-block;">
+                <span id="fileLabel" style="color:#ddd;">Pick a file to upload</span>
+                <button type="button" id="filePreviewBtn" class="create-post-btn" style="padding:6px 10px;">Preview</button>
+                <button type="button" id="fileRemoveBtn" class="create-post-btn" style="padding:6px 10px; background:#551A8B;">Remove</button>
+              </div>
       </div>
           <div class="create-post-actions">
             <button type="submit" class="create-post-btn">Submit</button>
@@ -447,21 +550,80 @@ profile svg
             <div class="post" style="background:#fff;border-radius:8px;padding:16px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
               <div class="post-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
                 <?php $displayName = !empty($post['user_username']) ? $post['user_username'] : ('User #' . intval($post['user_id'])); ?>
-                <span class="post-user" style="font-weight:bold;color:black;"><?= htmlspecialchars($displayName) ?></span>
-                <?php $t = timeAgo($post['created_at']); ?>
-                <span class="post-time" style="color:#666;font-size:0.9em;"><?= $t === 'just now' ? $t : htmlspecialchars($t . ' ago') ?></span>
+                <div style="display:flex;align-items:center;gap:12px;">
+                  <div class="post-author-avatar" style="width:40px;height:40px;border-radius:50%;background:#e9ecef;color:#333;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:1rem;">
+                    <?php
+                      $initial = '';
+                      if (!empty($post['user_username'])) {
+                        $initial = mb_strtoupper(mb_substr($post['user_username'], 0, 1));
+                      } else {
+                        $initial = 'U';
+                      }
+                      echo htmlspecialchars($initial);
+                    ?>
+                  </div>
+                  <div style="display:flex;flex-direction:column;">
+                    <div style="font-weight:600;color:#111"><?php echo htmlspecialchars($displayName); ?></div>
+                    <div style="font-size:0.85rem;color:#666"><?php echo isset($post['created_at']) ? htmlspecialchars(timeAgo($post['created_at'])) : 'just now'; ?></div>
+                  </div>
+                </div>
+
+                <?php
+                  $payload = [
+                    'content' => $post['content'] ?? '',
+                    'file_path' => $post['file_path'] ?? '',
+                    'username' => $displayName,
+                    'created_at' => $post['created_at'] ?? ''
+                  ];
+                  $payloadAttr = htmlspecialchars(json_encode($payload), ENT_QUOTES, 'UTF-8');
+                ?>
+
+                <div>
+                  <button type="button" class="view-post-btn create-post-btn" data-post="<?php echo $payloadAttr; ?>" style="padding:6px 10px;">View</button>
+                </div>
               </div>
               <div class="post-content" style="color:#333;line-height:1.5;">
-                <p style="margin:0;"><?= nl2br(htmlspecialchars($post['content'])) ?></p>
+                <p style="margin:0;"><?php echo nl2br(htmlspecialchars(mb_strlen($post['content']) > 400 ? mb_substr($post['content'],0,400) . '...' : $post['content'])); ?></p>
+                <?php if (!empty($post['file_path'])): ?>
+                  <div style="margin-top:8px;">
+                    <?php $ext = strtolower(pathinfo($post['file_path'], PATHINFO_EXTENSION)); ?>
+                    <?php if (in_array($ext, ['jpg','jpeg','png','gif','webp'])): ?>
+                      <img src="<?php echo htmlspecialchars($post['file_path']); ?>" alt="attachment" style="max-width:200px;border-radius:8px;display:block;margin-top:8px;" />
+                    <?php else: ?>
+                      <div style="margin-top:8px;color:#555;font-size:0.9rem;">Attachment: <a href="<?php echo htmlspecialchars($post['file_path']); ?>" target="_blank">Open</a></div>
+                    <?php endif; ?>
+                  </div>
+                <?php endif; ?>
               </div>
             </div>
           <?php endforeach; ?>
         <?php endif; ?>
 
     </div>
+
+    <!-- Post Detail Modal -->
+    <div id="postDetailModal" class="modal-backdrop" role="dialog" aria-hidden="true">
+      <div class="modal-box" id="postDetailBox">
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px;">
+          <div id="postDetailAvatar" style="width:48px;height:48px;border-radius:50%;background:#e9ecef;display:flex;align-items:center;justify-content:center;font-weight:600;color:#333;font-size:1.1rem;"></div>
+          <div>
+            <div id="postDetailUser" style="font-weight:700;color:#fff"></div>
+            <div id="postDetailTime" style="font-size:0.85rem;color:#bbb"></div>
+          </div>
+        </div>
+        <div id="postDetailContent" style="color:#fff;line-height:1.5;margin-bottom:12px;"></div>
+        <div id="postDetailMedia" style="text-align:center;">
+        </div>
+        <div style="text-align:center;margin-top:12px;"><button id="postDetailClose" class="modal-close">Close</button></div>
+      </div>
+    </div>
+
   </main>
 
 
 </body>
 
-</html>
+    <script src="script.js?v=20251103"></script>
+  </body>
+
+  </html>
