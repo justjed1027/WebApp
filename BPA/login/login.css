@@ -10,20 +10,20 @@
 }
 
 body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background: #f5f5f5;
-  overflow-x: hidden;
+  margin:0;
+  min-height:100vh;
+  background:#f5f5f5;
+  overflow-x:hidden;
+  /* Remove centering so split layout spans full viewport */
 }
 
 /* Split Screen Container */
 .split-container {
-  display: flex;
-  width: 100%;
-  min-height: 100vh;
-  box-shadow: 0 0 50px rgba(0, 0, 0, 0.2);
+  display:flex;
+  width:100vw;
+  height:100vh; /* lock full viewport height */
+  box-shadow:0 0 50px rgba(0,0,0,0.2);
+  align-items:stretch; /* ensure children fill height */
 }
 
 /* Left Panel - Dark with Bookshelf Background */
@@ -204,14 +204,15 @@ body {
   color: rgba(255, 255, 255, 0.8);
 }
 
-/* Right Panel - Auth Options */
+/* Right Panel - Image Background */
 .right-panel {
-  flex: 1;
-  background: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 3rem;
+  flex:1;
+  background:url('images/login.svg') center center / cover no-repeat;
+  min-height:100%;
+  height:100%;
+  /* Ensure it occupies its half fully with no internal padding */
+  margin:0;
+  padding:0;
 }
 
 .auth-options {
