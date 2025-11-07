@@ -153,15 +153,15 @@ body{
 
 /* Input Cards */
 .input-card{
-  background:rgba(8, 8, 8, 0.95);
-  border:2px solid rgba(0,0,0,.04);
+  background:rgba(255,255,255,.98);
+  border:1.5px solid rgba(0,0,0,.06);
   border-radius:16px;
   padding:20px;
   margin-bottom:20px;
   transition:all .3s var(--ease-smooth);
   box-shadow:
-    0 1px 3px rgba(0,0,0,.03),
-    0 0 0 1px rgba(5, 5, 5, 0.6) inset;
+    0 1px 3px rgba(0,0,0,.04),
+    0 8px 24px rgba(0,0,0,.06);
   position:relative;
   overflow:hidden;
 }
@@ -179,8 +179,8 @@ body{
   transform:translateY(-2px) scale(1.01);
   border-color:rgba(0,0,0,.08);
   box-shadow:
-    0 8px 24px rgba(0,0,0,.08),
-    0 0 0 1px rgba(0, 0, 0, 0.8) inset;
+    0 10px 28px rgba(0,0,0,.1),
+    0 2px 6px rgba(0,0,0,.06);
 }
 .input-card:hover::before{
   left:100%;
@@ -190,7 +190,6 @@ body{
   border-color:rgba(0,0,0,.15);
   box-shadow:
     0 12px 32px rgba(0,0,0,.12),
-    0 0 0 1px rgba(0, 0, 0, 0.9) inset,
     0 0 0 4px rgba(0,0,0,.05);
 }
 
@@ -487,7 +486,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.6}
 .courses-panel select{
   background: rgba(255,255,255,.06) !important;
   border: 1px solid rgba(255,255,255,.12) !important;
-  color:#ffffff !important;
+  color:#000000 !important;
   /* Prevent OS/browser from forcing light colors */
   forced-color-adjust: none;
   -webkit-text-fill-color: #ffffff !important;
