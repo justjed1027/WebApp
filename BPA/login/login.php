@@ -60,6 +60,7 @@
     <!-- Left Panel - Dark with Welcome Message -->
     <div class="left-panel">
         <div class="welcome-content">
+<div class="brand-logo">SkillShare</div>
 <h1>Welcome back!</h1>
 <p class="subtitle">Sign in to learn, collaborate, and share</p>
 

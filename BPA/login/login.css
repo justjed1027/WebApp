@@ -24,15 +24,26 @@ body {
   height:100vh; /* lock full viewport height */
   box-shadow:0 0 50px rgba(0,0,0,0.2);
   align-items:stretch; /* ensure children fill height */
+  position:relative;
+  overflow:hidden;
 }
 
-/* Left Panel - Dark with Bookshelf Background */
+/* subtle center divider for polish */
+.split-container::before{
+  content:'';
+  position:absolute;
+  top:0; bottom:0; left:50%;
+  width:1px;
+  transform:translateX(-0.5px);
+  background:linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.12) 20%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.12) 80%, rgba(255,255,255,0.18) 100%);
+  opacity:.25;
+  pointer-events:none;
+}
+
+/* Left Panel - Solid darker brand color */
 .left-panel {
   flex: 1;
-  background: linear-gradient(135deg, rgba(26, 35, 58, 0.95) 0%, rgba(44, 54, 79, 0.95) 100%),
-              url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><rect fill="%23222" width="1000" height="1000"/></svg>');
-  background-size: cover;
-  background-position: center;
+  background:#121425; /* solid color as requested */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -41,27 +52,32 @@ body {
   overflow: hidden;
 }
 
-/* Bookshelf pattern overlay */
-.left-panel::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+/* Subtle texture overlay behind content box */
+.left-panel::before { 
+  content:'';
+  position:absolute;
+  inset:0;
+  opacity:0.08;
+  z-index:1;
   background-image: 
-    repeating-linear-gradient(0deg, transparent, transparent 35px, rgba(255,255,255,0.03) 35px, rgba(255,255,255,0.03) 40px),
-    repeating-linear-gradient(90deg, transparent, transparent 80px, rgba(255,255,255,0.02) 80px, rgba(255,255,255,0.02) 120px);
-  opacity: 0.5;
-  z-index: 1;
+    radial-gradient(circle at 25% 25%, rgba(255,255,255,0.15) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(255,255,255,0.1) 0%, transparent 50%),
+    repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.02) 10px, rgba(255,255,255,0.02) 20px);
+  pointer-events:none;
 }
 
 .welcome-content {
-  max-width: 400px;
+  max-width: 580px;
   width: 100%;
   position: relative;
   z-index: 2;
   animation: fadeIn 0.8s ease;
+  padding: 3rem 4rem;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.04);
+  text-align: center;
 }
 
 @keyframes fadeIn {
@@ -69,18 +85,28 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-.left-panel h1 {
-  font-size: 2.5rem;
+.brand-logo {
+  font-size: 1.5rem;
+  font-weight: 800;
   color: #ffffff;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.5px;
+  text-align: center;
+  opacity: 0.95;
+}
+
+.left-panel h1 {
+  font-size: 3rem;
+  color: #ffffff;
+  margin-bottom: 0.75rem;
   font-weight: 700;
   line-height: 1.2;
 }
 
 .subtitle {
   color: rgba(255, 255, 255, 0.8);
-  font-size: 0.95rem;
-  margin-bottom: 2rem;
+  font-size: 1.1rem;
+  margin-bottom: 2.25rem;
   line-height: 1.5;
 }
 
@@ -109,25 +135,27 @@ body {
 .email-form label {
   display: block;
   color: rgba(255, 255, 255, 0.9);
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   font-weight: 600;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.6rem;
   letter-spacing: 0.5px;
   text-transform: uppercase;
+  text-align: left;
 }
 
 .email-form input[type="text"],
 .email-form input[type="password"] {
   width: 100%;
-  padding: 0.85rem 1rem;
-  margin-bottom: 1.25rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 6px;
+  border-radius: 10px;
   color: #ffffff;
-  font-size: 1rem;
+  font-size: 1.05rem;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
+  text-align: left;
 }
 
 .email-form input::placeholder {
@@ -136,22 +164,25 @@ body {
 
 .email-form input:focus {
   outline: none;
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.4);
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.45);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35), 0 0 0 3px rgba(255, 255, 255, 0.12);
 }
 
 .show-password {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   margin-bottom: 1.5rem;
   margin-top: -0.5rem;
+  gap: 0.5rem;
 }
 
 .show-password input[type="checkbox"] {
-  margin-right: 0.5rem;
+  margin: 0;
   width: auto;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .show-password label {
@@ -161,17 +192,19 @@ body {
   letter-spacing: normal;
   cursor: pointer;
   font-weight: 400;
+  margin: 0;
+  line-height: 1;
 }
 
 .signin-btn {
   width: 100%;
-  padding: 0.9rem;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
+  padding: 1.1rem 1.3rem;
+  background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.10));
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 12px;
   color: #ffffff;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 1rem;
   letter-spacing: 0.5px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -180,10 +213,10 @@ body {
 }
 
 .signin-btn:hover {
-  background: rgba(255, 255, 255, 0.25);
-  border-color: rgba(255, 255, 255, 0.5);
+  background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.14));
+  border-color: rgba(255, 255, 255, 0.55);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
 }
 
 .create-account {
@@ -204,15 +237,24 @@ body {
   color: rgba(255, 255, 255, 0.8);
 }
 
-/* Right Panel - Image Background */
+/* Right Panel - Image Background (use PNG) */
 .right-panel {
   flex:1;
-  background:url('images/login.svg') center center / cover no-repeat;
+  /* Prioritize the focal content on the right to avoid awkward crops */
+  background: url('images/login.png') right center / cover no-repeat;
   min-height:100%;
   height:100%;
-  /* Ensure it occupies its half fully with no internal padding */
   margin:0;
   padding:0;
+  /* In case the image is smaller than the panel on some screens, fill with a neutral color */
+  background-color:#0a0a0a;
+}
+
+/* On smaller screens when panels stack, keep the subject centered */
+@media (max-width: 768px){
+  .right-panel{
+    background-position: center top;
+  }
 }
 
 .auth-options {
@@ -268,14 +310,14 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
-  padding: 0.85rem 1.5rem;
+  gap: 0.85rem;
+  padding: 1rem 1.75rem;
   background: #ffffff; /* white as requested */
   border: 1px solid #e5e7eb; /* soft border for contrast on dark bg */
-  border-radius: 8px;
+  border-radius: 10px;
   color: #1f2937; /* slate-800 text */
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
