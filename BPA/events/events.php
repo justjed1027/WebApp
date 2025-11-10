@@ -2,7 +2,45 @@
 session_start();
 require_once '../database/DatabaseConnection.php';
 
+// Database connection
 
+
+$db = new DatabaseConnection();
+$conn = $db->connection;
+// Query to test event-subject relationships
+$sql = "
+SELECT 
+    e.events_title,
+    s.subject_name
+FROM 
+    bpa_skillswap.event_subjects AS es
+JOIN 
+    bpa_skillswap.events AS e 
+    ON es.es_event_id = e.events_id
+JOIN 
+    bpa_skillswap.subjects AS s 
+    ON es.es_subject_id = s.subject_id;
+";
+
+$result = $conn->query($sql);
+
+// Display results
+if ($result->num_rows > 0) {
+    echo "<h3>Event - Subject Links</h3>";
+    echo "<table border='1' cellpadding='5'>";
+    echo "<tr><th>Event Title</th><th>Subject</th></tr>";
+
+    while ($row = $result->fetch_assoc()) {
+        echo "<tr>";
+        echo "<td>" . htmlspecialchars($row['events_title']) . "</td>";
+        echo "<td>" . htmlspecialchars($row['subject_name']) . "</td>";
+        echo "</tr>";
+    }
+
+    echo "</table>";
+} else {
+    echo "No event-subject links found.";
+}
 
 
 
