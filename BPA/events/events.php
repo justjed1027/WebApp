@@ -1,0 +1,212 @@
+<?php
+session_start();
+require_once '../database/DatabaseConnection.php';
+
+
+
+
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Events</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="events-container">
+    <div class="events-main">
+      <div class="events-topbar">
+        <input type="text" class="events-search" placeholder="Search events...">
+        <select class="events-category">
+          <option>All Categories</option>
+          <option>Hackathon</option>
+          <option>Workshop</option>
+          <option>Career</option>
+          <option>Networking</option>
+        </select>
+        <button class="btn-primary">Create Event</button>
+      </div>
+      <div class="featured-event-label">Featured Event</div>
+      <div class="featured-event-card">
+        <img src="featured-event.jpg" alt="Campus-wide Hackathon" class="featured-event-img">
+        <div class="featured-event-info">
+          <div class="featured-event-title-row">
+            <span class="featured-event-title">Campus-wide Hackathon 2023</span>
+            <span class="featured-event-badge">Featured</span>
+          </div>
+          <div class="featured-event-desc">Join the biggest hackathon of the year! Teams will compete to build innovative solutions to real-world problems. Great prizes, food, and networking opportunities.</div>
+          <div class="featured-event-details">
+            <div><span class="event-icon">📅</span> November 5-7, 2023</div>
+            <div><span class="event-icon">⏰</span> Starts at 6:00 PM</div>
+            <div><span class="event-icon">📍</span> Technology Innovation Center</div>
+            <div><span class="event-icon">👥</span> 500+ attendees expected</div>
+          </div>
+          <div class="featured-event-tags">
+            <span class="event-tag">#hackathon</span>
+            <span class="event-tag">#coding</span>
+            <span class="event-tag">#innovation</span>
+          </div>
+          <div class="featured-event-actions">
+            <button class="btn-primary">Register Now</button>
+            <button class="btn-outline">Interested</button>
+          </div>
+        </div>
+      </div>
+      <div class="section-label">Upcoming Events</div>
+      <div class="upcoming-events-grid">
+        <div class="event-card">
+          <img src="career-fair.jpg" alt="Tech Career Fair 2023" class="event-img">
+          <div class="event-info">
+            <div class="event-title">Tech Career Fair 2023</div>
+            <div class="event-detail"><span class="event-icon">📅</span> October 15, 2023</div>
+            <div class="event-detail"><span class="event-icon">⏰</span> 10:00 AM - 4:00 PM</div>
+            <div class="event-detail"><span class="event-icon">📍</span> Student Center Grand Hall</div>
+            <div class="event-detail"><span class="event-icon">👥</span> 342 attending</div>
+            <div class="event-tags">
+              <span class="event-tag">#career</span>
+              <span class="event-tag">#networking</span>
+            </div>
+            <button class="btn-primary event-details-btn">View Details</button>
+          </div>
+        </div>
+        <div class="event-card">
+          <img src="ml-workshop.jpg" alt="Machine Learning Workshop" class="event-img">
+          <div class="event-info">
+            <div class="event-title">Machine Learning Workshop</div>
+            <div class="event-detail"><span class="event-icon">📅</span> October 18, 2023</div>
+            <div class="event-detail"><span class="event-icon">⏰</span> 2:00 PM - 5:00 PM</div>
+            <div class="event-detail"><span class="event-icon">📍</span> Technology Building Room 805</div>
+            <div class="event-detail"><span class="event-icon">👥</span> 124 attending</div>
+            <div class="event-tags">
+              <span class="event-tag">#workshop</span>
+              <span class="event-tag">#machinelearning</span>
+              <span class="event-tag">#python</span>
+            </div>
+            <button class="btn-primary event-details-btn">View Details</button>
+          </div>
+        </div>
+        <div class="event-card">
+          <img src="design-hackathon.jpg" alt="Design Thinking Hackathon" class="event-img">
+          <div class="event-info">
+            <div class="event-title">Design Thinking Hackathon</div>
+            <div class="event-detail"><span class="event-icon">📅</span> October 22-23, 2023</div>
+            <div class="event-detail"><span class="event-icon">⏰</span> 9:00 AM - 5:00 PM</div>
+            <div class="event-detail"><span class="event-icon">📍</span> Innovation Center</div>
+            <div class="event-detail"><span class="event-icon">👥</span> 210 attending</div>
+            <div class="event-tags">
+              <span class="event-tag">#hackathon</span>
+              <span class="event-tag">#design</span>
+              <span class="event-tag">#teamwork</span>
+            </div>
+            <button class="btn-primary event-details-btn">View Details</button>
+          </div>
+        </div>
+      </div>
+      <a href="#" class="view-all-link">View All Events</a>
+      <div class="section-label">Past Events</div>
+      <div class="past-events-card">
+        <div class="past-event-row">
+          <div class="past-event-info">
+            <div class="past-event-title">Research Symposium</div>
+            <div class="past-event-detail"><span class="event-icon">📅</span> September 28, 2023</div>
+            <div class="past-event-detail"><span class="event-icon">📍</span> Science Building Auditorium</div>
+          </div>
+          <div class="past-event-meta">
+            <span class="past-event-attended">156 attended</span>
+            <a href="#" class="past-event-recap">View Recap</a>
+          </div>
+        </div>
+        <div class="past-event-row">
+          <div class="past-event-info">
+            <div class="past-event-title">Alumni Networking Mixer</div>
+            <div class="past-event-detail"><span class="event-icon">📅</span> September 15, 2023</div>
+            <div class="past-event-detail"><span class="event-icon">📍</span> Downtown Conference Center</div>
+          </div>
+          <div class="past-event-meta">
+            <span class="past-event-attended">89 attended</span>
+            <a href="#" class="past-event-recap">View Recap</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="events-sidebar">
+      <div class="profile-card">
+        <div class="profile-avatar avatar-main"></div>
+        <div class="profile-name">Your Name</div>
+        <div class="profile-role">Computer Science</div>
+        <div class="profile-stats">
+          <div><span>42</span><br>Posts</div>
+          <div><span>128</span><br>Followers</div>
+          <div><span>97</span><br>Following</div>
+        </div>
+      </div>
+      <div class="card nav-card">
+        <div class="nav-title">Navigation</div>
+        <ul class="nav-list">
+          <li><span class="nav-icon">🏠</span> Posts</li>
+          <li><span class="nav-icon">📊</span> Dashboard</li>
+          <li><span class="nav-icon">📚</span> Courses</li>
+          <li><span class="nav-icon">📅</span> Events</li>
+          <li><span class="nav-icon">🗓️</span> Calendar</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="side-title-row">
+          <span>Suggested Collaborators</span>
+          <a href="#" class="side-link">See All</a>
+        </div>
+        <div class="side-collab">
+          <div class="side-collab-item">
+            <div class="conn-avatar avatar6"></div>
+            <div>
+              <div class="conn-name">Emily Chen</div>
+              <div class="conn-role">Data Science</div>
+            </div>
+            <a href="#" class="side-follow">Follow</a>
+          </div>
+          <div class="side-collab-item">
+            <div class="conn-avatar avatar7"></div>
+            <div>
+              <div class="conn-name">Marcus Johnson</div>
+              <div class="conn-role">Mechanical Engineering</div>
+            </div>
+            <a href="#" class="side-follow">Follow</a>
+          </div>
+          <div class="side-collab-item">
+            <div class="conn-avatar avatar8"></div>
+            <div>
+              <div class="conn-name">Sophia Williams</div>
+              <div class="conn-role">Graphic Design</div>
+            </div>
+            <a href="#" class="side-follow">Follow</a>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="side-title-row">
+          <span>Trending Topics</span>
+          <a href="#" class="side-link">See All</a>
+        </div>
+        <ul class="trending-list">
+          <li><a href="#">#machinelearning</a> <span>1243 posts</span></li>
+          <li><a href="#">#reactjs</a> <span>892 posts</span></li>
+          <li><a href="#">#finalexams</a> <span>754 posts</span></li>
+          <li><a href="#">#capstoneprojects</a> <span>621 posts</span></li>
+          <li><a href="#">#internships</a> <span>543 posts</span></li>
+        </ul>
+      </div>
+      <footer class="events-footer">
+        <div class="footer-links">
+          <a href="#">About</a> <a href="#">Help</a> <a href="#">Privacy</a> <a href="#">Terms</a>
+        </div>
+        <div class="footer-copy">© 2023 SkillSwap Student Platform</div>
+      </footer>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
