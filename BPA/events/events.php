@@ -11,7 +11,10 @@ $conn = $db->connection;
 $sql = "
 SELECT 
     e.events_title,
-    s.subject_name
+    e.events_description,
+    e.events_date,
+    s.subject_name,
+    s.description
 FROM 
     bpa_skillswap.event_subjects AS es
 JOIN 
@@ -28,12 +31,15 @@ $result = $conn->query($sql);
 if ($result->num_rows > 0) {
     echo "<h3>Event - Subject Links</h3>";
     echo "<table border='1' cellpadding='5'>";
-    echo "<tr><th>Event Title</th><th>Subject</th></tr>";
+    echo "<tr><th>Event Title</th><th>Event Description</th><th>Event Date</th><th>Subject Name</th><th>Subject description</th></tr>";
 
     while ($row = $result->fetch_assoc()) {
         echo "<tr>";
         echo "<td>" . htmlspecialchars($row['events_title']) . "</td>";
+        echo "<td>" . htmlspecialchars($row['events_description']) . "</td>";
+        echo "<td>" . htmlspecialchars($row['events_date']) . "</td>";
         echo "<td>" . htmlspecialchars($row['subject_name']) . "</td>";
+        echo "<td>" . htmlspecialchars($row['description']) . "</td>";
         echo "</tr>";
     }
 
