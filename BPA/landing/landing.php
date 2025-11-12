@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@700;800;900&display=swap" rel="stylesheet">
   <!-- Stylesheet (cache-busted) -->
-  <link rel="stylesheet" href="landing.css?v=polish-20251013-4">
+  <link rel="stylesheet" href="landing.css">
 </head>
 <body>
     <div class="scroll-container">
@@ -32,9 +32,9 @@
                   <a href="..//signup/signup.php" class="btn btn-primary">Get Started</a>
                   <a href="#features" class="btn btn-secondary">Learn More</a>
               </div>
-          </div>
-      </main>
-        
+            </div>
+        </main>
+    </div>
       <section class="features-section sticky-section" id="features">
         <div class="features-container">
           <div class="capabilities">
@@ -179,58 +179,90 @@
               }
           }, { passive: true });
 
-          // Intersection Observer for review boxes
-          const reviewObserver = new IntersectionObserver((entries) => {
-              entries.forEach(entry => {
-                  if (entry.isIntersecting) {
-                      entry.target.classList.add('visible');
-                      // Optional: Unobserve after animation
-                      // reviewObserver.unobserve(entry.target);
-                  }
+          // Intersection Observer for review boxes - initialize after DOM loads
+          document.addEventListener('DOMContentLoaded', function() {
+              const reviewObserver = new IntersectionObserver((entries) => {
+                  entries.forEach(entry => {
+                      if (entry.isIntersecting) {
+                          console.log('Review element became visible:', entry.target);
+                          entry.target.classList.add('visible');
+                          // Optional: Unobserve after animation
+                          // reviewObserver.unobserve(entry.target);
+                      }
+                  });
+              }, {
+                  threshold: 0.2 // Trigger when 20% of the element is visible
               });
-          }, {
-              threshold: 0.2 // Trigger when 20% of the element is visible
-          });
 
-          // Observe all review boxes
-          document.querySelectorAll('.review').forEach(review => {
-              reviewObserver.observe(review);
+              // Observe all review boxes
+              const reviews = document.querySelectorAll('.review');
+              console.log('Found reviews:', reviews.length);
+              reviews.forEach(review => {
+                  reviewObserver.observe(review);
+              });
           });
     </script>
       <section class="reviews-section sticky-section">
         <div class="reviews-title">
-          <h1 class="reviews-title-main">Latest Reviews From Our <b class="reviews-title-sub">Own Users!</b></h1>
+          <h1 class="reviews-title-main">Latest Reviews From Our <b>Own Users!</b></h1>
           <h3>Some of our own clients reviewing our site.</h3>
         </div>
         <div class="review-holder">
-          <div class="review">
-            <h2>Thanks, very cool.</h2>
-            <h3>Name</h3>
-            <p>Site's cool. Neque vitae semper egestas, urna justo faucibus lectus, a sollicitudin orci sem eget massa. Suspendisse eleifend. Cras sed leo. Cras.</p>
+          <div class="review"> <!-- All Placeholders right now --->
+            <h1>★ ★ ★ ★ ★</h1> <!--  ★ Stars ☆(Can remove if you all want) --->
+            <h2>Easily Digestable</h2> <!-- Review title --->
+            <h3>Name</h3> <!-- Reviewer's name --->
+            <p>This site has been a game-changer for me! The community is so supportive, and I've learned so much from my peers. Highly recommend to anyone looking to improve their skills.</p> <!-- Review --->
           </div>
           <div class="review">
-            <h2>Color pallette looks neet.</h2>
+            <h1>★ ★ ★</h1>
+            <h2>Visually appealing</h2>
             <h3>Name</h3>
-            <p>Colors remind me of a clothing company. (?)</p>
+            <p>Colors remind me of a clothing company though, so it tricked me for a second. Turns out that it's still really good.</p>
           </div>
           <div class="review">
-            <h2>I don't know what to say.</h2>
+            <h1>★ ★ ★ ★ </h1>
+            <h2>Got really good Tips</h2>
             <h3>Name</h3>
-            <p>I'm just gonna fill this with latin as a placeholder, I hope you don't mind. Etiam bibendum fermentum metus. Aenean sed pede nec ante blandit viverra. Donec tempus, lorem fringilla ornare placerat, orci lacus vestibulum.</p>
+            <p>Communicating with others who are smarter than me is incredibly easy, and they're really nice too!</p>
           </div>
           <div class="review">
+            <h1>★ ★ ★ ★</h1>
             <h2>Math is cool.</h2>
             <h3>Name</h3>
-            <p>I found some new friends, and I now know more about algebra! Brilliant.</p>
+            <p>I found some new friends, and I now know more about algebra! They walked me through the site and wished me good luck! Man, people on the internet are so kind!</p>
           </div>
           <div class="review">
-            <h2>5 Stars out of 5 Stars.</h2>
+            <h1>★ ★ ★ ★ </h1>
+            <h2>Aquired greater knowledge</h2>
             <h3>Name</h3>
-            <p>I'm honestly impressed with myself that I managed to conjour this up.... that sounds really pathetic now that I think about it.</p>
+            <p>I was struggling with some concepts, but after using this site, I feel much more confident in my understanding. The community is supportive and the resources are top-notch!</p>
+          </div>
+          <div class="review">
+            <h1>★ ★ ★</h1>
+            <h2>Very helpful study sessions</h2>
+            <h3>Name</h3>
+            <p>The study groups I joined here have been a game-changer. It's great to connect with peers who are as motivated as I am. We've been able to tackle tough subjects together!</p>
+          </div>
+          <div class="review">
+            <h1>★ ★ ★</h1>
+            <h2>More useful than I first though</h2>
+            <h3>Name</h3>
+            <p>At first, I was skeptical about joining another online platform, but SkillSwap has exceeded my expectations. The features are user-friendly, and I've learned so much from the community.</p>
+          </div>
+          <div class="review">
+            <h1>★ ★ ★ ★</h1>
+            <h2>Useful assistance</h2>
+            <h3>Name</h3>
+            <p>The direct messaging feature has been incredibly useful for getting quick help from classmates. It's like having a study buddy available 24/7!</p>
+          </div>
+          <div class="review">
+            <h1>★ ★ ★ ★ ★</h1>
+            <h2>Incredibly easy to use</h2>
+            <h3>Name</h3>
+            <p>I love how intuitive the platform is. Navigating through courses, forums, and resources is a breeze. It makes studying so much more enjoyable!</p>
           </div>
       </div>
     </section>
-  </div> <!-- Closing scroll-container -->
-    
 </body>
 </html>
