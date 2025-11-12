@@ -76,6 +76,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         <div class="welcome-content">
             <div class="brand-logo">SkillShare</div>
             <h1>Create account</h1>
+            <p class="subtitle">Join our community to share and learn new skills</p>
 
             <div class="auth-buttons">
                 <button class="auth-btn google-btn" onclick="googleSignIn()">

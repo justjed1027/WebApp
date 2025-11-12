@@ -24,10 +24,17 @@ function toggleEmailForm() {
  */
 function togglePassword() {
     const passwordInput = document.getElementById('password');
+    const eyeOpen = document.getElementById('eye-open');
+    const eyeSlash = document.getElementById('eye-slash');
+    
     if (passwordInput.type === 'password') {
         passwordInput.type = 'text';
+        eyeOpen.classList.remove('hidden');
+        eyeSlash.classList.add('hidden');
     } else {
         passwordInput.type = 'password';
+        eyeSlash.classList.remove('hidden');
+        eyeOpen.classList.add('hidden');
     }
 }
 
