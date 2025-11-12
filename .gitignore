@@ -1,0 +1,5 @@
+# Ignore project-level uploads (moved into BPA/post/uploads in-app)
+/uploads/
+
+# Also ignore uploads kept inside the post folder (redundant but explicit)
+BPA/post/uploads/
