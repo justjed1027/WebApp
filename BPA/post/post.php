@@ -28,6 +28,26 @@ function timeAgo($timestamp)
   return "just now";
 }
 
+// Normalize a DB file path into a web-visible path relative to this script.
+function publicPath($dbPath)
+{
+  if (empty($dbPath)) return '';
+  // If the path was stored like "BPA/post/uploads/filename.ext" convert to ./uploads/filename.ext
+  if (strpos($dbPath, 'BPA/post/uploads/') === 0) {
+    return './uploads/' . basename($dbPath);
+  }
+  // If path already starts with uploads/ (relative) make it explicit relative
+  if (strpos($dbPath, 'uploads/') === 0) {
+    return './' . $dbPath;
+  }
+  // If it's an absolute web path (starts with /) return as-is
+  if (strpos($dbPath, '/') === 0) {
+    return $dbPath;
+  }
+  // Otherwise return as-is (fallback)
+  return $dbPath;
+}
+
 $db = new DatabaseConnection();
 $conn = $db->connection;
 
@@ -352,7 +372,7 @@ profile svg
     <!-- Top Section: Logo & Profile -->
     <div class="sidebar-top">
       <div class="sidebar-logo">
-        <div class="logo-placeholder"></div>
+        <div class="logo-placeholder"><img class=".logo-placeholder" src="../images/skillswaplogotrans.png"></div>
         <span class="logo-text">SkillSwap</span>
       </div>
 
@@ -571,7 +591,8 @@ profile svg
                 <?php
                   $payload = [
                     'content' => $post['content'] ?? '',
-                    'file_path' => $post['file_path'] ?? '',
+                    // normalize file path so client-side modal can load it correctly
+                    'file_path' => !empty($post['file_path']) ? publicPath($post['file_path']) : '',
                     'username' => $displayName,
                     'created_at' => $post['created_at'] ?? ''
                   ];
@@ -584,13 +605,16 @@ profile svg
               </div>
               <div class="post-content" style="color:#333;line-height:1.5;">
                 <p style="margin:0;"><?php echo nl2br(htmlspecialchars(mb_strlen($post['content']) > 400 ? mb_substr($post['content'],0,400) . '...' : $post['content'])); ?></p>
-                <?php if (!empty($post['file_path'])): ?>
+                  <?php if (!empty($post['file_path'])):
+                    // normalize path for browser
+                    $publicPath = publicPath($post['file_path']);
+                  ?>
                   <div style="margin-top:8px;">
                     <?php $ext = strtolower(pathinfo($post['file_path'], PATHINFO_EXTENSION)); ?>
                     <?php if (in_array($ext, ['jpg','jpeg','png','gif','webp'])): ?>
-                      <img src="<?php echo htmlspecialchars($post['file_path']); ?>" alt="attachment" style="max-width:200px;border-radius:8px;display:block;margin-top:8px;" />
+                      <img src="<?php echo htmlspecialchars($publicPath); ?>" alt="attachment" style="max-width:200px;border-radius:8px;display:block;margin-top:8px;" />
                     <?php else: ?>
-                      <div style="margin-top:8px;color:#555;font-size:0.9rem;">Attachment: <a href="<?php echo htmlspecialchars($post['file_path']); ?>" target="_blank">Open</a></div>
+                      <div style="margin-top:8px;color:#555;font-size:0.9rem;">Attachment: <a href="<?php echo htmlspecialchars($publicPath); ?>" target="_blank">Open</a></div>
                     <?php endif; ?>
                   </div>
                 <?php endif; ?>

@@ -107,10 +107,9 @@ body {
   gap: 0;
 }
 
-.logo-placeholder {
+.logo-placeholder img {
   width: 42px;
   height: 42px;
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
   border-radius: 10px;
   flex-shrink: 0;
   transition: all var(--transition-normal);
