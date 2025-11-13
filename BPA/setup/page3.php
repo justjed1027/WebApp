@@ -108,7 +108,7 @@ while ($row = $subjects_result->fetch_assoc()) {
   <!-- Form ends here -->
 
   <div class="progress" aria-label="Progress">
-    <span class="dot"></span><span class="dot active"></span><span class="dot"></span><span class="dot"></span>
+    <span class="dot"></span><span class="dot"></span><span class="dot active"></span><span class="dot"></span>
   </div>
 </div>
   
