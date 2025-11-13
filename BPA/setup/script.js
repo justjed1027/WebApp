@@ -256,7 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     finish && finish.addEventListener('click', () => {
       // Here you can POST to PHP later; for now we redirect
-      window.location.href = '../landing/landing.php';
+      window.location.href = '../post/post.php';
     });
   }
 });

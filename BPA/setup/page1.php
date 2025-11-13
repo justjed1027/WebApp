@@ -1,4 +1,7 @@
 <?php
+session_start();
+require_once '../database/User.php';
+require_once '../database/DatabaseConnection.php';
 // Page 1 — Basic Info Input
 ?>
 <!DOCTYPE html>
