@@ -362,6 +362,22 @@ profile svg
       border-radius:6px;
       cursor:pointer;
     }
+    /* Feed card styles (LinkedIn-like) */
+    #posts-container { max-width: 920px; margin: 0 auto 40px; }
+    .post { background:#fff; border-radius:10px; padding:16px; margin:12px 0; box-shadow:0 2px 6px rgba(0,0,0,0.08); color:#222; }
+    .post-header { display:flex; align-items:flex-start; gap:12px; }
+    .post-avatar { width:48px; height:48px; border-radius:50%; background:#f0f0f0; display:flex; align-items:center; justify-content:center; font-weight:700; color:#777; flex:0 0 48px; }
+    .post-meta { flex:1; }
+    .post-username { font-weight:700; color:#111; }
+    .post-time { font-size:0.85rem; color:#888; margin-top:2px; }
+    .post-view { margin-left:auto; }
+    .post-view .post-view-btn { border:1px solid #ccc; background:transparent; padding:4px 8px; border-radius:4px; font-size:0.85rem; color:#222; cursor:pointer; }
+    .post-content { margin-top:12px; color:#444; font-size:0.98rem; line-height:1.5; }
+    .post-media { margin-top:12px; }
+    .post-media img { max-width:280px; border-radius:8px; display:block; }
+    /* Make cards sit on darker page background like the screenshot */
+    body { background:#0f0f0f; }
+    main.main-content { padding:24px 20px; }
   </style>
 </head>
 
@@ -539,6 +555,31 @@ profile svg
   <!-- Main Content Area -->
   <main class="main-content">
     <!-- Create Post (inline form) -->
+    <style>
+      /* Create-post card styled like the attached visual: left avatar, center content */
+      .create-post-card {
+        background: #fff;
+        color: #111;
+        border-radius: 12px;
+        padding: 14px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+        max-width: 900px;
+        margin-bottom: 18px;
+      }
+      .create-post-inner{ display:flex; gap:14px; align-items:flex-start; }
+      .create-post-left{ width:84px; flex:0 0 84px; display:flex; align-items:center; justify-content:center; }
+      .create-post-avatar{ width:72px; height:72px; border-radius:12px; background:#f4f6f8; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1.4rem; color:#222; }
+      .create-post-main{ flex:1; }
+      .create-post-meta{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px; }
+      .create-post-meta .user-name{ font-weight:700; font-size:1rem; }
+      .create-post-meta .user-sub{ color:#666; font-size:0.9rem; }
+      .create-post-actions-row{ display:flex; align-items:center; gap:8px; margin-top:10px; }
+      .create-post-btn{ background:#0b66c3; color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; }
+      .create-post-secondary{ background:transparent; border:1px solid #ddd; color:#333; padding:6px 10px; border-radius:8px; cursor:pointer; }
+      .file-row{ display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap; }
+      .create-post-input{ width:100%; min-height:72px; padding:10px 12px; border-radius:8px; border:1px solid #e6e6e6; font-size:1rem; resize:vertical; }
+    </style>
+
     <div class="create-post-card">
       <div class="create-post-header">
         <div class="user-avatar-small">
@@ -561,69 +602,18 @@ profile svg
           </div>
     </div>
 
-    <!-- Posts Feed -->
-    <div id="posts-container">
-      <?php if (count($posts) === 0): ?>
-          <div class="post" style="background:#fff3cd;border:1px solid #ffeebaff;padding:16px;margin-bottom:16px;color:black;">No posts yet.</div>
-        <?php else: ?>
-          <?php foreach ($posts as $post): ?>
-            <div class="post" style="background:#fff;border-radius:8px;padding:16px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
-              <div class="post-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-                <?php $displayName = !empty($post['user_username']) ? $post['user_username'] : ('User #' . intval($post['user_id'])); ?>
-                <div style="display:flex;align-items:center;gap:12px;">
-                  <div class="post-author-avatar" style="width:40px;height:40px;border-radius:50%;background:#e9ecef;color:#333;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:1rem;">
-                    <?php
-                      $initial = '';
-                      if (!empty($post['user_username'])) {
-                        $initial = mb_strtoupper(mb_substr($post['user_username'], 0, 1));
-                      } else {
-                        $initial = 'U';
-                      }
-                      echo htmlspecialchars($initial);
-                    ?>
-                  </div>
-                  <div style="display:flex;flex-direction:column;">
-                    <div style="font-weight:600;color:#111"><?php echo htmlspecialchars($displayName); ?></div>
-                    <div style="font-size:0.85rem;color:#666"><?php echo isset($post['created_at']) ? htmlspecialchars(timeAgo($post['created_at'])) : 'just now'; ?></div>
-                  </div>
-                </div>
+    <!-- Posts Feed (loaded dynamically by script.js) -->
+    <div id="posts-container"></div>
 
-                <?php
-                  $payload = [
-                    'content' => $post['content'] ?? '',
-                    // normalize file path so client-side modal can load it correctly
-                    'file_path' => !empty($post['file_path']) ? publicPath($post['file_path']) : '',
-                    'username' => $displayName,
-                    'created_at' => $post['created_at'] ?? ''
-                  ];
-                  $payloadAttr = htmlspecialchars(json_encode($payload), ENT_QUOTES, 'UTF-8');
-                ?>
-
-                <div>
-                  <button type="button" class="view-post-btn create-post-btn" data-post="<?php echo $payloadAttr; ?>" style="padding:6px 10px;">View</button>
-                </div>
-              </div>
-              <div class="post-content" style="color:#333;line-height:1.5;">
-                <p style="margin:0;"><?php echo nl2br(htmlspecialchars(mb_strlen($post['content']) > 400 ? mb_substr($post['content'],0,400) . '...' : $post['content'])); ?></p>
-                  <?php if (!empty($post['file_path'])):
-                    // normalize path for browser
-                    $publicPath = publicPath($post['file_path']);
-                  ?>
-                  <div style="margin-top:8px;">
-                    <?php $ext = strtolower(pathinfo($post['file_path'], PATHINFO_EXTENSION)); ?>
-                    <?php if (in_array($ext, ['jpg','jpeg','png','gif','webp'])): ?>
-                      <img src="<?php echo htmlspecialchars($publicPath); ?>" alt="attachment" style="max-width:200px;border-radius:8px;display:block;margin-top:8px;" />
-                    <?php else: ?>
-                      <div style="margin-top:8px;color:#555;font-size:0.9rem;">Attachment: <a href="<?php echo htmlspecialchars($publicPath); ?>" target="_blank">Open</a></div>
-                    <?php endif; ?>
-                  </div>
-                <?php endif; ?>
-              </div>
-            </div>
-          <?php endforeach; ?>
-        <?php endif; ?>
-
+    <!-- Loading spinner for infinite scroll -->
+    <div id="loading-spinner" style="display:none;text-align:center;padding:20px;margin:20px 0;">
+      <div style="display:inline-block;width:40px;height:40px;border:4px solid rgba(0,0,0,0.08);border-top:4px solid rgba(0,0,0,0.4);border-radius:50%;animation:spin 1s linear infinite;"></div>
+      <p style="margin-top:10px;color:#666;">Loading more posts...</p>
     </div>
+
+    <style>
+      @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
 
     <!-- Post Detail Modal -->
     <div id="postDetailModal" class="modal-backdrop" role="dialog" aria-hidden="true">
