@@ -50,7 +50,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         if($result['success']){
             //Success - redirect to login or dashboard
             $_SESSION['user_id'] = $newUser->user_id;
-            header("Location: ../post/post.php");
+            header("Location: ../setup/page1.php");
             exit;
         } else {
             $errors['general'] = $result['message'];
