@@ -1,11 +1,27 @@
 <?php 
 session_start();
-require_once '../database/User.php';
 require_once '../database/DatabaseConnection.php';
+require_once '../database/User.php';
+require_once '../database/Connection.php';
+require_once 'send_request.php';
 
 
+$pendingSql = "
+    SELECT c.connection_id, u.name 
+    FROM connections c
+    JOIN users u ON u.user_id = c.requester_id
+    WHERE c.receiver_id = ? AND c.status = 'pending'
+";
 
+$stmt = $con->prepare($pendingSql);
+$stmt->bind_param("i", $_SESSION['user_id']);
+$stmt->execute();
+$pending = $stmt->get_result();
 
+echo "<h2>Connection Requests</h2>";
+while ($req = $pending->fetch_assoc()) {
+    echo "<p>{$req['name']} wants to connect.</p>";
+}
 ?>
 
 <!DOCTYPE html>
@@ -75,46 +91,23 @@ require_once '../database/DatabaseConnection.php';
         <a href="#" class="view-link">View All Connections</a>
       </div>
       <div class="card">
-        <h3>People You May Know</h3>
-        <div class="suggested-list">
-          <div class="suggested-item">
-            <div class="conn-avatar avatar6"></div>
-            <div>
-              <div class="conn-name">Emily Chen</div>
-              <div class="conn-role">Data Science</div>
-              <div class="conn-mutual">4 mutual connections</div>
-            </div>
-            <button class="btn-connect">Connect</button>
-          </div>
-          <div class="suggested-item">
-            <div class="conn-avatar avatar7"></div>
-            <div>
-              <div class="conn-name">Marcus Johnson</div>
-              <div class="conn-role">Mechanical Engineering</div>
-              <div class="conn-mutual">2 mutual connections</div>
-            </div>
-            <button class="btn-connect">Connect</button>
-          </div>
-          <div class="suggested-item">
-            <div class="conn-avatar avatar8"></div>
-            <div>
-              <div class="conn-name">Sophia Williams</div>
-              <div class="conn-role">Graphic Design</div>
-              <div class="conn-mutual">6 mutual connections</div>
-            </div>
-            <button class="btn-connect">Connect</button>
-          </div>
-          <div class="suggested-item">
-            <div class="conn-avatar avatar9"></div>
-            <div>
-              <div class="conn-name">Jordan Smith</div>
-              <div class="conn-role">Business Administration</div>
-              <div class="conn-mutual">1 mutual connection</div>
-            </div>
-            <button class="btn-connect">Connect</button>
-          </div>
-        </div>
-        <a href="#" class="view-link">View More Suggestions</a>
+       <?php
+$userId = $_SESSION['user_id'];
+$recommended = $user->getRecommendedUsers($userId);
+?>
+
+<h2>People You May Know</h2>
+
+<?php while ($row = $recommended->fetch_assoc()): ?>
+    <div class="user-card">
+        <p><strong><?= $row['name'] ?></strong></p>
+
+        <form action="send_request.php" method="POST">
+            <input type="hidden" name="receiver_id" value="<?= $row['user_id'] ?>">
+            <button type="submit">Connect</button>
+        </form>
+    </div>
+<?php endwhile; ?>
       </div>
     </div>
     <div class="main-right">
