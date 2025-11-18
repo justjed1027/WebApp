@@ -478,17 +478,17 @@ body {
 }
 
 .sidebar.collapsed .toggle-switch {
-  width: 40px;
-  height: 40px;
-  margin: 0 auto;
-  padding: 0;
-  background: transparent;
-  border: none;
+  width: 40px !important;
+  height: 40px !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
 }
 
 .sidebar.collapsed .toggle-switch:hover {
-  background: transparent;
-  border: none;
+  background: transparent !important;
+  border: none !important;
 }
 
 .toggle-slider {
@@ -505,10 +505,10 @@ body {
 }
 
 .sidebar.collapsed .toggle-slider {
-  width: 40px;
-  height: 40px;
-  background: transparent;
-  box-shadow: none;
+  width: 40px !important;
+  height: 40px !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 .toggle-slider svg {
@@ -523,6 +523,7 @@ body {
   width: 20px;
   height: 20px;
   color: var(--text-secondary);
+  position: relative;
 }
 
 /* Dark mode - show moon icon */
@@ -555,18 +556,32 @@ body.light-mode .toggle-slider svg {
   color: #1a1a1a !important;
 }
 
-.sidebar.collapsed .toggle-slider svg {
+/* Collapsed state - no transform, just show icon */
+.sidebar.collapsed .toggle-slider {
+  transform: translateX(0) !important;
+}
+
+/* Keep moon visible in dark mode when collapsed */
+.sidebar.collapsed .moon-icon {
   display: block !important;
   opacity: 1 !important;
 }
 
-.sidebar.collapsed body.light-mode .toggle-slider svg {
+.sidebar.collapsed .sun-icon {
+  display: none !important;
+  opacity: 0 !important;
+}
+
+/* Show sun in light mode when collapsed */
+body.light-mode .sidebar.collapsed .sun-icon {
+  display: block !important;
+  opacity: 1 !important;
   color: #1a1a1a !important;
 }
 
-body.light-mode.sidebar.collapsed .toggle-slider,
-.sidebar.collapsed body.light-mode .toggle-slider {
-  transform: translateX(0);
+body.light-mode .sidebar.collapsed .moon-icon {
+  display: none !important;
+  opacity: 0 !important;
 }
 
 /* ===== TOP BAR NAVIGATION ===== */
