@@ -3,25 +3,21 @@ session_start();
 require_once '../database/DatabaseConnection.php';
 require_once '../database/User.php';
 require_once '../database/Connection.php';
-require_once 'send_request.php';
 
+$db = new DatabaseConnection();
+$con = $db->connection;
 
 $pendingSql = "
-    SELECT c.connection_id, u.name 
-    FROM connections c
-    JOIN users u ON u.user_id = c.requester_id
-    WHERE c.receiver_id = ? AND c.status = 'pending'
+  SELECT c.connection_id, u.user_username 
+  FROM connections c
+  JOIN user u ON u.user_id = c.requester_id
+  WHERE c.receiver_id = ? AND c.status = 'pending'
 ";
 
 $stmt = $con->prepare($pendingSql);
 $stmt->bind_param("i", $_SESSION['user_id']);
 $stmt->execute();
 $pending = $stmt->get_result();
-
-echo "<h2>Connection Requests</h2>";
-while ($req = $pending->fetch_assoc()) {
-    echo "<p>{$req['name']} wants to connect.</p>";
-}
 ?>
 
 <!DOCTYPE html>
@@ -37,31 +33,27 @@ while ($req = $pending->fetch_assoc()) {
     <div class="main-left">
       <input type="text" class="search-bar" placeholder="Search connections...">
       <div class="card">
-        <h3>Connection Requests (2)</h3>
-        <div class="conn-request">
-          <div class="conn-avatar avatar1"></div>
-          <div class="conn-info">
-            <div class="conn-name">Jamie Rivera</div>
-            <div class="conn-role">Web Development</div>
-            <div class="conn-mutual">3 mutual connections</div>
-          </div>
-          <div class="conn-actions">
-            <button class="btn-accept">✔</button>
-            <button class="btn-decline">✖</button>
-          </div>
-        </div>
-        <div class="conn-request">
-          <div class="conn-avatar avatar2"></div>
-          <div class="conn-info">
-            <div class="conn-name">Casey Thompson</div>
-            <div class="conn-role">Marketing</div>
-            <div class="conn-mutual">7 mutual connections</div>
-          </div>
-          <div class="conn-actions">
-            <button class="btn-accept">✔</button>
-            <button class="btn-decline">✖</button>
-          </div>
-        </div>
+        <h3>Connection Requests</h3>
+        <?php
+        if ($pending && $pending->num_rows > 0) {
+            while ($req = $pending->fetch_assoc()) {
+                ?>
+                <div class="conn-request">
+                  <div class="conn-avatar"></div>
+                  <div class="conn-info">
+                    <div class="conn-name"><?php echo htmlspecialchars($req['name']); ?></div>
+                  </div>
+                  <div class="conn-actions">
+                    <button class="btn-accept">✔</button>
+                    <button class="btn-decline">✖</button>
+                  </div>
+                </div>
+                <?php
+            }
+        } else {
+            echo '<p>No pending requests.</p>';
+        }
+        ?>
       </div>
       <div class="card">
         <h3>My Connections (3)</h3>
@@ -91,23 +83,28 @@ while ($req = $pending->fetch_assoc()) {
         <a href="#" class="view-link">View All Connections</a>
       </div>
       <div class="card">
-       <?php
-$userId = $_SESSION['user_id'];
-$recommended = $user->getRecommendedUsers($userId);
-?>
+         <?php
+        $userId = $_SESSION['user_id'];
+        $connObj = new Connection($db->connection);
+        $recommended = $connObj->getRecommendedUsers($userId);
+        ?>
 
-<h2>People You May Know</h2>
+      <h2>People You May Know</h2>
 
-<?php while ($row = $recommended->fetch_assoc()): ?>
-    <div class="user-card">
-        <p><strong><?= $row['name'] ?></strong></p>
+      <?php if ($recommended && $recommended->num_rows > 0): ?>
+        <?php while ($row = $recommended->fetch_assoc()): ?>
+          <div class="user-card">
+            <p><strong><?php echo htmlspecialchars($row['name']); ?></strong></p>
 
-        <form action="send_request.php" method="POST">
-            <input type="hidden" name="receiver_id" value="<?= $row['user_id'] ?>">
-            <button type="submit">Connect</button>
-        </form>
-    </div>
-<?php endwhile; ?>
+            <form action="send_request.php" method="POST">
+              <input type="hidden" name="receiver_id" value="<?php echo htmlspecialchars($row['user_id']); ?>">
+              <button type="submit">Connect</button>
+            </form>
+          </div>
+        <?php endwhile; ?>
+      <?php else: ?>
+        <p>No recommendations at this time.</p>
+      <?php endif; ?>
       </div>
     </div>
     <div class="main-right">

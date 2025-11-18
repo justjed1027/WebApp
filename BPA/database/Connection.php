@@ -2,10 +2,10 @@
 require_once 'DatabaseConnection.php';
 require_once 'User.php';
 class Connection {
-    private $db;
+    private $connection;
 
     public function __construct($connection) {
-        $this->db = $connection;   // ← NAME MUST MATCH
+        $this->connection = $connection;
     }
 
     public function sendConnectionRequest($requesterId, $receiverId)
@@ -43,13 +43,13 @@ class Connection {
 
 
     public function getRecommendedUsers($userId)
-{
+    {
     $sql = "
-        SELECT DISTINCT u.user_id, u.name
+        SELECT DISTINCT u.user_id, u.user_username
         FROM user u
-        INNER JOIN user_skills us ON u.user_id = us.user_id
-        WHERE us.skill_id IN (
-            SELECT skill_id FROM user_skills WHERE user_id = ?
+        INNER JOIN user_skills us ON u.user_id = us.us_id
+        WHERE us.us_id IN (
+            SELECT us_subject_id FROM user_skills WHERE user_id = ?
         )
         AND u.user_id != ?
         AND u.user_id NOT IN (
