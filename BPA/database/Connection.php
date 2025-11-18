@@ -47,9 +47,9 @@ class Connection {
     $sql = "
         SELECT DISTINCT u.user_id, u.user_username
         FROM user u
-        INNER JOIN user_skills us ON u.user_id = us.us_id
-        WHERE us.us_id IN (
-            SELECT us_subject_id FROM user_skills WHERE user_id = ?
+        INNER JOIN user_skills us ON u.user_id = us.us_user_id
+        WHERE us.us_subject_id IN (
+            SELECT us_subject_id FROM user_skills WHERE us_user_id = ?
         )
         AND u.user_id != ?
         AND u.user_id NOT IN (
@@ -75,5 +75,43 @@ class Connection {
     return $result;
 }
 
+
+    public function acceptRequest($connectionId, $receiverId)
+    {
+        $sql = "UPDATE connections SET status = 'accepted' WHERE connection_id = ? AND receiver_id = ? AND status = 'pending'";
+        $stmt = $this->connection->prepare($sql);
+        if ($stmt === false) {
+            return 'error_prepare';
+        }
+        $stmt->bind_param('ii', $connectionId, $receiverId);
+        if ($stmt->execute()) {
+            $affected = $stmt->affected_rows;
+            $stmt->close();
+            return $affected > 0 ? 'accepted' : 'not_authorized_or_already_handled';
+        } else {
+            $err = $stmt->error;
+            $stmt->close();
+            return 'error:' . $err;
+        }
+    }
+
+    public function declineRequest($connectionId, $receiverId)
+    {
+        $sql = "UPDATE connections SET status = 'declined' WHERE connection_id = ? AND receiver_id = ? AND status = 'pending'";
+        $stmt = $this->connection->prepare($sql);
+        if ($stmt === false) {
+            return 'error_prepare';
+        }
+        $stmt->bind_param('ii', $connectionId, $receiverId);
+        if ($stmt->execute()) {
+            $affected = $stmt->affected_rows;
+            $stmt->close();
+            return $affected > 0 ? 'declined' : 'not_authorized_or_already_handled';
+        } else {
+            $err = $stmt->error;
+            $stmt->close();
+            return 'error:' . $err;
+        }
+    }
 
 }

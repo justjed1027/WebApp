@@ -41,11 +41,19 @@ $pending = $stmt->get_result();
                 <div class="conn-request">
                   <div class="conn-avatar"></div>
                   <div class="conn-info">
-                    <div class="conn-name"><?php echo htmlspecialchars($req['name']); ?></div>
+                    <div class="conn-name"><?php echo htmlspecialchars($req['user_username']); ?></div>
                   </div>
                   <div class="conn-actions">
-                    <button class="btn-accept">✔</button>
-                    <button class="btn-decline">✖</button>
+                    <form action="respond_request.php" method="POST" style="display:inline">
+                      <input type="hidden" name="connection_id" value="<?php echo $req['connection_id']; ?>">
+                      <input type="hidden" name="action" value="accept">
+                      <button type="submit" class="btn-accept">✔</button>
+                    </form>
+                    <form action="respond_request.php" method="POST" style="display:inline; margin-left:6px;">
+                      <input type="hidden" name="connection_id" value="<?php echo $req['connection_id']; ?>">
+                      <input type="hidden" name="action" value="decline">
+                      <button type="submit" class="btn-decline">✖</button>
+                    </form>
                   </div>
                 </div>
                 <?php
@@ -94,7 +102,7 @@ $pending = $stmt->get_result();
       <?php if ($recommended && $recommended->num_rows > 0): ?>
         <?php while ($row = $recommended->fetch_assoc()): ?>
           <div class="user-card">
-            <p><strong><?php echo htmlspecialchars($row['name']); ?></strong></p>
+            <p><strong><?php echo htmlspecialchars($row['user_username']); ?></strong></p>
 
             <form action="send_request.php" method="POST">
               <input type="hidden" name="receiver_id" value="<?php echo htmlspecialchars($row['user_id']); ?>">
