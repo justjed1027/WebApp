@@ -10,19 +10,32 @@ class Connection {
 
     public function sendConnectionRequest($requesterId, $receiverId)
     {
-        if ($receiverId === null) {
-            return "Receiver ID missing";
-        }
+ // Prevent duplicates
+    $checkSql = "
+        SELECT * FROM connections 
+        WHERE (requester_id = ? AND receiver_id = ?)
+           OR (requester_id = ? AND receiver_id = ?)
+    ";
+    $check = $this->connection->prepare($checkSql);
+    $check->bind_param("iiii", $requesterId, $receiverId, $receiverId, $requesterId);
+    $check->execute();
+    $existing = $check->get_result();
 
-        $sql = "INSERT INTO connections (requester_id, receiver_id, status)
-                VALUES (?, ?, 'pending')";
-        $stmt = $this->db->prepare($sql);     // ← This MUST BE VALID
-
-        $stmt->bind_param("ii", $requesterId, $receiverId);
-        $stmt->execute();
-
-        return "success";
+    if ($existing->num_rows > 0) {
+        return "Request already exists.";
     }
+
+    $sql = "INSERT INTO connections (requester_id, receiver_id, status) VALUES (?, ?, 'pending')";
+    $stmt = $this->connection->prepare($sql);
+    $stmt->bind_param("ii", $requesterId, $receiverId);
+
+    if ($stmt->execute()) {
+        return "success";
+    } else {
+        return "error";
+    }
+}
+
 
 
 
