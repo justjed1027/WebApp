@@ -64,32 +64,31 @@ $pending = $stmt->get_result();
         ?>
       </div>
       <div class="card">
-        <h3>My Connections (3)</h3>
+         <?php
+        $userId = $_SESSION['user_id'];
+        $connObj = new Connection($db->connection);
+        $connections = $connObj->getConnections($userId);
+        ?>
+
+      <h3>My Connections</h3>
+
+      <?php if ($connections && $connections->num_rows > 0): ?>
         <div class="my-connections">
-          <div class="conn-card">
-            <div class="conn-avatar avatar3"></div>
-            <div>
-              <div class="conn-name">Alex Johnson</div>
-              <div class="conn-role">Computer Science</div>
+          <?php while ($row = $connections->fetch_assoc()): ?>
+            <div class="conn-card">
+              <div class="conn-avatar"></div>
+              <div>
+                <div class="conn-name"><?php echo htmlspecialchars($row['user_username']); ?></div>
+                <div class="conn-role">Role Placeholder</div>
+              </div>
             </div>
-          </div>
-          <div class="conn-card">
-            <div class="conn-avatar avatar4"></div>
-            <div>
-              <div class="conn-name">Morgan Lee</div>
-              <div class="conn-role">UX Design</div>
-            </div>
-          </div>
-          <div class="conn-card">
-            <div class="conn-avatar avatar5"></div>
-            <div>
-              <div class="conn-name">Taylor Wilson</div>
-              <div class="conn-role">Physics</div>
-            </div>
-          </div>
+          <?php endwhile; ?>
         </div>
-        <a href="#" class="view-link">View All Connections</a>
+      <?php else: ?>
+        <p>No connections yet.</p> 
+      <?php endif; ?>
       </div>
+
       <div class="card">
          <?php
         $userId = $_SESSION['user_id'];

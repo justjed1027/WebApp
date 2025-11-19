@@ -114,4 +114,26 @@ class Connection {
         }
     }
 
+
+    public function getConnections($userId)
+    {
+        $sql = "
+            SELECT u.user_id, u.user_username, c.status
+            FROM connections c
+            JOIN user u ON (u.user_id = c.requester_id OR u.user_id = c.receiver_id)
+            WHERE (c.requester_id = ? OR c.receiver_id = ?)
+              AND u.user_id != ?
+              AND c.status = 'accepted'
+        ";
+        $stmt = $this->connection->prepare($sql);
+        if ($stmt === false) {
+            return false;
+        }
+        $stmt->bind_param("iii", $userId, $userId, $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+        return $result;
+    }
+
 }
