@@ -3,6 +3,8 @@
     "default_view": "calendar",
     "timezone": "Europe\/Berlin",
     "time_format": "12",
+    "workday_start": "09:00",
+    "workday_end": "17:00",
     "enable_email_notifications": false,
     "enable_reminders": true,
     "theme": "system"

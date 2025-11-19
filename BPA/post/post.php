@@ -385,7 +385,7 @@ profile svg
         <div class="profile-info">
           <h3 class="profile-name"><?php echo htmlspecialchars($user->user_username); ?></h3>
           <p class="profile-email"><?php echo htmlspecialchars($user->user_email); ?></p>
-          <a href="#" class="view-profile-link">View Profile</a>
+          <a href="../profile/profile.php" class="view-profile-link">View Profile</a>
         </div>
       </div>
     </div>
