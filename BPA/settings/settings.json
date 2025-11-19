@@ -1,0 +1,9 @@
+{
+    "items_per_page": 10,
+    "default_view": "calendar",
+    "timezone": "Europe\/Berlin",
+    "time_format": "12",
+    "enable_email_notifications": false,
+    "enable_reminders": true,
+    "theme": "system"
+}
