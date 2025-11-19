@@ -72,16 +72,48 @@ $pending = $stmt->get_result();
 
       <h3>My Connections</h3>
 
+      <style>
+        /* simple grid: 3 columns, responsive down to 2/1 */
+        .my-connections {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 12px;
+          align-items: start;
+        }
+        .conn-card {
+          display: flex;
+          align-items: center;
+          padding: 10px;
+          border-radius: 6px;
+          background: #fff;
+          box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .conn-avatar {
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          background: #ddd;
+          margin-right: 12px;
+          flex: 0 0 48px;
+        }
+        @media (max-width: 900px) {
+          .my-connections { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 520px) {
+          .my-connections { grid-template-columns: 1fr; }
+        }
+      </style>
+
       <?php if ($connections && $connections->num_rows > 0): ?>
         <div class="my-connections">
           <?php while ($row = $connections->fetch_assoc()): ?>
-            <div class="conn-card">
-              <div class="conn-avatar"></div>
-              <div>
-                <div class="conn-name"><?php echo htmlspecialchars($row['user_username']); ?></div>
-                <div class="conn-role">Role Placeholder</div>
-              </div>
-            </div>
+        <div class="conn-card">
+          <div class="conn-avatar" aria-hidden="true"></div>
+          <div>
+            <div class="conn-name"><?php echo htmlspecialchars($row['user_username']); ?></div>
+            <div class="conn-role">Role Placeholder</div>
+          </div>
+        </div>
           <?php endwhile; ?>
         </div>
       <?php else: ?>
