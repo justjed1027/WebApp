@@ -177,58 +177,48 @@ if (!isset($_SESSION['user_id'])) {
   <main class="main-content">
   <div class="calendar-container">
     <div class="calendar-main">
-      <div class="calendar-card">
-        <div class="calendar-header">
-          <span class="calendar-title">September 2025</span>
+      <div class="calendar-card" id="calendarViews">
+        <!-- Shared Controls Header (Month & Day Views) -->
+        <div class="calendar-header" id="monthHeader">
+          <div class="calendar-title">
+            <span class="month-label" id="monthLabel" title="Back to Year View"></span>
+            <span class="year-label" id="yearLabel" title="Back to Year View"></span>
+          </div>
           <div class="calendar-controls">
-            <button class="calendar-btn">&#60;</button>
-            <button class="calendar-today">Today</button>
-            <button class="calendar-btn">&#62;</button>
+            <button class="calendar-btn" id="prevBtn" aria-label="Previous">&#60;</button>
+            <button class="calendar-today" id="todayBtn">Today</button>
+            <button class="calendar-btn" id="nextBtn" aria-label="Next">&#62;</button>
           </div>
         </div>
-        <table class="calendar-table">
-          <thead>
-            <tr>
-              <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td></td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td></tr>
-            <tr><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td><td>13</td></tr>
-            <tr><td>14</td><td>15</td><td>16</td><td>17</td><td>18</td><td>19</td><td>20</td></tr>
-            <tr><td>21</td><td>22</td><td><span class="calendar-today-cell">23</span></td><td>24</td><td>25</td><td>26</td><td>27</td></tr>
-            <tr><td>28</td><td>29</td><td>30</td><td></td><td></td><td></td><td></td></tr>
-          </tbody>
-        </table>
+
+        <!-- YEAR VIEW -->
+        <div id="yearView" class="view-container" aria-label="Year View" hidden>
+          <div class="year-grid" id="yearGrid"></div>
+        </div>
+
+        <!-- MONTH VIEW -->
+        <div id="monthView" class="view-container" aria-label="Month View">
+          <table class="calendar-table" id="monthTable">
+            <thead>
+              <tr>
+                <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
+              </tr>
+            </thead>
+            <tbody id="monthGrid"><!-- Days injected by JS --></tbody>
+          </table>
+        </div>
+
+        <!-- DAY VIEW -->
+        <div id="dayView" class="view-container" aria-label="Day View" hidden>
+          <div class="day-header">
+            <span class="day-full-label" id="dayFullLabel" title="Back to Month View"></span>
+          </div>
+          <div class="day-timeline" id="dayTimeline"><!-- Time slots injected by JS --></div>
+        </div>
       </div>
       <div class="events-card">
         <h3>Upcoming Events</h3>
-        <ul class="events-list">
-          <li>
-            <span class="event-dot event-dot-red"></span>
-            <span class="event-title">Data Structures Final Exam</span>
-            <span class="event-tag event-tag-red">Exam</span><br>
-            <span class="event-detail">Saturday, October 14<br>10:00 AM - 12:00 PM<br>Course: CS 201</span>
-          </li>
-          <li>
-            <span class="event-dot event-dot-blue"></span>
-            <span class="event-title">Group Project Meeting</span>
-            <span class="event-tag event-tag-blue">Meeting</span><br>
-            <span class="event-detail">Wednesday, October 11<br>3:00 PM - 4:30 PM<br>Course: UX 340</span>
-          </li>
-          <li>
-            <span class="event-dot event-dot-yellow"></span>
-            <span class="event-title">Research Paper Deadline</span>
-            <span class="event-tag event-tag-yellow">Assignment</span><br>
-            <span class="event-detail">Thursday, October 19<br>11:59 PM<br>Course: PHYS 401</span>
-          </li>
-          <li>
-            <span class="event-dot event-dot-green"></span>
-            <span class="event-title">Web Development Workshop</span>
-            <span class="event-tag event-tag-green">Workshop</span><br>
-            <span class="event-detail">Tuesday, October 17<br>2:00 PM - 5:00 PM<br>Location: Tech Center Room 302</span>
-          </li>
-        </ul>
+        <ul class="events-list" id="upcomingEvents" aria-label="Upcoming events"></ul>
       </div>
     </div>
   </div>
