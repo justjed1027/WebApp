@@ -21,7 +21,7 @@ require_once '../database/DatabaseConnection.php';
     <h1 class="step-title">Creating your Account</h1>
     <p class="subtitle">The Basics and Profile</p>
 
-    <form id="basicInfoForm" action="page2.php" method="get" enctype="multipart/form-data" novalidate>
+    <form id="basicInfoForm" action="save_profile.php" method="post" enctype="multipart/form-data" novalidate>
       <div class="form-stack">
         <div class="two-cols">
           <div class="input-card">
