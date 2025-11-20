@@ -25,7 +25,8 @@ class DatabaseConnection {
             $this->connection->close();
         }
     }
-
-
+    
+    
+   
 }
 ?>

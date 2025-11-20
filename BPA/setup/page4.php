@@ -2,6 +2,33 @@
 session_start();
 require_once '../database/User.php';
 require_once '../database/DatabaseConnection.php';
+
+
+
+
+
+$user = new User();
+
+//If userid exists in $_SESSION, then account is being updated. 
+//Otherwise, a new account is being created. 
+//We will use this page to insert and update user accounts. 
+if (!empty($_SESSION['user_id'])) {
+
+  $user->populate($_SESSION['user_id']);
+} else {
+  header('location: ../landing/landing.php');
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+
+  if (!empty($_GET['action']) && $_GET['action'] == 'logout') {
+
+    $_SESSION = [];
+    session_destroy();
+    setcookie("PHPSESSID", "", time() - 3600, "/");
+    header('location: ../landing/landing.php');
+  }
+}
 // Page 4 — Choose Colors and Preferences
 ?>
 <!DOCTYPE html>
