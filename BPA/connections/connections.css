@@ -144,6 +144,25 @@ nav a:hover {
   gap: 10px;
   min-width: 160px;
   flex: 1;
+  position: relative;
+}
+.message-btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  transition: background 0.2s;
+}
+.message-btn:hover {
+  background: #1d4ed8;
 }
 .view-link {
   display: block;

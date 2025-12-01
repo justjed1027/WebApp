@@ -14,8 +14,13 @@ const headerName = document.getElementById('headerName');
 const headerAvatar = document.getElementById('headerAvatar');
 
 // Initialize
-document.addEventListener('DOMContentLoaded', () => {
-    loadConversations();
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadConversations();
+    
+    // Check if we need to start a conversation with a specific user
+    if (window.startUserId) {
+        await startConversationWithUser(window.startUserId);
+    }
     
     // Send message on button click
     sendBtn.addEventListener('click', sendMessage);
@@ -34,10 +39,13 @@ async function loadConversations() {
         const response = await fetch('backend/list_conversations.php');
         const data = await response.json();
         
+        console.log('Conversations response:', data); // Debug
+        
         if (data.success) {
             renderConversations(data.conversations);
         } else {
-            conversationList.innerHTML = '<div class="dm-empty-state">Error loading conversations</div>';
+            console.error('Error from backend:', data.error);
+            conversationList.innerHTML = `<div class="dm-empty-state">Error: ${data.error || 'Unknown error'}</div>`;
         }
     } catch (error) {
         console.error('Error loading conversations:', error);
@@ -233,6 +241,57 @@ function formatTime(timestamp) {
     
     // Older - show date
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+// Start or open conversation with a specific user (from connections page)
+async function startConversationWithUser(userId) {
+    try {
+        console.log('Starting conversation with user:', userId);
+        
+        // Get user info first
+        const userResponse = await fetch(`backend/get_connections.php`);
+        const userData = await userResponse.json();
+        
+        if (!userData.success) {
+            console.error('Failed to get connections');
+            return;
+        }
+        
+        const user = userData.connections.find(c => c.user_id === userId);
+        if (!user) {
+            console.error('User not found in connections');
+            return;
+        }
+        
+        console.log('Found user:', user);
+        
+        // Try to get or create conversation using start_conversation endpoint
+        const response = await fetch('backend/start_conversation.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                other_user_id: userId
+            })
+        });
+        
+        const data = await response.json();
+        console.log('Conversation response:', data);
+        
+        if (data.success) {
+            // Reload conversations to show the new/existing one
+            await loadConversations();
+            // Open the conversation
+            await selectConversation(data.conversation_id, userId, user.user_username);
+            // Clear URL parameter
+            window.history.replaceState({}, document.title, window.location.pathname);
+        } else {
+            console.error('Failed to create conversation:', data.error);
+        }
+    } catch (error) {
+        console.error('Error starting conversation:', error);
+    }
 }
 
 // Utility: Escape HTML to prevent XSS

@@ -140,6 +140,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             <div class="conn-name"><?php echo htmlspecialchars($row['user_username']); ?></div>
             <div class="conn-role">Role Placeholder</div>
           </div>
+          <a href="../dms/dms.php?user_id=<?php echo $row['user_id']; ?>" class="message-btn" title="Send Message">💬 Message</a>
         </div>
           <?php endwhile; ?>
         </div>

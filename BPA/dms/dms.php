@@ -54,6 +54,12 @@ if (!isset($_SESSION['user_id'])) {
       </div>
     </div>
   </div>
+  <script>
+    // Check if coming from connections page with user_id
+    const urlParams = new URLSearchParams(window.location.search);
+    window.startUserId = urlParams.has('user_id') ? parseInt(urlParams.get('user_id')) : null;
+    console.log('URL parameter user_id:', window.startUserId);
+  </script>
   <script src="script.js"></script>
 </body>
 </html>

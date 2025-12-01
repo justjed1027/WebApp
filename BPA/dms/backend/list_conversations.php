@@ -29,7 +29,7 @@ $userId = $currentUser;
 
 $db = DB::getInstance()->getConnection();
 
-// Get all conversations for this user
+// Get all conversations for this user, but only with accepted connections
 $conversationsSql = "SELECT 
     c.conversation_id,
     c.user1_id,
@@ -40,7 +40,15 @@ $conversationsSql = "SELECT
         ELSE c.user1_id
     END AS other_user_id
 FROM conversations c
-WHERE c.user1_id = ? OR c.user2_id = ?
+WHERE (c.user1_id = ? OR c.user2_id = ?)
+AND EXISTS (
+    SELECT 1 FROM connections conn
+    WHERE conn.status = 'accepted'
+    AND (
+        (conn.requester_id = c.user1_id AND conn.receiver_id = c.user2_id)
+        OR (conn.requester_id = c.user2_id AND conn.receiver_id = c.user1_id)
+    )
+)
 ORDER BY c.last_message_time DESC";
 
 $stmt = $db->prepare($conversationsSql);

@@ -11,7 +11,7 @@ class DB {
     private function __construct() {
         $host = 'localhost';
         $username = 'root';
-        $password = '';
+        $password = 'password';
         $database = 'bpa_skillswap';
 
         $this->connection = new mysqli($host, $username, $password, $database);
