@@ -1325,15 +1325,14 @@ nav a:hover {
 .indicator-dot { width:7px; height:7px; border-radius:50%; background: var(--primary-color); position:absolute; bottom:6px; left:50%; transform:translateX(-50%); box-shadow:0 0 0 3px var(--primary-light); }
 
 /* Day View */
-#dayView { margin-top: 4px; }
+#dayView { margin-top: 4px; overflow-x: hidden; }
 .day-header { font-weight:600; font-size:1rem; margin-bottom:8px; cursor: pointer; }
 .day-header:hover { text-decoration: underline; }
 .day-timeline { 
   border:1px solid var(--border-color); 
   border-radius:8px; 
-  max-height:560px; 
-  overflow-y:auto; 
   background: var(--background-secondary);
+  overflow: visible;
 }
 .time-slot { 
   display:flex; 
@@ -1399,6 +1398,23 @@ nav a:hover {
 .event-type-badge.assignment { background:#b45309; color:#fff; }
 .event-type-badge.meeting { background:#1d4ed8; color:#fff; }
 .event-type-badge.workshop { background:#15803d; color:#fff; }
+
+/* Mini Month Preview (Day View) */
+.mini-preview { 
+  margin-top:14px; 
+  background: var(--background-secondary); 
+  border:1px solid var(--border-color); 
+  border-radius:12px; 
+  padding:10px 12px; 
+  min-height:120px; 
+  box-shadow: var(--shadow-sm);
+  overflow-x: hidden;
+}
+.mini-preview table { width:100%; border-collapse:collapse; font-size:0.55rem; }
+.mini-preview th { font-weight:600; color: var(--text-muted); padding:2px 0; }
+.mini-preview td { text-align:center; padding:3px 0; border-radius:4px; position:relative; }
+.mini-preview td.today { background: var(--primary-color); color:#0a0a0a; font-weight:600; }
+.mini-preview td.event { background: var(--primary-light); color: var(--primary-color); }
 
 /* Responsive Adjustments */
 @media (max-width: 700px) {
