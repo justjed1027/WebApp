@@ -1,3 +1,52 @@
+<?php 
+session_start();
+require_once '../database/DatabaseConnection.php';
+require_once '../database/User.php';
+require_once '../database/Connection.php';
+
+$db = new DatabaseConnection();
+$con = $db->connection;
+
+$pendingSql = "
+  SELECT c.connection_id, u.user_username 
+  FROM connections c
+  JOIN user u ON u.user_id = c.requester_id
+  WHERE c.receiver_id = ? AND c.status = 'pending'
+";
+
+$stmt = $con->prepare($pendingSql);
+$stmt->bind_param("i", $_SESSION['user_id']);
+$stmt->execute();
+$pending = $stmt->get_result();
+
+
+
+
+
+$user = new User();
+
+//If userid exists in $_SESSION, then account is being updated. 
+//Otherwise, a new account is being created. 
+//We will use this page to insert and update user accounts. 
+if (!empty($_SESSION['user_id'])) {
+
+  $user->populate($_SESSION['user_id']);
+} else {
+  header('location: ../landing/landing.php');
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+
+  if (!empty($_GET['action']) && $_GET['action'] == 'logout') {
+
+    $_SESSION = [];
+    session_destroy();
+    setcookie("PHPSESSID", "", time() - 3600, "/");
+    header('location: ../landing/landing.php');
+  }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,100 +60,117 @@
     <div class="main-left">
       <input type="text" class="search-bar" placeholder="Search connections...">
       <div class="card">
-        <h3>Connection Requests (2)</h3>
-        <div class="conn-request">
-          <div class="conn-avatar avatar1"></div>
-          <div class="conn-info">
-            <div class="conn-name">Jamie Rivera</div>
-            <div class="conn-role">Web Development</div>
-            <div class="conn-mutual">3 mutual connections</div>
-          </div>
-          <div class="conn-actions">
-            <button class="btn-accept">✔</button>
-            <button class="btn-decline">✖</button>
-          </div>
-        </div>
-        <div class="conn-request">
-          <div class="conn-avatar avatar2"></div>
-          <div class="conn-info">
-            <div class="conn-name">Casey Thompson</div>
-            <div class="conn-role">Marketing</div>
-            <div class="conn-mutual">7 mutual connections</div>
-          </div>
-          <div class="conn-actions">
-            <button class="btn-accept">✔</button>
-            <button class="btn-decline">✖</button>
-          </div>
-        </div>
+        <h3>Connection Requests</h3>
+        <?php
+        if ($pending && $pending->num_rows > 0) {
+            while ($req = $pending->fetch_assoc()) {
+                ?>
+                <div class="conn-request">
+                  <div class="conn-avatar"></div>
+                  <div class="conn-info">
+                    <div class="conn-name"><?php echo htmlspecialchars($req['user_username']); ?></div>
+                  </div>
+                  <div class="conn-actions">
+                    <form action="respond_request.php" method="POST" style="display:inline">
+                      <input type="hidden" name="connection_id" value="<?php echo $req['connection_id']; ?>">
+                      <input type="hidden" name="action" value="accept">
+                      <button type="submit" class="btn-accept">✔</button>
+                    </form>
+                    <form action="respond_request.php" method="POST" style="display:inline; margin-left:6px;">
+                      <input type="hidden" name="connection_id" value="<?php echo $req['connection_id']; ?>">
+                      <input type="hidden" name="action" value="decline">
+                      <button type="submit" class="btn-decline">✖</button>
+                    </form>
+                  </div>
+                </div>
+                <?php
+            }
+        } else {
+            echo '<p>No pending requests.</p>';
+        }
+        ?>
       </div>
       <div class="card">
-        <h3>My Connections (3)</h3>
+         <?php
+        $userId = $_SESSION['user_id'];
+        $connObj = new Connection($db->connection);
+        $connections = $connObj->getConnections($userId);
+        ?>
+
+      <h3>My Connections</h3>
+
+      <style>
+        /* simple grid: 3 columns, responsive down to 2/1 */
+        .my-connections {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 12px;
+          align-items: start;
+        }
+        .conn-card {
+          display: flex;
+          align-items: center;
+          padding: 10px;
+          border-radius: 6px;
+          background: #fff;
+          box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .conn-avatar {
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          background: #ddd;
+          margin-right: 12px;
+          flex: 0 0 48px;
+        }
+        @media (max-width: 900px) {
+          .my-connections { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 520px) {
+          .my-connections { grid-template-columns: 1fr; }
+        }
+      </style>
+
+      <?php if ($connections && $connections->num_rows > 0): ?>
         <div class="my-connections">
-          <div class="conn-card">
-            <div class="conn-avatar avatar3"></div>
-            <div>
-              <div class="conn-name">Alex Johnson</div>
-              <div class="conn-role">Computer Science</div>
-            </div>
-          </div>
-          <div class="conn-card">
-            <div class="conn-avatar avatar4"></div>
-            <div>
-              <div class="conn-name">Morgan Lee</div>
-              <div class="conn-role">UX Design</div>
-            </div>
-          </div>
-          <div class="conn-card">
-            <div class="conn-avatar avatar5"></div>
-            <div>
-              <div class="conn-name">Taylor Wilson</div>
-              <div class="conn-role">Physics</div>
-            </div>
+          <?php while ($row = $connections->fetch_assoc()): ?>
+        <div class="conn-card">
+          <div class="conn-avatar" aria-hidden="true"></div>
+          <div>
+            <div class="conn-name"><?php echo htmlspecialchars($row['user_username']); ?></div>
+            <div class="conn-role">Role Placeholder</div>
           </div>
         </div>
-        <a href="#" class="view-link">View All Connections</a>
+          <?php endwhile; ?>
+        </div>
+      <?php else: ?>
+        <p>No connections yet.</p> 
+      <?php endif; ?>
       </div>
+
       <div class="card">
-        <h3>People You May Know</h3>
-        <div class="suggested-list">
-          <div class="suggested-item">
-            <div class="conn-avatar avatar6"></div>
-            <div>
-              <div class="conn-name">Emily Chen</div>
-              <div class="conn-role">Data Science</div>
-              <div class="conn-mutual">4 mutual connections</div>
-            </div>
-            <button class="btn-connect">Connect</button>
+         <?php
+        $userId = $_SESSION['user_id'];
+        $connObj = new Connection($db->connection);
+        $recommended = $connObj->getRecommendedUsers($userId);
+        ?>
+
+      <h2>People You May Know</h2>
+
+      <?php if ($recommended && $recommended->num_rows > 0): ?>
+        <?php while ($row = $recommended->fetch_assoc()): ?>
+          <div class="user-card">
+            <p><strong><?php echo htmlspecialchars($row['user_username']); ?></strong></p>
+
+            <form action="send_request.php" method="POST">
+              <input type="hidden" name="receiver_id" value="<?php echo htmlspecialchars($row['user_id']); ?>">
+              <button type="submit">Connect</button>
+            </form>
           </div>
-          <div class="suggested-item">
-            <div class="conn-avatar avatar7"></div>
-            <div>
-              <div class="conn-name">Marcus Johnson</div>
-              <div class="conn-role">Mechanical Engineering</div>
-              <div class="conn-mutual">2 mutual connections</div>
-            </div>
-            <button class="btn-connect">Connect</button>
-          </div>
-          <div class="suggested-item">
-            <div class="conn-avatar avatar8"></div>
-            <div>
-              <div class="conn-name">Sophia Williams</div>
-              <div class="conn-role">Graphic Design</div>
-              <div class="conn-mutual">6 mutual connections</div>
-            </div>
-            <button class="btn-connect">Connect</button>
-          </div>
-          <div class="suggested-item">
-            <div class="conn-avatar avatar9"></div>
-            <div>
-              <div class="conn-name">Jordan Smith</div>
-              <div class="conn-role">Business Administration</div>
-              <div class="conn-mutual">1 mutual connection</div>
-            </div>
-            <button class="btn-connect">Connect</button>
-          </div>
-        </div>
-        <a href="#" class="view-link">View More Suggestions</a>
+        <?php endwhile; ?>
+      <?php else: ?>
+        <p>No recommendations at this time.</p>
+      <?php endif; ?>
       </div>
     </div>
     <div class="main-right">
