@@ -679,8 +679,255 @@ if ($result->num_rows > 0) {
     </div>
   </main>
 
+  <!-- Event Detail Modal -->
+  <div class="event-modal" id="eventModal" hidden>
+    <div class="modal-overlay" id="modalOverlay"></div>
+    <div class="modal-content">
+      <button class="modal-close" id="modalClose" aria-label="Close modal">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+        </svg>
+      </button>
+      
+      <div class="modal-header">
+        <img class="modal-event-image" id="modalImage" src="" alt="Event">
+        <div class="modal-header-content">
+          <h2 class="modal-event-title" id="modalTitle"></h2>
+          <div class="modal-event-meta">
+            <div class="modal-meta-item" id="modalDate"></div>
+            <div class="modal-meta-item" id="modalTime"></div>
+            <div class="modal-meta-item" id="modalLocation"></div>
+            <div class="modal-meta-item" id="modalAttending"></div>
+          </div>
+          <div class="modal-event-tags" id="modalTags"></div>
+        </div>
+      </div>
+      
+      <div class="modal-body">
+        <div class="modal-section">
+          <h3 class="modal-section-title">About This Event</h3>
+          <div class="modal-description">
+            <p class="modal-description-text" id="modalDescription"></p>
+            <button class="btn-expand-description" id="btnExpandDescription">Read more</button>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h3 class="modal-section-title">Event Details</h3>
+          <div class="modal-details-grid">
+            <div class="modal-detail-row">
+              <span class="modal-detail-label">Category</span>
+              <span class="modal-detail-value" id="modalCategory">Workshop</span>
+            </div>
+            <div class="modal-detail-row">
+              <span class="modal-detail-label">Organizer</span>
+              <span class="modal-detail-value" id="modalOrganizer">Student Technology Association</span>
+            </div>
+            <div class="modal-detail-row">
+              <span class="modal-detail-label">Capacity</span>
+              <span class="modal-detail-value" id="modalCapacity">500 spots</span>
+            </div>
+            <div class="modal-detail-row">
+              <span class="modal-detail-label">Registration</span>
+              <span class="modal-detail-value" id="modalRegistration">Open until Oct 14</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h3 class="modal-section-title">Created By</h3>
+          <div class="modal-creator">
+            <div class="creator-avatar">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+              </svg>
+            </div>
+            <div class="creator-info">
+              <div class="creator-name" id="modalCreator">John Smith</div>
+              <div class="creator-role" id="modalCreatorRole">Event Coordinator</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="btn-modal-interested">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+          </svg>
+          Interested
+        </button>
+        <button class="btn-modal-register">
+          Register Now
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Event Modal -->
+  <div class="event-modal" id="createEventModal" hidden>
+    <div class="modal-overlay" id="createModalOverlay"></div>
+    <div class="modal-content create-event-modal-content">
+      <button class="modal-close" id="createModalClose" aria-label="Close modal">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+        </svg>
+      </button>
+      
+      <div class="create-event-header">
+        <h2 class="create-event-title">Create New Event</h2>
+        <p class="create-event-subtitle">Fill in the details to create your event</p>
+      </div>
+      
+      <form class="create-event-form" id="createEventForm">
+        <div class="form-section">
+          <h3 class="form-section-title">Basic Information</h3>
+          
+          <div class="form-group">
+            <label class="form-label" for="eventTitle">Event Title <span class="required">*</span></label>
+            <input type="text" id="eventTitle" class="form-input" placeholder="Enter event title" required>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="eventCategory">Category <span class="required">*</span></label>
+            <select id="eventCategory" class="form-select" required>
+              <option value="">Select category</option>
+              <option value="hackathon">Hackathon</option>
+              <option value="workshop">Workshop</option>
+              <option value="career">Career</option>
+              <option value="networking">Networking</option>
+              <option value="conference">Conference</option>
+              <option value="social">Social</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="eventDescription">Description <span class="required">*</span></label>
+            <textarea id="eventDescription" class="form-textarea" rows="5" placeholder="Describe your event..." required></textarea>
+            <span class="form-hint">Minimum 50 characters</span>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="eventImage">Event Image URL</label>
+            <input type="url" id="eventImage" class="form-input" placeholder="https://example.com/image.jpg">
+          </div>
+        </div>
+        
+        <div class="form-section">
+          <h3 class="form-section-title">Date & Time</h3>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="eventDate">Date <span class="required">*</span></label>
+              <input type="date" id="eventDate" class="form-input" required>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label" for="eventStartTime">Start Time <span class="required">*</span></label>
+              <input type="time" id="eventStartTime" class="form-input" required>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label" for="eventEndTime">End Time</label>
+              <input type="time" id="eventEndTime" class="form-input">
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-section">
+          <h3 class="form-section-title">Location</h3>
+          
+          <div class="form-group">
+            <label class="form-label" for="eventLocation">Venue <span class="required">*</span></label>
+            <input type="text" id="eventLocation" class="form-input" placeholder="Enter location" required>
+          </div>
+        </div>
+        
+        <div class="form-section">
+          <h3 class="form-section-title">Event Settings</h3>
+          
+          <div class="form-group">
+            <label class="form-label" for="eventCapacity">Maximum Capacity</label>
+            <input type="number" id="eventCapacity" class="form-input" placeholder="e.g., 100" min="1">
+            <span class="form-hint">Leave empty for unlimited</span>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="eventOrganizer">Organizer Name <span class="required">*</span></label>
+            <input type="text" id="eventOrganizer" class="form-input" placeholder="Your name or organization" required>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="eventTags">Tags</label>
+            <input type="text" id="eventTags" class="form-input" placeholder="e.g., #tech #networking #workshop">
+            <span class="form-hint">Separate tags with spaces, use # prefix</span>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Visibility <span class="required">*</span></label>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" name="eventVisibility" value="public" checked>
+                <span class="radio-custom"></span>
+                <div class="radio-content">
+                  <span class="radio-title">Public</span>
+                  <span class="radio-description">Anyone can see and register for this event</span>
+                </div>
+              </label>
+              
+              <label class="radio-label">
+                <input type="radio" name="eventVisibility" value="private">
+                <span class="radio-custom"></span>
+                <div class="radio-content">
+                  <span class="radio-title">Private</span>
+                  <span class="radio-description">Only invited people can see this event</span>
+                </div>
+              </label>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="eventRequireApproval">
+              <span class="checkbox-custom"></span>
+              <span>Require approval for registrations</span>
+            </label>
+          </div>
+          
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="eventFeatured">
+              <span class="checkbox-custom"></span>
+              <span>Request featured placement</span>
+            </label>
+          </div>
+        </div>
+        
+        <div class="form-section">
+          <h3 class="form-section-title">Additional Information</h3>
+          
+          <div class="form-group">
+            <label class="form-label" for="eventRegistrationDeadline">Registration Deadline</label>
+            <input type="date" id="eventRegistrationDeadline" class="form-input">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="eventContactEmail">Contact Email</label>
+            <input type="email" id="eventContactEmail" class="form-input" placeholder="contact@example.com">
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="btn-form-cancel" id="btnCancelCreate">Cancel</button>
+          <button type="submit" class="btn-form-submit">Create Event</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Floating Create Event Button -->
-  <button class="fab-create-event" aria-label="Create Event">
+  <button class="fab-create-event" id="fabCreateEvent" aria-label="Create Event">
     <svg class="fab-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
       <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
     </svg>
@@ -716,5 +963,7 @@ if ($result->num_rows > 0) {
     });
   </script>
   <script src="script.js"></script>
+  <script src="modal.js"></script>
+  <script src="create-event.js"></script>
 </body>
 </html>
