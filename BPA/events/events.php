@@ -222,6 +222,107 @@ if ($result->num_rows > 0) {
   <main class="main-content">
     <div class="events-container">
       <div class="events-main">
+        <!-- Featured Events Carousel -->
+        <div class="section-label">Featured Events</div>
+        <div class="featured-carousel" aria-label="Featured events carousel">
+          <button class="carousel-btn prev" aria-label="Previous featured">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16" fill="currentColor"><path d="M11.354 1.646a.5.5 0 0 1 0 .708L6.707 7l4.647 4.646a.5.5 0 0 1-.708.708l-5-5a.5.5 0 0 1 0-.708l5-5a.5.5 0 0 1 .708 0z"/></svg>
+          </button>
+          <div class="featured-track">
+            <!-- Slide 1 -->
+            <article class="featured-event-card" role="group" aria-roledescription="slide" aria-label="1 of 3">
+              <div class="featured-event-image-container">
+                <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&h=600&fit=crop" alt="Campus-wide Hackathon 2023" class="featured-event-img" loading="lazy">
+              </div>
+              <div class="featured-event-info">
+                <div class="featured-event-header">
+                  <h2 class="featured-event-title">Campus-wide Hackathon 2023</h2>
+                  <span class="featured-badge">Featured</span>
+                </div>
+                <p class="featured-event-desc">Join the biggest hackathon of the year! Teams will compete to build innovative solutions to real-world problems. Great prizes, food, and networking opportunities.</p>
+                <div class="featured-event-details">
+                  <div class="event-detail-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/></svg>
+                    <span>November 5-7, 2023</span>
+                  </div>
+                  <div class="event-detail-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/></svg>
+                    <span>Starts at 6:00 PM</span>
+                  </div>
+                  <div class="event-detail-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/></svg>
+                    <span>Technology Innovation Center</span>
+                  </div>
+                  <div class="event-detail-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/></svg>
+                    <span>500+ attendees expected</span>
+                  </div>
+                </div>
+                <div class="featured-event-tags">
+                  <span class="event-tag">#hackathon</span>
+                  <span class="event-tag">#coding</span>
+                  <span class="event-tag">#innovation</span>
+                </div>
+                <div class="featured-event-actions">
+                  <button class="btn-register">Register Now</button>
+                  <button class="btn-interested">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/></svg>
+                    Interested
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <!-- Slide 2 -->
+            <article class="featured-event-card" role="group" aria-roledescription="slide" aria-label="2 of 3">
+              <div class="featured-event-image-container">
+                <img src="https://images.unsplash.com/photo-1515165562835-c3b8e3a01ee0?w=1200&h=600&fit=crop" alt="Startup Pitch Night" class="featured-event-img" loading="lazy">
+              </div>
+              <div class="featured-event-info">
+                <div class="featured-event-header">
+                  <h2 class="featured-event-title">Startup Pitch Night</h2>
+                  <span class="featured-badge">Featured</span>
+                </div>
+                <p class="featured-event-desc">Watch top student founders pitch their startups to a panel of VCs and alumni. Network with mentors and potential co-founders.</p>
+                <div class="featured-event-details">
+                  <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/></svg><span>November 15, 2023</span></div>
+                  <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/></svg><span>6:30 PM</span></div>
+                  <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/></svg><span>Business School Auditorium</span></div>
+                  <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/></svg><span>200 attending</span></div>
+                </div>
+                <div class="featured-event-tags"><span class="event-tag">#startup</span><span class="event-tag">#pitch</span><span class="event-tag">#networking</span></div>
+                <div class="featured-event-actions"><button class="btn-register">Register Now</button><button class="btn-interested"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/></svg>Interested</button></div>
+              </div>
+            </article>
+
+            <!-- Slide 3 -->
+            <article class="featured-event-card" role="group" aria-roledescription="slide" aria-label="3 of 3">
+              <div class="featured-event-image-container">
+                <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=1200&h=600&fit=crop" alt="AI Research Symposium" class="featured-event-img" loading="lazy">
+              </div>
+              <div class="featured-event-info">
+                <div class="featured-event-header">
+                  <h2 class="featured-event-title">AI Research Symposium</h2>
+                  <span class="featured-badge">Featured</span>
+                </div>
+                <p class="featured-event-desc">Hear lightning talks from faculty and students on the latest AI breakthroughs. Poster session and lab tours included.</p>
+                <div class="featured-event-details">
+                  <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/></svg><span>December 2, 2023</span></div>
+                  <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/></svg><span>9:00 AM - 5:00 PM</span></div>
+                  <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/></svg><span>Computer Science Complex</span></div>
+                  <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/></svg><span>650 attending</span></div>
+                </div>
+                <div class="featured-event-tags"><span class="event-tag">#AI</span><span class="event-tag">#research</span><span class="event-tag">#conference</span></div>
+                <div class="featured-event-actions"><button class="btn-register">Register Now</button><button class="btn-interested"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/></svg>Interested</button></div>
+              </div>
+            </article>
+          </div>
+          <button class="carousel-btn next" aria-label="Next featured">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16" fill="currentColor"><path d="M4.646 1.646a.5.5 0 0 1 .708 0l5 5a.5.5 0 0 1 0 .708l-5 5a.5.5 0 1 1-.708-.708L9.293 7 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
+          </button>
+          <div class="carousel-dots" aria-label="Featured pagination" role="tablist"></div>
+        </div>
+
         <!-- Search and Filter Bar -->
         <div class="events-topbar">
           <div class="search-wrapper">
@@ -230,75 +331,13 @@ if ($result->num_rows > 0) {
             </svg>
             <input type="text" class="events-search" placeholder="Search events...">
           </div>
-          <div class="events-topbar-right">
-            <select class="events-category">
-              <option>All Categories</option>
-              <option>Hackathon</option>
-              <option>Workshop</option>
-              <option>Career</option>
-              <option>Networking</option>
-            </select>
-            <button class="btn-create-event">Create Event</button>
-          </div>
-        </div>
-
-        <!-- Featured Event Section -->
-        <div class="section-label">Featured Event</div>
-        <div class="featured-event-card">
-          <div class="featured-event-image-container">
-            <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&h=400&fit=crop" alt="Campus-wide Hackathon 2023" class="featured-event-img">
-          </div>
-          <div class="featured-event-info">
-            <div class="featured-event-header">
-              <h2 class="featured-event-title">Campus-wide Hackathon 2023</h2>
-              <span class="featured-badge">Featured</span>
-            </div>
-            <p class="featured-event-desc">Join the biggest hackathon of the year! Teams will compete to build innovative solutions to real-world problems. Great prizes, food, and networking opportunities.</p>
-            
-            <div class="featured-event-details">
-              <div class="event-detail-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
-                </svg>
-                <span>November 5-7, 2023</span>
-              </div>
-              <div class="event-detail-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
-                  <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
-                </svg>
-                <span>Starts at 6:00 PM</span>
-              </div>
-              <div class="event-detail-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
-                </svg>
-                <span>Technology Innovation Center</span>
-              </div>
-              <div class="event-detail-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
-                </svg>
-                <span>500+ attendees expected</span>
-              </div>
-            </div>
-
-            <div class="featured-event-tags">
-              <span class="event-tag">#hackathon</span>
-              <span class="event-tag">#coding</span>
-              <span class="event-tag">#innovation</span>
-            </div>
-
-            <div class="featured-event-actions">
-              <button class="btn-register">Register Now</button>
-              <button class="btn-interested">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
-                </svg>
-                Interested
-              </button>
-            </div>
-          </div>
+          <select class="events-category">
+            <option>All Categories</option>
+            <option>Hackathon</option>
+            <option>Workshop</option>
+            <option>Career</option>
+            <option>Networking</option>
+          </select>
         </div>
 
         <!-- Upcoming Events Section -->
@@ -441,10 +480,212 @@ if ($result->num_rows > 0) {
               <button class="btn-view-details">View Details</button>
             </div>
           </div>
+
+          <!-- Event Card 4 -->
+          <div class="event-card">
+            <div class="event-image-container">
+              <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=250&fit=crop" alt="Resume Workshop" class="event-img" loading="lazy">
+            </div>
+            <div class="event-info">
+              <h3 class="event-title">Resume Workshop</h3>
+              <div class="event-details-list">
+                <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/></svg><span>October 24, 2023</span></div>
+                <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/></svg><span>6:00 PM</span></div>
+                <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/></svg><span>Career Center</span></div>
+                <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/></svg><span>78 attending</span></div>
+              </div>
+              <div class="event-tags"><span class="event-tag">#career</span><span class="event-tag">#resume</span></div>
+              <button class="btn-view-details">View Details</button>
+            </div>
+          </div>
+
+          <!-- Event Card 5 -->
+          <div class="event-card">
+            <div class="event-image-container">
+              <img src="https://images.unsplash.com/photo-1543269865-cbf427effbad?w=400&h=250&fit=crop" alt="Startup Mixer" class="event-img" loading="lazy">
+            </div>
+            <div class="event-info">
+              <h3 class="event-title">Startup Mixer</h3>
+              <div class="event-details-list">
+                <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/></svg><span>October 29, 2023</span></div>
+                <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/></svg><span>8:00 PM</span></div>
+                <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/></svg><span>Innovation Hub</span></div>
+                <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/></svg><span>156 attending</span></div>
+              </div>
+              <div class="event-tags"><span class="event-tag">#startup</span><span class="event-tag">#networking</span></div>
+              <button class="btn-view-details">View Details</button>
+            </div>
+          </div>
+
+          <!-- Event Card 6 -->
+          <div class="event-card">
+            <div class="event-image-container">
+              <img src="https://images.unsplash.com/photo-1517430816045-df4b7de11d1d?w=400&h=250&fit=crop" alt="Intro to JavaScript" class="event-img" loading="lazy">
+            </div>
+            <div class="event-info">
+              <h3 class="event-title">Intro to JavaScript</h3>
+              <div class="event-details-list">
+                <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/></svg><span>November 2, 2023</span></div>
+                <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/></svg><span>4:00 PM</span></div>
+                <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/></svg><span>CS Lecture Hall</span></div>
+                <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/></svg><span>210 attending</span></div>
+              </div>
+              <div class="event-tags"><span class="event-tag">#javascript</span><span class="event-tag">#workshop</span></div>
+              <button class="btn-view-details">View Details</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Show all upcoming toggle -->
+        <div class="show-all-wrapper" id="upcomingToggleWrapper" hidden>
+          <button class="btn-show-all" id="toggleUpcoming" aria-expanded="false" aria-controls="upcomingGrid">
+            <span class="btn-label">Show all upcoming events</span>
+            <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M1.5 5.5a.5.5 0 0 1 .8-.4l5.2 3.9 5.2-3.9a.5.5 0 1 1 .6.8l-5.5 4.1a.5.5 0 0 1-.6 0L1.7 5.9a.5.5 0 0 1-.2-.4z"/></svg>
+          </button>
+        </div>
+
+        <!-- Past Events Section -->
+        <div class="section-label">Past Events</div>
+        <div class="past-events-grid">
+          <!-- Past Event 1 -->
+          <div class="event-card past">
+            <span class="ended-badge">Ended</span>
+            <div class="event-image-container">
+              <img src="https://images.unsplash.com/photo-1503424886308-418b744c39a9?w=400&h=250&fit=crop" alt="Intro to Cloud Computing" class="event-img" loading="lazy">
+            </div>
+            <div class="event-info">
+              <h3 class="event-title">Intro to Cloud Computing</h3>
+              <div class="event-details-list">
+                <div class="event-detail-item">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/></svg>
+                  <span>September 8, 2023</span>
+                </div>
+                <div class="event-detail-item">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/></svg>
+                  <span>11:00 AM - 1:00 PM</span>
+                </div>
+                <div class="event-detail-item">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/></svg>
+                  <span>Engineering Hall 210</span>
+                </div>
+              </div>
+              <div class="event-tags">
+                <span class="event-tag">#cloud</span>
+                <span class="event-tag">#aws</span>
+              </div>
+              <button class="btn-view-details">View Recap</button>
+            </div>
+          </div>
+
+          <!-- Past Event 2 -->
+          <div class="event-card past">
+            <span class="ended-badge">Ended</span>
+            <div class="event-image-container">
+              <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=400&h=250&fit=crop" alt="Data Viz Night" class="event-img" loading="lazy">
+            </div>
+            <div class="event-info">
+              <h3 class="event-title">Data Viz Night</h3>
+              <div class="event-details-list">
+                <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/></svg><span>September 1, 2023</span></div>
+                <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/></svg><span>7:00 PM</span></div>
+                <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/></svg><span>Design Lab</span></div>
+              </div>
+              <div class="event-tags"><span class="event-tag">#dataviz</span><span class="event-tag">#d3</span></div>
+              <button class="btn-view-details">View Recap</button>
+            </div>
+          </div>
+
+          <!-- Past Event 3 -->
+          <div class="event-card past">
+            <span class="ended-badge">Ended</span>
+            <div class="event-image-container">
+              <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&h=250&fit=crop" alt="Intro to Web Security" class="event-img" loading="lazy">
+            </div>
+            <div class="event-info">
+              <h3 class="event-title">Intro to Web Security</h3>
+              <div class="event-details-list">
+                <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/></svg><span>August 20, 2023</span></div>
+                <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/></svg><span>3:00 PM</span></div>
+                <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/></svg><span>Cyber Lab</span></div>
+              </div>
+              <div class="event-tags"><span class="event-tag">#security</span><span class="event-tag">#web</span></div>
+              <button class="btn-view-details">View Recap</button>
+            </div>
+          </div>
+
+          <!-- Past Event 4 -->
+          <div class="event-card past">
+            <span class="ended-badge">Ended</span>
+            <div class="event-image-container">
+              <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400&h=250&fit=crop" alt="Robotics Demo Day" class="event-img" loading="lazy">
+            </div>
+            <div class="event-info">
+              <h3 class="event-title">Robotics Demo Day</h3>
+              <div class="event-details-list">
+                <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/></svg><span>July 12, 2023</span></div>
+                <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/></svg><span>2:00 PM</span></div>
+                <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/></svg><span>Engineering Field House</span></div>
+              </div>
+              <div class="event-tags"><span class="event-tag">#robotics</span><span class="event-tag">#demo</span></div>
+              <button class="btn-view-details">View Recap</button>
+            </div>
+          </div>
+
+          <!-- Past Event 5 -->
+          <div class="event-card past">
+            <span class="ended-badge">Ended</span>
+            <div class="event-image-container">
+              <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=400&h=250&fit=crop" alt="Figma for Beginners" class="event-img" loading="lazy">
+            </div>
+            <div class="event-info">
+              <h3 class="event-title">Figma for Beginners</h3>
+              <div class="event-details-list">
+                <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/></svg><span>June 25, 2023</span></div>
+                <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/></svg><span>5:30 PM</span></div>
+                <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/></svg><span>Design Studio</span></div>
+              </div>
+              <div class="event-tags"><span class="event-tag">#figma</span><span class="event-tag">#design</span></div>
+              <button class="btn-view-details">View Recap</button>
+            </div>
+          </div>
+
+          <!-- Past Event 6 -->
+          <div class="event-card past">
+            <span class="ended-badge">Ended</span>
+            <div class="event-image-container">
+              <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&h=250&fit=crop" alt="Kubernetes 101" class="event-img" loading="lazy">
+            </div>
+            <div class="event-info">
+              <h3 class="event-title">Kubernetes 101</h3>
+              <div class="event-details-list">
+                <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/></svg><span>May 10, 2023</span></div>
+                <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/></svg><span>1:00 PM - 3:00 PM</span></div>
+                <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/></svg><span>Tech Lab B</span></div>
+              </div>
+              <div class="event-tags"><span class="event-tag">#kubernetes</span><span class="event-tag">#devops</span></div>
+              <button class="btn-view-details">View Recap</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Show all past toggle -->
+        <div class="show-all-wrapper" id="pastToggleWrapper" hidden>
+          <button class="btn-show-all" id="togglePast" aria-expanded="false" aria-controls="pastGrid">
+            <span class="btn-label">Show all past events</span>
+            <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M1.5 5.5a.5.5 0 0 1 .8-.4l5.2 3.9 5.2-3.9a.5.5 0 1 1 .6.8l-5.5 4.1a.5.5 0 0 1-.6 0L1.7 5.9a.5.5 0 0 1-.2-.4z"/></svg>
+          </button>
         </div>
       </div>
     </div>
   </main>
+
+  <!-- Floating Create Event Button -->
+  <button class="fab-create-event" aria-label="Create Event">
+    <svg class="fab-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+      <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+    </svg>
+    <span class="fab-label">Create Event</span>
+  </button>
 
   <script>
     // Sidebar collapse on double-click
