@@ -1,17 +1,5 @@
-// Sidebar collapse on double-click
-document.addEventListener('dblclick', function() {
-  const sidebar = document.getElementById('sidebar');
-  if (sidebar) {
-    sidebar.classList.toggle('collapsed');
-  }
-});
-
-// Prevent text selection on double-click
-document.addEventListener('mousedown', function(e) {
-  if (e.detail > 1) {
-    e.preventDefault();
-  }
-});
+// Sidebar hover functionality is handled by CSS
+// No JavaScript needed for basic hover expand/collapse
 
 document.addEventListener('DOMContentLoaded', () => {
   // ===== THEME TOGGLE =====
