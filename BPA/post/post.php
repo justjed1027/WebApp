@@ -363,6 +363,19 @@ profile svg
       cursor:pointer;
     }
   </style>
+  <style>
+    .admin-badge {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 4px 10px;
+      background: #22c55e;
+      color: #0b0b0b;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    }
+  </style>
 </head>
 
 <body>
@@ -385,6 +398,9 @@ profile svg
         <div class="profile-info">
           <h3 class="profile-name"><?php echo htmlspecialchars($user->user_username); ?></h3>
           <p class="profile-email"><?php echo htmlspecialchars($user->user_email); ?></p>
+          <?php if ((isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === 1) || (isset($user->user_is_admin) && (int)$user->user_is_admin === 1)) : ?>
+            <div class="admin-badge" title="Administrator">Admin</div>
+          <?php endif; ?>
           <a href="../profile/profile.php" class="view-profile-link">View Profile</a>
         </div>
       </div>
