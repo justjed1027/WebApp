@@ -1,4 +1,5 @@
 // Create Event Modal
+
 document.addEventListener('DOMContentLoaded', () => {
 	const modal = document.getElementById('createEventModal');
 	const modalOverlay = document.getElementById('createModalOverlay');
@@ -63,14 +64,27 @@ document.addEventListener('DOMContentLoaded', () => {
 			return;
 		}
 
-		// Log form data (in production, this would be sent to backend)
-		console.log('Event Created:', formData);
-		
-		// Show success message
-		alert('Event created successfully! (This is a demo - no backend connected yet)');
-		
-		// Close modal
-		closeModal();
+		// Send to backend
+		fetch('create_event.php', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(formData)
+		})
+		.then(r => r.json())
+		.then(res => {
+			if (res && res.success) {
+				alert('Event created successfully');
+				closeModal();
+				// Optionally reload to show new event
+				setTimeout(() => location.reload(), 800);
+			} else {
+				alert('Error creating event: ' + (res.message || 'Unknown'));
+			}
+		})
+		.catch(err => {
+			console.error(err);
+			alert('Network error creating event');
+		});
 	});
 
 	// Real-time character counter for description

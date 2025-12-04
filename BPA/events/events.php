@@ -51,6 +51,16 @@ if ($result->num_rows > 0) {
 
 
 ?>
+<?php
+// Load subjects for the Create Event category list
+$subjects = [];
+$subRes = $conn->query("SELECT subject_id, subject_name FROM bpa_skillswap.subjects ORDER BY subject_name ASC");
+if ($subRes && $subRes->num_rows > 0) {
+  while ($s = $subRes->fetch_assoc()) {
+    $subjects[] = $s;
+  }
+}
+?>
 <?php require_once '../components/sidecontent.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -335,10 +345,9 @@ if ($result->num_rows > 0) {
           </div>
           <select class="events-category">
             <option>All Categories</option>
-            <option>Hackathon</option>
-            <option>Workshop</option>
-            <option>Career</option>
-            <option>Networking</option>
+            <?php foreach ($subjects as $sub): ?>
+              <option value="<?php echo htmlspecialchars($sub['subject_id']); ?>"><?php echo htmlspecialchars($sub['subject_name']); ?></option>
+            <?php endforeach; ?>
           </select>
         </div>
 
@@ -795,13 +804,9 @@ if ($result->num_rows > 0) {
             <label class="form-label" for="eventCategory">Category <span class="required">*</span></label>
             <select id="eventCategory" class="form-select" required>
               <option value="">Select category</option>
-              <option value="hackathon">Hackathon</option>
-              <option value="workshop">Workshop</option>
-              <option value="career">Career</option>
-              <option value="networking">Networking</option>
-              <option value="conference">Conference</option>
-              <option value="social">Social</option>
-              <option value="other">Other</option>
+              <?php foreach ($subjects as $sub): ?>
+                <option value="<?php echo htmlspecialchars($sub['subject_id']); ?>"><?php echo htmlspecialchars($sub['subject_name']); ?></option>
+              <?php endforeach; ?>
             </select>
           </div>
           
