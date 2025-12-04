@@ -775,11 +775,11 @@ body.light-mode .topbar {
 }
 
 .topbar-left {
-  flex: 1;
+  min-width: 0;
 }
 
 .topbar-center {
-  flex: 2;
+  flex: 1;
   text-align: center;
 }
 
@@ -795,7 +795,6 @@ body.light-mode .topbar {
 }
 
 .topbar-right {
-  flex: 1;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -807,43 +806,73 @@ body.light-mode .topbar {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: var(--background-hover);
+  background: #f0f0f0;
   padding: 10px 18px;
   border-radius: 24px;
-  border: 1px solid transparent;
+  border: none;
   transition: all var(--transition-fast);
-  max-width: 300px;
+  max-width: 350px;
+  position: relative;
 }
 
 .search-container:focus-within {
-  border-color: var(--primary-color);
-  background: var(--background-card);
-  box-shadow: 0 0 0 3px var(--primary-light);
+  border-color: transparent;
+  background: #f0f0f0;
+  box-shadow: none;
 }
 
 .search-container svg {
-  color: var(--text-muted);
+  color: #666666;
   flex-shrink: 0;
   transition: color var(--transition-fast);
+  position: absolute;
+  left: 18px;
 }
 
 .search-container:focus-within svg {
-  color: var(--primary-color);
+  color: #666666;
 }
 
 .search-input {
-  background: none;
+  background: #f0f0f0;
   border: none;
   outline: none;
-  color: var(--text-primary);
+  color: #333333;
   font-size: 14px;
   width: 100%;
   font-weight: 400;
+  padding-left: 36px;
 }
 
 .search-input::placeholder {
-  color: var(--text-muted);
+  color: #888888;
   font-weight: 400;
+}
+
+/* Dark mode search styling */
+body:not(.light-mode) .search-container {
+  background: #2a2a2a;
+}
+
+body:not(.light-mode) .search-container:focus-within {
+  background: #2a2a2a;
+}
+
+body:not(.light-mode) .search-container svg {
+  color: #999999;
+}
+
+body:not(.light-mode) .search-container:focus-within svg {
+  color: #999999;
+}
+
+body:not(.light-mode) .search-input {
+  background: #2a2a2a;
+  color: #e0e0e0;
+}
+
+body:not(.light-mode) .search-input::placeholder {
+  color: #666666;
 }
 
 /* Icon Buttons */

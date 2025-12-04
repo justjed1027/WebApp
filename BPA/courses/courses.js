@@ -1,88 +1,209 @@
-// Course Data
-const courses = {
-  general: [
-    { title: "Mathematics", desc: "Algebra, Geometry, Calculus, and more.", img: "https://picsum.photos/400/200?random=1", key: "math" },
-    { title: "English", desc: "Grammar, literature, and writing skills.", img: "https://picsum.photos/400/200?random=2", key: "english" },
-    { title: "Science", desc: "Physics, Chemistry, and Biology concepts.", img: "https://picsum.photos/400/200?random=3", key: "science" },
-    { title: "Data Science", desc: "Data analysis, AI, and ML foundations.", img: "https://picsum.photos/400/200?random=4", key: "data" },
-    { title: "Design", desc: "UI/UX and creative design thinking.", img: "https://picsum.photos/400/200?random=5", key: "design" }
-  ],
-  math: [
-    { title: "Algebra Basics", desc: "Variables, equations, and linear functions.", img: "https://picsum.photos/400/200?random=10" },
-    { title: "Geometry", desc: "Shapes, angles, theorems, and proofs.", img: "https://picsum.photos/400/200?random=11" },
-    { title: "Calculus", desc: "Limits, derivatives, and integrals.", img: "https://picsum.photos/400/200?random=12" }
-  ],
-  english: [
-    { title: "Grammar Essentials", desc: "Master sentence structure and tenses.", img: "https://picsum.photos/400/200?random=13" },
-    { title: "Literature Studies", desc: "Explore classic and modern literature.", img: "https://picsum.photos/400/200?random=14" },
-    { title: "Creative Writing", desc: "Develop storytelling and essay skills.", img: "https://picsum.photos/400/200?random=15" }
-  ],
-  science: [
-    { title: "Physics", desc: "Newton’s laws, energy, and motion.", img: "https://picsum.photos/400/200?random=16" },
-    { title: "Chemistry", desc: "Atoms, reactions, and periodic table.", img: "https://picsum.photos/400/200?random=17" },
-    { title: "Biology", desc: "Cells, genetics, and ecosystems.", img: "https://picsum.photos/400/200?random=18" }
-  ],
-  data: [
-    { title: "Data Analysis", desc: "Work with spreadsheets and SQL.", img: "https://picsum.photos/400/200?random=19" },
-    { title: "Machine Learning", desc: "Intro to supervised learning models.", img: "https://picsum.photos/400/200?random=20" },
-    { title: "AI Foundations", desc: "Basics of neural networks and NLP.", img: "https://picsum.photos/400/200?random=21" }
-  ],
-  design: [
-    { title: "UI Design", desc: "Typography, colors, and layout principles.", img: "https://picsum.photos/400/200?random=22" },
-    { title: "UX Research", desc: "User testing and design thinking.", img: "https://picsum.photos/400/200?random=23" },
-    { title: "Prototyping", desc: "Wireframes and interactive mockups.", img: "https://picsum.photos/400/200?random=24" }
-  ]
-};
+// Theme Toggle (matches calendar functionality)
+document.addEventListener('DOMContentLoaded', function() {
+    // Theme initialization - use same system as calendar
+    const themeToggleSidebar = document.getElementById('themeToggle');
+    const body = document.body;
+    const savedTheme = localStorage.getItem('theme');
+    
+    // Apply saved theme on load
+    if (savedTheme === 'light') {
+        body.classList.add('light-mode');
+    }
+    
+    // Theme toggle function
+    function toggleTheme() {
+        body.classList.toggle('light-mode');
+        localStorage.setItem('theme', body.classList.contains('light-mode') ? 'light' : 'dark');
+    }
+    
+    // Add event listener to sidebar toggle
+    if (themeToggleSidebar) {
+        themeToggleSidebar.addEventListener('click', toggleTheme);
+    }
 
-// Elements
-const courseContainer = document.getElementById("course-container");
-const pageTitle = document.getElementById("page-title");
-const backBtn = document.getElementById("back-btn");
+    // Initialize search functionality for all pages
+    initializeSearchFunctionality();
+    
+    // Initialize course list filtering and sorting if on course-list page
+    initializeCourseList();
+    
+    // Initialize course detail tabs if on course-detail page
+    initializeCourseTabs();
+});
 
-// Render function
-function renderCourses(list, title, isSub = false) {
-  courseContainer.innerHTML = ""; // clear
-  pageTitle.textContent = title;
-  backBtn.style.display = isSub ? "inline-block" : "none";
+// Universal Search Functionality
+function initializeSearchFunctionality() {
+    const searchInput = document.getElementById('search-input');
+    
+    if (!searchInput) return;
+    
+    // Detect which page we're on
+    const courseGroups = document.querySelectorAll('.course-group-card');
+    const courseCards = document.querySelectorAll('.course-list-card');
+    
+    // If on main courses page, search course groups
+    if (courseGroups.length > 0 && courseCards.length === 0) {
+        searchInput.addEventListener('input', function() {
+            searchCourses(this.value);
+        });
+    }
+    // If on course-list page, the filterAndSort function will handle search via event listener
+    // No need to add duplicate listener as initializeCourseList() already handles it
+}
 
-  list.forEach(course => {
-    const card = document.createElement("div");
-    card.className = "card";
-    card.innerHTML = `
-      <img src="${course.img}" alt="${course.title}">
-      <div class="card-content">
-        <h2>${course.title}</h2>
-        <p>${course.desc}</p>
-        ${isSub ? `<a href="#" class="btn">View Resources</a>` : `<button class="btn" data-key="${course.key}">View Courses</button>`}
-      </div>
-    `;
-    courseContainer.appendChild(card);
-  });
+// Course List Page - Filtering and Sorting
+function initializeCourseList() {
+    const levelFilter = document.getElementById('level-filter');
+    const sortSelect = document.getElementById('sort-select');
+    const searchInput = document.getElementById('search-input');
+    const courseCards = document.querySelectorAll('.course-list-card');
+    
+    if (!courseCards.length) return;
+    
+    function filterAndSort() {
+        const levelValue = levelFilter ? levelFilter.value : 'all';
+        const sortValue = sortSelect ? sortSelect.value : 'popular';
+        const searchValue = searchInput ? searchInput.value.toLowerCase() : '';
+        
+        // Convert NodeList to array for sorting
+        const cardsArray = Array.from(courseCards);
+        
+        // Filter courses
+        cardsArray.forEach(card => {
+            const level = card.dataset.level;
+            const title = card.querySelector('h3').textContent.toLowerCase();
+            const instructor = card.querySelector('.course-instructor').textContent.toLowerCase();
+            
+            const matchesLevel = levelValue === 'all' || level === levelValue;
+            const matchesSearch = searchValue === '' || 
+                                 title.includes(searchValue) || 
+                                 instructor.includes(searchValue);
+            
+            card.style.display = (matchesLevel && matchesSearch) ? 'flex' : 'none';
+        });
+        
+        // Sort visible courses
+        const visibleCards = cardsArray.filter(card => card.style.display !== 'none');
+        const container = document.querySelector('.courses-list-grid');
+        
+        if (container) {
+            visibleCards.sort((a, b) => {
+                switch(sortValue) {
+                    case 'popular':
+                        const studentsA = parseInt(a.dataset.students);
+                        const studentsB = parseInt(b.dataset.students);
+                        return studentsB - studentsA;
+                    
+                    case 'rating':
+                        const ratingA = parseFloat(a.dataset.rating);
+                        const ratingB = parseFloat(b.dataset.rating);
+                        return ratingB - ratingA;
+                    
+                    case 'duration':
+                        const durationA = parseInt(a.dataset.duration);
+                        const durationB = parseInt(b.dataset.duration);
+                        return durationA - durationB;
+                    
+                    case 'name':
+                        const nameA = a.querySelector('h3').textContent;
+                        const nameB = b.querySelector('h3').textContent;
+                        return nameA.localeCompare(nameB);
+                    
+                    default:
+                        return 0;
+                }
+            });
+            
+            // Re-append sorted cards
+            visibleCards.forEach(card => container.appendChild(card));
+        }
+        
+        // Update count
+        const countDisplay = document.querySelector('.course-count-display span');
+        if (countDisplay) {
+            countDisplay.textContent = visibleCards.length;
+        }
+    }
+    
+    // Add event listeners
+    if (levelFilter) {
+        levelFilter.addEventListener('change', filterAndSort);
+    }
+    
+    if (sortSelect) {
+        sortSelect.addEventListener('change', filterAndSort);
+    }
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', filterAndSort);
+    }
+}
 
-  if (!isSub) {
-    document.querySelectorAll(".btn[data-key]").forEach(btn => {
-      btn.addEventListener("click", e => {
-        const key = e.target.getAttribute("data-key");
-        renderCourses(courses[key], courseTitle(key), true);
-      });
+// Course Detail Page - Tab Switching
+function initializeCourseTabs() {
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    if (!tabButtons.length || !tabContents.length) return;
+    
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const targetTab = button.dataset.tab;
+            
+            // Remove active class from all tabs and contents
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // Add active class to clicked tab and corresponding content
+            button.classList.add('active');
+            const targetContent = document.getElementById(targetTab);
+            if (targetContent) {
+                targetContent.classList.add('active');
+            }
+        });
     });
-  }
 }
 
-// Convert key to title
-function courseTitle(key) {
-  switch (key) {
-    case "math": return "Mathematics Courses";
-    case "english": return "English Courses";
-    case "science": return "Science Courses";
-    case "data": return "Data Science Courses";
-    case "design": return "Design Courses";
-    default: return "Courses";
-  }
+// Sidebar navigation active state
+document.addEventListener('DOMContentLoaded', function() {
+    const currentPage = window.location.pathname.split('/').pop();
+    const navItems = document.querySelectorAll('.nav-item');
+    
+    navItems.forEach(item => {
+        const link = item.querySelector('a');
+        if (link && link.getAttribute('href') === currentPage) {
+            item.classList.add('active');
+        }
+    });
+});
+
+// Search functionality for main courses page (if needed)
+function searchCourses(query) {
+    const courseGroups = document.querySelectorAll('.course-group-card');
+    const lowerQuery = query.toLowerCase();
+    
+    courseGroups.forEach(group => {
+        const title = group.querySelector('h3').textContent.toLowerCase();
+        const description = group.querySelector('p').textContent.toLowerCase();
+        
+        if (title.includes(lowerQuery) || description.includes(lowerQuery)) {
+            group.style.display = 'flex';
+        } else {
+            group.style.display = 'none';
+        }
+    });
 }
 
-// Back button handler
-backBtn.addEventListener("click", () => renderCourses(courses.general, "General Courses"));
-
-// Initial render
-renderCourses(courses.general, "General Courses");
+// Smooth scroll for internal links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
