@@ -3,6 +3,10 @@ session_start();
 require_once '../database/User.php';
 require_once '../database/DatabaseConnection.php';
 
+// Single source of truth for the admin account email
+// Update this value to the exact email for Admin1
+const ADMIN_EMAIL = 'admin@gmail.com';
+
 $user_username ="";
 $user_password ="";
 $user_email ="";
@@ -42,7 +46,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $newUser->user_username = $user_username;
         $newUser->user_password = $user_password;
         $newUser->user_email = $user_email;
-        $newUser->user_is_admin = 0; 
+        // If the signup email matches the Admin account, grant admin
+        if (strtolower($user_email) === strtolower(ADMIN_EMAIL)) {
+            $newUser->user_is_admin = 1;
+        } else {
+            $newUser->user_is_admin = 0;
+        }
 
         //Insert user into database
         $result = $newUser->insert();
@@ -50,6 +59,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         if($result['success']){
             //Success - redirect to login or dashboard
             $_SESSION['user_id'] = $newUser->user_id;
+            if ($newUser->user_is_admin === 1) {
+                $_SESSION['is_admin'] = 1;
+            }
             header("Location: ../setup/page1.php");
             exit;
         } else {

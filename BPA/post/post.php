@@ -363,6 +363,19 @@ profile svg
       cursor:pointer;
     }
   </style>
+  <style>
+    .admin-badge {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 4px 10px;
+      background: #22c55e;
+      color: #0b0b0b;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    }
+  </style>
 </head>
 
 <body>
@@ -385,6 +398,9 @@ profile svg
         <div class="profile-info">
           <h3 class="profile-name"><?php echo htmlspecialchars($user->user_username); ?></h3>
           <p class="profile-email"><?php echo htmlspecialchars($user->user_email); ?></p>
+          <?php if ((isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === 1) || (isset($user->user_is_admin) && (int)$user->user_is_admin === 1)) : ?>
+            <div class="admin-badge" title="Administrator">Admin</div>
+          <?php endif; ?>
           <a href="../profile/profile.php" class="view-profile-link">View Profile</a>
         </div>
       </div>
@@ -467,10 +483,6 @@ profile svg
         </svg>
         <span>Log Out</span>
       </a>
-      
-      <form action="delete_oldest_post.php" method="POST" style="display:inline;">
-        <button type="submit" style="margin-left:16px;">Delete Oldest Post</button>
-      </form>
 
       <div class="theme-toggle">
         <button class="theme-toggle-btn" id="themeToggle">
@@ -570,7 +582,7 @@ profile svg
             <div class="post" style="background:#fff;border-radius:8px;padding:16px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
               <div class="post-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
                 <?php $displayName = !empty($post['user_username']) ? $post['user_username'] : ('User #' . intval($post['user_id'])); ?>
-                <div style="display:flex;align-items:center;gap:12px;">
+                <div style="display:flex;align-items:center;gap:12px;flex:1;">
                   <div class="post-author-avatar" style="width:40px;height:40px;border-radius:50%;background:#e9ecef;color:#333;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:1rem;">
                     <?php
                       $initial = '';
@@ -585,6 +597,39 @@ profile svg
                   <div style="display:flex;flex-direction:column;">
                     <div style="font-weight:600;color:#111"><?php echo htmlspecialchars($displayName); ?></div>
                     <div style="font-size:0.85rem;color:#666"><?php echo isset($post['created_at']) ? htmlspecialchars(timeAgo($post['created_at'])) : 'just now'; ?></div>
+                  </div>
+                </div>
+
+                <!-- Post Menu Button -->
+                <div style="position:relative;">
+                  <button class="post-menu-btn" data-post-id="<?php echo intval($post['post_id']); ?>" title="Post options" style="background:none;border:none;cursor:pointer;color:#666;font-size:1.2rem;padding:4px 8px;margin-left:8px;">
+                    ⋮
+                  </button>
+                  <div class="post-menu-dropdown" style="position:absolute;right:0;background:#fff;border:1px solid #ddd;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);z-index:10;min-width:140px;display:none;white-space:nowrap;">
+                    <?php if ($user->user_is_admin): ?>
+                      <!-- Admin Options -->
+                      <button class="post-menu-item delete-post-option" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#d32f2f;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
+                        🗑 Delete Post
+                      </button>
+                      <div style="border-top:1px solid #e0e0e0;"></div>
+                      <button class="post-menu-item admin-action-1" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#333;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
+                        📌 Pin Post
+                      </button>
+                      <button class="post-menu-item admin-action-2" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#333;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
+                        ⭐ Feature Post
+                      </button>
+                    <?php else: ?>
+                      <!-- Regular User Options -->
+                      <button class="post-menu-item user-action-report" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#333;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
+                        🚩 Report Post
+                      </button>
+                      <button class="post-menu-item user-action-save" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#333;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
+                        🔖 Save Post
+                      </button>
+                      <button class="post-menu-item user-action-hide" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#333;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
+                        👁️‍🗨️ Hide Post
+                      </button>
+                    <?php endif; ?>
                   </div>
                 </div>
 
@@ -619,6 +664,15 @@ profile svg
                   </div>
                 <?php endif; ?>
               </div>
+
+              <!-- Inline Delete Confirmation -->
+              <div class="post-delete-confirmation" data-post-id="<?php echo intval($post['post_id']); ?>" style="display:none;background:#fff3cd;border:1px solid #ffecb5;border-radius:4px;padding:8px 10px;margin-top:8px;text-align:right;max-width:fit-content;margin-left:auto;">
+                <div style="color:#333;font-size:0.8rem;margin-bottom:6px;text-align:left;">Delete this post?</div>
+                <div style="display:flex;gap:6px;justify-content:flex-end;">
+                  <button class="post-delete-cancel" data-post-id="<?php echo intval($post['post_id']); ?>" style="padding:4px 10px;background:#e0e0e0;border:none;border-radius:3px;cursor:pointer;font-size:0.8rem;transition:background 0.2s;">Cancel</button>
+                  <button class="post-delete-confirm" data-post-id="<?php echo intval($post['post_id']); ?>" style="padding:4px 10px;background:#d32f2f;color:white;border:none;border-radius:3px;cursor:pointer;font-size:0.8rem;transition:background 0.2s;">Delete</button>
+                </div>
+              </div>
             </div>
           <?php endforeach; ?>
         <?php endif; ?>
@@ -644,10 +698,203 @@ profile svg
 
   </main>
 
-
 </body>
 
     <script src="script.js?v=20251103"></script>
+    <script>
+      // Notification Toast
+      function showNotification(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = `notification-toast ${type}`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+          toast.style.animation = 'slideInRight 0.3s ease reverse';
+          setTimeout(() => toast.remove(), 300);
+        }, 3000);
+      }
+
+      // Event delegation for menu buttons and actions
+      document.addEventListener('click', function(e) {
+        // Handle 3-dot menu button clicks
+        if (e.target.closest('.post-menu-btn')) {
+          e.stopPropagation();
+          const btn = e.target.closest('.post-menu-btn');
+          const dropdown = btn.nextElementSibling;
+          const isOpen = dropdown.style.display !== 'none';
+          
+          // Close all other menus and confirmations
+          document.querySelectorAll('.post-menu-dropdown').forEach(menu => {
+            if (menu !== dropdown) menu.style.display = 'none';
+          });
+          document.querySelectorAll('.post-delete-confirmation').forEach(conf => {
+            conf.style.display = 'none';
+          });
+          
+          // Toggle current menu
+          dropdown.style.display = isOpen ? 'none' : 'flex';
+          dropdown.style.flexDirection = 'column';
+          return;
+        }
+
+        // Handle delete post option
+        if (e.target.closest('.delete-post-option')) {
+          e.preventDefault();
+          e.stopPropagation();
+          const btn = e.target.closest('.delete-post-option');
+          const postId = btn.getAttribute('data-post-id');
+          
+          // Close menu
+          document.querySelectorAll('.post-menu-dropdown').forEach(menu => {
+            menu.style.display = 'none';
+          });
+          
+          // Show delete confirmation
+          const confirmation = document.querySelector(`.post-delete-confirmation[data-post-id="${postId}"]`);
+          if (confirmation) {
+            confirmation.style.display = 'block';
+          }
+          return;
+        }
+
+        // Handle delete confirmation cancel
+        if (e.target.closest('.post-delete-cancel')) {
+          e.preventDefault();
+          e.stopPropagation();
+          const btn = e.target.closest('.post-delete-cancel');
+          const postId = btn.getAttribute('data-post-id');
+          const confirmation = document.querySelector(`.post-delete-confirmation[data-post-id="${postId}"]`);
+          if (confirmation) {
+            confirmation.style.display = 'none';
+          }
+          return;
+        }
+
+        // Handle delete confirmation confirm
+        if (e.target.closest('.post-delete-confirm')) {
+          e.preventDefault();
+          e.stopPropagation();
+          const btn = e.target.closest('.post-delete-confirm');
+          const postId = btn.getAttribute('data-post-id');
+          const confirmation = document.querySelector(`.post-delete-confirmation[data-post-id="${postId}"]`);
+          
+          fetch('delete_oldest_post.php', { 
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ post_id: parseInt(postId) })
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              showNotification('Post deleted successfully!', 'success');
+              setTimeout(() => {
+                window.location.href = 'post.php';
+              }, 1500);
+            } else {
+              showNotification('Error: ' + (data.error || 'Could not delete post'), 'error');
+              if (confirmation) {
+                confirmation.style.display = 'none';
+              }
+            }
+          })
+          .catch(error => {
+            showNotification('Error: ' + error.message, 'error');
+            if (confirmation) {
+              confirmation.style.display = 'none';
+            }
+          });
+          return;
+        }
+
+        // Handle pin post
+        if (e.target.closest('.admin-action-1')) {
+          e.preventDefault();
+          e.stopPropagation();
+          const btn = e.target.closest('.admin-action-1');
+          const postId = btn.getAttribute('data-post-id');
+          
+          // Close menu
+          document.querySelectorAll('.post-menu-dropdown').forEach(menu => {
+            menu.style.display = 'none';
+          });
+          
+          showNotification('Pin functionality coming soon', 'warning');
+          return;
+        }
+
+        // Handle feature post
+        if (e.target.closest('.admin-action-2')) {
+          e.preventDefault();
+          e.stopPropagation();
+          const btn = e.target.closest('.admin-action-2');
+          const postId = btn.getAttribute('data-post-id');
+          
+          // Close menu
+          document.querySelectorAll('.post-menu-dropdown').forEach(menu => {
+            menu.style.display = 'none';
+          });
+          
+          showNotification('Feature functionality coming soon', 'warning');
+          return;
+        }
+
+        // Handle report post (regular users)
+        if (e.target.closest('.user-action-report')) {
+          e.preventDefault();
+          e.stopPropagation();
+          const btn = e.target.closest('.user-action-report');
+          const postId = btn.getAttribute('data-post-id');
+          
+          // Close menu
+          document.querySelectorAll('.post-menu-dropdown').forEach(menu => {
+            menu.style.display = 'none';
+          });
+          
+          showNotification('Report functionality coming soon', 'warning');
+          return;
+        }
+
+        // Handle save post (regular users)
+        if (e.target.closest('.user-action-save')) {
+          e.preventDefault();
+          e.stopPropagation();
+          const btn = e.target.closest('.user-action-save');
+          const postId = btn.getAttribute('data-post-id');
+          
+          // Close menu
+          document.querySelectorAll('.post-menu-dropdown').forEach(menu => {
+            menu.style.display = 'none';
+          });
+          
+          showNotification('Save functionality coming soon', 'warning');
+          return;
+        }
+
+        // Handle hide post (regular users)
+        if (e.target.closest('.user-action-hide')) {
+          e.preventDefault();
+          e.stopPropagation();
+          const btn = e.target.closest('.user-action-hide');
+          const postId = btn.getAttribute('data-post-id');
+          
+          // Close menu
+          document.querySelectorAll('.post-menu-dropdown').forEach(menu => {
+            menu.style.display = 'none';
+          });
+          
+          showNotification('Hide functionality coming soon', 'warning');
+          return;
+        }
+
+        // Close menu when clicking outside menu areas
+        if (!e.target.closest('.post-menu-dropdown') && !e.target.closest('.post-menu-btn') && !e.target.closest('.post-delete-confirmation')) {
+          document.querySelectorAll('.post-menu-dropdown').forEach(menu => {
+            menu.style.display = 'none';
+          });
+        }
+      }, false);
+    </script>
   </body>
 
   </html>
