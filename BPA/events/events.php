@@ -51,7 +51,7 @@ if ($result->num_rows > 0) {
 
 
 ?>
-
+<?php require_once '../components/sidecontent.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -60,8 +60,9 @@ if ($result->num_rows > 0) {
   <title>Events | SkillSwap</title>
   <link rel="stylesheet" href="../calendar/calendar.css">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="../components/sidecontent.css">
 </head>
-<body>
+<body class="has-side-content">
 
   <!-- Sidebar Navigation -->
   <aside class="sidebar" id="sidebar">
@@ -220,8 +221,9 @@ if ($result->num_rows > 0) {
 
   <!-- Main Content Area -->
   <main class="main-content">
-    <div class="events-container">
-      <div class="events-main">
+    <div class="page-content">
+      <div class="events-container">
+        <div class="events-main">
         <!-- Featured Events Carousel -->
         <div class="section-label">Featured Events</div>
         <div class="featured-carousel" aria-label="Featured events carousel">
@@ -675,8 +677,9 @@ if ($result->num_rows > 0) {
             <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M1.5 5.5a.5.5 0 0 1 .8-.4l5.2 3.9 5.2-3.9a.5.5 0 1 1 .6.8l-5.5 4.1a.5.5 0 0 1-.6 0L1.7 5.9a.5.5 0 0 1-.2-.4z"/></svg>
           </button>
         </div>
+        </div>
       </div>
-    </div>
+      <?php renderSideContent('events'); ?>
   </main>
 
   <!-- Event Detail Modal -->
@@ -965,5 +968,6 @@ if ($result->num_rows > 0) {
   <script src="script.js"></script>
   <script src="modal.js"></script>
   <script src="create-event.js"></script>
+  <script src="../components/sidecontent.js"></script>
 </body>
 </html>

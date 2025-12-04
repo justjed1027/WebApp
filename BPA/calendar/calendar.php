@@ -3,10 +3,10 @@ session_start();
 require_once '../database/User.php';
 require_once '../database/DatabaseConnection.php';
 if (!isset($_SESSION['user_id'])) {
-    header('Location: ../login/login.php');
-    exit();
+  header('Location: ../login/login.php');
+  exit();
 }
-
+require_once '../components/sidecontent.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -15,8 +15,9 @@ if (!isset($_SESSION['user_id'])) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SkillSwap — Calendar</title>
   <link rel="stylesheet" href="calendar.css">
+  <link rel="stylesheet" href="../components/sidecontent.css">
 </head>
-<body>
+<body class="has-side-content">
 
   <!-- Sidebar Navigation -->
   <aside class="sidebar" id="sidebar">
@@ -175,8 +176,9 @@ if (!isset($_SESSION['user_id'])) {
 
   <!-- Main Content Area -->
   <main class="main-content">
-  <div class="calendar-container">
-    <div class="calendar-main">
+  <div class="page-content">
+    <div class="calendar-container">
+      <div class="calendar-main">
       <div class="calendar-card" id="calendarViews">
         <!-- Shared Controls Header (Month & Day Views) -->
         <div class="calendar-header" id="monthHeader">
@@ -220,10 +222,12 @@ if (!isset($_SESSION['user_id'])) {
         <h3>Upcoming Events</h3>
         <ul class="events-list" id="upcomingEvents" aria-label="Upcoming events"></ul>
       </div>
+      </div>
     </div>
-  </div>
+    <?php renderSideContent('calendar'); ?>
   </main>
 
   <script src="calendar.js"></script>
+  <script src="../components/sidecontent.js"></script>
 </body>
 </html>
