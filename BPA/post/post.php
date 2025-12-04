@@ -605,17 +605,31 @@ profile svg
                   <button class="post-menu-btn" data-post-id="<?php echo intval($post['post_id']); ?>" title="Post options" style="background:none;border:none;cursor:pointer;color:#666;font-size:1.2rem;padding:4px 8px;margin-left:8px;">
                     ⋮
                   </button>
-                  <div class="post-menu-dropdown" style="position:absolute;right:0;background:#fff;border:1px solid #ddd;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);z-index:10;min-width:180px;display:none;">
-                    <button class="post-menu-item delete-post-option" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#d32f2f;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
-                      🗑 Delete Post
-                    </button>
-                    <div style="border-top:1px solid #e0e0e0;"></div>
-                    <button class="post-menu-item admin-action-1" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#333;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
-                      📌 Pin Post
-                    </button>
-                    <button class="post-menu-item admin-action-2" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#333;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
-                      ⭐ Feature Post
-                    </button>
+                  <div class="post-menu-dropdown" style="position:absolute;right:0;background:#fff;border:1px solid #ddd;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);z-index:10;min-width:140px;display:none;white-space:nowrap;">
+                    <?php if ($user->user_is_admin): ?>
+                      <!-- Admin Options -->
+                      <button class="post-menu-item delete-post-option" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#d32f2f;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
+                        🗑 Delete Post
+                      </button>
+                      <div style="border-top:1px solid #e0e0e0;"></div>
+                      <button class="post-menu-item admin-action-1" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#333;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
+                        📌 Pin Post
+                      </button>
+                      <button class="post-menu-item admin-action-2" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#333;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
+                        ⭐ Feature Post
+                      </button>
+                    <?php else: ?>
+                      <!-- Regular User Options -->
+                      <button class="post-menu-item user-action-report" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#333;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
+                        🚩 Report Post
+                      </button>
+                      <button class="post-menu-item user-action-save" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#333;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
+                        🔖 Save Post
+                      </button>
+                      <button class="post-menu-item user-action-hide" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#333;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
+                        👁️‍🗨️ Hide Post
+                      </button>
+                    <?php endif; ?>
                   </div>
                 </div>
 
@@ -822,6 +836,54 @@ profile svg
           });
           
           showNotification('Feature functionality coming soon', 'warning');
+          return;
+        }
+
+        // Handle report post (regular users)
+        if (e.target.closest('.user-action-report')) {
+          e.preventDefault();
+          e.stopPropagation();
+          const btn = e.target.closest('.user-action-report');
+          const postId = btn.getAttribute('data-post-id');
+          
+          // Close menu
+          document.querySelectorAll('.post-menu-dropdown').forEach(menu => {
+            menu.style.display = 'none';
+          });
+          
+          showNotification('Report functionality coming soon', 'warning');
+          return;
+        }
+
+        // Handle save post (regular users)
+        if (e.target.closest('.user-action-save')) {
+          e.preventDefault();
+          e.stopPropagation();
+          const btn = e.target.closest('.user-action-save');
+          const postId = btn.getAttribute('data-post-id');
+          
+          // Close menu
+          document.querySelectorAll('.post-menu-dropdown').forEach(menu => {
+            menu.style.display = 'none';
+          });
+          
+          showNotification('Save functionality coming soon', 'warning');
+          return;
+        }
+
+        // Handle hide post (regular users)
+        if (e.target.closest('.user-action-hide')) {
+          e.preventDefault();
+          e.stopPropagation();
+          const btn = e.target.closest('.user-action-hide');
+          const postId = btn.getAttribute('data-post-id');
+          
+          // Close menu
+          document.querySelectorAll('.post-menu-dropdown').forEach(menu => {
+            menu.style.display = 'none';
+          });
+          
+          showNotification('Hide functionality coming soon', 'warning');
           return;
         }
 
