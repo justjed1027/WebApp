@@ -13,8 +13,7 @@ class User
 
     function populate($p_user_id)
     {
-
-        //Create new connection. 
+        // Create new connection
         $db = new DatabaseConnection();
 
         // Prepare the SELECT statement with a placeholder for the user ID
@@ -23,6 +22,7 @@ class User
 
         // Check if the statement preparation was successful
         if ($stmt === false) {
+            $db->closeConnection();
             die("Error preparing statement: " . $db->connection->error);
         }
         //Bind parameters to sql statement 
@@ -104,7 +104,7 @@ class User
     {
         $userId = 0;
 
-        //Create new connection. 
+        // Create new connection
         $db = new DatabaseConnection();
 
         // Prepare the SELECT statement with a placeholder for the user ID
@@ -113,6 +113,7 @@ class User
 
         // Check if the statement preparation was successful
         if ($stmt === false) {
+            $db->closeConnection();
             die("Error preparing statement: " . $db->connection->error);
         }
         //Bind parameters to sql statement 
