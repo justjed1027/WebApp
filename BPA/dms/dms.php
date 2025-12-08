@@ -22,6 +22,10 @@ if (!isset($_SESSION['user_id'])) {
 <body>
   <div class="dm-container">
     <div class="dm-sidebar">
+      <div class="dm-sidebar-header">
+        <a href="../post/post.php" class="dm-back-btn" title="Back to Posts">← Posts</a>
+        <h2 style="margin:0;font-size:1.2rem;color:#fff;">Messages</h2>
+      </div>
       <div class="dm-search">
         <input type="text" id="searchInput" placeholder="Search messages...">
       </div>
