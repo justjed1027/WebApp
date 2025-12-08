@@ -41,8 +41,19 @@ if (empty($img)) $img = null;
 $location = trim($data['location'] ?? '');
 $capacity = !empty($data['capacity']) && is_numeric($data['capacity']) ? (int)$data['capacity'] : null;
 $organizer = trim($data['organizer'] ?? '');
-$tags = trim($data['tags'] ?? '');
-if (empty($tags)) $tags = null;
+
+// tags may be sent as an array of tag IDs (preferred) or as a legacy string
+$tagIds = [];
+if (isset($data['tags'])) {
+    if (is_array($data['tags'])) {
+        $tagIds = array_map('intval', $data['tags']);
+    } elseif (is_string($data['tags']) && strlen(trim($data['tags'])) > 0) {
+        $parts = preg_split('/[\s,]+/', trim($data['tags']));
+        foreach ($parts as $p) {
+            if (is_numeric($p)) $tagIds[] = (int)$p;
+        }
+    }
+}
 $visibility = $data['visibility'] ?? 'public';
 $deadline = !empty($data['registrationDeadline']) ? $data['registrationDeadline'] : null;
 $contactEmail = trim($data['contactEmail'] ?? '');
@@ -78,9 +89,8 @@ $insertSql = "INSERT INTO events (
     events_visibility, 
     events_deadline, 
     events_start, 
-    events_end,
-    events_tags
-) VALUES (?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    events_end
+) VALUES (?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 $stmt = $conn->prepare($insertSql);
 if (!$stmt) {
@@ -92,9 +102,9 @@ if (!$stmt) {
 
 // Bind parameters: 
 // s = string, i = int
-// Order: title(s), description(s), date(s), img(s), location(s), capacity(i), organization(s), contact_email(s), visibility(s), deadline(s), start(s), end(s), tags(s)
+// Order: title(s), description(s), date(s), img(s), location(s), capacity(i), organization(s), contact_email(s), visibility(s), deadline(s), start(s), end(s)
 $stmt->bind_param(
-    'sssssisssssss',
+    'sssssissssss',
     $title,
     $desc,
     $events_date,
@@ -106,8 +116,7 @@ $stmt->bind_param(
     $visibility,
     $deadline,
     $startDateTime,
-    $endDateTime,
-    $tags
+    $endDateTime
 );
 
 if (!$stmt->execute()) {
@@ -129,6 +138,21 @@ if ($subjectId > 0) {
         $linkStmt->bind_param('ii', $eventId, $subjectId);
         $linkStmt->execute();
         $linkStmt->close();
+    }
+}
+
+// Link event to tags in events_tags junction table (if any tag IDs provided)
+if (!empty($tagIds)) {
+    $tagLinkSql = "INSERT INTO events_tags (et_tags_id, et_events_id) VALUES (?, ?)";
+    $tagStmt = $conn->prepare($tagLinkSql);
+    if ($tagStmt) {
+        foreach ($tagIds as $tId) {
+            $tid = (int)$tId;
+            if ($tid <= 0) continue;
+            $tagStmt->bind_param('ii', $tid, $eventId);
+            $tagStmt->execute();
+        }
+        $tagStmt->close();
     }
 }
 

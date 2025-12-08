@@ -868,8 +868,8 @@ if ($subRes && $subRes->num_rows > 0) {
           
           <div class="form-group">
             <label class="form-label" for="eventTags">Tags</label>
-            <input type="text" id="eventTags" class="form-input" placeholder="e.g., #tech #networking #workshop">
-            <span class="form-hint">Separate tags with spaces, use # prefix</span>
+            <div id="eventTags" class="tag-checkbox-list" aria-live="polite"></div>
+            <span class="form-hint">Choose tags relevant to selected category (click to toggle)</span>
           </div>
           
           <div class="form-group">

@@ -7,6 +7,65 @@ document.addEventListener('DOMContentLoaded', () => {
 	const fabButton = document.getElementById('fabCreateEvent');
 	const cancelButton = document.getElementById('btnCancelCreate');
 	const form = document.getElementById('createEventForm');
+
+	// Tags multi-select element
+	const tagSelect = document.getElementById('eventTags');
+
+	// Load tags for a subject and populate the multi-select
+	const loadTagsForSubject = async (subjectId) => {
+		if (!tagSelect) return;
+		// clear existing
+		tagSelect.innerHTML = '';
+		if (!subjectId) {
+			const note = document.createElement('div');
+			note.className = 'tag-note';
+			note.textContent = 'Select a category to load tags';
+			tagSelect.appendChild(note);
+			return;
+		}
+		try {
+			const res = await fetch(`get_subject_tags.php?subject_id=${encodeURIComponent(subjectId)}`);
+			const json = await res.json();
+			if (json && json.success && Array.isArray(json.tags)) {
+				if (json.tags.length === 0) {
+					const note = document.createElement('div');
+					note.className = 'tag-note';
+					note.textContent = 'No tags available for this category';
+					tagSelect.appendChild(note);
+				} else {
+					json.tags.forEach(t => {
+						const id = String(t.id);
+						const wrapper = document.createElement('label');
+						wrapper.className = 'tag-checkbox-label';
+						const cb = document.createElement('input');
+						cb.type = 'checkbox';
+						cb.value = id;
+						cb.name = 'eventTagCheckbox';
+						cb.id = `tag-${id}`;
+						const span = document.createElement('span');
+						span.textContent = t.name;
+						wrapper.appendChild(cb);
+						wrapper.appendChild(span);
+						tagSelect.appendChild(wrapper);
+					});
+				}
+				// if discovery info present, log it to console for debugging
+				if (json.discovery && json.discovery.length) console.debug('Tag discovery:', json.discovery);
+			}
+		} catch (err) {
+			console.error('Failed to load tags', err);
+		}
+	};
+
+	// When category changes, load tags
+	const categorySelect = document.getElementById('eventCategory');
+	if (categorySelect) {
+		categorySelect.addEventListener('change', (e) => {
+			loadTagsForSubject(e.target.value);
+		});
+		// load initial tags if category already selected
+		if (categorySelect.value) loadTagsForSubject(categorySelect.value);
+	}
 	
 	if (!modal || !fabButton) return;
 
@@ -21,6 +80,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		modal.hidden = true;
 		document.body.style.overflow = '';
 		form.reset();
+		// clear dynamic tag list so state resets between opens
+		if (tagSelect) tagSelect.innerHTML = '';
 	};
 
 	// Event listeners
@@ -50,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			location: document.getElementById('eventLocation').value,
 			capacity: document.getElementById('eventCapacity').value,
 			organizer: document.getElementById('eventOrganizer').value,
-			tags: document.getElementById('eventTags').value,
+			tags: Array.from(document.querySelectorAll('#eventTags input[type="checkbox"]:checked')).map(i => i.value),
 			visibility: document.querySelector('input[name="eventVisibility"]:checked').value,
 			requireApproval: document.getElementById('eventRequireApproval').checked,
 			featured: document.getElementById('eventFeatured').checked,
