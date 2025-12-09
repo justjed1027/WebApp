@@ -10,7 +10,10 @@ class DatabaseConnection {
 
     public function __construct() {
         // Load configuration from db_config.ini
-        $this->loadConfig();
+        try{$this->loadConfig();} 
+        catch (Exception $e){
+            die("Error loading database configuration: " . $e->getMessage());
+        }
 
         $this->connection = new mysqli($this->host, $this->username, $this->password, $this->database);
 
@@ -25,14 +28,14 @@ class DatabaseConnection {
         $configPath = realpath(__DIR__ . '/../../db_config.ini');
 
         if (!file_exists($configPath)) {
-            die("Error: db_config.ini file not found at " . ($configPath ?: 'project root'));
+            die("Error: database config not found.");
         }
 
         // Parse the ini file
         $dbSettings = parse_ini_file($configPath, true);
 
         if (!$dbSettings || !isset($dbSettings['database'])) {
-            die("Error: Failed to parse db_config.ini or [database] section not found.");
+            die("Error: Failed to parse or [database] section not found.");
         }
 
         // Extract database settings
@@ -43,7 +46,7 @@ class DatabaseConnection {
 
         // Validate that all required settings are present
         if (empty($this->host) || empty($this->username) || empty($this->database)) {
-            die("Error: Missing required database configuration in db_config.ini (host, username, or dbname).");
+            die("Error: Missing required database configuration (host, username, or dbname).");
         }
     }
 
