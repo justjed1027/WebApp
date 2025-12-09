@@ -52,7 +52,7 @@
                     if ((int)$user->user_is_admin !== 1) {
                         require_once '../database/DatabaseConnection.php';
                         $db = new DatabaseConnection();
-                        $stmt = $db->connection->prepare("UPDATE bpa_skillswap.user SET user_is_admin = 1 WHERE user_id = ?");
+                        $stmt = $db->connection->prepare("UPDATE user SET user_is_admin = 1 WHERE user_id = ?");
                         if ($stmt) {
                             $stmt->bind_param("i", $userid);
                             $stmt->execute();

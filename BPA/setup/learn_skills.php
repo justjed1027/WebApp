@@ -18,10 +18,10 @@ $db = new DatabaseConnection();
 $conn = $db->connection;
 
 // Optional: clear previous skills (if user revisits this page)
-$conn->query("DELETE FROM bpa_skillswap.user_interests WHERE ui_user_id = $user_id");
+$conn->query("DELETE FROM user_interests WHERE ui_user_id = $user_id");
 
 // Insert new ones
-$stmt = $conn->prepare("INSERT INTO bpa_skillswap.user_interests (ui_user_id, ui_subject_id) VALUES (?, ?)");
+$stmt = $conn->prepare("INSERT INTO user_interests (ui_user_id, ui_subject_id) VALUES (?, ?)");
 foreach ($selected_subjects as $subject_id) {
     $stmt->bind_param("ii", $user_id, $subject_id);
     $stmt->execute();

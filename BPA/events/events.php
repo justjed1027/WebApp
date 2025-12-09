@@ -21,7 +21,7 @@ JOIN
     bpa_skillswap.events AS e 
     ON es.es_event_id = e.events_id
 JOIN 
-    bpa_skillswap.subjects AS s 
+    subjects AS s 
     ON es.es_subject_id = s.subject_id;
 ";
 
