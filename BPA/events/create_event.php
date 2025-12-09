@@ -32,6 +32,9 @@ foreach ($required as $r) {
 $db = new DatabaseConnection();
 $conn = $db->connection;
 
+// Get the current user ID from session
+$hostUserId = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : null;
+
 // Map and sanitize incoming values
 $title = trim($data['title'] ?? '');
 $desc = trim($data['description'] ?? '');
@@ -89,8 +92,9 @@ $insertSql = "INSERT INTO events (
     events_visibility, 
     events_deadline, 
     events_start, 
-    events_end
-) VALUES (?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    events_end,
+    host_user_id
+) VALUES (?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 $stmt = $conn->prepare($insertSql);
 if (!$stmt) {
@@ -102,9 +106,9 @@ if (!$stmt) {
 
 // Bind parameters: 
 // s = string, i = int
-// Order: title(s), description(s), date(s), img(s), location(s), capacity(i), organization(s), contact_email(s), visibility(s), deadline(s), start(s), end(s)
+// Order: title(s), description(s), date(s), img(s), location(s), capacity(i), organization(s), contact_email(s), visibility(s), deadline(s), start(s), end(s), host_user_id(i)
 $stmt->bind_param(
-    'sssssissssss',
+    'ssssisssssssi',
     $title,
     $desc,
     $events_date,
@@ -116,7 +120,8 @@ $stmt->bind_param(
     $visibility,
     $deadline,
     $startDateTime,
-    $endDateTime
+    $endDateTime,
+    $hostUserId
 );
 
 if (!$stmt->execute()) {
