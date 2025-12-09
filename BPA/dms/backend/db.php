@@ -9,10 +9,20 @@ class DB {
     private $connection;
 
     private function __construct() {
-        $host = 'localhost';
-        $username = 'root';
-        $password = 'password';
-        $database = 'bpa_skillswap';
+        // Check if we're on Atspace hosting or local environment
+        if (isset($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], 'dacc-appdev.com') !== false) {
+            // Atspace production settings
+            $host = "pdb1050.atspace.me";
+            $username = "4237754_skillswap";
+            $password = "PxbBuA1/9ornvsM!";
+            $database = "4237754_skillswap";
+        } else {
+            // Local XAMPP settings
+            $host = 'localhost';
+            $username = 'root';
+            $password = 'password';
+            $database = 'bpa_skillswap';
+        }
 
         $this->connection = new mysqli($host, $username, $password, $database);
 
