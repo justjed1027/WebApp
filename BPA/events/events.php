@@ -973,6 +973,7 @@ if ($subRes && $subRes->num_rows > 0) {
   <script src="script.js"></script>
   <script src="modal.js"></script>
   <script src="create-event.js"></script>
+  <script src="events-loader.js"></script>
   <script src="../components/sidecontent.js"></script>
 </body>
 </html>
