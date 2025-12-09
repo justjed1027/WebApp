@@ -200,14 +200,16 @@ require_once '../components/sidecontent.php';
 
         <!-- MONTH VIEW -->
         <div id="monthView" class="view-container" aria-label="Month View">
-          <table class="calendar-table" id="monthTable">
-            <thead>
-              <tr>
-                <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
-              </tr>
-            </thead>
-            <tbody id="monthGrid"><!-- Days injected by JS --></tbody>
-          </table>
+          <div class="calendar-grid-box">
+            <table class="calendar-table" id="monthTable">
+              <thead>
+                <tr>
+                  <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
+                </tr>
+              </thead>
+              <tbody id="monthGrid"><!-- Days injected by JS --></tbody>
+            </table>
+          </div>
         </div>
 
         <!-- DAY VIEW -->
@@ -220,6 +222,35 @@ require_once '../components/sidecontent.php';
       </div>
       <div class="events-card">
         <h3>Upcoming Events</h3>
+        <div class="calendar-event-card">
+          <div class="calendar-event-info">
+            <h4 class="calendar-event-title">Web Development Workshop</h4>
+            <div class="calendar-event-details">
+              <div class="calendar-event-detail-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
+                  <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
+                </svg>
+                <span>Tuesday, December 15 • 2:00 PM - 5:00 PM</span>
+              </div>
+              <div class="calendar-event-detail-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
+                  <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                </svg>
+                <span>Tech Center Room 302</span>
+              </div>
+            </div>
+            <div class="calendar-event-tags">
+              <span class="calendar-event-tag workshop">Workshop</span>
+              <span class="calendar-event-tag subject">Computer Science</span>
+            </div>
+            <button class="calendar-btn-view-details">View Details</button>
+          </div>
+          <div class="calendar-event-image-side">
+            <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=1000&h=280&fit=crop" alt="Web Development Workshop" class="calendar-event-side-img">
+          </div>
+        </div>
         <ul class="events-list" id="upcomingEvents" aria-label="Upcoming events"></ul>
       </div>
       </div>
