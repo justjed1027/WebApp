@@ -16,9 +16,9 @@ SELECT
     s.subject_name,
     s.description
 FROM 
-    bpa_skillswap.event_subjects AS es
+    event_subjects AS es
 JOIN 
-    bpa_skillswap.events AS e 
+    events AS e 
     ON es.es_event_id = e.events_id
 JOIN 
     subjects AS s 
