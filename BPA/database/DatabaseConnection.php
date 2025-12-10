@@ -10,17 +10,18 @@ class DatabaseConnection {
 
     public function __construct() {
         // Load configuration from db_config.ini
-        try{$this->loadConfig();} 
+        try{
+            $this->loadConfig();
+        
+             $this->connection = new mysqli($this->host, $this->username, $this->password, $this->database);
+        } 
         catch (Exception $e){
-            die("Error loading database configuration: " . $e->getMessage());
+            die("Error loading database configuration");
         }
 
-        $this->connection = new mysqli($this->host, $this->username, $this->password, $this->database);
+       
 
-        if ($this->connection->connect_error) {
-            // Handle connection error, e.g., log it or throw an exception
-            die("Connection failed: " . $this->connection->connect_error);
-        }
+       
     }
 
     private function loadConfig() {
