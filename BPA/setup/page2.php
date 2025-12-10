@@ -9,7 +9,7 @@ $conn = $db->connection;
 // Fetch categories except the skipped one
 $categories_query = "
     SELECT category_id, category_name
-    FROM bpa_skillswap.subjectcategories
+    FROM subjectcategories
     WHERE category_id != 3
     ORDER BY category_name ASC
 ";
@@ -18,7 +18,7 @@ $categories_result = $conn->query($categories_query);
 // Fetch subjects grouped by category
 $subjects_query = "
     SELECT subject_id, subject_name, category_id
-    FROM bpa_skillswap.subjects
+    FROM subjects
     WHERE category_id != 3
     ORDER BY category_id, subject_name ASC
 ";

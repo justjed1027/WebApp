@@ -3,10 +3,10 @@ session_start();
 require_once '../database/User.php';
 require_once '../database/DatabaseConnection.php';
 if (!isset($_SESSION['user_id'])) {
-    header('Location: ../login/login.php');
-    exit();
+  header('Location: ../login/login.php');
+  exit();
 }
-
+require_once '../components/sidecontent.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -15,8 +15,9 @@ if (!isset($_SESSION['user_id'])) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SkillSwap — Calendar</title>
   <link rel="stylesheet" href="calendar.css">
+  <link rel="stylesheet" href="../components/sidecontent.css">
 </head>
-<body>
+<body class="has-side-content">
 
   <!-- Sidebar Navigation -->
   <aside class="sidebar" id="sidebar">
@@ -74,7 +75,7 @@ if (!isset($_SESSION['user_id'])) {
       <div class="nav-divider"></div>
 
       <div class="nav-group">
-        <a href="../courses/courses.html" class="nav-link" data-tooltip="Courses">
+        <a href="../courses/courses.php" class="nav-link" data-tooltip="Courses">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
             <path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783" />
           </svg>
@@ -145,7 +146,7 @@ if (!isset($_SESSION['user_id'])) {
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
           <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
         </svg>
-        <input type="text" class="search-input" placeholder="Search people, posts, and courses...">
+        <input type="text" id="search-input" class="search-input" placeholder="Search people, posts, and courses...">
       </div>
 
       <button class="icon-btn" aria-label="Notifications">
@@ -175,8 +176,9 @@ if (!isset($_SESSION['user_id'])) {
 
   <!-- Main Content Area -->
   <main class="main-content">
-  <div class="calendar-container">
-    <div class="calendar-main">
+  <div class="page-content">
+    <div class="calendar-container">
+      <div class="calendar-main">
       <div class="calendar-card" id="calendarViews">
         <!-- Shared Controls Header (Month & Day Views) -->
         <div class="calendar-header" id="monthHeader">
@@ -220,10 +222,12 @@ if (!isset($_SESSION['user_id'])) {
         <h3>Upcoming Events</h3>
         <ul class="events-list" id="upcomingEvents" aria-label="Upcoming events"></ul>
       </div>
+      </div>
     </div>
-  </div>
+    <?php renderSideContent('calendar'); ?>
   </main>
 
   <script src="calendar.js"></script>
+  <script src="../components/sidecontent.js"></script>
 </body>
 </html>

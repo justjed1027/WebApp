@@ -32,12 +32,45 @@
 
         if(!$uerror && !$perror){
             //No errors. Attempt to authenticate user. 
+            // Single source of truth for the admin account email
+            // Update this value to the exact email for Admin1
+            $ADMIN_EMAIL = 'admin@gmail.com';
 
             $userid = User::validateUser($email, $password);
 
             if($userid != 0){
                 $_SESSION['user_id'] = $userid;
-                header("Location: ../post/post.php");
+
+                // Populate user to read admin flag and email
+                $user = new User();
+                $user->populate($userid);
+
+                // If this login email is the admin email, ensure admin flag
+                if (strtolower($email) === strtolower($ADMIN_EMAIL)) {
+                    $_SESSION['is_admin'] = 1;
+                    // If DB flag is not set yet, set it now
+                    if ((int)$user->user_is_admin !== 1) {
+                        require_once '../database/DatabaseConnection.php';
+                        $db = new DatabaseConnection();
+                        $stmt = $db->connection->prepare("UPDATE user SET user_is_admin = 1 WHERE user_id = ?");
+                        if ($stmt) {
+                            $stmt->bind_param("i", $userid);
+                            $stmt->execute();
+                            $stmt->close();
+                        }
+                        $db->closeConnection();
+                    }
+                } else {
+                    // Otherwise rely on DB flag
+                    $_SESSION['is_admin'] = (int)$user->user_is_admin === 1 ? 1 : 0;
+                }
+
+                // Redirect based on admin status
+                if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === 1) {
+                    header("Location: ../post/post.php?admin=1");
+                } else {
+                    header("Location: ../post/post.php");
+                }
             }else{
                 $invalid_login = true;
             }

@@ -9,6 +9,7 @@ class DatabaseConnection {
     public $connection;
 
     public function __construct() {
+<<<<<<< HEAD
         // Load configuration from db_config.ini
         try{
             $this->loadConfig();
@@ -17,6 +18,28 @@ class DatabaseConnection {
         } 
         catch (Exception $e){
             die("Error loading database configuration");
+=======
+        // Check if we're on Atspace hosting or local environment
+        if (isset($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], 'dacc-appdev.com') !== false) {
+            // Atspace production settings
+            $this->host = "pdb1050.atspace.me";
+            $this->username = "4237754_skillswap";
+            $this->password = "PxbBuA1/9ornvsM!";
+            $this->database = "4237754_skillswap";
+        } else {
+            // Local XAMPP settings
+            $this->host = "localhost";
+            $this->username = "root";
+            $this->password = "password";
+            $this->database = "bpa_skillswap";
+        }
+
+        $this->connection = new mysqli($this->host, $this->username, $this->password, $this->database);
+
+        if ($this->connection->connect_error) {
+            // Handle connection error, e.g., log it or throw an exception
+            die("Connection failed: " . $this->connection->connect_error);
+>>>>>>> merge1
         }
 
        
@@ -24,6 +47,7 @@ class DatabaseConnection {
        
     }
 
+<<<<<<< HEAD
     private function loadConfig() {
         // Find the db_config.ini file in the project root (two directories up from BPA/database/)
         $configPath = realpath(__DIR__ . '/../../db_config.ini');
@@ -51,10 +75,16 @@ class DatabaseConnection {
         }
     }
 
+=======
+>>>>>>> merge1
     public function closeConnection() {
         if ($this->connection) {
             $this->connection->close();
         }
     }
+<<<<<<< HEAD
 }
 ?>
+=======
+}
+>>>>>>> merge1
