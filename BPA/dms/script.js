@@ -37,19 +37,26 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function loadConversations() {
     try {
         const response = await fetch('backend/list_conversations.php');
+        console.log('Response status:', response.status); // Debug
+        console.log('Response headers:', response.headers); // Debug
+        
         const data = await response.json();
         
         console.log('Conversations response:', data); // Debug
+        console.log('Full response data:', JSON.stringify(data, null, 2)); // More detailed debug
         
         if (data.success) {
             renderConversations(data.conversations);
         } else {
-            console.error('Error from backend:', data.error);
-            conversationList.innerHTML = `<div class="dm-empty-state">Error: ${data.error || 'Unknown error'}</div>`;
+            console.error('Error from backend:', data);
+            const errorMsg = data.error || 'Unknown error';
+            const debugInfo = data.debug ? `<br><small>Debug: ${JSON.stringify(data.debug)}</small>` : '';
+            conversationList.innerHTML = `<div class="dm-empty-state">Error: ${errorMsg}${debugInfo}</div>`;
         }
     } catch (error) {
         console.error('Error loading conversations:', error);
-        conversationList.innerHTML = '<div class="dm-empty-state">Error loading conversations</div>';
+        console.error('Error details:', error.message, error.stack);
+        conversationList.innerHTML = '<div class="dm-empty-state">Error loading conversations. Check console for details.</div>';
     }
 }
 
