@@ -362,6 +362,7 @@ if ($subRes && $subRes->num_rows > 0) {
             <div class="modal-meta-item" id="modalDate"></div>
             <div class="modal-meta-item" id="modalTime"></div>
             <div class="modal-meta-item" id="modalLocation"></div>
+            <div class="modal-meta-item" id="modalParticipants"></div>
             <div class="modal-meta-item" id="modalAttending"></div>
           </div>
           <div class="modal-event-tags" id="modalTags"></div>

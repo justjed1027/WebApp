@@ -13,6 +13,7 @@ $filter_mode = $_GET['filter'] ?? 'all'; // 'all', 'relevant', 'created'
 
 // Base query to get all events with their subject and tag info
 // Also include whether the current user is registered for each event (is_registered)
+// and count total number of registered participants
 $baseSql = "
 SELECT 
     e.events_id,
@@ -32,6 +33,8 @@ SELECT
     e.host_user_id,
     -- is the current user registered for this event? (0/1)
     (EXISTS(SELECT 1 FROM event_participants ep WHERE ep.ep_event_id = e.events_id AND ep.ep_user_id = ?)) AS is_registered,
+    -- count total number of participants registered for this event
+    (SELECT COUNT(*) FROM event_participants ep WHERE ep.ep_event_id = e.events_id) AS registration_count,
     GROUP_CONCAT(DISTINCT s.subject_name SEPARATOR ', ') as subjects,
     GROUP_CONCAT(DISTINCT es.es_subject_id SEPARATOR ',') as subject_ids,
     GROUP_CONCAT(DISTINCT t.tag_name SEPARATOR ', ') as tags,
@@ -101,6 +104,7 @@ while ($row = $result->fetch_assoc()) {
         'createdDate' => $row['events_create_date'],
         'hostUserId' => (int)$row['host_user_id'],
             'isRegistered' => !empty($row['is_registered']) && $row['is_registered'] ? true : false,
+        'registrationCount' => (int)($row['registration_count'] ?? 0),
         'subjects' => $row['subjects'] ? array_map('trim', explode(',', $row['subjects'])) : [],
         'subjectIds' => $row['subject_ids'] ? array_map('intval', explode(',', $row['subject_ids'])) : [],
         'tags' => $row['tags'] ? array_map('trim', explode(',', $row['tags'])) : [],
