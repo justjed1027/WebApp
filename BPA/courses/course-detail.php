@@ -64,6 +64,35 @@ $courseDatabase = [
       ['author' => 'Jessica Williams', 'title' => 'Real-world applications of derivatives', 'replies' => 14, 'time' => '4h ago'],
       ['author' => 'David Chen', 'title' => 'Study group forming for finals', 'replies' => 6, 'time' => '1d ago']
     ]
+  ],
+  'art-205' => [
+    'id' => 'art-205',
+    'title' => 'Digital Art & Design',
+    'group' => 'Art & Design',
+    'groupId' => 'art-design',
+    'description' => 'Explore digital art and graphic design resources, connect with creative students, and share your work. This topic hub covers digital illustration, UI/UX design, photo editing, and creative tools for visual communication.',
+    'studentsLearning' => 52,
+    'studentsFluent' => 38,
+    'resources' => [
+      ['name' => 'Canva', 'url' => 'https://canva.com', 'type' => 'Design Tool'],
+      ['name' => 'Figma', 'url' => 'https://figma.com', 'type' => 'UI/UX Tool'],
+      ['name' => 'Adobe Creative Cloud', 'url' => 'https://adobe.com/creativecloud', 'type' => 'Software Suite'],
+      ['name' => 'Procreate', 'url' => 'https://procreate.com', 'type' => 'Digital Painting'],
+      ['name' => 'Dribbble', 'url' => 'https://dribbble.com', 'type' => 'Inspiration'],
+      ['name' => 'Behance', 'url' => 'https://behance.net', 'type' => 'Portfolio Platform'],
+      ['name' => 'Color Hunt', 'url' => 'https://colorhunt.co', 'type' => 'Color Palettes'],
+      ['name' => 'Unsplash', 'url' => 'https://unsplash.com', 'type' => 'Stock Photos']
+    ],
+    'relatedEvents' => [
+      ['title' => 'Design Critique Session', 'date' => 'Dec 16, 2025', 'time' => '5:00 PM'],
+      ['title' => 'Figma UI Design Workshop', 'date' => 'Dec 20, 2025', 'time' => '3:00 PM'],
+      ['title' => 'Portfolio Review & Feedback', 'date' => 'Dec 23, 2025', 'time' => '6:00 PM']
+    ],
+    'recentPosts' => [
+      ['author' => 'Emma Thompson', 'title' => 'Best free alternatives to Adobe Creative Cloud?', 'replies' => 18, 'time' => '3h ago'],
+      ['author' => 'Carlos Rivera', 'title' => 'Just finished my first logo design - thoughts?', 'replies' => 11, 'time' => '6h ago'],
+      ['author' => 'Lily Zhang', 'title' => 'Tips for choosing color palettes?', 'replies' => 22, 'time' => '1d ago']
+    ]
   ]
 ];
 
