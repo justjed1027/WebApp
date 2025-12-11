@@ -56,16 +56,34 @@ $uid_param = $user_id ? (int)$user_id : 0;
 $timeFilter = "(TIMESTAMP(e.events_date, COALESCE(e.events_start, '23:59:59')) > NOW())";
 
 // Accept optional search and category filters from query params
+// Query params: search text, category id, and status (upcoming|past)
 $search = isset($_GET['q']) ? trim($_GET['q']) : '';
 $category = isset($_GET['category']) ? trim($_GET['category']) : '';
+$status = isset($_GET['status']) ? trim($_GET['status']) : 'upcoming';
 
 // Build dynamic WHERE clauses and bind parameters safely
 $whereClauses = [];
 $bindTypes = '';
 $bindValues = [];
 
-// Always apply time filter
-$whereClauses[] = $timeFilter;
+// Deadline passed expression: treat a date-only deadline as end of day
+$deadlinePassedExpr = "(e.events_deadline IS NOT NULL AND TIMESTAMP(e.events_deadline, '23:59:59') <= NOW())";
+
+// For 'past' status we select events whose deadline has passed.
+// For 'upcoming' (default) we select events that start in the future and
+// whose deadline has NOT passed (if a deadline exists).
+if ($status === 'past') {
+    // Only include past events whose deadline has passed AND the current user is registered
+    $whereClauses[] = $deadlinePassedExpr . " AND (EXISTS(SELECT 1 FROM event_participants ep2 WHERE ep2.ep_event_id = e.events_id AND ep2.ep_user_id = ?))";
+    $bindTypes .= 'i';
+    $bindValues[] = (int)$user_id;
+} else {
+    // upcoming: event start is in the future AND deadline has NOT passed
+    // Registered users will NOT see deadline-passed events in the upcoming list;
+    // those will only appear in the 'past' (Coming) registered list.
+    $whereClauses[] = $timeFilter;
+    $whereClauses[] = "NOT (" . $deadlinePassedExpr . ")";
+}
 
 // Base visibility / mode filters
 if ($filter_mode === 'created' && $user_id) {

@@ -50,12 +50,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 		return formatTime(startTime || endTime);
 	};
 
-	// Fetch events from backend (supports optional search query and category)
-	const fetchEvents = async (filter = 'all', q = '', category = '') => {
+	// Fetch events from backend (supports optional search query, category and status)
+	const fetchEvents = async (filter = 'all', q = '', category = '', status = '') => {
 		try {
 			let url = `get_events.php?filter=${encodeURIComponent(filter)}`;
 			if (q) url += `&q=${encodeURIComponent(q)}`;
 			if (category) url += `&category=${encodeURIComponent(category)}`;
+			if (status) url += `&status=${encodeURIComponent(status)}`;
 			const response = await fetch(url);
 			const data = await response.json();
 			if (data.success) {
@@ -70,18 +71,52 @@ document.addEventListener('DOMContentLoaded', async () => {
 		}
 	};
 
-	// Render helper to populate grid
-	const renderEvents = (eventsList) => {
-		// Clear existing hardcoded cards
-		const existingCards = upcomingGrid.querySelectorAll('.event-card');
+	// Render helper to populate a grid (containerElement) with event cards
+	const renderEvents = (containerElement, eventsList, limit = 6) => {
+		if (!containerElement) return;
+		// Clear existing dynamic cards
+		const existingCards = containerElement.querySelectorAll('.event-card');
 		existingCards.forEach(card => card.remove());
 
 		if (!eventsList || eventsList.length === 0) return;
 
-		eventsList.slice(0, 6).forEach(event => {
+		eventsList.slice(0, limit).forEach(event => {
 			const html = createEventCard(event);
-			upcomingGrid.insertAdjacentHTML('beforeend', html);
+			containerElement.insertAdjacentHTML('beforeend', html);
 		});
+	};
+
+	// Update card UI for a specific event id: registration badge and participant count
+	const updateCardRegistration = (eventId, isRegistered, deltaCount = 0) => {
+		const selector = `.event-card[data-event-id="${eventId}"]`;
+		const card = document.querySelector(selector);
+		if (!card) return;
+		// Update badge
+		let badge = card.querySelector('.card-registration-badge');
+		if (!badge) {
+			// create badge placeholder
+			badge = document.createElement('div');
+			badge.className = 'card-registration-badge';
+			card.querySelector('.event-info').insertBefore(badge, card.querySelector('.event-info').firstChild);
+		}
+		if (isRegistered) {
+			badge.textContent = 'Registered';
+			badge.classList.add('registered');
+		} else {
+			badge.textContent = '';
+			badge.classList.remove('registered');
+		}
+
+		// Update participant count display on card
+		const countEl = card.querySelector('.participants-count span');
+		if (countEl && deltaCount !== 0) {
+			// find first numeric match and replace
+			const text = countEl.textContent || '';
+			const match = text.match(/(\d+)/);
+			let count = match ? parseInt(match[1], 10) : 0;
+			count = Math.max(0, count + deltaCount);
+			countEl.textContent = `${count} ${count === 1 ? 'participant' : 'participants'}`;
+		}
 	};
 
 	// Simple debounce helper
@@ -93,15 +128,64 @@ document.addEventListener('DOMContentLoaded', async () => {
 		};
 	};
 
+	// Show a small custom confirm dialog (returns Promise<boolean>)
+	const showConfirm = (message) => {
+		return new Promise((resolve) => {
+			const overlay = document.createElement('div');
+			overlay.className = 'confirm-overlay';
+			overlay.innerHTML = `
+				<div class="confirm-dialog">
+					<p>${message}</p>
+					<div class="confirm-actions">
+						<button class="btn-yes">Unregister</button>
+						<button class="btn-no">Cancel</button>
+					</div>
+				</div>`;
+			document.body.appendChild(overlay);
+
+			const yes = overlay.querySelector('.btn-yes');
+			const no = overlay.querySelector('.btn-no');
+
+			const cleanup = () => {
+				overlay.remove();
+			};
+
+			yes.focus();
+
+			yes.addEventListener('click', () => {
+				cleanup();
+				resolve(true);
+			});
+
+			no.addEventListener('click', () => {
+				cleanup();
+				resolve(false);
+			});
+
+			overlay.addEventListener('click', (ev) => {
+				if (ev.target === overlay) {
+					cleanup();
+					resolve(false);
+				}
+			});
+		});
+	};
+
 	// Wire up search input and category select
 	const searchInput = document.querySelector('.events-search');
 	const categorySelect = document.querySelector('.events-category');
 
+	const pastGrid = document.querySelector('.past-events-grid');
+
 	const applyFilters = async () => {
 		const q = searchInput ? searchInput.value.trim() : '';
 		const cat = (categorySelect && categorySelect.value && categorySelect.value !== 'All Categories') ? categorySelect.value : '';
-		const events = await fetchEvents('all', q, cat);
-		renderEvents(events);
+		// Upcoming events (status=upcoming)
+		const upcomingEvents = await fetchEvents('all', q, cat, 'upcoming');
+		renderEvents(upcomingGrid, upcomingEvents, 6);
+		// Past events (status=past)
+		const pastEvents = await fetchEvents('all', q, cat, 'past');
+		renderEvents(pastGrid, pastEvents, 6);
 	};
 
 	if (searchInput) {
@@ -154,12 +238,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 								<span>${event.location}</span>
 							</div>
 						` : ''}
-						<div class="event-detail-item">
-							<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-								<path d="M8 16a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM7 6.5a1 1 0 1 1 2 0 1 1 0 0 1-2 0zm1.5 4.5c0 .5 0 1-.5 1s-1-.5-1-1 .5-1 1-1 1 .5 1 1zm3-3.5a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM2.5 8a1 1 0 1 1 2 0 1 1 0 0 1-2 0z"/>
-							</svg>
-							<span>${event.registrationCount} ${event.registrationCount === 1 ? 'participant' : 'participants'}</span>
-						</div>
+					<div class="event-detail-item participants-count">
+						<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+							<path d="M8 16a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM7 6.5a1 1 0 1 1 2 0 1 1 0 0 1-2 0zm1.5 4.5c0 .5 0 1-.5 1s-1-.5-1-1 .5-1 1-1 1 .5 1 1zm3-3.5a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM2.5 8a1 1 0 1 1 2 0 1 1 0 0 1-2 0z"/>
+						</svg>
+						<span>${event.registrationCount} ${event.registrationCount === 1 ? 'participant' : 'participants'}</span>
+					</div>
 					</div>
 
 					<div class="event-tags">
@@ -267,13 +351,102 @@ document.addEventListener('DOMContentLoaded', async () => {
 		// Setup modal register button: replace hard-coded button inside modal
 		const modalRegisterBtn = document.querySelector('.btn-modal-register');
 		if (modalRegisterBtn) {
-			// reset state and handlers
+			// clear previous handlers/state
 			modalRegisterBtn.disabled = false;
 			modalRegisterBtn.onclick = null;
+			modalRegisterBtn.onmouseenter = null;
+			modalRegisterBtn.onmouseleave = null;
+
+			const updateModalParticipantCount = (delta) => {
+				const modalParticipants = document.getElementById('modalParticipants');
+				if (!modalParticipants) return;
+				const text = modalParticipants.textContent || '';
+				const match = text.match(/(\d+)/);
+				let count = match ? parseInt(match[1], 10) : 0;
+				count = Math.max(0, count + delta);
+				modalParticipants.innerHTML = `\n\t\t\t\t\t<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">\n\t\t\t\t\t\t<path d="M8 16a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM7 6.5a1 1 0 1 1 2 0 1 1 0 0 1-2 0zm1.5 4.5c0 .5 0 1-.5 1s-1-.5-1-1 .5-1 1-1 1 .5 1 1zm3-3.5a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM2.5 8a1 1 0 1 1 2 0 1 1 0 0 1-2 0z"/>\n\t\t\t\t\t</svg><span>${count} ${count === 1 ? 'participant' : 'participants'}</span>`;
+			};
+
 			if (event.isRegistered) {
 				modalRegisterBtn.textContent = 'Registered';
-				modalRegisterBtn.disabled = true;
 				modalRegisterBtn.classList.add('registered');
+				modalRegisterBtn.setAttribute('data-event-id', event.id);
+				// keep button enabled so user may unregister
+				modalRegisterBtn.disabled = false;
+
+				// hover to indicate unregister action
+				modalRegisterBtn.onmouseenter = () => {
+					modalRegisterBtn.textContent = 'Unregister?';
+					modalRegisterBtn.classList.add('danger-hover');
+				};
+				modalRegisterBtn.onmouseleave = () => {
+					modalRegisterBtn.textContent = 'Registered';
+					modalRegisterBtn.classList.remove('danger-hover');
+				};
+
+					// click to unregister (use custom confirm dialog)
+					modalRegisterBtn.onclick = async () => {
+						const confirmed = await showConfirm('Unregister from this event?');
+						if (!confirmed) return;
+						modalRegisterBtn.disabled = true;
+					const original = modalRegisterBtn.textContent;
+					modalRegisterBtn.textContent = 'Unregistering...';
+					try {
+						const res = await fetch('unregister_event.php', {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json' },
+							body: JSON.stringify({ eventId: event.id })
+						});
+						const data = await res.json();
+						if (res.ok && data.success) {
+							modalRegisterBtn.textContent = 'Register Now';
+							modalRegisterBtn.classList.remove('registered');
+							modalRegisterBtn.disabled = false;
+							// rebind to register action
+							modalRegisterBtn.onclick = async () => {
+								modalRegisterBtn.disabled = true;
+								const orig = modalRegisterBtn.textContent;
+								modalRegisterBtn.textContent = 'Registering...';
+								try {
+									const r = await fetch('register_event.php', {
+										method: 'POST',
+										headers: { 'Content-Type': 'application/json' },
+										body: JSON.stringify({ eventId: event.id })
+									});
+									const d = await r.json();
+									if (r.ok && d.success) {
+										modalRegisterBtn.textContent = 'Registered';
+										modalRegisterBtn.classList.add('registered');
+										modalRegisterBtn.disabled = false;
+										updateModalParticipantCount(1);
+										updateCardRegistration(event.id, true, 1);
+									} else {
+										modalRegisterBtn.textContent = orig;
+										modalRegisterBtn.disabled = false;
+										alert('Registration failed: ' + (d.message || 'Unknown'));
+									}
+								} catch (err) {
+									console.error(err);
+									modalRegisterBtn.textContent = orig;
+									modalRegisterBtn.disabled = false;
+									alert('Network error registering for event');
+								}
+							};
+							updateModalParticipantCount(-1);
+										updateCardRegistration(event.id, false, -1);
+						} else {
+							console.error('Unregister failed', data);
+							modalRegisterBtn.textContent = original;
+							modalRegisterBtn.disabled = false;
+							alert('Unregister failed: ' + (data.message || 'Unknown'));
+						}
+					} catch (err) {
+						console.error('Unregister error', err);
+						modalRegisterBtn.textContent = original;
+						modalRegisterBtn.disabled = false;
+						alert('Network error unregistering');
+					}
+				};
 			} else {
 				modalRegisterBtn.textContent = 'Register Now';
 				modalRegisterBtn.classList.remove('registered');
@@ -292,11 +465,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 						if (res.ok && data.success) {
 							modalRegisterBtn.textContent = 'Registered';
 							modalRegisterBtn.classList.add('registered');
-							modalRegisterBtn.disabled = true;
+							modalRegisterBtn.disabled = false;
+							updateModalParticipantCount(1);
+							updateCardRegistration(event.id, true, 1);
 						} else if (res.status === 409) {
 							modalRegisterBtn.textContent = 'Registered';
 							modalRegisterBtn.classList.add('registered');
-							modalRegisterBtn.disabled = true;
+							modalRegisterBtn.disabled = false;
+							updateModalParticipantCount(1);
+							updateCardRegistration(event.id, true, 1);
 						} else {
 							console.error('Registration failed', data);
 							modalRegisterBtn.disabled = false;
@@ -345,7 +522,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 				const findEventById = async (id) => {
 					const q = searchInput ? searchInput.value.trim() : '';
 					const cat = (categorySelect && categorySelect.value && categorySelect.value !== 'All Categories') ? categorySelect.value : '';
-					const events = await fetchEvents('all', q, cat);
+					// Try upcoming first
+					let events = await fetchEvents('all', q, cat, 'upcoming');
+					let found = events.find(e => e.id === parseInt(id));
+					if (found) return found;
+					// Then try past
+					events = await fetchEvents('all', q, cat, 'past');
 					return events.find(e => e.id === parseInt(id));
 				};
 				findEventById(eventId).then(event => {

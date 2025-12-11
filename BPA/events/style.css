@@ -658,6 +658,26 @@ body:not(.light-mode) .btn-show-all:hover { background: #161616; }
   text-transform: uppercase;
   border: 1px solid #d1d5db;
 }
+
+/* Card-level registration badge (shows when user is registered) */
+.card-registration-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(0,0,0,0.06);
+  color: #111827;
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  min-width: 80px;
+  text-align: center;
+}
+.card-registration-badge.registered {
+  background: linear-gradient(135deg, #00f593 0%, #00d36a 100%);
+  color: #000;
+}
 body:not(.light-mode) .event-card.past .event-img { filter: grayscale(100%) brightness(0.8); }
 body:not(.light-mode) .ended-badge {
   background: #232323;
@@ -1430,6 +1450,61 @@ body:not(.light-mode) .fab-create-event:hover {
 
 .btn-modal-register:active {
   transform: translateY(0);
+}
+
+/* Hover state when showing an unregister affordance */
+.btn-modal-register.danger-hover,
+.btn-modal-register.danger-hover:hover {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff4d4d 100%);
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(255, 77, 77, 0.25);
+  transform: translateY(-2px);
+}
+
+/* Simple confirm overlay/dialog used for unregister confirmation */
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10050; /* above event modal (z-index:2000) */
+}
+.confirm-dialog {
+  background: var(--panel-bg, #fff);
+  color: var(--text-color, #111827);
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+  padding: 20px 20px;
+  max-width: 420px;
+  width: 92%;
+  text-align: center;
+}
+.confirm-dialog p {
+  margin: 0 0 14px 0;
+  font-weight: 600;
+}
+.confirm-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+.confirm-actions .btn-yes,
+.confirm-actions .btn-no {
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+}
+.confirm-actions .btn-yes {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff4d4d 100%);
+  color: #fff;
+}
+.confirm-actions .btn-no {
+  background: #f3f4f6;
+  color: #111827;
 }
 
 /* Dark mode modal styles */

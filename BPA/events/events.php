@@ -326,16 +326,16 @@ if ($subRes && $subRes->num_rows > 0) {
           </button>
         </div>
 
-        <!-- Past Events Section -->
-        <div class="section-label">Past Events</div>
+        <!-- Past Events Section (renamed to Coming Events) -->
+        <div class="section-label">Coming Registered Events</div>
         <div class="past-events-grid">
           <!-- Past events will be populated by JavaScript loader -->
         </div>
 
-        <!-- Show all past toggle -->
+        <!-- Show all coming toggle -->
         <div class="show-all-wrapper" id="pastToggleWrapper" hidden>
           <button class="btn-show-all" id="togglePast" aria-expanded="false" aria-controls="pastGrid">
-            <span class="btn-label">Show all past events</span>
+            <span class="btn-label">Show all coming events</span>
             <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M1.5 5.5a.5.5 0 0 1 .8-.4l5.2 3.9 5.2-3.9a.5.5 0 1 1 .6.8l-5.5 4.1a.5.5 0 0 1-.6 0L1.7 5.9a.5.5 0 0 1-.2-.4z"/></svg>
           </button>
         </div>
