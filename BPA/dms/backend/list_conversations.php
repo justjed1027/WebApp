@@ -21,7 +21,14 @@ require_once 'utils.php';
 // Authenticate user
 $currentUser = get_authenticated_user();
 if (!$currentUser) {
-    send_json(['success' => false, 'error' => 'Not authenticated'], 401);
+    // Debug info
+    $debugInfo = [
+        'session_status' => session_status(),
+        'session_id' => session_id(),
+        'session_data' => isset($_SESSION) ? array_keys($_SESSION) : 'no session',
+        'user_id_exists' => isset($_SESSION['user_id']) ? 'yes' : 'no'
+    ];
+    send_json(['success' => false, 'error' => 'Not authenticated', 'debug' => $debugInfo], 401);
 }
 
 // Use authenticated user

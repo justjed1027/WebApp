@@ -10,14 +10,18 @@ class DatabaseConnection {
 
     public function __construct() {
         // Load configuration from db_config.ini
-        $this->loadConfig();
-
-        $this->connection = new mysqli($this->host, $this->username, $this->password, $this->database);
-
-        if ($this->connection->connect_error) {
-            // Handle connection error, e.g., log it or throw an exception
-            die("Connection failed: " . $this->connection->connect_error);
+        try{
+            $this->loadConfig();
+        
+             $this->connection = new mysqli($this->host, $this->username, $this->password, $this->database);
+        } 
+        catch (Exception $e){
+            die("Error loading database configuration");
         }
+
+       
+
+       
     }
 
     private function loadConfig() {
@@ -25,25 +29,34 @@ class DatabaseConnection {
         $configPath = realpath(__DIR__ . '/../../db_config.ini');
 
         if (!file_exists($configPath)) {
-            die("Error: db_config.ini file not found at " . ($configPath ?: 'project root'));
+            die("Error: database config not found.");
         }
 
         // Parse the ini file
         $dbSettings = parse_ini_file($configPath, true);
 
-        if (!$dbSettings || !isset($dbSettings['database'])) {
-            die("Error: Failed to parse db_config.ini or [database] section not found.");
+        if (!$dbSettings) {
+            die("Error: Failed to parse");
         }
 
-        // Extract database settings
-        $this->host = isset($dbSettings['database']['host']) ? $dbSettings['database']['host'] : null;
-        $this->username = isset($dbSettings['database']['username']) ? $dbSettings['database']['username'] : null;
-        $this->password = isset($dbSettings['database']['password']) ? trim($dbSettings['database']['password'], "'\"") : null;
-        $this->database = isset($dbSettings['database']['dbname']) ? $dbSettings['database']['dbname'] : null;
+        // Determine which configuration section to use (production or default database)
+        $isProduction = isset($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], 'dacc-appdev.com') !== false;
+        $section = ($isProduction && isset($dbSettings['production'])) ? 'production' : 'database';
+
+        if (!isset($dbSettings[$section])) {
+            die("Error: section not found");
+        }
+
+        // Extract database settings from the appropriate section
+        $config = $dbSettings[$section];
+        $this->host = isset($config['host']) ? $config['host'] : null;
+        $this->username = isset($config['username']) ? $config['username'] : null;
+        $this->password = isset($config['password']) ? trim($config['password'], "'\"") : null;
+        $this->database = isset($config['dbname']) ? $config['dbname'] : null;
 
         // Validate that all required settings are present
         if (empty($this->host) || empty($this->username) || empty($this->database)) {
-            die("Error: Missing required database configuration in db_config.ini (host, username, or dbname).");
+            die("Error: Missing required database configuration settings.");
         }
     }
 

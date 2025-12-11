@@ -17,7 +17,7 @@ class User
         $db = new DatabaseConnection();
 
         // Prepare the SELECT statement with a placeholder for the user ID
-        $sql = "SELECT * FROM bpa_skillswap.user where user_id=?;";
+        $sql = "SELECT * FROM user where user_id=?;";
         $stmt = $db->connection->prepare($sql);
 
         // Check if the statement preparation was successful
@@ -53,7 +53,7 @@ class User
     $db = new DatabaseConnection();
 
     // Check for existing username/email
-    $checkSql = "SELECT user_id FROM bpa_skillswap.user WHERE user_username = ? OR user_email = ? LIMIT 1;";
+    $checkSql = "SELECT user_id FROM user WHERE user_username = ? OR user_email = ? LIMIT 1;";
     $checkStmt = $db->connection->prepare($checkSql);
     $checkStmt->bind_param("ss", $this->user_username, $this->user_email);
     $checkStmt->execute();
@@ -78,7 +78,7 @@ class User
     }
 
     // Insert new user
-    $sql = "INSERT INTO bpa_skillswap.user (user_username, user_password, user_email, user_is_admin, user_create_date)
+    $sql = "INSERT INTO user (user_username, user_password, user_email, user_is_admin, user_create_date)
             VALUES (?, ?, ?, ?, NOW());";
     $stmt = $db->connection->prepare($sql);
     $hashedPassword = password_hash($this->user_password, PASSWORD_DEFAULT);
@@ -108,7 +108,7 @@ class User
         $db = new DatabaseConnection();
 
         // Prepare the SELECT statement with a placeholder for the user ID
-        $sql = "SELECT * FROM bpa_skillswap.user where user_email=?;";
+        $sql = "SELECT * FROM user where user_email=?;";
         $stmt = $db->connection->prepare($sql);
 
         // Check if the statement preparation was successful
