@@ -26,7 +26,7 @@ class DatabaseConnection {
  
     private function loadConfig() {
         // Find the db_config.ini file in the project root (two directories up from BPA/database/)
-        $configPath = realpath(__DIR__ . '/../../db_config.ini');
+        $configPath = realpath(__DIR__ . '/../db_config.ini');
  
         if (!file_exists($configPath)) {
             die("Error: database config not found.");
