@@ -8,11 +8,32 @@
  */
 
 function renderSideContent($currentPage = '', $options = []) {
+    // Defaults by page
     $showNotifications = !in_array($currentPage, ['notifications']);
     $showUpcomingEvents = !in_array($currentPage, ['calendar', 'events']);
     $showRecentDMs = !in_array($currentPage, ['dms', 'messages']);
     $showSuggestedCollaborators = !in_array($currentPage, ['connections']);
     $showTrendingTopics = !in_array($currentPage, ['forum']);
+
+    // Optional overrides per page via $options['hide']
+    // Example: renderSideContent('courses', ['hide' => ['notifications', 'recentDMs']])
+    if (isset($options['hide']) && is_array($options['hide'])) {
+        $hide = array_map('strtolower', $options['hide']);
+        if (in_array('notifications', $hide)) { $showNotifications = false; }
+        if (in_array('upcomingevents', $hide) || in_array('upcoming_events', $hide)) { $showUpcomingEvents = false; }
+        if (in_array('recentdms', $hide) || in_array('recent_dms', $hide) || in_array('messages', $hide)) { $showRecentDMs = false; }
+        if (in_array('suggestedcollaborators', $hide) || in_array('suggested_collaborators', $hide) || in_array('collaborators', $hide)) { $showSuggestedCollaborators = false; }
+        if (in_array('trendingtopics', $hide) || in_array('trending_topics', $hide) || in_array('topics', $hide)) { $showTrendingTopics = false; }
+    }
+
+    // Optional limits per widget via $options['limit']
+    // Example: ['limit' => ['trendingTopics' => 3]] to show only first 3 topics
+    $limitTrendingTopics = null;
+    if (isset($options['limit']) && is_array($options['limit'])) {
+        if (isset($options['limit']['trendingTopics'])) {
+            $limitTrendingTopics = (int)$options['limit']['trendingTopics'];
+        }
+    }
     ?>
     
     <aside class="side-content" id="sideContent">
@@ -188,26 +209,23 @@ function renderSideContent($currentPage = '', $options = []) {
                 <a href="../forum/forums.html" class="side-card-link">See All</a>
             </div>
             <div class="side-card-body">
+                <?php 
+                  $topics = [
+                    ['tag' => '#machinelearning', 'count' => '1,243'],
+                    ['tag' => '#reactjs', 'count' => '892'],
+                    ['tag' => '#finalexams', 'count' => '754'],
+                    ['tag' => '#capstoneprojects', 'count' => '621'],
+                    ['tag' => '#internships', 'count' => '543']
+                  ];
+                  $max = ($limitTrendingTopics !== null) ? max(0, min($limitTrendingTopics, count($topics))) : count($topics);
+                  for ($i = 0; $i < $max; $i++): 
+                    $t = $topics[$i];
+                ?>
                 <div class="side-topic-item">
-                    <a href="#" class="side-topic-tag">#machinelearning</a>
-                    <span class="side-topic-count">1,243 posts</span>
+                    <a href="#" class="side-topic-tag"><?php echo htmlspecialchars($t['tag']); ?></a>
+                    <span class="side-topic-count"><?php echo htmlspecialchars($t['count']); ?> posts</span>
                 </div>
-                <div class="side-topic-item">
-                    <a href="#" class="side-topic-tag">#reactjs</a>
-                    <span class="side-topic-count">892 posts</span>
-                </div>
-                <div class="side-topic-item">
-                    <a href="#" class="side-topic-tag">#finalexams</a>
-                    <span class="side-topic-count">754 posts</span>
-                </div>
-                <div class="side-topic-item">
-                    <a href="#" class="side-topic-tag">#capstoneprojects</a>
-                    <span class="side-topic-count">621 posts</span>
-                </div>
-                <div class="side-topic-item">
-                    <a href="#" class="side-topic-tag">#internships</a>
-                    <span class="side-topic-count">543 posts</span>
-                </div>
+                <?php endfor; ?>
             </div>
         </div>
         <?php endif; ?>

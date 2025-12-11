@@ -14,78 +14,78 @@ $groupId = isset($_GET['group']) ? $_GET['group'] : 'mathematics';
 // Hardcoded course data organized by group
 $allCourses = [
   'mathematics' => [
-    ['id' => 'math-101', 'title' => 'Algebra I', 'instructor' => 'Dr. Sarah Chen', 'students' => 142, 'rating' => 4.8, 'level' => 'Beginner', 'duration' => '12 weeks'],
-    ['id' => 'math-102', 'title' => 'Algebra II', 'instructor' => 'Prof. Michael Torres', 'students' => 98, 'rating' => 4.7, 'level' => 'Intermediate', 'duration' => '12 weeks'],
-    ['id' => 'math-201', 'title' => 'Geometry', 'instructor' => 'Dr. Emily Wang', 'students' => 156, 'rating' => 4.9, 'level' => 'Beginner', 'duration' => '10 weeks'],
-    ['id' => 'math-301', 'title' => 'Calculus I', 'instructor' => 'Prof. David Kim', 'students' => 186, 'rating' => 4.9, 'level' => 'Advanced', 'duration' => '14 weeks'],
-    ['id' => 'math-302', 'title' => 'Calculus II', 'instructor' => 'Dr. James Rodriguez', 'students' => 134, 'rating' => 4.8, 'level' => 'Advanced', 'duration' => '14 weeks'],
-    ['id' => 'math-401', 'title' => 'Linear Algebra', 'instructor' => 'Prof. Rachel Green', 'students' => 89, 'rating' => 4.7, 'level' => 'Advanced', 'duration' => '12 weeks'],
-    ['id' => 'math-501', 'title' => 'Statistics', 'instructor' => 'Dr. Robert Lee', 'students' => 201, 'rating' => 4.8, 'level' => 'Intermediate', 'duration' => '10 weeks'],
-    ['id' => 'math-601', 'title' => 'Discrete Mathematics', 'instructor' => 'Prof. Lisa Park', 'students' => 76, 'rating' => 4.6, 'level' => 'Advanced', 'duration' => '12 weeks']
+    ['id' => 'math-101', 'title' => 'Algebra I', 'studentsLearning' => 42, 'resourceCount' => 18],
+    ['id' => 'math-102', 'title' => 'Algebra II', 'studentsLearning' => 38, 'resourceCount' => 15],
+    ['id' => 'math-201', 'title' => 'Geometry', 'studentsLearning' => 46, 'resourceCount' => 21],
+    ['id' => 'math-301', 'title' => 'Calculus I', 'studentsLearning' => 36, 'resourceCount' => 24],
+    ['id' => 'math-302', 'title' => 'Calculus II', 'studentsLearning' => 34, 'resourceCount' => 22],
+    ['id' => 'math-401', 'title' => 'Linear Algebra', 'studentsLearning' => 29, 'resourceCount' => 17],
+    ['id' => 'math-501', 'title' => 'Statistics', 'studentsLearning' => 51, 'resourceCount' => 26],
+    ['id' => 'math-601', 'title' => 'Discrete Mathematics', 'studentsLearning' => 26, 'resourceCount' => 19]
   ],
   'computer-science' => [
-    ['id' => 'cs-101', 'title' => 'Introduction to Programming', 'instructor' => 'Dr. Alex Johnson', 'students' => 312, 'rating' => 4.9, 'level' => 'Beginner', 'duration' => '10 weeks'],
-    ['id' => 'cs-102', 'title' => 'Python Programming', 'instructor' => 'Prof. Maria Garcia', 'students' => 248, 'rating' => 4.8, 'level' => 'Beginner', 'duration' => '12 weeks'],
-    ['id' => 'cs-201', 'title' => 'Data Structures', 'instructor' => 'Dr. Kevin Wu', 'students' => 189, 'rating' => 4.7, 'level' => 'Intermediate', 'duration' => '14 weeks'],
-    ['id' => 'cs-202', 'title' => 'Algorithms', 'instructor' => 'Prof. Jennifer Smith', 'students' => 167, 'rating' => 4.8, 'level' => 'Intermediate', 'duration' => '14 weeks'],
-    ['id' => 'cs-301', 'title' => 'Web Development', 'instructor' => 'Dr. Tom Anderson', 'students' => 276, 'rating' => 4.9, 'level' => 'Intermediate', 'duration' => '12 weeks'],
-    ['id' => 'cs-302', 'title' => 'Database Systems', 'instructor' => 'Prof. Nancy Brown', 'students' => 145, 'rating' => 4.6, 'level' => 'Intermediate', 'duration' => '10 weeks'],
-    ['id' => 'cs-401', 'title' => 'Machine Learning', 'instructor' => 'Dr. Andrew Ng', 'students' => 298, 'rating' => 4.9, 'level' => 'Advanced', 'duration' => '16 weeks'],
-    ['id' => 'cs-402', 'title' => 'Artificial Intelligence', 'instructor' => 'Prof. Susan Taylor', 'students' => 234, 'rating' => 4.8, 'level' => 'Advanced', 'duration' => '16 weeks'],
-    ['id' => 'cs-501', 'title' => 'Computer Networks', 'instructor' => 'Dr. Richard Martinez', 'students' => 132, 'rating' => 4.7, 'level' => 'Advanced', 'duration' => '12 weeks'],
-    ['id' => 'cs-502', 'title' => 'Operating Systems', 'instructor' => 'Prof. Laura White', 'students' => 156, 'rating' => 4.8, 'level' => 'Advanced', 'duration' => '14 weeks'],
-    ['id' => 'cs-601', 'title' => 'Cybersecurity', 'instructor' => 'Dr. Chris Evans', 'students' => 189, 'rating' => 4.9, 'level' => 'Advanced', 'duration' => '12 weeks'],
-    ['id' => 'cs-602', 'title' => 'Mobile App Development', 'instructor' => 'Prof. Emma Davis', 'students' => 212, 'rating' => 4.7, 'level' => 'Intermediate', 'duration' => '10 weeks']
+    ['id' => 'cs-101', 'title' => 'Introduction to Programming', 'studentsLearning' => 62, 'resourceCount' => 28],
+    ['id' => 'cs-102', 'title' => 'Python Programming', 'studentsLearning' => 48, 'resourceCount' => 32],
+    ['id' => 'cs-201', 'title' => 'Data Structures', 'studentsLearning' => 39, 'resourceCount' => 25],
+    ['id' => 'cs-202', 'title' => 'Algorithms', 'studentsLearning' => 37, 'resourceCount' => 24],
+    ['id' => 'cs-301', 'title' => 'Web Development', 'studentsLearning' => 56, 'resourceCount' => 35],
+    ['id' => 'cs-302', 'title' => 'Database Systems', 'studentsLearning' => 35, 'resourceCount' => 22],
+    ['id' => 'cs-401', 'title' => 'Machine Learning', 'studentsLearning' => 54, 'resourceCount' => 31],
+    ['id' => 'cs-402', 'title' => 'Artificial Intelligence', 'studentsLearning' => 47, 'resourceCount' => 29],
+    ['id' => 'cs-501', 'title' => 'Computer Networks', 'studentsLearning' => 32, 'resourceCount' => 20],
+    ['id' => 'cs-502', 'title' => 'Operating Systems', 'studentsLearning' => 36, 'resourceCount' => 23],
+    ['id' => 'cs-601', 'title' => 'Cybersecurity', 'studentsLearning' => 41, 'resourceCount' => 27],
+    ['id' => 'cs-602', 'title' => 'Mobile App Development', 'studentsLearning' => 44, 'resourceCount' => 26]
   ],
   'science' => [
-    ['id' => 'sci-101', 'title' => 'General Biology', 'instructor' => 'Dr. Patricia Moore', 'students' => 178, 'rating' => 4.8, 'level' => 'Beginner', 'duration' => '12 weeks'],
-    ['id' => 'sci-102', 'title' => 'General Chemistry', 'instructor' => 'Prof. Mark Wilson', 'students' => 205, 'rating' => 4.7, 'level' => 'Beginner', 'duration' => '12 weeks'],
-    ['id' => 'sci-201', 'title' => 'Physics I', 'instructor' => 'Dr. Linda Thompson', 'students' => 142, 'rating' => 4.8, 'level' => 'Intermediate', 'duration' => '14 weeks'],
-    ['id' => 'sci-202', 'title' => 'Physics II', 'instructor' => 'Prof. Daniel Clark', 'students' => 98, 'rating' => 4.7, 'level' => 'Intermediate', 'duration' => '14 weeks'],
-    ['id' => 'sci-301', 'title' => 'Organic Chemistry', 'instructor' => 'Dr. Carol Adams', 'students' => 134, 'rating' => 4.6, 'level' => 'Advanced', 'duration' => '16 weeks'],
-    ['id' => 'sci-302', 'title' => 'Molecular Biology', 'instructor' => 'Prof. Steven Hall', 'students' => 112, 'rating' => 4.8, 'level' => 'Advanced', 'duration' => '14 weeks'],
-    ['id' => 'sci-401', 'title' => 'Genetics', 'instructor' => 'Dr. Barbara Young', 'students' => 156, 'rating' => 4.9, 'level' => 'Advanced', 'duration' => '12 weeks'],
-    ['id' => 'sci-501', 'title' => 'Environmental Science', 'instructor' => 'Prof. George King', 'students' => 189, 'rating' => 4.7, 'level' => 'Intermediate', 'duration' => '10 weeks'],
-    ['id' => 'sci-601', 'title' => 'Astronomy', 'instructor' => 'Dr. Margaret Scott', 'students' => 234, 'rating' => 4.9, 'level' => 'Beginner', 'duration' => '8 weeks'],
-    ['id' => 'sci-701', 'title' => 'Anatomy & Physiology', 'instructor' => 'Prof. Paul Wright', 'students' => 167, 'rating' => 4.8, 'level' => 'Intermediate', 'duration' => '14 weeks']
+    ['id' => 'sci-101', 'title' => 'General Biology', 'studentsLearning' => 38, 'resourceCount' => 26],
+    ['id' => 'sci-102', 'title' => 'General Chemistry', 'studentsLearning' => 41, 'resourceCount' => 28],
+    ['id' => 'sci-201', 'title' => 'Physics I', 'studentsLearning' => 32, 'resourceCount' => 24],
+    ['id' => 'sci-202', 'title' => 'Physics II', 'studentsLearning' => 28, 'resourceCount' => 22],
+    ['id' => 'sci-301', 'title' => 'Organic Chemistry', 'studentsLearning' => 34, 'resourceCount' => 25],
+    ['id' => 'sci-302', 'title' => 'Molecular Biology', 'studentsLearning' => 30, 'resourceCount' => 21],
+    ['id' => 'sci-401', 'title' => 'Genetics', 'studentsLearning' => 36, 'resourceCount' => 27],
+    ['id' => 'sci-501', 'title' => 'Environmental Science', 'studentsLearning' => 39, 'resourceCount' => 29],
+    ['id' => 'sci-601', 'title' => 'Astronomy', 'studentsLearning' => 47, 'resourceCount' => 31],
+    ['id' => 'sci-701', 'title' => 'Anatomy & Physiology', 'studentsLearning' => 37, 'resourceCount' => 26]
   ],
   'english' => [
-    ['id' => 'eng-101', 'title' => 'English Composition', 'instructor' => 'Dr. Helen Mitchell', 'students' => 198, 'rating' => 4.7, 'level' => 'Beginner', 'duration' => '10 weeks'],
-    ['id' => 'eng-201', 'title' => 'American Literature', 'instructor' => 'Prof. William Turner', 'students' => 145, 'rating' => 4.8, 'level' => 'Intermediate', 'duration' => '12 weeks'],
-    ['id' => 'eng-202', 'title' => 'British Literature', 'instructor' => 'Dr. Elizabeth Collins', 'students' => 132, 'rating' => 4.9, 'level' => 'Intermediate', 'duration' => '12 weeks'],
-    ['id' => 'eng-301', 'title' => 'Creative Writing', 'instructor' => 'Prof. Jessica Cooper', 'students' => 176, 'rating' => 4.8, 'level' => 'Intermediate', 'duration' => '10 weeks'],
-    ['id' => 'eng-401', 'title' => 'Shakespeare Studies', 'instructor' => 'Dr. Thomas Bailey', 'students' => 89, 'rating' => 4.9, 'level' => 'Advanced', 'duration' => '8 weeks'],
-    ['id' => 'eng-501', 'title' => 'World Literature', 'instructor' => 'Prof. Dorothy Stewart', 'students' => 156, 'rating' => 4.7, 'level' => 'Intermediate', 'duration' => '12 weeks']
+    ['id' => 'eng-101', 'title' => 'English Composition', 'studentsLearning' => 40, 'resourceCount' => 22],
+    ['id' => 'eng-201', 'title' => 'American Literature', 'studentsLearning' => 35, 'resourceCount' => 28],
+    ['id' => 'eng-202', 'title' => 'British Literature', 'studentsLearning' => 32, 'resourceCount' => 26],
+    ['id' => 'eng-301', 'title' => 'Creative Writing', 'studentsLearning' => 38, 'resourceCount' => 24],
+    ['id' => 'eng-401', 'title' => 'Shakespeare Studies', 'studentsLearning' => 29, 'resourceCount' => 19],
+    ['id' => 'eng-501', 'title' => 'World Literature', 'studentsLearning' => 36, 'resourceCount' => 25]
   ],
   'history' => [
-    ['id' => 'hist-101', 'title' => 'World History I', 'instructor' => 'Dr. Charles Reed', 'students' => 167, 'rating' => 4.8, 'level' => 'Beginner', 'duration' => '12 weeks'],
-    ['id' => 'hist-102', 'title' => 'World History II', 'instructor' => 'Prof. Sandra Murphy', 'students' => 142, 'rating' => 4.7, 'level' => 'Beginner', 'duration' => '12 weeks'],
-    ['id' => 'hist-201', 'title' => 'American History', 'instructor' => 'Dr. Kenneth Bell', 'students' => 189, 'rating' => 4.9, 'level' => 'Intermediate', 'duration' => '14 weeks'],
-    ['id' => 'hist-301', 'title' => 'European History', 'instructor' => 'Prof. Betty Ross', 'students' => 134, 'rating' => 4.8, 'level' => 'Intermediate', 'duration' => '14 weeks'],
-    ['id' => 'hist-401', 'title' => 'Ancient Civilizations', 'instructor' => 'Dr. Frank Powell', 'students' => 156, 'rating' => 4.9, 'level' => 'Advanced', 'duration' => '12 weeks'],
-    ['id' => 'hist-501', 'title' => 'Medieval History', 'instructor' => 'Prof. Catherine Ward', 'students' => 98, 'rating' => 4.7, 'level' => 'Advanced', 'duration' => '10 weeks'],
-    ['id' => 'hist-601', 'title' => 'Modern History', 'instructor' => 'Dr. Gerald Foster', 'students' => 178, 'rating' => 4.8, 'level' => 'Intermediate', 'duration' => '12 weeks']
+    ['id' => 'hist-101', 'title' => 'World History I', 'studentsLearning' => 37, 'resourceCount' => 24],
+    ['id' => 'hist-102', 'title' => 'World History II', 'studentsLearning' => 34, 'resourceCount' => 22],
+    ['id' => 'hist-201', 'title' => 'American History', 'studentsLearning' => 41, 'resourceCount' => 27],
+    ['id' => 'hist-301', 'title' => 'European History', 'studentsLearning' => 33, 'resourceCount' => 25],
+    ['id' => 'hist-401', 'title' => 'Ancient Civilizations', 'studentsLearning' => 36, 'resourceCount' => 26],
+    ['id' => 'hist-501', 'title' => 'Medieval History', 'studentsLearning' => 28, 'resourceCount' => 20],
+    ['id' => 'hist-601', 'title' => 'Modern History', 'studentsLearning' => 38, 'resourceCount' => 23]
   ],
   'art' => [
-    ['id' => 'art-101', 'title' => 'Introduction to Art', 'instructor' => 'Dr. Diana Gray', 'students' => 212, 'rating' => 4.8, 'level' => 'Beginner', 'duration' => '8 weeks'],
-    ['id' => 'art-201', 'title' => 'Drawing & Sketching', 'instructor' => 'Prof. Ryan Howard', 'students' => 167, 'rating' => 4.9, 'level' => 'Beginner', 'duration' => '10 weeks'],
-    ['id' => 'art-301', 'title' => 'Painting Techniques', 'instructor' => 'Dr. Sharon Ward', 'students' => 134, 'rating' => 4.7, 'level' => 'Intermediate', 'duration' => '12 weeks'],
-    ['id' => 'art-401', 'title' => 'Digital Art & Design', 'instructor' => 'Prof. Brandon Cox', 'students' => 198, 'rating' => 4.9, 'level' => 'Intermediate', 'duration' => '10 weeks'],
-    ['id' => 'art-501', 'title' => 'Art History', 'instructor' => 'Dr. Michelle Russell', 'students' => 145, 'rating' => 4.8, 'level' => 'Intermediate', 'duration' => '12 weeks']
+    ['id' => 'art-101', 'title' => 'Introduction to Art', 'studentsLearning' => 44, 'resourceCount' => 24],
+    ['id' => 'art-201', 'title' => 'Drawing & Sketching', 'studentsLearning' => 37, 'resourceCount' => 20],
+    ['id' => 'art-301', 'title' => 'Painting Techniques', 'studentsLearning' => 34, 'resourceCount' => 22],
+    ['id' => 'art-205', 'title' => 'Digital Art & Design', 'studentsLearning' => 52, 'resourceCount' => 38],
+    ['id' => 'art-501', 'title' => 'Art History', 'studentsLearning' => 35, 'resourceCount' => 28]
   ],
   'business' => [
-    ['id' => 'bus-101', 'title' => 'Introduction to Business', 'instructor' => 'Dr. Larry Griffin', 'students' => 234, 'rating' => 4.7, 'level' => 'Beginner', 'duration' => '10 weeks'],
-    ['id' => 'bus-201', 'title' => 'Marketing Fundamentals', 'instructor' => 'Prof. Kimberly Hayes', 'students' => 189, 'rating' => 4.8, 'level' => 'Intermediate', 'duration' => '12 weeks'],
-    ['id' => 'bus-301', 'title' => 'Financial Accounting', 'instructor' => 'Dr. Eugene West', 'students' => 156, 'rating' => 4.6, 'level' => 'Intermediate', 'duration' => '14 weeks'],
-    ['id' => 'bus-401', 'title' => 'Entrepreneurship', 'instructor' => 'Prof. Nicole Long', 'students' => 198, 'rating' => 4.9, 'level' => 'Advanced', 'duration' => '12 weeks'],
-    ['id' => 'bus-501', 'title' => 'Business Strategy', 'instructor' => 'Dr. Philip Hughes', 'students' => 142, 'rating' => 4.8, 'level' => 'Advanced', 'duration' => '10 weeks'],
-    ['id' => 'bus-601', 'title' => 'Economics', 'instructor' => 'Prof. Stephanie Price', 'students' => 176, 'rating' => 4.7, 'level' => 'Intermediate', 'duration' => '12 weeks']
+    ['id' => 'bus-101', 'title' => 'Introduction to Business', 'studentsLearning' => 47, 'resourceCount' => 26],
+    ['id' => 'bus-201', 'title' => 'Marketing Fundamentals', 'studentsLearning' => 41, 'resourceCount' => 29],
+    ['id' => 'bus-301', 'title' => 'Financial Accounting', 'studentsLearning' => 36, 'resourceCount' => 24],
+    ['id' => 'bus-401', 'title' => 'Entrepreneurship', 'studentsLearning' => 44, 'resourceCount' => 32],
+    ['id' => 'bus-501', 'title' => 'Business Strategy', 'studentsLearning' => 34, 'resourceCount' => 27],
+    ['id' => 'bus-601', 'title' => 'Economics', 'studentsLearning' => 38, 'resourceCount' => 25]
   ],
   'music' => [
-    ['id' => 'mus-101', 'title' => 'Music Theory I', 'instructor' => 'Dr. Jonathan Barnes', 'students' => 134, 'rating' => 4.8, 'level' => 'Beginner', 'duration' => '10 weeks'],
-    ['id' => 'mus-201', 'title' => 'Music History', 'instructor' => 'Prof. Angela Fisher', 'students' => 98, 'rating' => 4.7, 'level' => 'Intermediate', 'duration' => '12 weeks'],
-    ['id' => 'mus-301', 'title' => 'Piano Performance', 'instructor' => 'Dr. Victor Morris', 'students' => 112, 'rating' => 4.9, 'level' => 'Intermediate', 'duration' => '14 weeks'],
-    ['id' => 'mus-401', 'title' => 'Music Composition', 'instructor' => 'Prof. Melissa Jenkins', 'students' => 76, 'rating' => 4.8, 'level' => 'Advanced', 'duration' => '12 weeks']
+    ['id' => 'mus-101', 'title' => 'Music Theory I', 'studentsLearning' => 34, 'resourceCount' => 22],
+    ['id' => 'mus-201', 'title' => 'Music History', 'studentsLearning' => 28, 'resourceCount' => 24],
+    ['id' => 'mus-301', 'title' => 'Piano Performance', 'studentsLearning' => 30, 'resourceCount' => 19],
+    ['id' => 'mus-401', 'title' => 'Music Composition', 'studentsLearning' => 26, 'resourceCount' => 18]
   ]
 ];
 
@@ -284,60 +284,38 @@ $group = isset($groupInfo[$groupId]) ? $groupInfo[$groupId] : ['name' => 'Course
           </a>
           
           <div class="filter-controls">
-            <select class="filter-select" id="levelFilter">
-              <option value="all">All Levels</option>
-              <option value="beginner">Beginner</option>
-              <option value="intermediate">Intermediate</option>
-              <option value="advanced">Advanced</option>
-            </select>
-            
             <select class="filter-select" id="sortBy">
-              <option value="popular">Most Popular</option>
-              <option value="rating">Highest Rated</option>
-              <option value="students">Most Students</option>
+              <option value="popular">Most Active</option>
+              <option value="resources">Most Resources</option>
               <option value="title">A-Z</option>
             </select>
           </div>
         </div>
 
-        <!-- Course Count -->
+        <!-- Topic Count -->
         <div class="course-count">
-          <span id="courseCount"><?php echo count($courses); ?></span> courses available
+          <span id="courseCount"><?php echo count($courses); ?></span> topics available
         </div>
 
-        <!-- Courses List -->
+        <!-- Topics List -->
         <div class="courses-list-grid" id="coursesList">
           <?php foreach ($courses as $course): ?>
-            <a href="course-detail.php?id=<?php echo $course['id']; ?>" class="course-list-card" data-level="<?php echo strtolower($course['level']); ?>">
+            <a href="course-detail.php?id=<?php echo $course['id']; ?>" class="course-list-card">
               <div class="course-list-header">
                 <h3><?php echo $course['title']; ?></h3>
-                <span class="level-badge level-<?php echo strtolower($course['level']); ?>"><?php echo $course['level']; ?></span>
               </div>
-              <p class="course-instructor">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
-                </svg>
-                <?php echo $course['instructor']; ?>
-              </p>
               <div class="course-list-stats">
                 <span class="stat">
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
                     <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
                   </svg>
-                  <?php echo $course['students']; ?> students
+                  <?php echo $course['studentsLearning']; ?> exploring
                 </span>
                 <span class="stat">
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                    <path d="M6 0a.5.5 0 0 1 .5.5V3h3V.5a.5.5 0 0 1 1 0V3h1a2 2 0 0 1 2 2v3.5a.5.5 0 0 1-1 0V5h-11v8a1 1 0 0 0 1 1h4.5a.5.5 0 0 1 0 1h-4.5A2 2 0 0 1 0 13V5a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 1 0V3h3V.5A.5.5 0 0 1 6 0M9.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5z"/>
                   </svg>
-                  <?php echo $course['rating']; ?>
-                </span>
-                <span class="stat">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
-                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
-                  </svg>
-                  <?php echo $course['duration']; ?>
+                  <?php echo $course['resourceCount']; ?> resources
                 </span>
               </div>
             </a>
