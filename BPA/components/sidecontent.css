@@ -87,13 +87,15 @@
   gap: 12px;
   padding: 10px;
   border-radius: 8px;
-  transition: background 0.2s ease;
+  background: #0a0a0a;
+  transition: all 0.2s ease;
   cursor: pointer;
   position: relative;
 }
 
 .notification-item:hover {
-  background: var(--background-hover, rgba(255, 255, 255, 0.04));
+  background: var(--background-hover, rgba(255, 255, 255, 0.06));
+  transform: scale(1.02);
 }
 
 .notification-item.unread::before {
@@ -161,12 +163,14 @@
   gap: 12px;
   padding: 10px;
   border-radius: 8px;
-  transition: background 0.2s ease;
+  background: #0a0a0a;
+  transition: all 0.2s ease;
   cursor: pointer;
 }
 
 .side-event-item:hover {
-  background: var(--background-hover, rgba(255, 255, 255, 0.04));
+  background: var(--background-hover, rgba(255, 255, 255, 0.06));
+  transform: scale(1.02);
 }
 
 .side-event-date {
@@ -258,17 +262,19 @@
   gap: 10px;
   padding: 10px;
   border-radius: 8px;
-  transition: background 0.2s ease;
+  background: #0a0a0a;
+  transition: all 0.2s ease;
   cursor: pointer;
   position: relative;
 }
 
 .side-dm-item:hover {
-  background: var(--background-hover, rgba(255, 255, 255, 0.04));
+  background: var(--background-hover, rgba(255, 255, 255, 0.06));
+  transform: scale(1.02);
 }
 
 .side-dm-item.unread {
-  background: rgba(0, 217, 126, 0.05);
+  background: #0a0a0a;
 }
 
 .side-dm-avatar {
@@ -335,11 +341,13 @@
   gap: 10px;
   padding: 10px;
   border-radius: 8px;
-  transition: background 0.2s ease;
+  background: #0a0a0a;
+  transition: all 0.2s ease;
 }
 
 .side-collab-item:hover {
-  background: var(--background-hover, rgba(255, 255, 255, 0.04));
+  background: var(--background-hover, rgba(255, 255, 255, 0.06));
+  transform: scale(1.02);
 }
 
 .side-collab-avatar {
@@ -394,11 +402,13 @@
   align-items: center;
   padding: 8px 10px;
   border-radius: 6px;
-  transition: background 0.2s ease;
+  background: #0a0a0a;
+  transition: all 0.2s ease;
 }
 
 .side-topic-item:hover {
-  background: var(--background-hover, rgba(255, 255, 255, 0.04));
+  background: var(--background-hover, rgba(255, 255, 255, 0.06));
+  transform: scale(1.02);
 }
 
 .side-topic-tag {
@@ -469,7 +479,7 @@
 
 /* Light Mode */
 body.light-mode .side-content {
-  background: transparent;
+  background: #f5f5f5;
   border-left: none;
 }
 
@@ -491,12 +501,20 @@ body.light-mode .side-card-title {
   color: #1a1a1a;
 }
 
+body.light-mode .notification-item,
+body.light-mode .side-event-item,
+body.light-mode .side-dm-item,
+body.light-mode .side-collab-item,
+body.light-mode .side-topic-item {
+  background: #f5f5f5;
+}
+
 body.light-mode .notification-item:hover,
 body.light-mode .side-event-item:hover,
 body.light-mode .side-dm-item:hover,
 body.light-mode .side-collab-item:hover,
 body.light-mode .side-topic-item:hover {
-  background: rgba(0, 0, 0, 0.02);
+  background: #e8e8e8;
 }
 
 body.light-mode .notification-content p,
@@ -525,7 +543,7 @@ body.light-mode .side-event-day {
 }
 
 body.light-mode .side-dm-item.unread {
-  background: rgba(0, 217, 126, 0.08);
+  background: #f5f5f5;
 }
 
 body.light-mode .side-dm-badge {

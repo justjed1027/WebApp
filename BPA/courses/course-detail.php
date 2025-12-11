@@ -11,47 +11,33 @@ require_once '../components/sidecontent.php';
 // Get course ID from URL
 $courseId = isset($_GET['id']) ? $_GET['id'] : 'cs-102';
 
-// Hardcoded comprehensive course data
+// Course topic data - skillshare information hub model
 $courseDatabase = [
   'cs-102' => [
     'id' => 'cs-102',
     'title' => 'Python Programming',
     'group' => 'Computer Science',
     'groupId' => 'computer-science',
-    'instructor' => 'Prof. Maria Garcia',
-    'instructorBio' => 'Senior Software Engineer with 15 years of experience in Python development and data science.',
-    'students' => 248,
-    'rating' => 4.8,
-    'reviews' => 127,
-    'level' => 'Beginner',
-    'duration' => '12 weeks',
-    'description' => 'Learn Python programming from scratch with hands-on projects and real-world applications. This comprehensive course covers fundamental programming concepts, data structures, object-oriented programming, and practical applications in web development and data analysis.',
-    'objectives' => [
-      'Master Python syntax and fundamental programming concepts',
-      'Understand data types, variables, and control flow',
-      'Work with functions, modules, and packages',
-      'Implement object-oriented programming principles',
-      'Build real-world projects and applications'
+    'description' => 'Explore Python programming resources, connect with fellow learners, and share knowledge. This topic hub covers fundamental programming concepts, data structures, object-oriented programming, and practical applications.',
+    'studentsLearning' => 48,
+    'studentsFluent' => 32,
+    'resources' => [
+      ['name' => 'Official Python Documentation', 'url' => 'https://docs.python.org', 'type' => 'Documentation'],
+      ['name' => 'VS Code', 'url' => 'https://code.visualstudio.com', 'type' => 'IDE'],
+      ['name' => 'PyCharm', 'url' => 'https://jetbrains.com/pycharm', 'type' => 'IDE'],
+      ['name' => 'Jupyter Notebooks', 'url' => 'https://jupyter.org', 'type' => 'Tool'],
+      ['name' => 'Python Package Index (PyPI)', 'url' => 'https://pypi.org', 'type' => 'Repository'],
+      ['name' => 'Real Python Tutorials', 'url' => 'https://realpython.com', 'type' => 'Learning Platform']
     ],
-    'syllabus' => [
-      ['week' => 1, 'title' => 'Introduction to Python', 'topics' => ['Setup and environment', 'Basic syntax', 'Variables and data types']],
-      ['week' => 2, 'title' => 'Control Flow', 'topics' => ['If statements', 'Loops', 'Conditional logic']],
-      ['week' => 3, 'title' => 'Functions', 'topics' => ['Defining functions', 'Parameters and arguments', 'Return values']],
-      ['week' => 4, 'title' => 'Data Structures', 'topics' => ['Lists', 'Tuples', 'Dictionaries', 'Sets']],
-      ['week' => 5, 'title' => 'String Manipulation', 'topics' => ['String methods', 'Formatting', 'Regular expressions']],
-      ['week' => 6, 'title' => 'File Handling', 'topics' => ['Reading files', 'Writing files', 'Working with CSV']],
-      ['week' => 7, 'title' => 'Object-Oriented Programming I', 'topics' => ['Classes and objects', 'Attributes', 'Methods']],
-      ['week' => 8, 'title' => 'Object-Oriented Programming II', 'topics' => ['Inheritance', 'Polymorphism', 'Encapsulation']],
-      ['week' => 9, 'title' => 'Modules and Packages', 'topics' => ['Importing modules', 'Creating packages', 'Standard library']],
-      ['week' => 10, 'title' => 'Error Handling', 'topics' => ['Try-except blocks', 'Custom exceptions', 'Debugging']],
-      ['week' => 11, 'title' => 'Working with Libraries', 'topics' => ['NumPy basics', 'Pandas introduction', 'Data visualization']],
-      ['week' => 12, 'title' => 'Final Project', 'topics' => ['Project planning', 'Implementation', 'Presentation']]
+    'relatedEvents' => [
+      ['title' => 'Python Study Group', 'date' => 'Dec 15, 2025', 'time' => '2:00 PM'],
+      ['title' => 'Data Structures Workshop', 'date' => 'Dec 18, 2025', 'time' => '4:00 PM'],
+      ['title' => 'Python Project Showcase', 'date' => 'Dec 22, 2025', 'time' => '1:00 PM']
     ],
-    'prerequisites' => ['None - This is a beginner-friendly course'],
-    'materials' => [
-      ['type' => 'textbook', 'name' => 'Python Crash Course', 'author' => 'Eric Matthes'],
-      ['type' => 'online', 'name' => 'Official Python Documentation', 'url' => 'https://docs.python.org'],
-      ['type' => 'tool', 'name' => 'VS Code or PyCharm IDE']
+    'recentPosts' => [
+      ['author' => 'Sarah Chen', 'title' => 'Best Python libraries for data analysis?', 'replies' => 12, 'time' => '2h ago'],
+      ['author' => 'Mike Johnson', 'title' => 'My first Python project - feedback welcome!', 'replies' => 8, 'time' => '5h ago'],
+      ['author' => 'Emily Rodriguez', 'title' => 'Help with list comprehensions', 'replies' => 15, 'time' => '1d ago']
     ]
   ],
   'math-301' => [
@@ -59,42 +45,53 @@ $courseDatabase = [
     'title' => 'Calculus I',
     'group' => 'Mathematics',
     'groupId' => 'mathematics',
-    'instructor' => 'Prof. David Kim',
-    'instructorBio' => 'PhD in Mathematics with specialization in analysis and a passion for teaching calculus.',
-    'students' => 186,
-    'rating' => 4.9,
-    'reviews' => 98,
-    'level' => 'Advanced',
-    'duration' => '14 weeks',
-    'description' => 'Master differential calculus including limits, derivatives, and their applications. This rigorous course provides a solid foundation for advanced mathematics and its applications in science and engineering.',
-    'objectives' => [
-      'Understand the concept of limits and continuity',
-      'Master differentiation techniques',
-      'Apply derivatives to optimization problems',
-      'Analyze functions using calculus',
-      'Solve real-world problems using calculus'
+    'description' => 'Explore differential calculus resources including limits, derivatives, and applications. Connect with students studying calculus and share problem-solving strategies.',
+    'studentsLearning' => 36,
+    'studentsFluent' => 24,
+    'resources' => [
+      ['name' => 'Khan Academy Calculus', 'url' => 'https://khanacademy.org/math/calculus-1', 'type' => 'Learning Platform'],
+      ['name' => 'Desmos Graphing Calculator', 'url' => 'https://desmos.com/calculator', 'type' => 'Tool'],
+      ['name' => 'Wolfram Alpha', 'url' => 'https://wolframalpha.com', 'type' => 'Calculator'],
+      ['name' => 'Paul\'s Online Math Notes', 'url' => 'https://tutorial.math.lamar.edu', 'type' => 'Tutorial'],
+      ['name' => 'GeoGebra', 'url' => 'https://geogebra.org', 'type' => 'Visualization Tool']
     ],
-    'syllabus' => [
-      ['week' => 1, 'title' => 'Functions and Models', 'topics' => ['Function types', 'Models', 'Transformations']],
-      ['week' => 2, 'title' => 'Limits and Continuity', 'topics' => ['Limit definition', 'Limit laws', 'Continuity']],
-      ['week' => 3, 'title' => 'Derivatives', 'topics' => ['Derivative definition', 'Power rule', 'Product rule']],
-      ['week' => 4, 'title' => 'Differentiation Rules', 'topics' => ['Chain rule', 'Implicit differentiation', 'Related rates']],
-      ['week' => 5, 'title' => 'Applications of Derivatives', 'topics' => ['Curve sketching', 'Optimization', 'Related rates']],
-      ['week' => 6, 'title' => 'Trigonometric Functions', 'topics' => ['Trig derivatives', 'Inverse trig', 'Applications']],
-      ['week' => 7, 'title' => 'Exponential Functions', 'topics' => ['e and ln', 'Exponential growth', 'Applications']],
-      ['week' => 8, 'title' => 'Inverse Functions', 'topics' => ['Function inverses', 'Logarithmic differentiation']],
-      ['week' => 9, 'title' => 'L\'Hospital\'s Rule', 'topics' => ['Indeterminate forms', 'Limit evaluation']],
-      ['week' => 10, 'title' => 'Optimization Problems', 'topics' => ['Max/min problems', 'Applied optimization']],
-      ['week' => 11, 'title' => 'Antiderivatives', 'topics' => ['Integration introduction', 'Basic techniques']],
-      ['week' => 12, 'title' => 'Definite Integrals', 'topics' => ['Riemann sums', 'Fundamental theorem']],
-      ['week' => 13, 'title' => 'Integration Applications', 'topics' => ['Area', 'Volume', 'Applications']],
-      ['week' => 14, 'title' => 'Review and Final Exam', 'topics' => ['Comprehensive review', 'Problem solving']]
+    'relatedEvents' => [
+      ['title' => 'Calculus Help Session', 'date' => 'Dec 14, 2025', 'time' => '3:00 PM'],
+      ['title' => 'Optimization Problems Workshop', 'date' => 'Dec 19, 2025', 'time' => '2:00 PM']
     ],
-    'prerequisites' => ['Pre-Calculus or equivalent', 'Strong algebra skills'],
-    'materials' => [
-      ['type' => 'textbook', 'name' => 'Calculus: Early Transcendentals', 'author' => 'James Stewart'],
-      ['type' => 'online', 'name' => 'Khan Academy Calculus', 'url' => 'https://khanacademy.org'],
-      ['type' => 'tool', 'name' => 'Graphing calculator (TI-84 or equivalent)']
+    'recentPosts' => [
+      ['author' => 'Alex Martinez', 'title' => 'Chain rule confusion - help needed', 'replies' => 9, 'time' => '1h ago'],
+      ['author' => 'Jessica Williams', 'title' => 'Real-world applications of derivatives', 'replies' => 14, 'time' => '4h ago'],
+      ['author' => 'David Chen', 'title' => 'Study group forming for finals', 'replies' => 6, 'time' => '1d ago']
+    ]
+  ],
+  'art-205' => [
+    'id' => 'art-205',
+    'title' => 'Digital Art & Design',
+    'group' => 'Art & Design',
+    'groupId' => 'art-design',
+    'description' => 'Explore digital art and graphic design resources, connect with creative students, and share your work. This topic hub covers digital illustration, UI/UX design, photo editing, and creative tools for visual communication.',
+    'studentsLearning' => 52,
+    'studentsFluent' => 38,
+    'resources' => [
+      ['name' => 'Canva', 'url' => 'https://canva.com', 'type' => 'Design Tool'],
+      ['name' => 'Figma', 'url' => 'https://figma.com', 'type' => 'UI/UX Tool'],
+      ['name' => 'Adobe Creative Cloud', 'url' => 'https://adobe.com/creativecloud', 'type' => 'Software Suite'],
+      ['name' => 'Procreate', 'url' => 'https://procreate.com', 'type' => 'Digital Painting'],
+      ['name' => 'Dribbble', 'url' => 'https://dribbble.com', 'type' => 'Inspiration'],
+      ['name' => 'Behance', 'url' => 'https://behance.net', 'type' => 'Portfolio Platform'],
+      ['name' => 'Color Hunt', 'url' => 'https://colorhunt.co', 'type' => 'Color Palettes'],
+      ['name' => 'Unsplash', 'url' => 'https://unsplash.com', 'type' => 'Stock Photos']
+    ],
+    'relatedEvents' => [
+      ['title' => 'Design Critique Session', 'date' => 'Dec 16, 2025', 'time' => '5:00 PM'],
+      ['title' => 'Figma UI Design Workshop', 'date' => 'Dec 20, 2025', 'time' => '3:00 PM'],
+      ['title' => 'Portfolio Review & Feedback', 'date' => 'Dec 23, 2025', 'time' => '6:00 PM']
+    ],
+    'recentPosts' => [
+      ['author' => 'Emma Thompson', 'title' => 'Best free alternatives to Adobe Creative Cloud?', 'replies' => 18, 'time' => '3h ago'],
+      ['author' => 'Carlos Rivera', 'title' => 'Just finished my first logo design - thoughts?', 'replies' => 11, 'time' => '6h ago'],
+      ['author' => 'Lily Zhang', 'title' => 'Tips for choosing color palettes?', 'replies' => 22, 'time' => '1d ago']
     ]
   ]
 ];
@@ -282,7 +279,6 @@ $course = isset($courseDatabase[$courseId]) ? $courseDatabase[$courseId] : $cour
         <div class="course-detail-header">
           <div class="course-header-content">
             <div class="course-meta-row">
-              <span class="level-badge level-<?php echo strtolower($course['level']); ?>"><?php echo $course['level']; ?></span>
               <span class="course-group-badge"><?php echo $course['group']; ?></span>
             </div>
             <h1><?php echo $course['title']; ?></h1>
@@ -291,59 +287,46 @@ $course = isset($courseDatabase[$courseId]) ? $courseDatabase[$courseId] : $cour
             <div class="course-header-stats">
               <div class="stat-item">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
+                  <path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783"/>
                 </svg>
                 <div>
-                  <strong><?php echo $course['instructor']; ?></strong>
-                  <span>Instructor</span>
+                  <strong><?php echo $course['studentsLearning']; ?></strong>
+                  <span>Students Learning</span>
                 </div>
               </div>
               
               <div class="stat-item">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
+                  <path d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0"/>
+                  <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1m3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/>
                 </svg>
                 <div>
-                  <strong><?php echo $course['students']; ?></strong>
-                  <span>Students Enrolled</span>
+                  <strong><?php echo $course['studentsFluent']; ?></strong>
+                  <span>Students Fluent</span>
                 </div>
               </div>
               
               <div class="stat-item">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                  <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
+                  <path d="M2.5 5.5a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-2a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0 4a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m6-6a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1H9a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1H9a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1H9a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1H9a.5.5 0 0 1-.5-.5"/>
                 </svg>
                 <div>
-                  <strong><?php echo $course['rating']; ?>/5.0</strong>
-                  <span><?php echo $course['reviews']; ?> reviews</span>
+                  <strong><?php echo count($course['resources']); ?></strong>
+                  <span>Resources</span>
                 </div>
               </div>
               
               <div class="stat-item">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
-                  <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
+                  <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z"/>
+                  <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
                 </svg>
                 <div>
-                  <strong><?php echo $course['duration']; ?></strong>
-                  <span>Duration</span>
+                  <strong><?php echo count($course['relatedEvents']); ?></strong>
+                  <span>Upcoming Events</span>
                 </div>
               </div>
-            </div>
-            
-            <div class="course-actions">
-              <button class="btn-primary btn-enroll">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
-                </svg>
-                Enroll in Course
-              </button>
-              <button class="btn-secondary">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
-                </svg>
-                Add to Wishlist
-              </button>
             </div>
           </div>
         </div>
@@ -351,108 +334,65 @@ $course = isset($courseDatabase[$courseId]) ? $courseDatabase[$courseId] : $cour
         <!-- Tabs Navigation -->
         <div class="course-tabs">
           <button class="tab-btn active" data-tab="overview">Overview</button>
-          <button class="tab-btn" data-tab="syllabus">Syllabus</button>
-          <button class="tab-btn" data-tab="materials">Materials</button>
-          <button class="tab-btn" data-tab="discussion">Discussion</button>
+          <button class="tab-btn" data-tab="resources">Resources</button>
+          <button class="tab-btn" data-tab="students">Students</button>
+          <button class="tab-btn" data-tab="events">Events</button>
+          <button class="tab-btn" data-tab="posts">Posts & Forums</button>
         </div>
 
         <!-- Tab Content -->
         <div class="tab-content active" id="overview">
           <div class="content-card">
-            <h2>Course Description</h2>
+            <h2>Topic Overview</h2>
             <p><?php echo $course['description']; ?></p>
           </div>
           
           <div class="content-card">
-            <h2>Learning Objectives</h2>
-            <ul class="objectives-list">
-              <?php foreach ($course['objectives'] as $objective): ?>
-                <li>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z"/>
-                  </svg>
-                  <?php echo $objective; ?>
-                </li>
-              <?php endforeach; ?>
-            </ul>
-          </div>
-          
-          <div class="content-card">
-            <h2>About the Instructor</h2>
-            <div class="instructor-info">
-              <div class="instructor-avatar">
-                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
-                </svg>
+            <h2>Community Stats</h2>
+            <div class="stats-grid">
+              <div class="stat-box">
+                <strong><?php echo $course['studentsLearning']; ?></strong>
+                <span>Students actively learning this topic</span>
               </div>
-              <div>
-                <h3><?php echo $course['instructor']; ?></h3>
-                <p><?php echo $course['instructorBio']; ?></p>
+              <div class="stat-box">
+                <strong><?php echo $course['studentsFluent']; ?></strong>
+                <span>Students fluent and available to help</span>
+              </div>
+              <div class="stat-box">
+                <strong><?php echo count($course['resources']); ?></strong>
+                <span>Curated learning resources</span>
+              </div>
+              <div class="stat-box">
+                <strong><?php echo count($course['relatedEvents']); ?></strong>
+                <span>Upcoming related events</span>
               </div>
             </div>
           </div>
           
           <div class="content-card">
-            <h2>Prerequisites</h2>
-            <ul class="simple-list">
-              <?php foreach ($course['prerequisites'] as $prereq): ?>
-                <li><?php echo $prereq; ?></li>
-              <?php endforeach; ?>
-            </ul>
+            <h2>Get Involved</h2>
+            <p>Join study groups, attend events, share resources, and connect with other learners in this topic area. Use the tabs above to explore resources, find students to collaborate with, and join relevant discussions.</p>
           </div>
         </div>
 
-        <div class="tab-content" id="syllabus">
+        <div class="tab-content" id="resources">
           <div class="content-card">
-            <h2>Course Syllabus</h2>
-            <div class="syllabus-list">
-              <?php foreach ($course['syllabus'] as $week): ?>
-                <div class="syllabus-item">
-                  <div class="week-header">
-                    <span class="week-number">Week <?php echo $week['week']; ?></span>
-                    <h3><?php echo $week['title']; ?></h3>
+            <h2>Learning Resources</h2>
+            <p class="section-intro">Curated tools, websites, and resources to help you learn <?php echo $course['title']; ?>.</p>
+            <div class="resources-list">
+              <?php foreach ($course['resources'] as $resource): ?>
+                <div class="resource-item">
+                  <div class="resource-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m7.5-6.923c-.67.204-1.335.82-1.887 1.855A8 8 0 0 0 5.145 4H7.5zM4.09 4a9.3 9.3 0 0 1 .64-1.539 7 7 0 0 1 .597-.933A7.03 7.03 0 0 0 2.255 4zm-.582 3.5c.03-.877.138-1.718.312-2.5H1.674a7 7 0 0 0-.656 2.5zM4.847 5a12.5 12.5 0 0 0-.338 2.5H7.5V5zM8.5 5v2.5h2.99a12.5 12.5 0 0 0-.337-2.5zM4.51 8.5a12.5 12.5 0 0 0 .337 2.5H7.5V8.5zm3.99 0V11h2.653c.187-.765.306-1.608.338-2.5zM5.145 12q.208.58.468 1.068c.552 1.035 1.218 1.65 1.887 1.855V12zm.182 2.472a7 7 0 0 1-.597-.933A9.3 9.3 0 0 1 4.09 12H2.255a7 7 0 0 0 3.072 2.472M3.82 11a13.7 13.7 0 0 1-.312-2.5h-2.49c.062.89.291 1.733.656 2.5zm6.853 3.472A7 7 0 0 0 13.745 12H11.91a9.3 9.3 0 0 1-.64 1.539 7 7 0 0 1-.597.933M8.5 12v2.923c.67-.204 1.335-.82 1.887-1.855q.26-.487.468-1.068zm3.68-1h2.146c.365-.767.594-1.61.656-2.5h-2.49a13.7 13.7 0 0 1-.312 2.5m2.802-3.5a7 7 0 0 0-.656-2.5H12.18c.174.782.282 1.623.312 2.5zM11.27 2.461c.247.464.462.98.64 1.539h1.835a7 7 0 0 0-3.072-2.472c.218.284.418.598.597.933M10.855 4a8 8 0 0 0-.468-1.068C9.835 1.897 9.17 1.282 8.5 1.077V4z"/>
+                    </svg>
                   </div>
-                  <ul class="topics-list">
-                    <?php foreach ($week['topics'] as $topic): ?>
-                      <li><?php echo $topic; ?></li>
-                    <?php endforeach; ?>
-                  </ul>
-                </div>
-              <?php endforeach; ?>
-            </div>
-          </div>
-        </div>
-
-        <div class="tab-content" id="materials">
-          <div class="content-card">
-            <h2>Course Materials</h2>
-            <div class="materials-list">
-              <?php foreach ($course['materials'] as $material): ?>
-                <div class="material-item">
-                  <div class="material-icon">
-                    <?php if ($material['type'] == 'textbook'): ?>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783" />
-                      </svg>
-                    <?php elseif ($material['type'] == 'online'): ?>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m7.5-6.923c-.67.204-1.335.82-1.887 1.855A8 8 0 0 0 5.145 4H7.5zM4.09 4a9.3 9.3 0 0 1 .64-1.539 7 7 0 0 1 .597-.933A7.03 7.03 0 0 0 2.255 4zm-.582 3.5c.03-.877.138-1.718.312-2.5H1.674a7 7 0 0 0-.656 2.5zM4.847 5a12.5 12.5 0 0 0-.338 2.5H7.5V5zM8.5 5v2.5h2.99a12.5 12.5 0 0 0-.337-2.5zM4.51 8.5a12.5 12.5 0 0 0 .337 2.5H7.5V8.5zm3.99 0V11h2.653c.187-.765.306-1.608.338-2.5zM5.145 12q.208.58.468 1.068c.552 1.035 1.218 1.65 1.887 1.855V12zm.182 2.472a7 7 0 0 1-.597-.933A9.3 9.3 0 0 1 4.09 12H2.255a7 7 0 0 0 3.072 2.472M3.82 11a13.7 13.7 0 0 1-.312-2.5h-2.49c.062.89.291 1.733.656 2.5zm6.853 3.472A7 7 0 0 0 13.745 12H11.91a9.3 9.3 0 0 1-.64 1.539 7 7 0 0 1-.597.933M8.5 12v2.923c.67-.204 1.335-.82 1.887-1.855q.26-.487.468-1.068zm3.68-1h2.146c.365-.767.594-1.61.656-2.5h-2.49a13.7 13.7 0 0 1-.312 2.5m2.802-3.5a7 7 0 0 0-.656-2.5H12.18c.174.782.282 1.623.312 2.5zM11.27 2.461c.247.464.462.98.64 1.539h1.835a7 7 0 0 0-3.072-2.472c.218.284.418.598.597.933M10.855 4a8 8 0 0 0-.468-1.068C9.835 1.897 9.17 1.282 8.5 1.077V4z"/>
-                      </svg>
-                    <?php else: ?>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M11 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM5 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
-                        <path d="M8 14a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
-                      </svg>
-                    <?php endif; ?>
-                  </div>
-                  <div class="material-info">
-                    <h4><?php echo $material['name']; ?></h4>
-                    <?php if (isset($material['author'])): ?>
-                      <p>by <?php echo $material['author']; ?></p>
-                    <?php endif; ?>
-                    <?php if (isset($material['url'])): ?>
-                      <a href="<?php echo $material['url']; ?>" target="_blank" class="material-link">Visit Resource →</a>
-                    <?php endif; ?>
+                  <div class="resource-info">
+                    <div class="resource-header">
+                      <h4><?php echo $resource['name']; ?></h4>
+                      <span class="resource-type-badge"><?php echo $resource['type']; ?></span>
+                    </div>
+                    <a href="<?php echo $resource['url']; ?>" target="_blank" class="resource-link">Visit Resource →</a>
                   </div>
                 </div>
               <?php endforeach; ?>
@@ -460,11 +400,63 @@ $course = isset($courseDatabase[$courseId]) ? $courseDatabase[$courseId] : $cour
           </div>
         </div>
 
-        <div class="tab-content" id="discussion">
+        <div class="tab-content" id="students">
           <div class="content-card">
-            <h2>Course Discussion</h2>
-            <p class="discussion-placeholder">Join the discussion forum to ask questions, share insights, and collaborate with fellow students.</p>
-            <button class="btn-primary">Go to Forum →</button>
+            <h2>Students Learning This Topic</h2>
+            <p class="section-intro"><?php echo $course['studentsLearning']; ?> students are currently learning <?php echo $course['title']; ?>. Connect with them to form study groups!</p>
+            <button class="btn-primary">Browse Learners →</button>
+          </div>
+          
+          <div class="content-card">
+            <h2>Students Fluent in This Topic</h2>
+            <p class="section-intro"><?php echo $course['studentsFluent']; ?> students are fluent in <?php echo $course['title']; ?> and available to help. Reach out for guidance!</p>
+            <button class="btn-primary">Find Mentors →</button>
+          </div>
+        </div>
+
+        <div class="tab-content" id="events">
+          <div class="content-card">
+            <h2>Related Events</h2>
+            <div class="events-list">
+              <?php foreach ($course['relatedEvents'] as $event): ?>
+                <div class="event-item">
+                  <div class="event-date-box">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z"/>
+                      <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+                    </svg>
+                  </div>
+                  <div class="event-info">
+                    <h4><?php echo $event['title']; ?></h4>
+                    <p><?php echo $event['date']; ?> • <?php echo $event['time']; ?></p>
+                  </div>
+                  <button class="btn-secondary btn-sm">View Details</button>
+                </div>
+              <?php endforeach; ?>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-content" id="posts">
+          <div class="content-card">
+            <h2>Recent Discussions</h2>
+            <div class="posts-list">
+              <?php foreach ($course['recentPosts'] as $post): ?>
+                <div class="post-item">
+                  <div class="post-avatar">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                    </svg>
+                  </div>
+                  <div class="post-content">
+                    <h4><?php echo $post['title']; ?></h4>
+                    <p class="post-meta">by <?php echo $post['author']; ?> • <?php echo $post['replies']; ?> replies • <?php echo $post['time']; ?></p>
+                  </div>
+                  <button class="btn-secondary btn-sm">View Thread</button>
+                </div>
+              <?php endforeach; ?>
+            </div>
+            <button class="btn-primary" style="margin-top: 20px;">View All Discussions →</button>
           </div>
         </div>
       </div>
