@@ -15,8 +15,12 @@
  *   - unread_count: int
  */
 
-require_once 'db.php';
-require_once 'utils.php';
+require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/utils.php';
+
+if (!class_exists('DB')) {
+    send_json(['success' => false, 'error' => 'Database class not found'], 500);
+}
 
 // Authenticate user
 $currentUser = get_authenticated_user();
