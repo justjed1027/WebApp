@@ -115,11 +115,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 						${tagsHtml}
 					</div>
 
-					<button class="btn-view-details" data-event-id="${event.id}">View Details</button>
+					<div class="featured-event-actions">
+						
+						<button class="btn-view-details" data-event-id="${event.id}">View Details</button>
+					</div>
 				</div>
 			</div>
 		`;
 	};
+
+	
 
 	// Open event detail modal
 	const openEventModal = (event) => {
@@ -198,6 +203,55 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 		const modalCreator = document.getElementById('modalCreator');
 		if (modalCreator) modalCreator.textContent = event.organization || 'Event Organizer';
+
+		// Setup modal register button: replace hard-coded button inside modal
+		const modalRegisterBtn = document.querySelector('.btn-modal-register');
+		if (modalRegisterBtn) {
+			// reset state and handlers
+			modalRegisterBtn.disabled = false;
+			modalRegisterBtn.onclick = null;
+			if (event.isRegistered) {
+				modalRegisterBtn.textContent = 'Registered';
+				modalRegisterBtn.disabled = true;
+				modalRegisterBtn.classList.add('registered');
+			} else {
+				modalRegisterBtn.textContent = 'Register Now';
+				modalRegisterBtn.classList.remove('registered');
+				modalRegisterBtn.setAttribute('data-event-id', event.id);
+				modalRegisterBtn.onclick = async () => {
+					modalRegisterBtn.disabled = true;
+					const original = modalRegisterBtn.textContent;
+					modalRegisterBtn.textContent = 'Registering...';
+					try {
+						const res = await fetch('register_event.php', {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json' },
+							body: JSON.stringify({ eventId: event.id })
+						});
+						const data = await res.json();
+						if (res.ok && data.success) {
+							modalRegisterBtn.textContent = 'Registered';
+							modalRegisterBtn.classList.add('registered');
+							modalRegisterBtn.disabled = true;
+						} else if (res.status === 409) {
+							modalRegisterBtn.textContent = 'Registered';
+							modalRegisterBtn.classList.add('registered');
+							modalRegisterBtn.disabled = true;
+						} else {
+							console.error('Registration failed', data);
+							modalRegisterBtn.disabled = false;
+							modalRegisterBtn.textContent = original;
+							alert('Registration failed: ' + (data.message || 'Unknown'));
+						}
+					} catch (err) {
+						console.error('Registration error', err);
+						modalRegisterBtn.disabled = false;
+						modalRegisterBtn.textContent = original;
+						alert('Network error registering for event');
+					}
+				};
+			}
+		}
 
 		// Show modal
 		if (modal) {
