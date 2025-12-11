@@ -798,7 +798,7 @@ body.light-mode .search-container:focus-within svg {
 
 .simple-list li::before {
   content: '•';
-  position: absolute;
+  background: transparent;
   left: 0;
   color: var(--primary-color);
   font-size: 1.25rem;
@@ -1039,7 +1039,7 @@ body.light-mode .courses-content {
 }
 
 body.light-mode .courses-hero::before {
-  background: rgba(255, 255, 255, 0.5);
+  background: transparent;
 }
 
 body.light-mode .course-card {

@@ -8,71 +8,71 @@ if (!isset($_SESSION['user_id'])) {
 }
 require_once '../components/sidecontent.php';
 
-// Hardcoded course groups with counts
+// Course topic groups - organized learning resources by subject
 $courseGroups = [
   [
     'id' => 'mathematics',
     'name' => 'Mathematics',
     'icon' => '📐',
     'color' => '#3b82f6',
-    'courseCount' => 8,
-    'description' => 'From algebra to calculus and beyond'
+    'resourceCount' => 24,
+    'description' => 'Algebra, calculus, geometry, and more'
   ],
   [
     'id' => 'computer-science',
     'name' => 'Computer Science',
     'icon' => '💻',
     'color' => '#8b5cf6',
-    'courseCount' => 12,
-    'description' => 'Programming, algorithms, and software development'
+    'resourceCount' => 38,
+    'description' => 'Programming, data structures, and algorithms'
   ],
   [
     'id' => 'science',
     'name' => 'Science',
     'icon' => '🔬',
     'color' => '#10b981',
-    'courseCount' => 10,
-    'description' => 'Physics, chemistry, biology, and more'
+    'resourceCount' => 31,
+    'description' => 'Physics, chemistry, biology, and environmental science'
   ],
   [
     'id' => 'english',
     'name' => 'English',
     'icon' => '📚',
     'color' => '#f59e0b',
-    'courseCount' => 6,
-    'description' => 'Literature, writing, and language arts'
+    'resourceCount' => 19,
+    'description' => 'Literature, writing, and language skills'
   ],
   [
     'id' => 'history',
     'name' => 'History',
     'icon' => '🏛️',
     'color' => '#ef4444',
-    'courseCount' => 7,
-    'description' => 'World history, civilizations, and cultures'
+    'resourceCount' => 22,
+    'description' => 'World history, civilizations, and historical events'
   ],
   [
     'id' => 'art',
-    'name' => 'Art',
+    'name' => 'Art & Design',
     'icon' => '🎨',
     'color' => '#ec4899',
-    'courseCount' => 5,
-    'description' => 'Visual arts, design, and creativity'
+    'resourceCount' => 16,
+    'description' => 'Visual arts, design principles, and creativity'
   ],
   [
     'id' => 'business',
-    'name' => 'Business',
+    'name' => 'Business & Economics',
     'icon' => '💼',
     'color' => '#06b6d4',
-    'courseCount' => 6,
-    'description' => 'Economics, management, and entrepreneurship'
+    'resourceCount' => 20,
+    'description' => 'Business fundamentals, economics, and entrepreneurship'
   ],
   [
     'id' => 'music',
     'name' => 'Music',
     'icon' => '🎵',
     'color' => '#a855f7',
-    'courseCount' => 4,
-    'description' => 'Theory, performance, and composition'
+    'resourceCount' => 13,
+    'description' => 'Music theory, instruments, and composition'
   ]
 ];
 ?>
@@ -248,11 +248,11 @@ $courseGroups = [
       <div class="courses-content">
         <!-- Hero Section -->
         <section class="courses-hero">
-          <h2>Explore Courses</h2>
-          <p>Join study groups, share knowledge, and master new subjects with your peers</p>
+          <h2>Learning Resources</h2>
+          <p>Explore topics across all subjects. Share knowledge and learn together.</p>
         </section>
 
-        <!-- Course Groups Grid -->
+        <!-- Topic Categories Grid -->
         <section class="course-groups">
           <?php foreach ($courseGroups as $group): ?>
             <a href="course-list.php?group=<?php echo $group['id']; ?>" class="course-group-card" data-group="<?php echo $group['id']; ?>">
@@ -263,7 +263,7 @@ $courseGroups = [
                 <h3><?php echo $group['name']; ?></h3>
                 <p><?php echo $group['description']; ?></p>
                 <div class="group-meta">
-                  <span class="course-count"><?php echo $group['courseCount']; ?> courses</span>
+                  <span class="course-count"><?php echo $group['resourceCount']; ?> resources</span>
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                     <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8" />
                   </svg>
@@ -275,7 +275,13 @@ $courseGroups = [
       </div>
 
       <!-- Side Content -->
-      <?php renderSideContent('courses'); ?>
+      <?php 
+        // Hide a few sidebar boxes and limit trending topics on the courses page
+        renderSideContent('courses', [
+          'hide' => ['notifications', 'recentDMs'],
+          'limit' => ['trendingTopics' => 2]
+        ]);
+      ?>
     </div>
   </main>
 

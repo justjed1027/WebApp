@@ -1148,6 +1148,15 @@ nav a:hover {
   background: #0a0a0a;
   padding: 20px;
   border-radius: 12px;
+  border: 1px solid var(--border-color);
+  transition: all var(--transition-normal);
+}
+
+.calendar-grid-box:hover {
+  background: #0f0f0f;
+  transform: translateY(-2px);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px var(--primary-light), 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 .calendar-table {
   width: 100%;
@@ -1167,6 +1176,13 @@ nav a:hover {
   height: 64px;
   font-size: 1.1rem;
   color: var(--text-primary);
+  transition: background var(--transition-fast);
+}
+
+.calendar-table td:hover {
+  background: #121212;
+  border-radius: 8px;
+  cursor: pointer;
 }
 .calendar-today-cell {
   display: inline-block;
@@ -1868,6 +1884,13 @@ body.light-mode .calendar-grid-box {
   border: 1px solid #e0e0e0;
 }
 
+body.light-mode .calendar-grid-box:hover {
+  background: #efefef;
+  transform: translateY(-2px);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px var(--primary-light), 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
 body.light-mode .calendar-btn,
 body.light-mode .calendar-today {
   background: #f5f5f5;
@@ -1905,6 +1928,10 @@ body.light-mode .time-slot {
 
 body.light-mode .time-slot:hover {
   background: #f9f9f9;
+}
+
+body.light-mode .calendar-table td:hover {
+  background: #e8e8e8;
 }
 
 body.light-mode .calendar-event-card {
