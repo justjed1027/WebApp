@@ -50,10 +50,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 		return formatTime(startTime || endTime);
 	};
 
-	// Fetch events from backend
-	const fetchEvents = async (filter = 'all') => {
+	// Fetch events from backend (supports optional search query and category)
+	const fetchEvents = async (filter = 'all', q = '', category = '') => {
 		try {
-			const response = await fetch(`get_events.php?filter=${encodeURIComponent(filter)}`);
+			let url = `get_events.php?filter=${encodeURIComponent(filter)}`;
+			if (q) url += `&q=${encodeURIComponent(q)}`;
+			if (category) url += `&category=${encodeURIComponent(category)}`;
+			const response = await fetch(url);
 			const data = await response.json();
 			if (data.success) {
 				return data.events;
@@ -66,6 +69,48 @@ document.addEventListener('DOMContentLoaded', async () => {
 			return [];
 		}
 	};
+
+	// Render helper to populate grid
+	const renderEvents = (eventsList) => {
+		// Clear existing hardcoded cards
+		const existingCards = upcomingGrid.querySelectorAll('.event-card');
+		existingCards.forEach(card => card.remove());
+
+		if (!eventsList || eventsList.length === 0) return;
+
+		eventsList.slice(0, 6).forEach(event => {
+			const html = createEventCard(event);
+			upcomingGrid.insertAdjacentHTML('beforeend', html);
+		});
+	};
+
+	// Simple debounce helper
+	const debounce = (fn, wait) => {
+		let t;
+		return function (...args) {
+			clearTimeout(t);
+			t = setTimeout(() => fn.apply(this, args), wait);
+		};
+	};
+
+	// Wire up search input and category select
+	const searchInput = document.querySelector('.events-search');
+	const categorySelect = document.querySelector('.events-category');
+
+	const applyFilters = async () => {
+		const q = searchInput ? searchInput.value.trim() : '';
+		const cat = (categorySelect && categorySelect.value && categorySelect.value !== 'All Categories') ? categorySelect.value : '';
+		const events = await fetchEvents('all', q, cat);
+		renderEvents(events);
+	};
+
+	if (searchInput) {
+		searchInput.addEventListener('input', debounce(() => applyFilters(), 300));
+	}
+
+	if (categorySelect) {
+		categorySelect.addEventListener('change', () => applyFilters());
+	}
 
 	// Create event card HTML
 	const createEventCard = (event) => {
@@ -298,7 +343,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 			if (card) {
 				// Re-fetch and find the event
 				const findEventById = async (id) => {
-					const events = await fetchEvents('all');
+					const q = searchInput ? searchInput.value.trim() : '';
+					const cat = (categorySelect && categorySelect.value && categorySelect.value !== 'All Categories') ? categorySelect.value : '';
+					const events = await fetchEvents('all', q, cat);
 					return events.find(e => e.id === parseInt(id));
 				};
 				findEventById(eventId).then(event => {
@@ -315,17 +362,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 		if (e.key === 'Escape' && modal && !modal.hidden) closeModal();
 	});
 
-	// Load and render events on page load
-	const events = await fetchEvents('all');
-	if (events.length > 0) {
-		// Clear existing hardcoded cards
-		const existingCards = upcomingGrid.querySelectorAll('.event-card');
-		existingCards.forEach(card => card.remove());
-
-		// Render dynamic event cards
-		events.slice(0, 6).forEach(event => {
-			const html = createEventCard(event);
-			upcomingGrid.insertAdjacentHTML('beforeend', html);
-		});
-	}
+	// Initial load using any active filters (search/category)
+	await applyFilters();
 });

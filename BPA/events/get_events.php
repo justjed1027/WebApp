@@ -49,31 +49,88 @@ LEFT JOIN tags t ON et.et_tags_id = t.tag_id
 // We'll always bind the current user id (or 0) for the is_registered check
 $uid_param = $user_id ? (int)$user_id : 0;
 
+// Build WHERE clauses depending on filter mode, and always exclude events
+// whose start datetime is now or in the past. If `events_start` is NULL,
+// treat the event as ending at the end of that day so it remains visible
+// until 23:59:59 of its date.
+$timeFilter = "(TIMESTAMP(e.events_date, COALESCE(e.events_start, '23:59:59')) > NOW())";
+
+// Accept optional search and category filters from query params
+$search = isset($_GET['q']) ? trim($_GET['q']) : '';
+$category = isset($_GET['category']) ? trim($_GET['category']) : '';
+
+// Build dynamic WHERE clauses and bind parameters safely
+$whereClauses = [];
+$bindTypes = '';
+$bindValues = [];
+
+// Always apply time filter
+$whereClauses[] = $timeFilter;
+
+// Base visibility / mode filters
 if ($filter_mode === 'created' && $user_id) {
-    // Get events created by the current user
-    $baseSql .= "WHERE e.host_user_id = ?";
-    $stmt = $conn->prepare($baseSql . " GROUP BY e.events_id ORDER BY e.events_date ASC");
-    // bind: first the uid for is_registered, then host_user_id
-    $stmt->bind_param('ii', $uid_param, $user_id);
+    $whereClauses[] = 'e.host_user_id = ?';
+    $bindTypes .= 'i';
+    $bindValues[] = (int)$user_id;
 } elseif ($filter_mode === 'relevant' && $user_id) {
-    // Get events matching user's learning interests
-    $baseSql .= "
-    WHERE (
-        es.es_subject_id IN (
-            SELECT ui_subject_id FROM user_interests WHERE ui_user_id = ?
-        )
-        OR e.events_visibility = 'public'
-    )
-    ";
-    $stmt = $conn->prepare($baseSql . " GROUP BY e.events_id ORDER BY e.events_date ASC");
-    // bind: first uid for is_registered, then ui_user_id param
-    $stmt->bind_param('ii', $uid_param, $user_id);
+    $whereClauses[] = "(es.es_subject_id IN (SELECT ui_subject_id FROM user_interests WHERE ui_user_id = ?) OR e.events_visibility = 'public')";
+    $bindTypes .= 'i';
+    $bindValues[] = (int)$user_id;
 } else {
-    // Get all public events
-    $baseSql .= "WHERE e.events_visibility = 'public' OR e.events_visibility IS NULL";
-    $stmt = $conn->prepare($baseSql . " GROUP BY e.events_id ORDER BY e.events_date ASC");
-    // bind uid for is_registered
-    $stmt->bind_param('i', $uid_param);
+    $whereClauses[] = "(e.events_visibility = 'public' OR e.events_visibility IS NULL)";
+}
+
+// Category filter: subject id
+if ($category !== '') {
+    // only accept numeric category ids
+    if (ctype_digit($category)) {
+        $whereClauses[] = 'es.es_subject_id = ?';
+        $bindTypes .= 'i';
+        $bindValues[] = (int)$category;
+    }
+}
+
+// Search filter: match title, description, location, organization, subject name, or tag name
+if ($search !== '') {
+    $like = '%' . $search . '%';
+    $whereClauses[] = "(
+        e.events_title LIKE ? OR
+        e.events_description LIKE ? OR
+        e.events_location LIKE ? OR
+        e.events_organization LIKE ? OR
+        s.subject_name LIKE ? OR
+        t.tag_name LIKE ?
+    )";
+    // add six string params
+    $bindTypes .= 'ssssss';
+    $bindValues[] = $like;
+    $bindValues[] = $like;
+    $bindValues[] = $like;
+    $bindValues[] = $like;
+    $bindValues[] = $like;
+    $bindValues[] = $like;
+}
+
+// Prepare final SQL with WHERE clauses
+$finalSql = $baseSql . ' WHERE ' . implode(' AND ', $whereClauses) . ' GROUP BY e.events_id ORDER BY e.events_date ASC';
+$stmt = $conn->prepare($finalSql);
+if ($stmt === false) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Prepare failed', 'error' => $conn->error]);
+    exit;
+}
+
+// Bind parameters: first the uid used in is_registered subquery, then dynamic ones
+$allTypes = 'i' . $bindTypes; // first param is uid for is_registered
+$allValues = array_merge([$uid_param], $bindValues);
+if ($allValues) {
+    // mysqli_stmt::bind_param requires references
+    $refs = [];
+    $refs[] = &$allTypes;
+    foreach ($allValues as $k => $v) {
+        $refs[] = &$allValues[$k];
+    }
+    call_user_func_array([$stmt, 'bind_param'], $refs);
 }
 
 if (!$stmt->execute()) {
