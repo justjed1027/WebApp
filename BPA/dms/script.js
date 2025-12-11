@@ -37,14 +37,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function loadConversations() {
     try {
         const response = await fetch('backend/list_conversations.php');
-        console.log('Response status:', response.status); // Debug
-        console.log('Response headers:', response.headers); // Debug
-        
-        const data = await response.json();
-        
-        console.log('Conversations response:', data); // Debug
-        console.log('Full response data:', JSON.stringify(data, null, 2)); // More detailed debug
-        
+        console.log('Response status:', response.status);
+
+        const text = await response.text();
+        console.log('Raw response text:', text);
+
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (parseErr) {
+            console.error('Failed to parse JSON:', parseErr);
+            conversationList.innerHTML = '<div class="dm-empty-state">Error loading conversations (invalid JSON). Check console for details.</div>';
+            return;
+        }
+
+        console.log('Conversations response:', data);
+        console.log('Full response data:', JSON.stringify(data, null, 2));
+
         if (data.success) {
             renderConversations(data.conversations);
         } else {
