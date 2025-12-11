@@ -15,8 +15,8 @@
  *   - is_read: bool
  */
 
-require_once 'db.php';
-require_once 'utils.php';
+require_once __DIR__ . '/utils.php';
+require_once __DIR__ . '/../../database/DatabaseConnection.php';
 
 // Authenticate user
 $currentUser = get_authenticated_user();
@@ -28,7 +28,8 @@ if (!$currentUser) {
 $params = validate_get_params(['conversation_id']);
 $conversationId = intval($params['conversation_id']);
 
-$db = DB::getInstance()->getConnection();
+$dbConn = new DatabaseConnection();
+$db = $dbConn->connection;
 
 // Verify user is part of this conversation
 $verifySql = "SELECT conversation_id FROM conversations 

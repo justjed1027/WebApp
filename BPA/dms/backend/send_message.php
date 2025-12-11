@@ -12,8 +12,8 @@
  * - message_id: int
  */
 
-require_once 'db.php';
-require_once 'utils.php';
+require_once __DIR__ . '/utils.php';
+require_once __DIR__ . '/../../database/DatabaseConnection.php';
 
 // Authenticate user
 $currentUser = get_authenticated_user();
@@ -34,7 +34,8 @@ if (strlen($messageText) > 10000) {
     send_json(['success' => false, 'error' => 'Message text too long (max 10000 characters)'], 400);
 }
 
-$db = DB::getInstance()->getConnection();
+$dbConn = new DatabaseConnection();
+$db = $dbConn->connection;
 
 // Verify user is part of this conversation
 $verifySql = "SELECT conversation_id FROM conversations 

@@ -12,8 +12,8 @@
  *   - conversation_id: int|null
  */
 
-require_once 'db.php';
-require_once 'utils.php';
+require_once __DIR__ . '/utils.php';
+require_once __DIR__ . '/../../database/DatabaseConnection.php';
 
 // Authenticate user
 $currentUser = get_authenticated_user();
@@ -21,7 +21,8 @@ if (!$currentUser) {
     send_json(['success' => false, 'error' => 'Not authenticated'], 401);
 }
 
-$db = DB::getInstance()->getConnection();
+$dbConn = new DatabaseConnection();
+$db = $dbConn->connection;
 
 // Get all accepted connections (users they can message)
 $connectionsSql = "SELECT DISTINCT

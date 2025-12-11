@@ -10,8 +10,8 @@
  * - updated_count: int (number of messages marked as read)
  */
 
-require_once 'db.php';
-require_once 'utils.php';
+require_once __DIR__ . '/utils.php';
+require_once __DIR__ . '/../../database/DatabaseConnection.php';
 
 // Authenticate user
 $currentUser = get_authenticated_user();
@@ -25,7 +25,8 @@ $params = validate_post_params($requiredParams);
 
 $conversationId = intval($params['conversation_id']);
 
-$db = DB::getInstance()->getConnection();
+$dbConn = new DatabaseConnection();
+$db = $dbConn->connection;
 
 // Verify the user is part of this conversation
 $checkSql = "SELECT user1_id, user2_id FROM conversations WHERE conversation_id = ?";

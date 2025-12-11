@@ -15,12 +15,8 @@
  *   - unread_count: int
  */
 
-require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/utils.php';
-
-if (!class_exists('DB')) {
-    send_json(['success' => false, 'error' => 'Database class not found'], 500);
-}
+require_once __DIR__ . '/../../database/DatabaseConnection.php';
 
 // Authenticate user
 $currentUser = get_authenticated_user();
@@ -38,7 +34,9 @@ if (!$currentUser) {
 // Use authenticated user
 $userId = $currentUser;
 
-$db = DB::getInstance()->getConnection();
+// Use shared DatabaseConnection (ini-based)
+$dbConn = new DatabaseConnection();
+$db = $dbConn->connection;
 
 // Get all conversations for this user, but only with accepted connections
 $conversationsSql = "SELECT 

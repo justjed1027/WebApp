@@ -12,8 +12,8 @@
  * - created: bool (true if newly created, false if existing)
  */
 
-require_once 'db.php';
-require_once 'utils.php';
+require_once __DIR__ . '/utils.php';
+require_once __DIR__ . '/../../database/DatabaseConnection.php';
 
 // Authenticate user
 $currentUser = get_authenticated_user();
@@ -39,7 +39,8 @@ if ($currentUser !== $user1_id && $currentUser !== $user2_id) {
     send_json(['success' => false, 'error' => 'Unauthorized'], 403);
 }
 
-$db = DB::getInstance()->getConnection();
+$dbConn = new DatabaseConnection();
+$db = $dbConn->connection;
 
 // Check if conversation exists
 $checkSql = "SELECT conversation_id FROM conversations WHERE user1_id = ? AND user2_id = ?";
