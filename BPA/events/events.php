@@ -645,6 +645,91 @@ if ($subRes && $subRes->num_rows > 0) {
     </div>
   </div>
 
+  <!-- Edit Tags Modal -->
+  <div class="event-modal" id="editTagsModal" hidden>
+    <div class="modal-overlay" id="editTagsOverlay"></div>
+    <div class="modal-content create-event-modal-content" style="max-width: 600px;">
+      <button class="modal-close" id="editTagsClose" aria-label="Close modal">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+        </svg>
+      </button>
+      
+      <div class="create-event-header">
+        <h2 class="create-event-title">Edit Event Tags</h2>
+        <p class="create-event-subtitle">Choose tags relevant to selected category (click to toggle)</p>
+      </div>
+      
+      <form class="create-event-form" id="editTagsForm">
+        <div class="form-section">
+          <h3 class="form-section-title">Tags</h3>
+          <div class="form-group">
+            <div class="tag-selector" id="editTagsSelector">
+              <!-- Tags will be populated dynamically -->
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="btn-form-cancel" id="btnCancelEditTags">Cancel</button>
+          <button type="submit" class="btn-form-submit">Save Tags</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Date Modal -->
+  <div class="event-modal" id="editDateModal" hidden>
+    <div class="modal-overlay" id="editDateOverlay"></div>
+    <div class="modal-content create-event-modal-content" style="max-width: 600px;">
+      <button class="modal-close" id="editDateClose" aria-label="Close modal">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+        </svg>
+      </button>
+      
+      <div class="create-event-header">
+        <h2 class="create-event-title">Edit Event Date & Time</h2>
+        <p class="create-event-subtitle">Update the event schedule</p>
+      </div>
+      
+      <form class="create-event-form" id="editDateForm">
+        <div class="form-section">
+          <h3 class="form-section-title">Date & Time</h3>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="editEventDate">Date <span class="required">*</span></label>
+              <input type="date" id="editEventDate" name="date" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="editEventStartTime">Start Time <span class="required">*</span></label>
+              <input type="time" id="editEventStartTime" name="startTime" required>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="editEventEndTime">End Time</label>
+              <input type="time" id="editEventEndTime" name="endTime">
+            </div>
+            
+            <div class="form-group">
+              <label for="editEventDeadline">Registration Deadline</label>
+              <input type="date" id="editEventDeadline" name="deadline">
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="btn-form-cancel" id="btnCancelEditDate">Cancel</button>
+          <button type="submit" class="btn-form-submit">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Floating Create Event Button -->
   <button class="fab-create-event" id="fabCreateEvent" aria-label="Create Event">
     <svg class="fab-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
@@ -688,6 +773,7 @@ if ($subRes && $subRes->num_rows > 0) {
   <script src="script.js"></script>
   <script src="modal.js"></script>
   <script src="create-event.js"></script>
+  <script src="edit-host-modals.js"></script>
   <script src="events-loader.js"></script>
   <script src="../components/sidecontent.js"></script>
 </body>

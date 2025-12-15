@@ -277,57 +277,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 		// Edit Tags Handler
 		if (btnEditTags) {
 			btnEditTags.onclick = async () => {
-				const currentTags = event.tags || [];
-				const currentTagIds = event.tagIds || [];
-				const tagInput = prompt(`Edit tags (comma-separated):\nCurrent: ${currentTags.join(', ')}`, currentTags.join(', '));
-				
-				if (tagInput === null) return; // Cancelled
-				
-				// For now, just show alert - would need tag management endpoint
-				alert('Tag editing requires tag ID mapping. This feature needs additional backend support.');
+				// Open styled modal instead of prompt
+				if (window.openEditTagsModal) {
+					window.openEditTagsModal(event);
+				} else {
+					alert('Edit tags modal not loaded');
+				}
 			};
 		}
 
 		// Edit Date Handler
 		if (btnEditDate) {
 			btnEditDate.onclick = async () => {
-				const newDate = prompt('Enter new event date (YYYY-MM-DD):', event.date);
-				if (!newDate || newDate === event.date) return;
-				
-				const newStart = prompt('Enter start time (HH:MM:SS):', event.startTime || '');
-				const newEnd = prompt('Enter end time (HH:MM:SS):', event.endTime || '');
-				const newDeadline = prompt('Enter registration deadline (YYYY-MM-DD):', event.deadline || '');
-				
-				btnEditDate.disabled = true;
-				btnEditDate.textContent = 'Updating...';
-				
-				try {
-					const response = await fetch('update_event.php', {
-						method: 'POST',
-						headers: { 'Content-Type': 'application/json' },
-						body: JSON.stringify({
-							eventId: event.id,
-							type: 'date',
-							date: newDate,
-							startTime: newStart || null,
-							endTime: newEnd || null,
-							deadline: newDeadline || null
-						})
-					});
-					
-					const data = await response.json();
-					if (response.ok && data.success) {
-						alert('Date updated! Please refresh to see changes.');
-						closeModal();
-					} else {
-						alert('Failed to update date: ' + (data.message || 'Unknown error'));
-					}
-				} catch (error) {
-					console.error('Error updating date:', error);
-					alert('Network error updating date');
-				} finally {
-					btnEditDate.disabled = false;
-					btnEditDate.textContent = 'Edit Date';
+				// Open styled modal instead of prompts
+				if (window.openEditDateModal) {
+					window.openEditDateModal(event);
+				} else {
+					alert('Edit date modal not loaded');
 				}
 			};
 		}
@@ -418,6 +384,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 	// Open event detail modal
 	const openEventModal = async (event) => {
 		if (!modal) return;
+
+		// Add subjectId for edit modals (use first subject if multiple)
+		event.subjectId = event.subjectIds && event.subjectIds.length > 0 ? event.subjectIds[0] : null;
 
 		const timeRange = getTimeRange(event.startTime, event.endTime);
 		const formattedDate = formatDate(event.date);
