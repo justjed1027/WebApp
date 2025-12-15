@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once '../database/DatabaseConnection.php';
-
+require_once '../database/User.php';
 // Database connection
 
 
