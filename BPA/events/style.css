@@ -1461,6 +1461,93 @@ body:not(.light-mode) .fab-create-event:hover {
   transform: translateY(-2px);
 }
 
+/* Host Controls Section */
+.modal-host-controls {
+  padding: 20px 40px;
+  border-top: 1px solid #e5e7eb;
+  background: linear-gradient(135deg, rgba(249, 250, 251, 0.5) 0%, rgba(243, 244, 246, 0.3) 100%);
+}
+
+.modal-host-controls .modal-section-title {
+  margin-bottom: 16px;
+  color: #374151;
+}
+
+.host-controls-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.btn-host-action {
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 2px solid #e5e7eb;
+  background: #fff;
+  color: #374151;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
+.btn-host-action:hover {
+  border-color: var(--primary-color);
+  background: rgba(0, 217, 126, 0.05);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 217, 126, 0.15);
+}
+
+.btn-host-action.danger {
+  border-color: #fee2e2;
+  color: #dc2626;
+}
+
+.btn-host-action.danger:hover {
+  border-color: #dc2626;
+  background: rgba(220, 38, 38, 0.05);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
+}
+
+.btn-host-action:active {
+  transform: translateY(0);
+}
+
+/* Dark mode host controls */
+body:not(.light-mode) .modal-host-controls {
+  background: linear-gradient(135deg, rgba(26, 26, 26, 0.5) 0%, rgba(18, 18, 18, 0.3) 100%);
+  border-color: #3a3a3a;
+}
+
+body:not(.light-mode) .modal-host-controls .modal-section-title {
+  color: #d1d5db;
+}
+
+body:not(.light-mode) .btn-host-action {
+  background: #1a1a1a;
+  border-color: #3a3a3a;
+  color: #d1d5db;
+}
+
+body:not(.light-mode) .btn-host-action:hover {
+  background: rgba(0, 217, 126, 0.1);
+  border-color: var(--primary-color);
+}
+
+body:not(.light-mode) .btn-host-action.danger {
+  border-color: #7f1d1d;
+  color: #fca5a5;
+}
+
+body:not(.light-mode) .btn-host-action.danger:hover {
+  border-color: #dc2626;
+  background: rgba(220, 38, 38, 0.1);
+}
+
 /* Simple confirm overlay/dialog used for unregister confirmation */
 .confirm-overlay {
   position: fixed;

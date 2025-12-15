@@ -83,6 +83,15 @@ if ($status === 'past') {
     // those will only appear in the 'past' (Coming) registered list.
     $whereClauses[] = $timeFilter;
     $whereClauses[] = "NOT (" . $deadlinePassedExpr . ")";
+    
+    // Hide full capacity events from users who are NOT registered
+    // Show event if: (capacity is null) OR (spots available) OR (user is registered)
+    $capacityFilter = "(e.events_capacity IS NULL OR 
+        (SELECT COUNT(*) FROM event_participants ep3 WHERE ep3.ep_event_id = e.events_id) < e.events_capacity OR
+        EXISTS(SELECT 1 FROM event_participants ep4 WHERE ep4.ep_event_id = e.events_id AND ep4.ep_user_id = ?))";
+    $whereClauses[] = $capacityFilter;
+    $bindTypes .= 'i';
+    $bindValues[] = (int)$user_id;
 }
 
 // Base visibility / mode filters

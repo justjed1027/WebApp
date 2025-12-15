@@ -115,7 +115,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 			const match = text.match(/(\d+)/);
 			let count = match ? parseInt(match[1], 10) : 0;
 			count = Math.max(0, count + deltaCount);
-			countEl.textContent = `${count} ${count === 1 ? 'participant' : 'participants'}`;
+			// Check if there's a capacity (X/Y format)
+			const capacityMatch = text.match(/\d+\/(\d+)/);
+			const capacity = capacityMatch ? capacityMatch[1] : null;
+			const countDisplay = capacity ? `${count}/${capacity}` : count;
+			countEl.textContent = `${countDisplay} ${count === 1 ? 'participant' : 'participants'}`;
 		}
 	};
 
@@ -133,11 +137,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 		return new Promise((resolve) => {
 			const overlay = document.createElement('div');
 			overlay.className = 'confirm-overlay';
+			const isUnregister = message.toLowerCase().includes('unregister');
+			const confirmText = isUnregister ? 'Unregister' : 'Confirm';
 			overlay.innerHTML = `
 				<div class="confirm-dialog">
 					<p>${message}</p>
 					<div class="confirm-actions">
-						<button class="btn-yes">Unregister</button>
+						<button class="btn-yes">${confirmText}</button>
 						<button class="btn-no">Cancel</button>
 					</div>
 				</div>`;
@@ -242,7 +248,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 						<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
 							<path d="M8 16a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM7 6.5a1 1 0 1 1 2 0 1 1 0 0 1-2 0zm1.5 4.5c0 .5 0 1-.5 1s-1-.5-1-1 .5-1 1-1 1 .5 1 1zm3-3.5a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM2.5 8a1 1 0 1 1 2 0 1 1 0 0 1-2 0z"/>
 						</svg>
-						<span>${event.registrationCount} ${event.registrationCount === 1 ? 'participant' : 'participants'}</span>
+							<span>${event.capacity ? `${event.registrationCount}/${event.capacity}` : event.registrationCount} ${event.registrationCount === 1 ? 'participant' : 'participants'}</span>
 					</div>
 					</div>
 
@@ -261,8 +267,156 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 	
 
+	// Setup host controls handlers
+	const setupHostControls = (event) => {
+		const btnEditTags = document.getElementById('btnEditTags');
+		const btnEditDate = document.getElementById('btnEditDate');
+		const btnCloseRegistration = document.getElementById('btnCloseRegistration');
+		const btnDeleteEvent = document.getElementById('btnDeleteEvent');
+
+		// Edit Tags Handler
+		if (btnEditTags) {
+			btnEditTags.onclick = async () => {
+				const currentTags = event.tags || [];
+				const currentTagIds = event.tagIds || [];
+				const tagInput = prompt(`Edit tags (comma-separated):\nCurrent: ${currentTags.join(', ')}`, currentTags.join(', '));
+				
+				if (tagInput === null) return; // Cancelled
+				
+				// For now, just show alert - would need tag management endpoint
+				alert('Tag editing requires tag ID mapping. This feature needs additional backend support.');
+			};
+		}
+
+		// Edit Date Handler
+		if (btnEditDate) {
+			btnEditDate.onclick = async () => {
+				const newDate = prompt('Enter new event date (YYYY-MM-DD):', event.date);
+				if (!newDate || newDate === event.date) return;
+				
+				const newStart = prompt('Enter start time (HH:MM:SS):', event.startTime || '');
+				const newEnd = prompt('Enter end time (HH:MM:SS):', event.endTime || '');
+				const newDeadline = prompt('Enter registration deadline (YYYY-MM-DD):', event.deadline || '');
+				
+				btnEditDate.disabled = true;
+				btnEditDate.textContent = 'Updating...';
+				
+				try {
+					const response = await fetch('update_event.php', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({
+							eventId: event.id,
+							type: 'date',
+							date: newDate,
+							startTime: newStart || null,
+							endTime: newEnd || null,
+							deadline: newDeadline || null
+						})
+					});
+					
+					const data = await response.json();
+					if (response.ok && data.success) {
+						alert('Date updated! Please refresh to see changes.');
+						closeModal();
+					} else {
+						alert('Failed to update date: ' + (data.message || 'Unknown error'));
+					}
+				} catch (error) {
+					console.error('Error updating date:', error);
+					alert('Network error updating date');
+				} finally {
+					btnEditDate.disabled = false;
+					btnEditDate.textContent = 'Edit Date';
+				}
+			};
+		}
+
+		// Close Registration Handler
+		if (btnCloseRegistration) {
+			btnCloseRegistration.onclick = async () => {
+				const confirmed = await showConfirm('Close registration for this event? This cannot be undone.');
+				if (!confirmed) return;
+				
+				btnCloseRegistration.disabled = true;
+				btnCloseRegistration.textContent = 'Closing...';
+				
+				try {
+					const response = await fetch('update_event.php', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({
+							eventId: event.id,
+							type: 'close_registration'
+						})
+					});
+					
+					const data = await response.json();
+					if (response.ok && data.success) {
+						alert('Registration closed!');
+						const modalRegistration = document.getElementById('modalRegistration');
+						if (modalRegistration) {
+							modalRegistration.textContent = 'Registration closed';
+						}
+					} else {
+						alert('Failed to close registration: ' + (data.message || 'Unknown error'));
+					}
+				} catch (error) {
+					console.error('Error closing registration:', error);
+					alert('Network error closing registration');
+				} finally {
+					btnCloseRegistration.disabled = false;
+					btnCloseRegistration.textContent = 'Close Registration';
+				}
+			};
+		}
+
+		// Delete Event Handler
+		if (btnDeleteEvent) {
+			btnDeleteEvent.onclick = async () => {
+				const confirmed = await showConfirm('Delete this event permanently? All registrations will be lost. This cannot be undone.');
+				if (!confirmed) return;
+				
+				btnDeleteEvent.disabled = true;
+				btnDeleteEvent.textContent = 'Deleting...';
+				
+				try {
+					const response = await fetch('delete_event.php', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({
+							eventId: event.id
+						})
+					});
+					
+					const data = await response.json();
+					if (response.ok && data.success) {
+						alert('Event deleted!');
+						closeModal();
+						// Refresh the event list
+						await applyFilters();
+					} else {
+						alert('Failed to delete event: ' + (data.message || 'Unknown error'));
+						btnDeleteEvent.disabled = false;
+						btnDeleteEvent.textContent = 'Delete Event';
+					}
+				} catch (error) {
+					console.error('Error deleting event:', error);
+					alert('Network error deleting event');
+					btnDeleteEvent.disabled = false;
+					btnDeleteEvent.textContent = 'Delete Event';
+				}
+			};
+		}
+	};
+
+	// Get current user ID from PHP session (passed via window.CURRENT_USER_ID)
+	const getCurrentUserId = () => {
+		return window.CURRENT_USER_ID || null;
+	};
+
 	// Open event detail modal
-	const openEventModal = (event) => {
+	const openEventModal = async (event) => {
 		if (!modal) return;
 
 		const timeRange = getTimeRange(event.startTime, event.endTime);
@@ -270,6 +424,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 		const tagsHtml = event.tags && event.tags.length
 			? event.tags.map(tag => `<span class="event-tag">#${tag}</span>`).join('')
 			: '<span class="event-tag">#event</span>';
+
+		// Check if current user is the host
+		const currentUserId = getCurrentUserId();
+		const isHost = currentUserId && event.hostUserId && currentUserId === event.hostUserId;
+
+		// Show/hide host controls
+		const hostControls = document.getElementById('modalHostControls');
+		if (hostControls) {
+			if (isHost) {
+				hostControls.hidden = false;
+				setupHostControls(event);
+			} else {
+				hostControls.hidden = true;
+			}
+		}
 
 		// Populate modal
 		const modalImage = document.getElementById('modalImage');
@@ -311,10 +480,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 		const modalParticipants = document.getElementById('modalParticipants');
 		if (modalParticipants) {
+			const countDisplay = event.capacity ? `${event.registrationCount}/${event.capacity}` : event.registrationCount;
 			modalParticipants.innerHTML = `
 				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
 					<path d="M8 16a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM7 6.5a1 1 0 1 1 2 0 1 1 0 0 1-2 0zm1.5 4.5c0 .5 0 1-.5 1s-1-.5-1-1 .5-1 1-1 1 .5 1 1zm3-3.5a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM2.5 8a1 1 0 1 1 2 0 1 1 0 0 1-2 0z"/>
-				</svg><span>${event.registrationCount} ${event.registrationCount === 1 ? 'participant' : 'participants'}</span>
+				</svg><span>${countDisplay} ${event.registrationCount === 1 ? 'participant' : 'participants'}</span>
 			`;
 		}
 
@@ -364,7 +534,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 				const match = text.match(/(\d+)/);
 				let count = match ? parseInt(match[1], 10) : 0;
 				count = Math.max(0, count + delta);
-				modalParticipants.innerHTML = `\n\t\t\t\t\t<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">\n\t\t\t\t\t\t<path d="M8 16a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM7 6.5a1 1 0 1 1 2 0 1 1 0 0 1-2 0zm1.5 4.5c0 .5 0 1-.5 1s-1-.5-1-1 .5-1 1-1 1 .5 1 1zm3-3.5a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM2.5 8a1 1 0 1 1 2 0 1 1 0 0 1-2 0z"/>\n\t\t\t\t\t</svg><span>${count} ${count === 1 ? 'participant' : 'participants'}</span>`;
+				const countDisplay = event.capacity ? `${count}/${event.capacity}` : count;
+				modalParticipants.innerHTML = `\n\t\t\t\t\t<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">\n\t\t\t\t\t\t<path d="M8 16a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM7 6.5a1 1 0 1 1 2 0 1 1 0 0 1-2 0zm1.5 4.5c0 .5 0 1-.5 1s-1-.5-1-1 .5-1 1-1 1 .5 1 1zm3-3.5a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM2.5 8a1 1 0 1 1 2 0 1 1 0 0 1-2 0z"/>\n\t\t\t\t\t</svg><span>${countDisplay} ${count === 1 ? 'participant' : 'participants'}</span>`;
 			};
 
 			if (event.isRegistered) {
@@ -401,8 +572,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 						if (res.ok && data.success) {
 							modalRegisterBtn.textContent = 'Register Now';
 							modalRegisterBtn.classList.remove('registered');
-							modalRegisterBtn.disabled = false;
-							// rebind to register action
+							modalRegisterBtn.disabled = false;						// Refresh event list so full events that now have space appear
+						await applyFilters();							// rebind to register action
 							modalRegisterBtn.onclick = async () => {
 								modalRegisterBtn.disabled = true;
 								const orig = modalRegisterBtn.textContent;
