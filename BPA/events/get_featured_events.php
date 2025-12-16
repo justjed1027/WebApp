@@ -82,7 +82,7 @@ ORDER BY
         WHEN e.events_deadline IS NOT NULL THEN TIMESTAMP(e.events_deadline, '23:59:59')
         ELSE TIMESTAMP(e.events_date, COALESCE(e.events_start, '23:59:59'))
     END ASC
-LIMIT 10
+LIMIT 5
 ";
 
 $stmt = $conn->prepare($sql);

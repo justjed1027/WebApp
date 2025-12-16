@@ -206,11 +206,18 @@ document.addEventListener('DOMContentLoaded', () => {
 	};
 
 	// Scroll to specific slide
-	const scrollToSlide = (index) => {
+	const scrollToSlide = (index, scrollViewport = true) => {
 		currentSlide = Math.max(0, Math.min(index, featuredEvents.length - 1));
 		const cards = featuredTrack.querySelectorAll('.featured-event-card');
 		if (cards[currentSlide]) {
-			cards[currentSlide].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+			if (scrollViewport) {
+				// Manual navigation - scroll into view
+				cards[currentSlide].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+			} else {
+				// Auto-play - scroll track only without scrolling page
+				const cardLeft = cards[currentSlide].offsetLeft;
+				featuredTrack.scrollTo({ left: cardLeft, behavior: 'smooth' });
+			}
 		}
 		updateCarousel();
 		resetAutoplay();
@@ -219,10 +226,10 @@ document.addEventListener('DOMContentLoaded', () => {
 	// Next slide
 	const nextSlide = () => {
 		if (currentSlide < featuredEvents.length - 1) {
-			scrollToSlide(currentSlide + 1);
+			scrollToSlide(currentSlide + 1, false);
 		} else {
 			// Loop back to first
-			scrollToSlide(0);
+			scrollToSlide(0, false);
 		}
 	};
 
