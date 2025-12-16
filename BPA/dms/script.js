@@ -203,6 +203,11 @@ async function sendMessage() {
             messageText.value = '';
             await loadMessages(currentConversationId);
             await loadConversations(); // Refresh conversation list to update timestamps
+            
+            // Trigger badge update in other tabs/pages
+            localStorage.setItem('dm_badge_update', Date.now().toString());
+            // Trigger in same tab
+            window.dispatchEvent(new Event('dm_badge_update'));
         } else {
             alert('Error sending message: ' + data.error);
         }
@@ -227,6 +232,11 @@ async function markAsRead(conversationId) {
         
         // Refresh conversation list to clear unread badges
         await loadConversations();
+        
+        // Trigger badge update in other tabs/pages
+        localStorage.setItem('dm_badge_update', Date.now().toString());
+        // Trigger in same tab
+        window.dispatchEvent(new Event('dm_badge_update'));
     } catch (error) {
         console.error('Error marking as read:', error);
     }
