@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 <?php
 // Load subjects for the Create Event category list
 $subjects = [];
-$subRes = $conn->query("SELECT subject_id, subject_name FROM bpa_skillswap.subjects ORDER BY subject_name ASC");
+$subRes = $conn->query("SELECT subject_id, subject_name FROM subjects ORDER BY subject_name ASC");
 if ($subRes && $subRes->num_rows > 0) {
   while ($s = $subRes->fetch_assoc()) {
     $subjects[] = $s;
