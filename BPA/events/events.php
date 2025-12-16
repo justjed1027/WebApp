@@ -221,98 +221,13 @@ if ($subRes && $subRes->num_rows > 0) {
       <div class="events-container">
         <div class="events-main">
         <!-- Featured Events Carousel -->
-        <div class="section-label">Featured Events</div>
+        <div class="section-label">Featured Events For You</div>
         <div class="featured-carousel" aria-label="Featured events carousel">
           <button class="carousel-btn prev" aria-label="Previous featured">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16" fill="currentColor"><path d="M11.354 1.646a.5.5 0 0 1 0 .708L6.707 7l4.647 4.646a.5.5 0 0 1-.708.708l-5-5a.5.5 0 0 1 0-.708l5-5a.5.5 0 0 1 .708 0z"/></svg>
           </button>
           <div class="featured-track">
-            <!-- Slide 1 -->
-            <article class="featured-event-card" role="group" aria-roledescription="slide" aria-label="1 of 3">
-              <div class="featured-event-image-container">
-                <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&h=600&fit=crop" alt="Campus-wide Hackathon 2023" class="featured-event-img" loading="lazy">
-              </div>
-              <div class="featured-event-info">
-                <div class="featured-event-header">
-                  <h2 class="featured-event-title">Campus-wide Hackathon 2023</h2>
-                  <span class="featured-badge">Featured</span>
-                </div>
-                <p class="featured-event-desc">Join the biggest hackathon of the year! Teams will compete to build innovative solutions to real-world problems. Great prizes, food, and networking opportunities.</p>
-                <div class="featured-event-details">
-                  <div class="event-detail-item">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/></svg>
-                    <span>November 5-7, 2023</span>
-                  </div>
-                  <div class="event-detail-item">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/></svg>
-                    <span>Starts at 6:00 PM</span>
-                  </div>
-                  <div class="event-detail-item">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/></svg>
-                    <span>Technology Innovation Center</span>
-                  </div>
-                  <div class="event-detail-item">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/></svg>
-                    <span>500+ attendees expected</span>
-                  </div>
-                </div>
-                <div class="featured-event-tags">
-                  <span class="event-tag">#hackathon</span>
-                  <span class="event-tag">#coding</span>
-                  <span class="event-tag">#innovation</span>
-                </div>
-                <div class="featured-event-actions">
-                  <button class="btn-interested">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/></svg>
-                    Interested
-                  </button>
-                </div>
-              </div>
-            </article>
-
-            <!-- Slide 2 -->
-            <article class="featured-event-card" role="group" aria-roledescription="slide" aria-label="2 of 3">
-              <div class="featured-event-image-container">
-                <img src="https://images.unsplash.com/photo-1515165562835-c3b8e3a01ee0?w=1200&h=600&fit=crop" alt="Startup Pitch Night" class="featured-event-img" loading="lazy">
-              </div>
-              <div class="featured-event-info">
-                <div class="featured-event-header">
-                  <h2 class="featured-event-title">Startup Pitch Night</h2>
-                  <span class="featured-badge">Featured</span>
-                </div>
-                <p class="featured-event-desc">Watch top student founders pitch their startups to a panel of VCs and alumni. Network with mentors and potential co-founders.</p>
-                <div class="featured-event-details">
-                  <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/></svg><span>November 15, 2023</span></div>
-                  <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/></svg><span>6:30 PM</span></div>
-                  <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/></svg><span>Business School Auditorium</span></div>
-                  <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/></svg><span>200 attending</span></div>
-                </div>
-                <div class="featured-event-tags"><span class="event-tag">#startup</span><span class="event-tag">#pitch</span><span class="event-tag">#networking</span></div>
-                <div class="featured-event-actions"><button class="btn-interested"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/></svg>Interested</button></div>
-              </div>
-            </article>
-
-            <!-- Slide 3 -->
-            <article class="featured-event-card" role="group" aria-roledescription="slide" aria-label="3 of 3">
-              <div class="featured-event-image-container">
-                <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=1200&h=600&fit=crop" alt="AI Research Symposium" class="featured-event-img" loading="lazy">
-              </div>
-              <div class="featured-event-info">
-                <div class="featured-event-header">
-                  <h2 class="featured-event-title">AI Research Symposium</h2>
-                  <span class="featured-badge">Featured</span>
-                </div>
-                <p class="featured-event-desc">Hear lightning talks from faculty and students on the latest AI breakthroughs. Poster session and lab tours included.</p>
-                <div class="featured-event-details">
-                  <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/></svg><span>December 2, 2023</span></div>
-                  <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/></svg><span>9:00 AM - 5:00 PM</span></div>
-                  <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/></svg><span>Computer Science Complex</span></div>
-                  <div class="event-detail-item"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/></svg><span>650 attending</span></div>
-                </div>
-                <div class="featured-event-tags"><span class="event-tag">#AI</span><span class="event-tag">#research</span><span class="event-tag">#conference</span></div>
-                <div class="featured-event-actions"><button class="btn-interested"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/></svg>Interested</button></div>
-              </div>
-            </article>
+            <!-- Featured events will be dynamically loaded here -->
           </div>
           <button class="carousel-btn next" aria-label="Next featured">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16" fill="currentColor"><path d="M4.646 1.646a.5.5 0 0 1 .708 0l5 5a.5.5 0 0 1 0 .708l-5 5a.5.5 0 1 1-.708-.708L9.293 7 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
@@ -768,6 +683,7 @@ if ($subRes && $subRes->num_rows > 0) {
   <script src="modal.js"></script>
   <script src="create-event.js"></script>
   <script src="edit-host-modals.js"></script>
+  <script src="featured-loader.js"></script>
   <script src="events-loader.js"></script>
   <script src="../components/sidecontent.js"></script>
 </body>
