@@ -152,6 +152,7 @@
   scroll-behavior: smooth;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE/Edge */
+  transition: scroll 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .featured-track::-webkit-scrollbar { display: none; } /* WebKit */
@@ -400,6 +401,120 @@ body:not(.light-mode) .carousel-dots .dot.active { background: #e5e7eb; }
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
+/* Tag checkbox chip list (create event form) */
+.tag-checkbox-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  min-height: 56px;
+  align-items: center;
+  background: #ffffff;
+  overflow-y: auto;
+}
+
+.tag-checkbox-list .tag-note {
+  color: #6b7280;
+  font-size: 0.95rem;
+  padding: 6px 10px;
+}
+
+.tag-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 12px;
+  border: 2px solid #e5e7eb;
+  background: #ffffff;
+  transition: all 0.18s ease;
+  position: relative;
+}
+
+.tag-checkbox-label:hover {
+  border-color: #00d97e;
+  background: rgba(0,217,126,0.02);
+}
+
+.tag-checkbox-label input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.tag-checkbox-label span {
+  position: relative;
+  padding-left: 26px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.tag-checkbox-label span::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #e5e7eb;
+  background: #ffffff;
+}
+
+.tag-checkbox-label input[type="checkbox"]:checked + span::before {
+  background: #00d97e;
+  border-color: #00d97e;
+}
+
+.tag-checkbox-label span::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 50%;
+  transform: translateY(-50%) scale(0);
+  width: 8px;
+  height: 8px;
+  background: #ffffff;
+  border-radius: 50%;
+  transition: transform 0.15s ease;
+}
+
+.tag-checkbox-label input[type="checkbox"]:checked + span::after {
+  transform: translateY(-50%) scale(1);
+}
+
+/* Light mode adjustments */
+body.light-mode .tag-checkbox-list {
+  border-color: #e5e7eb;
+  background: #ffffff;
+}
+body.light-mode .tag-checkbox-label {
+  border-color: #e5e7eb;
+  background: #ffffff;
+}
+body.light-mode .tag-checkbox-label:hover {
+  border-color: #00d97e;
+  background: rgba(0,217,126,0.02);
+}
+body.light-mode .tag-checkbox-label span {
+  color: #1f2937;
+}
+body.light-mode .tag-checkbox-label span::before {
+  border-color: #e5e7eb;
+  background: #ffffff;
+}
+body.light-mode .tag-checkbox-label input[type="checkbox"]:checked + span::before {
+  border-color: #00d97e;
+  background: #00d97e;
+}
+body.light-mode .tag-checkbox-label span::after {
+  background: #ffffff;
+}
+
 .btn-register:hover {
   background: linear-gradient(135deg, var(--primary-hover) 0%, var(--primary-color) 100%);
   transform: translateY(-2px);
@@ -543,6 +658,26 @@ body:not(.light-mode) .btn-show-all:hover { background: #161616; }
   letter-spacing: 0.03em;
   text-transform: uppercase;
   border: 1px solid #d1d5db;
+}
+
+/* Card-level registration badge (shows when user is registered) */
+.card-registration-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(0,0,0,0.06);
+  color: #111827;
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  min-width: 80px;
+  text-align: center;
+}
+.card-registration-badge.registered {
+  background: linear-gradient(135deg, #00f593 0%, #00d36a 100%);
+  color: #000;
 }
 body:not(.light-mode) .event-card.past .event-img { filter: grayscale(100%) brightness(0.8); }
 body:not(.light-mode) .ended-badge {
@@ -1318,6 +1453,148 @@ body:not(.light-mode) .fab-create-event:hover {
   transform: translateY(0);
 }
 
+/* Hover state when showing an unregister affordance */
+.btn-modal-register.danger-hover,
+.btn-modal-register.danger-hover:hover {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff4d4d 100%);
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(255, 77, 77, 0.25);
+  transform: translateY(-2px);
+}
+
+/* Host Controls Section */
+.modal-host-controls {
+  padding: 20px 40px;
+  border-top: 1px solid #e5e7eb;
+  background: linear-gradient(135deg, rgba(249, 250, 251, 0.5) 0%, rgba(243, 244, 246, 0.3) 100%);
+}
+
+.modal-host-controls .modal-section-title {
+  margin-bottom: 16px;
+  color: #374151;
+}
+
+.host-controls-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.btn-host-action {
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 2px solid #e5e7eb;
+  background: #fff;
+  color: #374151;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
+.btn-host-action:hover {
+  border-color: var(--primary-color);
+  background: rgba(0, 217, 126, 0.05);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 217, 126, 0.15);
+}
+
+.btn-host-action.danger {
+  border-color: #fee2e2;
+  color: #dc2626;
+}
+
+.btn-host-action.danger:hover {
+  border-color: #dc2626;
+  background: rgba(220, 38, 38, 0.05);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
+}
+
+.btn-host-action:active {
+  transform: translateY(0);
+}
+
+/* Dark mode host controls */
+body:not(.light-mode) .modal-host-controls {
+  background: linear-gradient(135deg, rgba(26, 26, 26, 0.5) 0%, rgba(18, 18, 18, 0.3) 100%);
+  border-color: #3a3a3a;
+}
+
+body:not(.light-mode) .modal-host-controls .modal-section-title {
+  color: #d1d5db;
+}
+
+body:not(.light-mode) .btn-host-action {
+  background: #1a1a1a;
+  border-color: #3a3a3a;
+  color: #d1d5db;
+}
+
+body:not(.light-mode) .btn-host-action:hover {
+  background: rgba(0, 217, 126, 0.1);
+  border-color: var(--primary-color);
+}
+
+body:not(.light-mode) .btn-host-action.danger {
+  border-color: #7f1d1d;
+  color: #fca5a5;
+}
+
+body:not(.light-mode) .btn-host-action.danger:hover {
+  border-color: #dc2626;
+  background: rgba(220, 38, 38, 0.1);
+}
+
+/* Simple confirm overlay/dialog used for unregister confirmation */
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10050; /* above event modal (z-index:2000) */
+}
+.confirm-dialog {
+  background: var(--panel-bg, #fff);
+  color: var(--text-color, #111827);
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+  padding: 20px 20px;
+  max-width: 420px;
+  width: 92%;
+  text-align: center;
+}
+.confirm-dialog p {
+  margin: 0 0 14px 0;
+  font-weight: 600;
+}
+.confirm-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+.confirm-actions .btn-yes,
+.confirm-actions .btn-no {
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+}
+.confirm-actions .btn-yes {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff4d4d 100%);
+  color: #fff;
+}
+.confirm-actions .btn-no {
+  background: #f3f4f6;
+  color: #111827;
+}
+
 /* Dark mode modal styles */
 body:not(.light-mode) .modal-content {
   background: #1a1a1a;
@@ -1915,3 +2192,32 @@ body:not(.light-mode) .create-event-modal-content::-webkit-scrollbar-thumb:hover
     justify-content: center;
   }
 }
+
+/* Dark-mode adjustments for tag checkbox chips */
+body:not(.light-mode) .tag-checkbox-list {
+  border-color: #333;
+  background: #0b0b0b;
+}
+body:not(.light-mode) .tag-checkbox-label {
+  border-color: #333;
+  background: #1a1a1a;
+}
+body:not(.light-mode) .tag-checkbox-label:hover {
+  border-color: #00d97e;
+  background: rgba(0,217,126,0.05);
+}
+body:not(.light-mode) .tag-checkbox-label span {
+  color: #e5e7eb;
+}
+body:not(.light-mode) .tag-checkbox-label span::before {
+  border-color: #333;
+  background: #1a1a1a;
+}
+body:not(.light-mode) .tag-checkbox-label input[type="checkbox"]:checked + span::before {
+  background: #00d97e;
+  border-color: #00d97e;
+}
+body:not(.light-mode) .tag-checkbox-label span::after {
+  background: #ffffff;
+}
+
