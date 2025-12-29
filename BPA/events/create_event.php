@@ -3,6 +3,7 @@
 // Receives JSON POST to create an event and link to a subject (category)
 session_start();
 require_once '../database/DatabaseConnection.php';
+require_once '../database/Notification.php';
 header('Content-Type: application/json; charset=utf-8');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -161,7 +162,48 @@ if (!empty($tagIds)) {
     }
 }
 
-$db->closeConnection();
+// Send notifications to users with matching interests
+if ($subjectId > 0) {
+    $notif = new Notification($conn);
+    
+    // Get all users who have skills matching this subject
+    $userQuery = $conn->prepare("
+        SELECT DISTINCT us.us_user_id
+        FROM user_skills us
+        WHERE us.us_subject_id = ?
+        AND us.us_user_id != ?
+        LIMIT 100
+    ");
+    
+    if ($userQuery) {
+        $userQuery->bind_param("ii", $subjectId, $hostUserId);
+        $userQuery->execute();
+        $userResult = $userQuery->get_result();
+        
+        // Get organizer username
+        $orgQuery = $conn->prepare("SELECT user_username FROM user WHERE user_id = ?");
+        $orgQuery->bind_param("i", $hostUserId);
+        $orgQuery->execute();
+        $orgResult = $orgQuery->get_result();
+        $orgData = $orgResult->fetch_assoc();
+        $orgName = $orgData['user_username'] ?? 'An organizer';
+        
+        // Create notification for each user with matching interests
+        while ($userRow = $userResult->fetch_assoc()) {
+            $userId = $userRow['us_user_id'];
+            $notif->createNotification(
+                $userId,
+                'event_created',
+                $hostUserId,
+                'New event: ' . $title,
+                $orgName . ' created an event matching your interests',
+                $eventId,
+                'event'
+            );
+        }
+        
+        $userQuery->close();
+        $orgQuery->close();
+    }
+}
 
-echo json_encode(['success' => true, 'event_id' => $eventId, 'message' => 'Event created successfully']);
-exit;

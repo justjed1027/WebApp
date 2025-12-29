@@ -2,6 +2,7 @@
 session_start();
 require_once '../database/User.php';
 require_once '../database/DatabaseConnection.php';
+require_once '../database/Notification.php';
 
 // Function to convert timestamp to "time ago" format
 function timeAgo($timestamp)
@@ -214,6 +215,15 @@ if (!empty($_SESSION['user_id'])) {
     }
     $unreadStmt->close();
   }
+}
+
+// Get unread notification count for badge
+$notificationCount = 0;
+$notificationCountDisplay = '0';
+if (!empty($_SESSION['user_id'])) {
+  $notif = new Notification($conn);
+  $notificationCountDisplay = $notif->getCountDisplay($_SESSION['user_id']);
+  $notificationCount = $notif->getUnreadCount($_SESSION['user_id']);
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
@@ -546,22 +556,20 @@ profile svg
         <input type="text" class="search-input" placeholder="Search people, posts, and courses...">
       </div>
 
-      <button class="icon-btn" aria-label="Notifications">
+      <a href="../notifications/notifications.php" class="icon-btn" aria-label="Notifications" id="notificationBtn" style="text-decoration: none;">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
           <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z" />
         </svg>
-        <span class="badge"><?php
-          
-        ?></span>
-      </button>
+        <span class="badge" id="notificationBadge"><?php echo $notificationCountDisplay; ?></span>
+      </a>
 
-      <button class="icon-btn" aria-label="Messages">
+      <a href="../dms/dms.php" class="icon-btn" aria-label="Messages" style="text-decoration: none;">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
           <path d="M5 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0m4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2" />
           <path d="m2.165 15.803.02-.004c1.83-.363 2.948-.842 3.468-1.105A9 9 0 0 0 8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6a10.4 10.4 0 0 1-.524 2.318l-.003.011a11 11 0 0 1-.244.637c-.079.186.074.394.273.362a22 22 0 0 0 .693-.125m.8-3.108a1 1 0 0 0-.287-.801C1.618 10.83 1 9.468 1 8c0-3.192 3.004-6 7-6s7 2.808 7 6-3.004 6-7 6a8 8 0 0 1-2.088-.272 1 1 0 0 0-.711.074c-.387.196-1.24.57-2.634.893a11 11 0 0 0 .398-2" />
         </svg>
         <span class="badge"><?php echo $unreadDmCount; ?></span>
-      </button>
+      </a>
 
       <div class="profile-dropdown">
         <button class="profile-btn">
@@ -727,6 +735,18 @@ profile svg
 
     <script src="script.js?v=20251103"></script>
     <script>
+      // Helper function to escape HTML
+      function escapeHtml(text) {
+        const map = {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#039;'
+        };
+        return text.replace(/[&<>"']/g, m => map[m]);
+      }
+
       // Notification Toast
       function showNotification(message, type = 'success') {
         const toast = document.createElement('div');
@@ -951,6 +971,35 @@ profile svg
       window.addEventListener('dm_badge_update', function() {
         updateDmBadge();
       });
+
+      // Update notification badge periodically
+      function updateNotificationBadge() {
+        fetch('./get_notifications.php?action=get_count')
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              document.getElementById('notificationBadge').textContent = data.display;
+            }
+          })
+          .catch(error => console.error('Error updating notification badge:', error));
+      }
+
+      // Poll notification badge every 10 seconds
+      setInterval(updateNotificationBadge, 10000);
+      // Update notification badge count
+      function updateNotificationBadge() {
+        fetch('./get_notifications.php?action=get_count')
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              document.getElementById('notificationBadge').textContent = data.display;
+            }
+          })
+          .catch(error => console.error('Error updating notification badge:', error));
+      }
+
+      // Poll notification badge every 10 seconds
+      setInterval(updateNotificationBadge, 10000);
     </script>
   </body>
 
