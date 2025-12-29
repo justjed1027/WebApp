@@ -308,4 +308,287 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initial render
   renderMonth();
+
+  // ===== UPCOMING EVENTS LOADING =====
+  const upcomingEventsContainer = document.getElementById('calendarUpcomingEvents');
+  const modal = document.getElementById('eventModal');
+  const modalOverlay = document.getElementById('modalOverlay');
+  const modalClose = document.getElementById('modalClose');
+  const btnExpandDescription = document.getElementById('btnExpandDescription');
+
+  if (!modal) {
+    console.error('Event modal not found');
+  }
+
+  // Format time helper - handles TIME format (HH:MM:SS)
+  const formatTime = (timeStr) => {
+    if (!timeStr) return '';
+    if (timeStr.includes(':') && !timeStr.includes('-')) {
+      const [hours, minutes] = timeStr.split(':');
+      const hour = parseInt(hours);
+      const minute = parseInt(minutes);
+      const ampm = hour >= 12 ? 'PM' : 'AM';
+      const displayHour = hour % 12 || 12;
+      return `${displayHour}:${minute.toString().padStart(2, '0')} ${ampm}`;
+    }
+    const date = new Date(timeStr);
+    if (isNaN(date.getTime())) return '';
+    return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+  };
+
+  // Format date helper
+  const formatDate = (dateStr) => {
+    if (!dateStr) return '';
+    const datePart = dateStr.split('T')[0] || dateStr.split(' ')[0];
+    const [year, month, day] = datePart.split('-');
+    const date = new Date(year, month - 1, day);
+    const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
+    const monthName = date.toLocaleDateString('en-US', { month: 'long' });
+    return `${dayName}, ${monthName} ${parseInt(day)}`;
+  };
+
+  // Get time range
+  const getTimeRange = (startTime, endTime) => {
+    if (!startTime && !endTime) return '';
+    if (startTime && endTime) {
+      const start = formatTime(startTime);
+      const end = formatTime(endTime);
+      return `${start} - ${end}`;
+    }
+    return formatTime(startTime || endTime);
+  };
+
+  // Get default event image
+  const getEventImage = (event) => {
+    if (event.events_img) return event.events_img;
+    // Default images based on subjects
+    const subject = (event.subjects || '').toLowerCase();
+    if (subject.includes('computer') || subject.includes('programming')) {
+      return 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=1000&h=280&fit=crop';
+    } else if (subject.includes('data') || subject.includes('science')) {
+      return 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1000&h=280&fit=crop';
+    } else if (subject.includes('design') || subject.includes('ui') || subject.includes('ux')) {
+      return 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1000&h=280&fit=crop';
+    }
+    return 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1000&h=280&fit=crop';
+  };
+
+  // Get primary subject tag
+  const getPrimarySubject = (subjects) => {
+    if (!subjects) return 'General';
+    const subjectList = subjects.split(',');
+    return subjectList[0].trim();
+  };
+
+  // Create event card HTML
+  const createEventCard = (event) => {
+    const dateStr = formatDate(event.events_date);
+    const timeRange = getTimeRange(event.events_start, event.events_end);
+    const imageUrl = getEventImage(event);
+    const primarySubject = getPrimarySubject(event.subjects);
+    
+    return `
+      <div class="calendar-event-card" data-event-id="${event.events_id}">
+        <div class="calendar-event-info">
+          <h4 class="calendar-event-title">${event.events_title}</h4>
+          <div class="calendar-event-details">
+            <div class="calendar-event-detail-item">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
+                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
+              </svg>
+              <span>${dateStr}${timeRange ? ' • ' + timeRange : ''}</span>
+            </div>
+            ${event.events_location ? `
+            <div class="calendar-event-detail-item">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
+                <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+              </svg>
+              <span>${event.events_location}</span>
+            </div>
+            ` : ''}
+          </div>
+          <div class="calendar-event-tags">
+            <span class="calendar-event-tag subject">${primarySubject}</span>
+          </div>
+          <button class="calendar-btn-view-details" data-event-id="${event.events_id}">View Details</button>
+        </div>
+        <div class="calendar-event-image-side">
+          <img src="${imageUrl}" alt="${event.events_title}" class="calendar-event-side-img">
+        </div>
+      </div>
+    `;
+  };
+
+  // Fetch and render upcoming events
+  const loadUpcomingEvents = async () => {
+    try {
+      const response = await fetch('get_calendar_events.php');
+      const data = await response.json();
+      
+      if (data.success && data.events && data.events.length > 0) {
+        upcomingEventsContainer.innerHTML = data.events.map(event => createEventCard(event)).join('');
+        // Attach event listeners to View Details buttons
+        attachViewDetailsListeners();
+      } else {
+        upcomingEventsContainer.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 20px;">No upcoming events. Register for events to see them here!</p>';
+      }
+    } catch (error) {
+      console.error('Error loading upcoming events:', error);
+      upcomingEventsContainer.innerHTML = '<p style="color: var(--error); text-align: center; padding: 20px;">Failed to load upcoming events.</p>';
+    }
+  };
+
+  // Open modal with event details
+  const openEventModal = async (eventId) => {
+    if (!modal) {
+      console.error('Modal element not found');
+      return;
+    }
+
+    try {
+      // Fetch event details
+      const response = await fetch(`../events/get_events.php?filter=all`);
+      const data = await response.json();
+      
+      if (data.success) {
+        const event = data.events.find(e => e.events_id == eventId);
+        if (!event) {
+          console.error('Event not found');
+          return;
+        }
+
+        console.log('Opening modal for event:', event.events_title);
+
+        // Populate modal
+        const imageUrl = getEventImage(event);
+        document.getElementById('modalImage').src = imageUrl;
+        document.getElementById('modalImage').alt = event.events_title;
+        document.getElementById('modalTitle').textContent = event.events_title;
+        
+        // Format date as "Jan 15, 2026"
+        const eventDate = new Date(event.events_date + 'T00:00:00');
+        const dateStr = eventDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        const timeRange = getTimeRange(event.events_start, event.events_end);
+        
+        document.getElementById('modalDate').innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+          </svg>
+          <span>${dateStr}</span>
+        `;
+        
+        document.getElementById('modalTime').innerHTML = timeRange ? `
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
+            <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
+          </svg>
+          <span>${timeRange}</span>
+        ` : '';
+        
+        document.getElementById('modalLocation').innerHTML = event.events_location ? `
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
+          </svg>
+          <span>${event.events_location}</span>
+        ` : `
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
+          </svg>
+          <span>0</span>
+        `;
+        
+        // Show participant count with capacity in format "1/500 participant" or "10/500 participants"
+        const capacity = event.events_capacity || 0;
+        const count = event.registration_count || 0;
+        const participantWord = count === 1 ? 'participant' : 'participants';
+        const participantText = capacity > 0 ? `${count}/${capacity} ${participantWord}` : `${count} ${participantWord}`;
+        
+        document.getElementById('modalParticipants').innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
+          </svg>
+          <span>${participantText}</span>
+        `;
+        
+        // Tags - show subjects as hashtags
+        const subjects = event.subjects ? event.subjects.split(',').map(s => s.trim()) : [];
+        document.getElementById('modalTags').innerHTML = subjects.map(subject => 
+          `<span class="event-tag">#${subject.toLowerCase().replace(/\s+/g, '')}</span>`
+        ).join('');
+        
+        document.getElementById('modalDescription').textContent = event.events_description || 'No description available.';
+        
+        // Category - use first subject
+        document.getElementById('modalCategory').textContent = subjects[0] || 'General';
+        document.getElementById('modalOrganizer').textContent = event.events_organization || 'N/A';
+        
+        // Capacity in format "500 spots"
+        const capacityText = event.events_capacity ? `${event.events_capacity} spots` : 'Unlimited';
+        document.getElementById('modalCapacity').textContent = capacityText;
+        
+        // Registration deadline in format "Open until Jan 10, 2026"
+        let deadlineStr = 'Open';
+        if (event.events_deadline) {
+          const deadlineDate = new Date(event.events_deadline + 'T00:00:00');
+          const deadlineDateStr = deadlineDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+          deadlineStr = `Open until ${deadlineDateStr}`;
+        }
+        document.getElementById('modalRegistration').textContent = deadlineStr;
+        
+        // Show modal
+        modal.removeAttribute('hidden');
+        document.body.style.overflow = 'hidden';
+      }
+    } catch (error) {
+      console.error('Error loading event details:', error);
+    }
+  };
+
+  // Close modal
+  const closeModal = () => {
+    if (!modal) return;
+    modal.setAttribute('hidden', '');
+    document.body.style.overflow = '';
+    const descText = document.getElementById('modalDescription');
+    if (descText) {
+      descText.classList.remove('expanded');
+    }
+    if (btnExpandDescription) {
+      btnExpandDescription.textContent = 'Read more';
+    }
+  };
+
+  // Attach listeners to View Details buttons
+  const attachViewDetailsListeners = () => {
+    document.querySelectorAll('.calendar-btn-view-details').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const eventId = e.target.getAttribute('data-event-id');
+        if (eventId) {
+          openEventModal(eventId);
+        }
+      });
+    });
+  };
+
+  // Modal controls
+  if (modalClose) {
+    modalClose.addEventListener('click', closeModal);
+  }
+  
+  if (modalOverlay) {
+    modalOverlay.addEventListener('click', closeModal);
+  }
+
+  if (btnExpandDescription) {
+    btnExpandDescription.addEventListener('click', () => {
+      const descText = document.getElementById('modalDescription');
+      descText.classList.toggle('expanded');
+      btnExpandDescription.textContent = descText.classList.contains('expanded') ? 'Read less' : 'Read more';
+    });
+  }
+
+  // Load upcoming events on page load
+  loadUpcomingEvents();
 });

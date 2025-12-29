@@ -222,101 +222,70 @@ require_once '../components/sidecontent.php';
       </div>
       <div class="events-card">
         <h3>Upcoming Events</h3>
-        <div class="calendar-event-card">
-          <div class="calendar-event-info">
-            <h4 class="calendar-event-title">Web Development Workshop</h4>
-            <div class="calendar-event-details">
-              <div class="calendar-event-detail-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
-                  <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
-                </svg>
-                <span>Tuesday, December 15 • 2:00 PM - 5:00 PM</span>
-              </div>
-              <div class="calendar-event-detail-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
-                  <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-                </svg>
-                <span>Tech Center Room 302</span>
-              </div>
-            </div>
-            <div class="calendar-event-tags">
-              <span class="calendar-event-tag workshop">Workshop</span>
-              <span class="calendar-event-tag subject">Computer Science</span>
-            </div>
-            <button class="calendar-btn-view-details">View Details</button>
-          </div>
-          <div class="calendar-event-image-side">
-            <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=1000&h=280&fit=crop" alt="Web Development Workshop" class="calendar-event-side-img">
-          </div>
-        </div>
-
-        <div class="calendar-event-card">
-          <div class="calendar-event-info">
-            <h4 class="calendar-event-title">Data Science Seminar</h4>
-            <div class="calendar-event-details">
-              <div class="calendar-event-detail-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
-                  <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
-                </svg>
-                <span>Thursday, December 17 • 10:00 AM - 12:00 PM</span>
-              </div>
-              <div class="calendar-event-detail-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
-                  <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-                </svg>
-                <span>Science Building Auditorium</span>
-              </div>
-            </div>
-            <div class="calendar-event-tags">
-              <span class="calendar-event-tag workshop">Seminar</span>
-              <span class="calendar-event-tag subject">Data Science</span>
-            </div>
-            <button class="calendar-btn-view-details">View Details</button>
-          </div>
-          <div class="calendar-event-image-side">
-            <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1000&h=280&fit=crop" alt="Data Science Seminar" class="calendar-event-side-img">
-          </div>
-        </div>
-
-        <div class="calendar-event-card">
-          <div class="calendar-event-info">
-            <h4 class="calendar-event-title">UI/UX Design Masterclass</h4>
-            <div class="calendar-event-details">
-              <div class="calendar-event-detail-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
-                  <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
-                </svg>
-                <span>Friday, December 18 • 3:00 PM - 6:00 PM</span>
-              </div>
-              <div class="calendar-event-detail-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
-                  <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-                </svg>
-                <span>Design Lab Room 105</span>
-              </div>
-            </div>
-            <div class="calendar-event-tags">
-              <span class="calendar-event-tag workshop">Masterclass</span>
-              <span class="calendar-event-tag subject">Design</span>
-            </div>
-            <button class="calendar-btn-view-details">View Details</button>
-          </div>
-          <div class="calendar-event-image-side">
-            <img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1000&h=280&fit=crop" alt="UI/UX Design Masterclass" class="calendar-event-side-img">
-          </div>
-        </div>
-        <ul class="events-list" id="upcomingEvents" aria-label="Upcoming events"></ul>
+        <div id="calendarUpcomingEvents"></div>
       </div>
       </div>
     </div>
     <?php renderSideContent('calendar'); ?>
   </main>
+
+  <!-- Event Detail Modal -->
+  <div class="event-modal" id="eventModal" hidden>
+    <div class="modal-overlay" id="modalOverlay"></div>
+    <div class="modal-content">
+      <button class="modal-close" id="modalClose" aria-label="Close modal">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+        </svg>
+      </button>
+      
+      <div class="modal-header">
+        <img class="modal-event-image" id="modalImage" src="" alt="Event">
+        <div class="modal-header-content">
+          <h2 class="modal-event-title" id="modalTitle"></h2>
+          <div class="modal-event-meta">
+            <div class="modal-meta-item" id="modalDate"></div>
+            <div class="modal-meta-item" id="modalTime"></div>
+            <div class="modal-meta-item" id="modalLocation"></div>
+            <div class="modal-meta-item" id="modalParticipants"></div>
+          </div>
+          <div class="modal-event-tags" id="modalTags"></div>
+        </div>
+      </div>
+      
+      <div class="modal-body">
+        <div class="modal-section">
+          <h3 class="modal-section-title">About This Event</h3>
+          <div class="modal-description">
+            <p class="modal-description-text" id="modalDescription"></p>
+            <button class="btn-expand-description" id="btnExpandDescription">Read more</button>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h3 class="modal-section-title">Event Details</h3>
+          <div class="modal-details-grid">
+            <div class="modal-detail-row">
+              <span class="modal-detail-label">Category</span>
+              <span class="modal-detail-value" id="modalCategory"></span>
+            </div>
+            <div class="modal-detail-row">
+              <span class="modal-detail-label">Organizer</span>
+              <span class="modal-detail-value" id="modalOrganizer"></span>
+            </div>
+            <div class="modal-detail-row">
+              <span class="modal-detail-label">Capacity</span>
+              <span class="modal-detail-value" id="modalCapacity"></span>
+            </div>
+            <div class="modal-detail-row">
+              <span class="modal-detail-label">Registration</span>
+              <span class="modal-detail-value" id="modalRegistration"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="calendar.js"></script>
   <script src="../components/sidecontent.js"></script>
