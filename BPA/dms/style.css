@@ -264,6 +264,27 @@ body {
     padding: 10px 6px;
   }
 }
+
+/* Online/Offline Status Styling */
+.dm-status-online {
+  color: #10b981;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.dm-status-offline {
+  color: #6b7280;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.dm-header-status {
+  color: #666;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
 h1 {
   font-size: 32px;
   margin-bottom: 20px;
