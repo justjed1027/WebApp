@@ -283,13 +283,6 @@ $group = isset($groupInfo[$groupId]) ? $groupInfo[$groupId] : ['name' => 'Course
             Back to Courses
           </a>
           
-          <div class="filter-controls">
-            <select class="filter-select" id="sortBy">
-              <option value="popular">Most Active</option>
-              <option value="resources">Most Resources</option>
-              <option value="title">A-Z</option>
-            </select>
-          </div>
         </div>
 
         <!-- Topic Count -->

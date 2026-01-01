@@ -62,7 +62,8 @@ function initializeCourseList() {
     
     function filterAndSort() {
         const levelValue = levelFilter ? levelFilter.value : 'all';
-        const sortValue = sortSelect ? sortSelect.value : 'popular';
+        // If no sort control exists, do not sort; preserve original DOM order
+        const sortValue = sortSelect ? sortSelect.value : null;
         const searchValue = searchInput ? searchInput.value.toLowerCase() : '';
         
         // Convert NodeList to array for sorting
@@ -72,7 +73,8 @@ function initializeCourseList() {
         cardsArray.forEach(card => {
             const level = card.dataset.level;
             const title = card.querySelector('h3').textContent.toLowerCase();
-            const instructor = card.querySelector('.course-instructor').textContent.toLowerCase();
+            const instructorEl = card.querySelector('.course-instructor');
+            const instructor = instructorEl ? instructorEl.textContent.toLowerCase() : '';
             
             const matchesLevel = levelValue === 'all' || level === levelValue;
             const matchesSearch = searchValue === '' || 
@@ -82,11 +84,11 @@ function initializeCourseList() {
             card.style.display = (matchesLevel && matchesSearch) ? 'flex' : 'none';
         });
         
-        // Sort visible courses
+        // Sort visible courses only if a sort control exists
         const visibleCards = cardsArray.filter(card => card.style.display !== 'none');
         const container = document.querySelector('.courses-list-grid');
         
-        if (container) {
+        if (container && sortValue) {
             visibleCards.sort((a, b) => {
                 switch(sortValue) {
                     case 'popular':
