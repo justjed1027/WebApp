@@ -33,13 +33,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const todayBtn = document.getElementById('todayBtn');
   const calendarCard = document.getElementById('calendarViews');
 
-  // ===== SAMPLE EVENTS DATA (stub) =====
-  const events = [
-    { title: 'Data Structures Final Exam', type: 'exam', date: '2025-10-14', start: '10:00', end: '12:00' },
-    { title: 'Group Project Meeting', type: 'meeting', date: '2025-10-11', start: '15:00', end: '16:30' },
-    { title: 'Research Paper Deadline', type: 'assignment', date: '2025-10-19', start: '00:00', end: '23:59' },
-    { title: 'Web Development Workshop', type: 'workshop', date: '2025-10-17', start: '14:00', end: '17:00' }
-  ];
+  // ===== REGISTERED EVENTS DATA =====
+  let registeredEvents = []; // Will hold actual user's registered events
+
+  // ===== SAMPLE EVENTS DATA (stub) - keeping for backwards compatibility but will be replaced =====
+  const events = [];
 
   // Utility: format YYYY-MM-DD
   function fmt(date) { return date.toISOString().split('T')[0]; }
@@ -159,11 +157,23 @@ document.addEventListener('DOMContentLoaded', () => {
       span.textContent = d;
       const cellDate = new Date(year, month, d);
       if (fmt(cellDate) === fmt(new Date())) td.classList.add('today');
-      if (events.some(ev => ev.date === fmt(cellDate))) {
+      
+      // Check for registered events on this date
+      const dayEvents = registeredEvents.filter(ev => {
+        const eventDate = ev.events_date ? ev.events_date.split(' ')[0] : '';
+        return eventDate === fmt(cellDate);
+      });
+      
+      if (dayEvents.length > 0) {
+        td.classList.add('has-events');
         const dot = document.createElement('div');
         dot.className = 'indicator-dot';
+        if (dayEvents.length > 1) {
+          dot.setAttribute('data-count', dayEvents.length);
+        }
         td.appendChild(dot);
       }
+      
       td.appendChild(span);
       td.setAttribute('role','button');
       td.setAttribute('tabindex','0');
@@ -196,6 +206,13 @@ document.addEventListener('DOMContentLoaded', () => {
     monthLabel.textContent = d.toLocaleString('default', { month: 'long' });
     yearLabel.textContent = d.getFullYear();
     dayTimeline.innerHTML = '';
+    
+    // Get events for this specific day
+    const dayEvents = registeredEvents.filter(ev => {
+      const eventDate = ev.events_date ? ev.events_date.split(' ')[0] : '';
+      return eventDate === fmt(d);
+    });
+    
     for (let h = 0; h < 24; h++) {
       const slot = document.createElement('div');
       slot.className = 'time-slot';
@@ -203,22 +220,48 @@ document.addEventListener('DOMContentLoaded', () => {
       time.className = 'slot-time';
       time.textContent = (h < 10 ? '0' + h : h) + ':00';
       slot.appendChild(time);
-      events.filter(ev => ev.date === fmt(d)).forEach(ev => {
-        const startHour = parseInt(ev.start.split(':')[0], 10);
+      
+      // Find events that start in this hour
+      dayEvents.forEach(ev => {
+        if (!ev.events_start) return;
+        const startTime = ev.events_start.split(':');
+        const startHour = parseInt(startTime[0], 10);
+        
         if (startHour === h) {
           const block = document.createElement('div');
-          block.className = 'event-block ' + ev.type;
-          block.innerHTML = `<strong>${ev.title}</strong><br>${ev.start} - ${ev.end}<span class="event-duration">${ev.type}</span>`;
+          block.className = 'event-block event';
+          
+          // Format time display
+          const formatEventTime = (timeStr) => {
+            if (!timeStr) return '';
+            const [hours, minutes] = timeStr.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const displayHour = hour % 12 || 12;
+            return `${displayHour}:${minutes} ${ampm}`;
+          };
+          
+          const startTimeFormatted = formatEventTime(ev.events_start);
+          const endTimeFormatted = ev.events_end ? formatEventTime(ev.events_end) : '';
+          const timeDisplay = endTimeFormatted ? `${startTimeFormatted} - ${endTimeFormatted}` : startTimeFormatted;
+          
+          // Get primary subject for badge
+          const subjects = ev.subjects ? ev.subjects.split(',') : [];
+          const primarySubject = subjects[0] ? subjects[0].trim() : 'Event';
+          
+          block.innerHTML = `<strong>${ev.events_title}</strong><br>${timeDisplay}<span class="event-duration">${primarySubject}</span>`;
           block.tabIndex = 0;
+          block.setAttribute('data-event-id', ev.events_id);
+          
           const showTooltip = () => {
             let tip = block.querySelector('.event-tooltip');
             if (!tip) {
               tip = document.createElement('div');
               tip.className = 'event-tooltip';
               tip.innerHTML = `
-                <h4>${ev.title}</h4>
-                <div class='event-meta'>${d.toDateString()}<br>${ev.start} - ${ev.end}</div>
-                <span class='event-type-badge ${ev.type}'>${ev.type.toUpperCase()}</span>
+                <h4>${ev.events_title}</h4>
+                <div class='event-meta'>${d.toDateString()}<br>${timeDisplay}</div>
+                <span class='event-type-badge event'>${primarySubject}</span>
               `;
               block.appendChild(tip);
               const rect = block.getBoundingClientRect();
@@ -229,12 +272,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 tip.style.marginRight = '10px';
               }
             }
-            requestAnimationFrame(()=> tip.classList.add('visible'));
+            requestAnimationFrame(() => tip.classList.add('visible'));
           };
+          
           const hideTooltip = () => {
             const tip = block.querySelector('.event-tooltip');
             if (tip) tip.classList.remove('visible');
           };
+          
+          // Click to view event details
+          block.addEventListener('click', () => {
+            openEventModal(ev.events_id);
+          });
+          
           block.addEventListener('mouseenter', showTooltip);
           block.addEventListener('mouseleave', hideTooltip);
           block.addEventListener('focus', showTooltip);
@@ -242,6 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
           slot.appendChild(block);
         }
       });
+      
       dayTimeline.appendChild(slot);
     }
   }
@@ -315,6 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalOverlay = document.getElementById('modalOverlay');
   const modalClose = document.getElementById('modalClose');
   const btnExpandDescription = document.getElementById('btnExpandDescription');
+  let currentEventId = null; // Track current event for unregister
 
   if (!modal) {
     console.error('Event modal not found');
@@ -428,119 +480,163 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await response.json();
       
       if (data.success && data.events && data.events.length > 0) {
+        // Store events globally for calendar views
+        registeredEvents = data.events;
+        
+        // Render events in the sidebar
         upcomingEventsContainer.innerHTML = data.events.map(event => createEventCard(event)).join('');
         // Attach event listeners to View Details buttons
         attachViewDetailsListeners();
+        
+        // Re-render the current calendar view to show event indicators
+        if (state.view === 'month') {
+          renderMonth();
+        } else if (state.view === 'day') {
+          renderDay();
+        } else if (state.view === 'year') {
+          renderYear();
+        }
       } else {
+        registeredEvents = [];
         upcomingEventsContainer.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 20px;">No upcoming events. Register for events to see them here!</p>';
       }
     } catch (error) {
       console.error('Error loading upcoming events:', error);
+      registeredEvents = [];
       upcomingEventsContainer.innerHTML = '<p style="color: var(--error); text-align: center; padding: 20px;">Failed to load upcoming events.</p>';
     }
   };
 
+  // Helper function to populate modal with event data
+  const populateModal = (event) => {
+    console.log('Populating modal with event:', event);
+    
+    // Store the current event ID for unregister functionality
+    currentEventId = event.events_id;
+    
+    // Populate modal
+    const imageUrl = getEventImage(event);
+    document.getElementById('modalImage').src = imageUrl;
+    document.getElementById('modalImage').alt = event.events_title;
+    document.getElementById('modalTitle').textContent = event.events_title;
+    
+    // Format date as "Jan 15, 2026"
+    const eventDate = new Date(event.events_date + 'T00:00:00');
+    const dateStr = eventDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const timeRange = getTimeRange(event.events_start, event.events_end);
+    
+    document.getElementById('modalDate').innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+      </svg>
+      <span>${dateStr}</span>
+    `;
+    
+    document.getElementById('modalTime').innerHTML = timeRange ? `
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
+        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
+      </svg>
+      <span>${timeRange}</span>
+    ` : '';
+    
+    document.getElementById('modalLocation').innerHTML = event.events_location ? `
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
+      </svg>
+      <span>${event.events_location}</span>
+    ` : `
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
+      </svg>
+      <span>0</span>
+    `;
+    
+    // Show participant count with capacity in format "1/500 participant" or "10/500 participants"
+    const capacity = event.events_capacity || 0;
+    const count = event.registration_count || 0;
+    const participantWord = count === 1 ? 'participant' : 'participants';
+    const participantText = capacity > 0 ? `${count}/${capacity} ${participantWord}` : `${count} ${participantWord}`;
+    
+    document.getElementById('modalParticipants').innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
+      </svg>
+      <span>${participantText}</span>
+    `;
+    
+    // Tags - show subjects as hashtags
+    const subjects = event.subjects ? event.subjects.split(',').map(s => s.trim()) : [];
+    document.getElementById('modalTags').innerHTML = subjects.map(subject => 
+      `<span class="event-tag">#${subject.toLowerCase().replace(/\s+/g, '')}</span>`
+    ).join('');
+    
+    document.getElementById('modalDescription').textContent = event.events_description || 'No description available.';
+    
+    // Category - use first subject
+    document.getElementById('modalCategory').textContent = subjects[0] || 'General';
+    document.getElementById('modalOrganizer').textContent = event.events_organization || 'N/A';
+    
+    // Capacity in format "500 spots"
+    const capacityText = event.events_capacity ? `${event.events_capacity} spots` : 'Unlimited';
+    document.getElementById('modalCapacity').textContent = capacityText;
+    
+    // Registration deadline in format "Open until Jan 10, 2026"
+    let deadlineStr = 'Open';
+    if (event.events_deadline) {
+      const deadlineDate = new Date(event.events_deadline + 'T00:00:00');
+      const deadlineDateStr = deadlineDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      deadlineStr = `Open until ${deadlineDateStr}`;
+    }
+    document.getElementById('modalRegistration').textContent = deadlineStr;
+  };
+
   // Open modal with event details
   const openEventModal = async (eventId) => {
+    console.log('openEventModal called with eventId:', eventId);
+    console.log('Modal element exists:', !!modal);
+    
     if (!modal) {
       console.error('Modal element not found');
       return;
     }
 
     try {
-      // Fetch event details
-      const response = await fetch(`../events/get_events.php?filter=all`);
-      const data = await response.json();
+      // First try to fetch from calendar events (the events the user is registered for)
+      console.log('Fetching from get_calendar_events.php');
+      const calResponse = await fetch('get_calendar_events.php');
+      const calData = await calResponse.json();
+      console.log('Calendar events response:', calData);
       
-      if (data.success) {
-        const event = data.events.find(e => e.events_id == eventId);
-        if (!event) {
-          console.error('Event not found');
+      if (calData.success && calData.events) {
+        const calEvent = calData.events.find(e => e.events_id == eventId);
+        if (calEvent) {
+          console.log('Found event in calendar data:', calEvent);
+          populateModal(calEvent);
+          modal.removeAttribute('hidden');
+          document.body.style.overflow = 'hidden';
           return;
         }
-
-        console.log('Opening modal for event:', event.events_title);
-
-        // Populate modal
-        const imageUrl = getEventImage(event);
-        document.getElementById('modalImage').src = imageUrl;
-        document.getElementById('modalImage').alt = event.events_title;
-        document.getElementById('modalTitle').textContent = event.events_title;
-        
-        // Format date as "Jan 15, 2026"
-        const eventDate = new Date(event.events_date + 'T00:00:00');
-        const dateStr = eventDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        const timeRange = getTimeRange(event.events_start, event.events_end);
-        
-        document.getElementById('modalDate').innerHTML = `
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
-          </svg>
-          <span>${dateStr}</span>
-        `;
-        
-        document.getElementById('modalTime').innerHTML = timeRange ? `
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
-            <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
-          </svg>
-          <span>${timeRange}</span>
-        ` : '';
-        
-        document.getElementById('modalLocation').innerHTML = event.events_location ? `
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
-          </svg>
-          <span>${event.events_location}</span>
-        ` : `
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
-          </svg>
-          <span>0</span>
-        `;
-        
-        // Show participant count with capacity in format "1/500 participant" or "10/500 participants"
-        const capacity = event.events_capacity || 0;
-        const count = event.registration_count || 0;
-        const participantWord = count === 1 ? 'participant' : 'participants';
-        const participantText = capacity > 0 ? `${count}/${capacity} ${participantWord}` : `${count} ${participantWord}`;
-        
-        document.getElementById('modalParticipants').innerHTML = `
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
-          </svg>
-          <span>${participantText}</span>
-        `;
-        
-        // Tags - show subjects as hashtags
-        const subjects = event.subjects ? event.subjects.split(',').map(s => s.trim()) : [];
-        document.getElementById('modalTags').innerHTML = subjects.map(subject => 
-          `<span class="event-tag">#${subject.toLowerCase().replace(/\s+/g, '')}</span>`
-        ).join('');
-        
-        document.getElementById('modalDescription').textContent = event.events_description || 'No description available.';
-        
-        // Category - use first subject
-        document.getElementById('modalCategory').textContent = subjects[0] || 'General';
-        document.getElementById('modalOrganizer').textContent = event.events_organization || 'N/A';
-        
-        // Capacity in format "500 spots"
-        const capacityText = event.events_capacity ? `${event.events_capacity} spots` : 'Unlimited';
-        document.getElementById('modalCapacity').textContent = capacityText;
-        
-        // Registration deadline in format "Open until Jan 10, 2026"
-        let deadlineStr = 'Open';
-        if (event.events_deadline) {
-          const deadlineDate = new Date(event.events_deadline + 'T00:00:00');
-          const deadlineDateStr = deadlineDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-          deadlineStr = `Open until ${deadlineDateStr}`;
-        }
-        document.getElementById('modalRegistration').textContent = deadlineStr;
-        
-        // Show modal
-        modal.removeAttribute('hidden');
-        document.body.style.overflow = 'hidden';
       }
+      
+      // If not found in calendar events, try all events
+      console.log('Event not in calendar, fetching from ../events/get_events.php');
+      const response = await fetch(`../events/get_events.php?filter=all`);
+      const data = await response.json();
+      console.log('All events response:', data);
+      
+      if (data.success && data.events) {
+        const event = data.events.find(e => e.events_id == eventId);
+        if (event) {
+          console.log('Found event in all events:', event);
+          populateModal(event);
+          modal.removeAttribute('hidden');
+          document.body.style.overflow = 'hidden';
+          return;
+        }
+      }
+      
+      console.error('Event not found in either source. Event ID:', eventId);
     } catch (error) {
       console.error('Error loading event details:', error);
     }
@@ -562,9 +658,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Attach listeners to View Details buttons
   const attachViewDetailsListeners = () => {
-    document.querySelectorAll('.calendar-btn-view-details').forEach(btn => {
+    const buttons = document.querySelectorAll('.calendar-btn-view-details');
+    console.log('Found', buttons.length, 'View Details buttons');
+    buttons.forEach(btn => {
       btn.addEventListener('click', (e) => {
         const eventId = e.target.getAttribute('data-event-id');
+        console.log('View Details clicked for event ID:', eventId);
         if (eventId) {
           openEventModal(eventId);
         }
@@ -586,6 +685,122 @@ document.addEventListener('DOMContentLoaded', () => {
       const descText = document.getElementById('modalDescription');
       descText.classList.toggle('expanded');
       btnExpandDescription.textContent = descText.classList.contains('expanded') ? 'Read less' : 'Read more';
+    });
+  }
+
+  // Unregister button
+  const btnUnregister = document.getElementById('btnUnregister');
+
+  // Confirmation modal elements
+  const confirmationModal = document.getElementById('confirmationModal');
+  const confirmationOverlay = document.getElementById('confirmationOverlay');
+  const confirmationTitle = document.getElementById('confirmationTitle');
+  const confirmationMessage = document.getElementById('confirmationMessage');
+  const btnConfirmCancel = document.getElementById('btnConfirmCancel');
+  const btnConfirmOk = document.getElementById('btnConfirmOk');
+
+  // Show confirmation dialog
+  const showConfirmation = (title, message) => {
+    return new Promise((resolve) => {
+      confirmationTitle.textContent = title;
+      confirmationMessage.textContent = message;
+      confirmationModal.removeAttribute('hidden');
+      document.body.style.overflow = 'hidden';
+
+      const handleConfirm = () => {
+        cleanup();
+        resolve(true);
+      };
+
+      const handleCancel = () => {
+        cleanup();
+        resolve(false);
+      };
+
+      const cleanup = () => {
+        confirmationModal.setAttribute('hidden', '');
+        document.body.style.overflow = '';
+        btnConfirmOk.removeEventListener('click', handleConfirm);
+        btnConfirmCancel.removeEventListener('click', handleCancel);
+        confirmationOverlay.removeEventListener('click', handleCancel);
+      };
+
+      btnConfirmOk.addEventListener('click', handleConfirm);
+      btnConfirmCancel.addEventListener('click', handleCancel);
+      confirmationOverlay.addEventListener('click', handleCancel);
+    });
+  };
+
+  // Show success/error message
+  const showMessage = (title, message) => {
+    return new Promise((resolve) => {
+      confirmationTitle.textContent = title;
+      confirmationMessage.textContent = message;
+      confirmationModal.removeAttribute('hidden');
+      document.body.style.overflow = 'hidden';
+      
+      // Hide cancel button, change confirm to "OK"
+      btnConfirmCancel.style.display = 'none';
+      btnConfirmOk.textContent = 'OK';
+
+      const handleOk = () => {
+        cleanup();
+        resolve();
+      };
+
+      const cleanup = () => {
+        confirmationModal.setAttribute('hidden', '');
+        document.body.style.overflow = '';
+        btnConfirmCancel.style.display = '';
+        btnConfirmOk.textContent = 'Confirm';
+        btnConfirmOk.removeEventListener('click', handleOk);
+        confirmationOverlay.removeEventListener('click', handleOk);
+      };
+
+      btnConfirmOk.addEventListener('click', handleOk);
+      confirmationOverlay.addEventListener('click', handleOk);
+    });
+  };
+
+  if (btnUnregister) {
+    btnUnregister.addEventListener('click', async () => {
+      if (!currentEventId) {
+        console.error('No event ID set');
+        return;
+      }
+
+      const confirmed = await showConfirmation(
+        'Unregister from Event',
+        'Are you sure you want to unregister from this event? This action cannot be undone.'
+      );
+
+      if (!confirmed) {
+        return;
+      }
+
+      try {
+        const response = await fetch('../events/unregister_event.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ eventId: currentEventId })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          await showMessage('Success', 'You have successfully unregistered from the event!');
+          closeModal();
+          // Reload the events list
+          loadUpcomingEvents();
+        } else {
+          await showMessage('Error', 'Failed to unregister: ' + (data.message || 'Unknown error'));
+        }
+      } catch (error) {
+        console.error('Error unregistering:', error);
+        await showMessage('Error', 'An error occurred while unregistering. Please try again.');
+      }
     });
   }
 
