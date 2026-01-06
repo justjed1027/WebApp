@@ -1,3 +1,22 @@
+// ===== SIDEBAR COLLAPSE INITIALIZATION =====
+// Sidebar starts collapsed and expands on hover (handled by CSS)
+const sidebar = document.getElementById('sidebar');
+if (sidebar) {
+    sidebar.classList.add('collapsed');
+}
+
+// ===== THEME TOGGLE =====
+const themeToggle = document.getElementById('themeToggle');
+const body = document.body;
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme === 'light') body.classList.add('light-mode');
+if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+        body.classList.toggle('light-mode');
+        localStorage.setItem('theme', body.classList.contains('light-mode') ? 'light' : 'dark');
+    });
+}
+
 // All handlers run after DOM is ready
 document.addEventListener('DOMContentLoaded', function () {
     // Auto-resize behavior for the top textarea (.create-post-input)
