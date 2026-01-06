@@ -817,10 +817,6 @@ body.light-mode .toggle-slider {
   box-shadow: 0 2px 8px rgba(255, 0, 128, 0.4);
   animation: pulse 2s ease-in-out infinite;
 }
-  border-color: var(--primary-color);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
 
 .badge {
   position: absolute;
@@ -1539,21 +1535,14 @@ body.has-side-content .main-content {
   color: white;
 }
 
-<<<<<<< HEAD
 /* ===== NOTIFICATION MODAL STYLES ===== */
 .notification-modal-backdrop {
-=======
-/* ===== MODAL STYLES ===== */
-.modal-backdrop {
-  display: none;
->>>>>>> events2
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.7);
-<<<<<<< HEAD
   display: none;
   align-items: center;
   justify-content: center;
@@ -1626,74 +1615,10 @@ body.has-side-content .main-content {
 }
 
 .notification-modal-close:hover {
-=======
-  backdrop-filter: blur(4px);
-  z-index: 9999;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-backdrop[aria-hidden="false"] {
-  display: flex;
-}
-
-.modal-box {
-  background: var(--background-card);
-  border-radius: var(--border-radius);
-  padding: 24px;
-  max-width: 600px;
-  width: 90%;
-  box-shadow: var(--shadow-lg);
-  border: 1px solid var(--border-color);
-  animation: slideUp 0.3s ease;
-}
-
-.modal-close {
-  background: var(--primary-color);
-  color: var(--background-main);
-  border: none;
-  border-radius: 6px;
-  padding: 10px 24px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.modal-close:hover {
-  background: var(--primary-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(31, 255, 147, 0.3);
-}
-
-/* Post Delete Confirmation */
-.post-delete-confirmation {
-  display: none;
-  background: var(--background-hover);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 12px;
-  margin-top: 12px;
-}
-
-.post-delete-cancel,
-.post-delete-confirm {
-  padding: 6px 16px;
-  border: none;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.post-delete-cancel {
->>>>>>> events2
   background: var(--background-hover);
   color: var(--text-primary);
 }
 
-<<<<<<< HEAD
 .notification-modal-body {
   flex: 1;
   overflow-y: auto;
@@ -1854,19 +1779,5 @@ body.has-side-content .main-content {
   .notification-item-modal {
     padding: 16px 12px;
   }
-=======
-.post-delete-cancel:hover {
-  background: var(--divider-color);
-}
-
-.post-delete-confirm {
-  background: var(--error);
-  color: white;
-}
-
-.post-delete-confirm:hover {
-  background: #d32f2f;
-  transform: translateY(-1px);
->>>>>>> events2
 }
 

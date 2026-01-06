@@ -2,11 +2,8 @@
 session_start();
 require_once '../database/User.php';
 require_once '../database/DatabaseConnection.php';
-<<<<<<< HEAD
 require_once '../database/Notification.php';
-=======
 require_once '../components/sidecontent.php';
->>>>>>> events2
 
 // Function to convert timestamp to "time ago" format
 function timeAgo($timestamp)
