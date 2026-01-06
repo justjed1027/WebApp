@@ -306,12 +306,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_notification']
         <span>Settings</span>
       </a>
 
-      <a href="notifications.php" class="nav-link active" data-tooltip="Notifications">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742.37.142.765.214 1.175.214.72 0 1.404-.337 1.84-.952.606.941 1.04 2.135 1.04 3.496 0 .384-.048.774-.144 1.158.91-.223 1.856-.347 2.368-.347.72 0 1.405.337 1.84.952.606-.941 1.04-2.135 1.04-3.496 0-.384-.048-.774-.144-1.158.37-.142.765-.214 1.175-.214.72 0 1.404-.337 1.84-.952.606.941 1.04 2.135 1.04 3.496 0 .384-.048.774-.144 1.158.368-.085.727-.202 1.074-.35-.248-1.45-.396-3.01-.396-3.808 0-3.314-2.134-6.027-5.02-6.615.066-.32.1-.645.1-.98A4.002 4.002 0 0 0 8 1.918z" />
-        </svg>
-        <span>Notifications</span>
-      </a>
 
       <a href="post.php?action=logout" class="nav-link" data-tooltip="Log Out">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
