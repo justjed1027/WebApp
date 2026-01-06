@@ -639,9 +639,46 @@
   .dm-input-row {
     padding: 12px 16px;
   }
-  
-  .dm-message-bubble {
-    font-size: 0.9rem;
-    padding: 10px 14px;
-  }
+}
+
+/* Online/Offline Status Styling */
+.dm-status-online {
+  color: #10b981;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.dm-status-offline {
+  color: #6b7280;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.dm-header-status {
+  color: #666;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+h1 {
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+p {
+  font-size: 18px;
+  margin-bottom: 30px;
+}
+nav a {
+  display: inline-block;
+  margin: 0 15px;
+  color: #4f46e5;
+  text-decoration: none;
+  font-size: 18px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+nav a:hover {
+  background: #eef3ff;
 }

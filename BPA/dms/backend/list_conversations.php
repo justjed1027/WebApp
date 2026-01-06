@@ -75,15 +75,19 @@ while ($row = $result->fetch_assoc()) {
     $conversationId = intval($row['conversation_id']);
     $otherUserId = intval($row['other_user_id']);
     
-    // Get other user's username
-    $userStmt = $db->prepare("SELECT user_username FROM user WHERE user_id = ?");
+    // Get other user's username and online status
+    $userStmt = $db->prepare("SELECT user_username, is_online, last_seen FROM user WHERE user_id = ?");
     $userStmt->bind_param("i", $otherUserId);
     $userStmt->execute();
     $userResult = $userStmt->get_result();
     $otherUsername = 'Unknown User';
+    $isOnline = false;
+    $lastSeen = null;
     
     if ($userRow = $userResult->fetch_assoc()) {
         $otherUsername = $userRow['user_username'];
+        $isOnline = (bool)$userRow['is_online'];
+        $lastSeen = $userRow['last_seen'];
     }
     $userStmt->close();
     
@@ -108,7 +112,9 @@ while ($row = $result->fetch_assoc()) {
         'other_user_id' => $otherUserId,
         'other_user_username' => $otherUsername,
         'last_message_time' => $row['last_message_time'],
-        'unread_count' => $unreadCount
+        'unread_count' => $unreadCount,
+        'is_online' => $isOnline,
+        'last_seen' => $lastSeen
     ];
 }
 

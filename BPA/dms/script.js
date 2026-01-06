@@ -27,6 +27,9 @@ const headerAvatar = document.getElementById('headerAvatar');
 
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
+    // Mark user as online
+    updateUserStatus('online');
+    
     await loadConversations();
     
     // Check if we need to start a conversation with a specific user
@@ -42,6 +45,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (e.key === 'Enter') {
             sendMessage();
         }
+    });
+    
+    // Update online status every 30 seconds
+    setInterval(() => {
+        updateUserStatus('online');
+    }, 30000);
+    
+    // Refresh conversation list every 15 seconds to show updated online/offline status
+    setInterval(() => {
+        loadConversations();
+    }, 15000);
+    
+    // Mark offline when leaving the page
+    window.addEventListener('beforeunload', () => {
+        updateUserStatus('offline');
     });
 });
 
@@ -106,22 +124,26 @@ function renderConversations(conversations) {
             ? formatTime(conv.last_message_time) 
             : 'No messages';
         
+        // Format online status
+        const statusClass = conv.is_online ? 'online' : 'offline';
+        const statusText = conv.is_online ? '🟢 Online' : `⚫ ${formatTimeAgo(conv.last_seen)}`;
+        
         item.innerHTML = `
             <div class="dm-avatar ${avatarClass}"></div>
             <div class="dm-list-info">
                 <div class="dm-list-name">${escapeHtml(conv.other_user_username)} <span class="dm-list-time">${timeStr}</span> ${unreadBadge}</div>
-                <div class="dm-list-preview">Click to view messages</div>
+                <div class="dm-list-preview dm-status-${statusClass}">${statusText}</div>
             </div>
         `;
         
-        item.addEventListener('click', () => selectConversation(conv.conversation_id, conv.other_user_id, conv.other_user_username));
+        item.addEventListener('click', () => selectConversation(conv.conversation_id, conv.other_user_id, conv.other_user_username, conv.is_online));
         
         conversationList.appendChild(item);
     });
 }
 
 // Select a conversation and load messages
-async function selectConversation(conversationId, otherUserId, otherUsername) {
+async function selectConversation(conversationId, otherUserId, otherUsername, isOnline) {
     currentConversationId = conversationId;
     currentOtherUserId = otherUserId;
     
@@ -134,8 +156,12 @@ async function selectConversation(conversationId, otherUserId, otherUsername) {
         selectedItem.classList.add('active');
     }
     
-    // Update header
+    // Update header with online status
     headerName.textContent = otherUsername;
+    const statusEl = chatHeader.querySelector('.dm-header-status');
+    if (statusEl) {
+        statusEl.textContent = isOnline ? '🟢 Online' : '⚫ Offline';
+    }
     headerAvatar.className = `dm-header-avatar avatar${(otherUserId % 4) + 1}`;
     chatHeader.style.display = 'flex';
     messageInput.style.display = 'flex';
@@ -279,6 +305,29 @@ function formatTime(timestamp) {
     
     // Older - show date
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+// Utility: Format time ago for last_seen
+function formatTimeAgo(timestamp) {
+    if (!timestamp) return 'never';
+    
+    const date = new Date(timestamp);
+    const now = new Date();
+    const seconds = Math.floor((now - date) / 1000);
+    
+    if (seconds < 60) return 'just now';
+    if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+    if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+    if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`;
+    
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+// Update user online/offline status
+function updateUserStatus(action) {
+    fetch(`backend/update_status.php?action=${action}`)
+        .then(response => response.json())
+        .catch(err => console.log('Status update failed:', err));
 }
 
 // Start or open conversation with a specific user (from connections page)
