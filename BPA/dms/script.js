@@ -1,3 +1,15 @@
+// ===== THEME TOGGLE =====
+const themeToggle = document.getElementById('themeToggle');
+const body = document.body;
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme === 'light') body.classList.add('light-mode');
+if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+        body.classList.toggle('light-mode');
+        localStorage.setItem('theme', body.classList.contains('light-mode') ? 'light' : 'dark');
+    });
+}
+
 // Global state
 let currentConversationId = null;
 let currentOtherUserId = null;

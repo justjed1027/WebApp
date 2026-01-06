@@ -2,7 +2,11 @@
 session_start();
 require_once '../database/User.php';
 require_once '../database/DatabaseConnection.php';
+<<<<<<< HEAD
 require_once '../database/Notification.php';
+=======
+require_once '../components/sidecontent.php';
+>>>>>>> events2
 
 // Function to convert timestamp to "time ago" format
 function timeAgo($timestamp)
@@ -334,6 +338,7 @@ profile svg
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SkillSwap — Posts</title>
   <link rel="stylesheet" href="style.css?v=nav-20251022">
+  <link rel="stylesheet" href="../components/sidecontent.css">
   <style>
     
     .create-post-input {
@@ -411,14 +416,16 @@ profile svg
   </style>
 </head>
 
-<body>
+<body class="has-side-content">
 
   <!-- Sidebar Navigation -->
   <aside class="sidebar" id="sidebar">
     <!-- Top Section: Logo & Profile -->
     <div class="sidebar-top">
       <div class="sidebar-logo">
-        <div class="logo-placeholder"><img class=".logo-placeholder" src="../images/skillswaplogotrans.png"></div>
+        <div class="logo-placeholder">
+          <img src="../images/skillswaplogotrans.png" alt="SkillSwap Logo">
+        </div>
         <span class="logo-text">SkillSwap</span>
       </div>
 
@@ -429,11 +436,6 @@ profile svg
           </svg>
         </div>
         <div class="profile-info">
-          <h3 class="profile-name"><?php echo htmlspecialchars($user->user_username); ?></h3>
-          <p class="profile-email"><?php echo htmlspecialchars($user->user_email); ?></p>
-          <?php if ((isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === 1) || (isset($user->user_is_admin) && (int)$user->user_is_admin === 1)) : ?>
-            <div class="admin-badge" title="Administrator">Admin</div>
-          <?php endif; ?>
           <a href="../profile/profile.php" class="view-profile-link">View Profile</a>
         </div>
       </div>
@@ -502,14 +504,14 @@ profile svg
     <div class="sidebar-bottom">
       <div class="nav-divider"></div>
 
-      <a href="..//settings/settings.php" class="nav-link" data-tooltip="Settings">
+      <a href="../settings/settings.php" class="nav-link" data-tooltip="Settings">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
           <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z" />
         </svg>
         <span>Settings</span>
       </a>
 
-      <a href="post.php?action=logout" class="nav-link" data-tooltip="Log Out">
+      <a href="../login/login.php" class="nav-link" data-tooltip="Log Out">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
           <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z" />
           <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z" />
@@ -730,6 +732,9 @@ profile svg
     </div>
 
   </main>
+
+  <!-- Side Content -->
+  <?php renderSideContent('posts'); ?>
 
 </body>
 

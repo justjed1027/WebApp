@@ -1,32 +1,34 @@
 <?php
+session_start();
 require_once '../database/DatabaseConnection.php';
 require_once '../database/User.php';
 require_once '../components/sidecontent.php';
 
-session_start();
-
+// Enforce login like other pages
 if (!isset($_SESSION['user_id'])) {
-    header("Location: ../landing/landing.php");
-    exit;
+  header('Location: ../login/login.php');
+  exit();
 }
 
-?>
+$db = new DatabaseConnection();
+$conn = $db->connection;
 
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Direct Messages | SkillSwap</title>
-  <!-- Shared styles for navbar and layout -->
+  <title>New Page | SkillSwap</title>
+  <!-- Reuse shared styles for navbar and layout -->
   <link rel="stylesheet" href="../calendar/calendar.css">
   <link rel="stylesheet" href="../components/sidecontent.css">
-  <!-- Page-specific styles -->
+  <!-- Page-specific styles (unique content only) -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="has-side-content">
 
-  <!-- Sidebar Navigation (reused from existing pages) -->
+  <!-- Sidebar Navigation (copied exactly from existing pages) -->
   <aside class="sidebar" id="sidebar">
     <!-- Top Section: Logo & Profile -->
     <div class="sidebar-top">
@@ -57,7 +59,7 @@ if (!isset($_SESSION['user_id'])) {
           <span>Posts</span>
         </a>
 
-        <a href="../dms/dms.php" class="nav-link active" data-tooltip="Direct Messages">
+        <a href="../dms/index.html" class="nav-link" data-tooltip="Direct Messages">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
             <path d="M16 8c0 3.866-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.584.296-1.925.864-4.181 1.234-.2.032-.352-.176-.273-.362.354-.836.674-1.95.77-2.966C.744 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7M5 8a1 1 0 1 0-2 0 1 1 0 0 0 2 0m4 0a1 1 0 1 0-2 0 1 1 0 0 0 2 0m3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2" />
           </svg>
@@ -142,17 +144,18 @@ if (!isset($_SESSION['user_id'])) {
     </div>
   </aside>
 
-  <!-- Top Bar Navigation (reused from existing pages) -->
+  <!-- Top Bar Navigation (copied exactly) -->
   <header class="topbar">
     <div class="topbar-left"></div>
     <div class="topbar-center">
+      <h1 class="page-title">New Page</h1>
     </div>
     <div class="topbar-right">
       <div class="search-container">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
           <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
         </svg>
-        <input type="text" class="search-input" placeholder="Search people, posts, and courses..." >
+        <input type="text" class="search-input" placeholder="Search people, posts, and courses...">
       </div>
 
       <button class="icon-btn" aria-label="Notifications">
@@ -165,7 +168,7 @@ if (!isset($_SESSION['user_id'])) {
       <button class="icon-btn" aria-label="Messages">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
           <path d="M5 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0m4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2" />
-          <path d="m2.165 15.803.02-.004c1.83-.363 2.948-.842 3.468-1.105A9 9 0 0 0 8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6a10.4 10.4 0 0 1-.524 2.318l-.003.011a11 11 0 0 1-.244.637c-.079.186.074.394.273.362a22 22 0  0 0 .693-.125m.8-3.108a1 1 0  0 0-.287-.801C1.618 10.83 1 9.468 1 8c0-3.192 3.004-6 7-6s7 2.808 7 6-3.004 6-7 6a8 8 0 0 1-2.088-.272 1 1 0  0 0-.711.074c-.387.196-1.24.57-2.634.893a11 11 0  0 0 .398-2" />
+          <path d="m2.165 15.803.02-.004c1.83-.363 2.948-.842 3.468-1.105A9 9 0 0 0 8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6a10.4 10.4 0 0 1-.524 2.318l-.003.011a11 11 0  0 1-.244.637c-.079.186.074.394.273.362a22 22 0 0 0 .693-.125m.8-3.108a1 1 0 0 0-.287-.801C1.618 10.83 1 9.468 1 8c0-3.192 3.004-6 7-6s7 2.808 7 6-3.004 6-7 6a8 8 0 0 1-2.088-.272 1 1 0 0 0-.711.074c-.387.196-1.24.57-2.634.893a11 11 0 0 0 .398-2" />
         </svg>
         <span class="badge">7</span>
       </button>
@@ -180,68 +183,46 @@ if (!isset($_SESSION['user_id'])) {
     </div>
   </header>
 
-  <!-- Main Content Area -->
+  <!-- Main Content Area (unique for this page) -->
   <main class="main-content">
-    <div class="calendar-container">
-      <div class="dm-container">
-        <!-- Left Sidebar: Conversations List -->
-        <div class="dm-sidebar">
-          <div class="dm-sidebar-header">
-            <h2>
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M16 8c0 3.866-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.584.296-1.925.864-4.181 1.234-.2.032-.352-.176-.273-.362.354-.836.674-1.95.77-2.966C.744 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7M5 8a1 1 0 1 0-2 0 1 1 0 0 0 2 0m4 0a1 1 0 1 0-2 0 1 1 0 0 0 2 0m3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2" />
-              </svg>
-              <span>Messages</span>
-            </h2>
-          </div>
-      <div class="dm-search">
-        <input type="text" id="searchInput" placeholder="Search messages...">
+    <div class="page-content">
+      <div class="custom-page-content">
+        <h2>Welcome to Your New Page</h2>
+        <p>Build your unique content here. The navbar and shared layout are consistent with other pages.</p>
       </div>
-      <div class="dm-list" id="conversationList">
-        <!-- Conversations will be loaded here by JavaScript -->
-        <div class="dm-empty-state">Loading conversations...</div>
-      </div>
+      <?php renderSideContent('events'); ?>
     </div>
-    <div class="dm-main">
-      <div class="dm-header" id="chatHeader" style="display: none;">
-        <div class="dm-header-avatar" id="headerAvatar"></div>
-        <div class="dm-header-info">
-          <div class="dm-header-name" id="headerName"></div>
-          <div class="dm-header-status">Online</div>
-        </div>
-        <div class="dm-header-actions">
-          <button title="Call">📞</button>
-          <button title="Video">🎥</button>
-          <button title="Info">ℹ️</button>
-          <button title="More">⋯</button>
-        </div>
-      </div>
-      <div class="dm-messages" id="messagesContainer">
-        <!-- Messages will be loaded here by JavaScript -->
-        <div class="dm-empty-state">Select a conversation to start messaging</div>
-      </div>
-      <div class="dm-input-row" id="messageInput" style="display: none;">
-        <input type="text" class="dm-input" id="messageText" placeholder="Type a message...">
-        <button class="dm-send-btn" id="sendBtn" title="Send">&#10148;</button>
-      </div>
-    </div>
-  </div>
-    </div><!-- Close calendar-container -->
+  </main>
 
-    <!-- Side Content -->
-    <?php renderSideContent('dms', [
-        'hide' => ['trending_topics', 'upcoming_events'], 
-        'limit' => ['notifications' => 2, 'recent_dms' => 2, 'suggested_collaborators' => 2]
-    ]); ?>
-    
-  </main><!-- Close main-content -->
-
+  <!-- Reuse shared scripts for side content -->
   <script>
-    // Check if coming from connections page with user_id
-    const urlParams = new URLSearchParams(window.location.search);
-    window.startUserId = urlParams.has('user_id') ? parseInt(urlParams.get('user_id')) : null;
-    console.log('URL parameter user_id:', window.startUserId);
+    // Sidebar collapse on double-click
+    document.addEventListener('dblclick', function() {
+      const sidebar = document.getElementById('sidebar');
+      if (sidebar) {
+        sidebar.classList.toggle('collapsed');
+      }
+    });
+
+    // Prevent text selection on double-click
+    document.addEventListener('mousedown', function(e) {
+      if (e.detail > 1) {
+        e.preventDefault();
+      }
+    });
+
+    // Theme toggle
+    document.addEventListener('DOMContentLoaded', () => {
+      const themeToggle = document.getElementById('themeToggle');
+      const body = document.body;
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'light') body.classList.add('light-mode');
+      themeToggle.addEventListener('click', () => {
+        body.classList.toggle('light-mode');
+        localStorage.setItem('theme', body.classList.contains('light-mode') ? 'light' : 'dark');
+      });
+    });
   </script>
-  <script src="script.js"></script>
+  <script src="../components/sidecontent.js"></script>
 </body>
 </html>

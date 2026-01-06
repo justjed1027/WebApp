@@ -29,9 +29,21 @@ function renderSideContent($currentPage = '', $options = []) {
     // Optional limits per widget via $options['limit']
     // Example: ['limit' => ['trendingTopics' => 3]] to show only first 3 topics
     $limitTrendingTopics = null;
+    $limitNotifications = null;
+    $limitRecentDMs = null;
+    $limitSuggestedCollaborators = null;
     if (isset($options['limit']) && is_array($options['limit'])) {
-        if (isset($options['limit']['trendingTopics'])) {
-            $limitTrendingTopics = (int)$options['limit']['trendingTopics'];
+        if (isset($options['limit']['trendingTopics']) || isset($options['limit']['trending_topics'])) {
+            $limitTrendingTopics = (int)($options['limit']['trendingTopics'] ?? $options['limit']['trending_topics']);
+        }
+        if (isset($options['limit']['notifications'])) {
+            $limitNotifications = (int)$options['limit']['notifications'];
+        }
+        if (isset($options['limit']['recentDms']) || isset($options['limit']['recent_dms'])) {
+            $limitRecentDMs = (int)($options['limit']['recentDms'] ?? $options['limit']['recent_dms']);
+        }
+        if (isset($options['limit']['suggestedCollaborators']) || isset($options['limit']['suggested_collaborators'])) {
+            $limitSuggestedCollaborators = (int)($options['limit']['suggestedCollaborators'] ?? $options['limit']['suggested_collaborators']);
         }
     }
     ?>
@@ -46,6 +58,11 @@ function renderSideContent($currentPage = '', $options = []) {
                 <a href="#" class="side-card-link">See All</a>
             </div>
             <div class="side-card-body">
+                <?php 
+                $notificationCount = 0;
+                $maxNotifications = $limitNotifications ?? 3; // Default to 3 if not limited
+                ?>
+                <?php if ($notificationCount < $maxNotifications): ?>
                 <div class="notification-item unread">
                     <div class="notification-icon notification-like">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
@@ -57,6 +74,8 @@ function renderSideContent($currentPage = '', $options = []) {
                         <span class="notification-time">5m ago</span>
                     </div>
                 </div>
+                <?php $notificationCount++; endif; ?>
+                <?php if ($notificationCount < $maxNotifications): ?>
                 <div class="notification-item unread">
                     <div class="notification-icon notification-comment">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
@@ -68,6 +87,8 @@ function renderSideContent($currentPage = '', $options = []) {
                         <span class="notification-time">12m ago</span>
                     </div>
                 </div>
+                <?php $notificationCount++; endif; ?>
+                <?php if ($notificationCount < $maxNotifications): ?>
                 <div class="notification-item">
                     <div class="notification-icon notification-event">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
@@ -79,6 +100,7 @@ function renderSideContent($currentPage = '', $options = []) {
                         <span class="notification-time">1h ago</span>
                     </div>
                 </div>
+                <?php $notificationCount++; endif; ?>
             </div>
         </div>
         <?php endif; ?>
@@ -173,6 +195,11 @@ function renderSideContent($currentPage = '', $options = []) {
                 <a href="../connections/connections.html" class="side-card-link">See All</a>
             </div>
             <div class="side-card-body">
+                <?php 
+                $collaboratorCount = 0;
+                $maxCollaborators = $limitSuggestedCollaborators ?? 3; // Default to 3 if not limited
+                ?>
+                <?php if ($collaboratorCount < $maxCollaborators): ?>
                 <div class="side-collab-item">
                     <div class="side-collab-avatar avatar-4"></div>
                     <div class="side-collab-info">
@@ -181,6 +208,8 @@ function renderSideContent($currentPage = '', $options = []) {
                     </div>
                     <button class="side-collab-btn">Follow</button>
                 </div>
+                <?php $collaboratorCount++; endif; ?>
+                <?php if ($collaboratorCount < $maxCollaborators): ?>
                 <div class="side-collab-item">
                     <div class="side-collab-avatar avatar-5"></div>
                     <div class="side-collab-info">
@@ -189,6 +218,8 @@ function renderSideContent($currentPage = '', $options = []) {
                     </div>
                     <button class="side-collab-btn">Follow</button>
                 </div>
+                <?php $collaboratorCount++; endif; ?>
+                <?php if ($collaboratorCount < $maxCollaborators): ?>
                 <div class="side-collab-item">
                     <div class="side-collab-avatar avatar-6"></div>
                     <div class="side-collab-info">
@@ -197,6 +228,7 @@ function renderSideContent($currentPage = '', $options = []) {
                     </div>
                     <button class="side-collab-btn">Follow</button>
                 </div>
+                <?php $collaboratorCount++; endif; ?>
             </div>
         </div>
         <?php endif; ?>
