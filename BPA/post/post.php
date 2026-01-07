@@ -410,6 +410,20 @@ profile svg
       font-weight: 700;
       box-shadow: 0 1px 2px rgba(0,0,0,0.15);
     }
+    /* Comment button hover effects */
+    .view-comments-btn:hover,
+    .write-comment-btn:hover {
+      background: #f0f0f0;
+    }
+    .write-comment-btn {
+      font-weight: 600;
+    }
+    .write-comment-btn:hover {
+      color: #441570;
+    }
+    .comment-submit-btn:hover {
+      background: #441570;
+    }
   </style>
 </head>
 
@@ -697,6 +711,41 @@ profile svg
                 <?php endif; ?>
               </div>
 
+              <!-- Comment Section -->
+              <div class="post-actions" style="display:flex;gap:16px;margin-top:12px;padding-top:12px;border-top:1px solid #e9ecef;">
+                <button class="view-comments-btn" data-post-id="<?php echo intval($post['post_id']); ?>" style="background:none;border:none;color:#666;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:0.9rem;padding:4px 8px;border-radius:4px;transition:all 0.2s;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M2.678 11.894a1 1 0 0 1 .287.801 11 11 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8 8 0 0 0 8 14c3.996 0 7-2.807 7-6s-3.004-6-7-6-7 2.808-7 6c0 1.468.617 2.83 1.678 3.894m-.493 3.905a22 22 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a10 10 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105"/>
+                  </svg>
+                  <span class="view-comments-text">View Comments</span>
+                </button>
+                <button class="write-comment-btn" data-post-id="<?php echo intval($post['post_id']); ?>" style="background:none;border:none;color:#551A8B;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:0.9rem;padding:4px 8px;border-radius:4px;transition:all 0.2s;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
+                  </svg>
+                  <span>Write Comment</span>
+                </button>
+              </div>
+
+              <!-- Comments Container (initially hidden) -->
+              <div class="post-comments-section" data-post-id="<?php echo intval($post['post_id']); ?>" style="display:none;margin-top:12px;border-top:1px solid #e9ecef;padding-top:12px;">
+                <!-- Comments List -->
+                <div class="comments-list" data-post-id="<?php echo intval($post['post_id']); ?>">
+                  <!-- Comments will be loaded here dynamically -->
+                </div>
+              </div>
+
+              <!-- Comment Input Form (initially hidden) -->
+              <div class="comment-input-section" data-post-id="<?php echo intval($post['post_id']); ?>" style="display:none;margin-top:12px;border-top:1px solid #e9ecef;padding-top:12px;">
+                <form class="comment-form" data-post-id="<?php echo intval($post['post_id']); ?>">
+                  <textarea class="comment-input" placeholder="Write a comment..." rows="2" style="width:100%;padding:8px 12px;border:1px solid #ddd;border-radius:6px;resize:vertical;font-family:inherit;font-size:0.9rem;"></textarea>
+                  <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px;">
+                    <button type="button" class="comment-cancel-btn" data-post-id="<?php echo intval($post['post_id']); ?>" style="padding:6px 14px;background:#e0e0e0;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">Cancel</button>
+                    <button type="submit" class="comment-submit-btn" style="padding:6px 14px;background:#551A8B;color:white;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">Post Comment</button>
+                  </div>
+                </form>
+              </div>
+
               <!-- Inline Delete Confirmation -->
               <div class="post-delete-confirmation" data-post-id="<?php echo intval($post['post_id']); ?>" style="display:none;background:#fff3cd;border:1px solid #ffecb5;border-radius:4px;padding:8px 10px;margin-top:8px;text-align:right;max-width:fit-content;margin-left:auto;">
                 <div style="color:#333;font-size:0.8rem;margin-bottom:6px;text-align:left;">Delete this post?</div>
@@ -941,6 +990,158 @@ profile svg
           });
         }
       }, false);
+
+      // Comment functionality
+      document.addEventListener('click', function(e) {
+        // Toggle view comments section
+        if (e.target.closest('.view-comments-btn')) {
+          const btn = e.target.closest('.view-comments-btn');
+          const postId = btn.getAttribute('data-post-id');
+          const commentSection = document.querySelector(`.post-comments-section[data-post-id="${postId}"]`);
+          const btnText = btn.querySelector('.view-comments-text');
+          
+          if (commentSection) {
+            const isHidden = commentSection.style.display === 'none';
+            commentSection.style.display = isHidden ? 'block' : 'none';
+            btnText.textContent = isHidden ? 'Hide Comments' : 'View Comments';
+            
+            // Load comments if opening for the first time
+            if (isHidden) {
+              loadComments(postId);
+            }
+          }
+        }
+
+        // Toggle write comment input
+        if (e.target.closest('.write-comment-btn')) {
+          const btn = e.target.closest('.write-comment-btn');
+          const postId = btn.getAttribute('data-post-id');
+          const inputSection = document.querySelector(`.comment-input-section[data-post-id="${postId}"]`);
+          
+          if (inputSection) {
+            const isHidden = inputSection.style.display === 'none';
+            inputSection.style.display = isHidden ? 'block' : 'none';
+            
+            // Focus the textarea when opening
+            if (isHidden) {
+              const textarea = inputSection.querySelector('.comment-input');
+              if (textarea) {
+                setTimeout(() => textarea.focus(), 100);
+              }
+            }
+          }
+        }
+
+        // Cancel comment
+        if (e.target.closest('.comment-cancel-btn')) {
+          const btn = e.target.closest('.comment-cancel-btn');
+          const postId = btn.getAttribute('data-post-id');
+          const inputSection = document.querySelector(`.comment-input-section[data-post-id="${postId}"]`);
+          
+          if (inputSection) {
+            inputSection.style.display = 'none';
+            // Clear the textarea
+            const textarea = inputSection.querySelector('.comment-input');
+            if (textarea) textarea.value = '';
+          }
+        }
+      });
+
+      // Handle comment form submission
+      document.addEventListener('submit', function(e) {
+        if (e.target.classList.contains('comment-form')) {
+          e.preventDefault();
+          const form = e.target;
+          const postId = form.getAttribute('data-post-id');
+          const textarea = form.querySelector('.comment-input');
+          const commentText = textarea.value.trim();
+
+          if (!commentText) {
+            showNotification('Please write a comment', 'warning');
+            return;
+          }
+
+          // Submit comment via AJAX
+          fetch('add_comment.php', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `post_id=${encodeURIComponent(postId)}&comment=${encodeURIComponent(commentText)}`
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              showNotification('Comment added successfully', 'success');
+              textarea.value = '';
+              
+              // Hide the input section
+              const inputSection = document.querySelector(`.comment-input-section[data-post-id="${postId}"]`);
+              if (inputSection) {
+                inputSection.style.display = 'none';
+              }
+              
+              // Show and reload comments section
+              const commentSection = document.querySelector(`.post-comments-section[data-post-id="${postId}"]`);
+              if (commentSection) {
+                commentSection.style.display = 'block';
+                const btnText = document.querySelector(`.view-comments-btn[data-post-id="${postId}"] .view-comments-text`);
+                if (btnText) btnText.textContent = 'Hide Comments';
+              }
+              
+              loadComments(postId);
+            } else {
+              showNotification(data.message || 'Failed to add comment', 'error');
+            }
+          })
+          .catch(error => {
+            console.error('Error adding comment:', error);
+            showNotification('An error occurred', 'error');
+          });
+        }
+      });
+
+      // Function to load comments for a post
+      function loadComments(postId) {
+        const commentsList = document.querySelector(`.comments-list[data-post-id="${postId}"]`);
+        if (!commentsList) return;
+
+        fetch(`get_comments.php?post_id=${encodeURIComponent(postId)}`)
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              if (data.comments.length === 0) {
+                commentsList.innerHTML = '<div style="color:#999;font-size:0.85rem;text-align:center;padding:12px;">No comments yet. Be the first to comment!</div>';
+              } else {
+                let html = '';
+                data.comments.forEach(comment => {
+                  const initial = comment.username ? comment.username.charAt(0).toUpperCase() : 'U';
+                  html += `
+                    <div class="comment-item" style="display:flex;gap:10px;margin-bottom:14px;padding:10px;background:#f8f9fa;border-radius:6px;">
+                      <div class="comment-avatar" style="width:32px;height:32px;border-radius:50%;background:#e9ecef;display:flex;align-items:center;justify-content:center;font-weight:600;color:#333;font-size:0.85rem;flex-shrink:0;">
+                        ${escapeHtml(initial)}
+                      </div>
+                      <div style="flex:1;">
+                        <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                          <span style="font-weight:600;color:#333;font-size:0.9rem;">${escapeHtml(comment.username)}</span>
+                          <span style="color:#999;font-size:0.8rem;">${escapeHtml(comment.time_ago)}</span>
+                        </div>
+                        <div style="color:#555;font-size:0.9rem;line-height:1.4;">${escapeHtml(comment.comment_text).replace(/\n/g, '<br>')}</div>
+                      </div>
+                    </div>
+                  `;
+                });
+                commentsList.innerHTML = html;
+              }
+            } else {
+              commentsList.innerHTML = '<div style="color:#d32f2f;font-size:0.85rem;padding:12px;">Failed to load comments</div>';
+            }
+          })
+          .catch(error => {
+            console.error('Error loading comments:', error);
+            commentsList.innerHTML = '<div style="color:#d32f2f;font-size:0.85rem;padding:12px;">Error loading comments</div>';
+          });
+      }
 
       // Update DM badge count periodically
       function updateDmBadge() {
