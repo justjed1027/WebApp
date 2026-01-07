@@ -207,3 +207,12 @@ if ($subjectId > 0) {
     }
 }
 
+// Successful response
+http_response_code(200);
+echo json_encode([
+    'success' => true,
+    'message' => 'Event created successfully',
+    'eventId' => $eventId
+]);
+exit;
+

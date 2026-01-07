@@ -89,6 +89,72 @@ document.addEventListener('DOMContentLoaded', () => {
 	modalClose.addEventListener('click', closeModal);
 	modalOverlay.addEventListener('click', closeModal);
 	cancelButton.addEventListener('click', closeModal);
+
+	// Lightweight confirmation popup (no external CSS needed)
+	const showConfirmation = (message, onConfirm) => {
+		const overlay = document.createElement('div');
+		overlay.style.position = 'fixed';
+		overlay.style.inset = '0';
+		overlay.style.background = 'rgba(0,0,0,0.5)';
+		overlay.style.display = 'flex';
+		overlay.style.alignItems = 'center';
+		overlay.style.justifyContent = 'center';
+		overlay.style.zIndex = '10000';
+
+		const box = document.createElement('div');
+		box.style.width = 'min(92vw, 420px)';
+		box.style.background = '#0f172a';
+		box.style.color = '#e2e8f0';
+		box.style.border = '1px solid #334155';
+		box.style.borderRadius = '12px';
+		box.style.boxShadow = '0 10px 30px rgba(0,0,0,0.35)';
+		box.style.padding = '20px';
+		box.style.textAlign = 'center';
+
+		const title = document.createElement('div');
+		title.textContent = 'Event Created';
+		title.style.fontSize = '18px';
+		title.style.fontWeight = '600';
+		title.style.marginBottom = '8px';
+
+		const msg = document.createElement('div');
+		msg.textContent = message || 'Your event was created successfully.';
+		msg.style.opacity = '0.9';
+		msg.style.marginBottom = '16px';
+
+		const actions = document.createElement('div');
+		actions.style.display = 'flex';
+		actions.style.gap = '10px';
+		actions.style.justifyContent = 'center';
+
+		const ok = document.createElement('button');
+		ok.textContent = 'OK';
+		ok.style.background = '#10b981';
+		ok.style.border = 'none';
+		ok.style.color = '#052e2b';
+		ok.style.fontWeight = '700';
+		ok.style.padding = '10px 16px';
+		ok.style.borderRadius = '8px';
+		ok.style.cursor = 'pointer';
+		ok.addEventListener('click', () => {
+			overlay.remove();
+			if (typeof onConfirm === 'function') onConfirm();
+		});
+
+		box.appendChild(title);
+		box.appendChild(msg);
+		actions.appendChild(ok);
+		box.appendChild(actions);
+		overlay.appendChild(box);
+		document.body.appendChild(overlay);
+
+		// Close on Escape
+		overlay.addEventListener('keydown', (e) => {
+			if (e.key === 'Escape') overlay.remove();
+		});
+		// Focus trap start
+		ok.focus();
+	};
 	
 	// Escape key to close
 	document.addEventListener('keydown', (e) => {
@@ -131,20 +197,35 @@ document.addEventListener('DOMContentLoaded', () => {
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(formData)
 		})
-		.then(r => r.json())
-		.then(res => {
+		.then(async (r) => {
+			let data = null;
+			try {
+				// Try to parse JSON regardless of header robustness
+				const text = await r.text();
+				data = text ? JSON.parse(text) : null;
+			} catch (e) {
+				console.warn('Response was not valid JSON');
+			}
+
+			if (!r.ok) {
+				throw new Error((data && data.message) || `Request failed (${r.status})`);
+			}
+			return data;
+		})
+		.then((res) => {
 			if (res && res.success) {
-				alert('Event created successfully');
 				closeModal();
-				// Optionally reload to show new event
-				setTimeout(() => location.reload(), 800);
+				showConfirmation('Your event was created successfully.', () => {
+					location.reload();
+				});
 			} else {
-				alert('Error creating event: ' + (res.message || 'Unknown'));
+				const msg = (res && res.message) ? res.message : 'Unknown error creating event';
+				alert('Error creating event: ' + msg);
 			}
 		})
 		.catch(err => {
 			console.error(err);
-			alert('Network error creating event');
+			alert('Network or parsing error creating event.');
 		});
 	});
 
