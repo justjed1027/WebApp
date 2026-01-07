@@ -161,6 +161,166 @@ document.addEventListener('DOMContentLoaded', () => {
 		currentEditEvent = null;
 	};
 
+	// Success confirmation popup for edit modal
+	const showEditConfirmation = (message, onConfirm) => {
+		const overlay = document.createElement('div');
+		overlay.style.position = 'fixed';
+		overlay.style.inset = '0';
+		overlay.style.background = 'rgba(0,0,0,0.5)';
+		overlay.style.display = 'flex';
+		overlay.style.alignItems = 'center';
+		overlay.style.justifyContent = 'center';
+		overlay.style.zIndex = '10001';
+
+		const box = document.createElement('div');
+		box.style.width = 'min(92vw, 420px)';
+		box.style.background = '#0f172a';
+		box.style.color = '#e2e8f0';
+		box.style.border = '1px solid #334155';
+		box.style.borderRadius = '12px';
+		box.style.boxShadow = '0 10px 30px rgba(0,0,0,0.35)';
+		box.style.padding = '20px';
+		box.style.textAlign = 'center';
+
+		const title = document.createElement('div');
+		title.textContent = 'Event Updated';
+		title.style.fontSize = '18px';
+		title.style.fontWeight = '600';
+		title.style.marginBottom = '8px';
+
+		const msg = document.createElement('div');
+		msg.textContent = message || 'Your event was updated successfully.';
+		msg.style.opacity = '0.9';
+		msg.style.marginBottom = '16px';
+
+		const actions = document.createElement('div');
+		actions.style.display = 'flex';
+		actions.style.gap = '10px';
+		actions.style.justifyContent = 'center';
+
+		const ok = document.createElement('button');
+		ok.textContent = 'OK';
+		ok.style.background = '#10b981';
+		ok.style.border = 'none';
+		ok.style.color = '#052e2b';
+		ok.style.fontWeight = '700';
+		ok.style.padding = '10px 16px';
+		ok.style.borderRadius = '8px';
+		ok.style.cursor = 'pointer';
+		ok.addEventListener('click', () => {
+			overlay.remove();
+			if (typeof onConfirm === 'function') onConfirm();
+		});
+
+		box.appendChild(title);
+		box.appendChild(msg);
+		actions.appendChild(ok);
+		box.appendChild(actions);
+		overlay.appendChild(box);
+		document.body.appendChild(overlay);
+
+		overlay.addEventListener('keydown', (e) => {
+			if (e.key === 'Escape') overlay.remove();
+		});
+		ok.focus();
+	};
+
+	// Validation error popup for edit date modal
+	const showEditValidationErrors = (errors) => {
+		const overlay = document.createElement('div');
+		overlay.style.position = 'fixed';
+		overlay.style.inset = '0';
+		overlay.style.background = 'rgba(0,0,0,0.5)';
+		overlay.style.display = 'flex';
+		overlay.style.alignItems = 'center';
+		overlay.style.justifyContent = 'center';
+		overlay.style.zIndex = '10001';
+
+		const box = document.createElement('div');
+		box.style.width = 'min(92vw, 480px)';
+		box.style.maxHeight = '80vh';
+		box.style.background = '#0f172a';
+		box.style.color = '#e2e8f0';
+		box.style.border = '1px solid #334155';
+		box.style.borderRadius = '12px';
+		box.style.boxShadow = '0 10px 30px rgba(0,0,0,0.35)';
+		box.style.padding = '20px';
+		box.style.overflowY = 'auto';
+
+		const title = document.createElement('div');
+		title.textContent = 'Validation Errors';
+		title.style.fontSize = '18px';
+		title.style.fontWeight = '600';
+		title.style.marginBottom = '12px';
+		title.style.color = '#ef4444';
+
+		const msg = document.createElement('div');
+		msg.textContent = 'Please fix the following issues before updating the event:';
+		msg.style.opacity = '0.85';
+		msg.style.marginBottom = '16px';
+		msg.style.fontSize = '14px';
+
+		const errorList = document.createElement('ul');
+		errorList.style.textAlign = 'left';
+		errorList.style.listStyle = 'none';
+		errorList.style.padding = '0';
+		errorList.style.margin = '0 0 20px 0';
+		errors.forEach(err => {
+			const li = document.createElement('li');
+			li.style.padding = '8px 12px';
+			li.style.marginBottom = '6px';
+			li.style.background = '#1e293b';
+			li.style.border = '1px solid #ef4444';
+			li.style.borderRadius = '6px';
+			li.style.fontSize = '14px';
+			li.style.display = 'flex';
+			li.style.alignItems = 'flex-start';
+			li.style.gap = '8px';
+
+			const icon = document.createElement('span');
+			icon.textContent = '⚠';
+			icon.style.color = '#ef4444';
+			icon.style.fontSize = '16px';
+			icon.style.flexShrink = '0';
+
+			const text = document.createElement('span');
+			text.textContent = err;
+			text.style.flex = '1';
+
+			li.appendChild(icon);
+			li.appendChild(text);
+			errorList.appendChild(li);
+		});
+
+		const actions = document.createElement('div');
+		actions.style.display = 'flex';
+		actions.style.justifyContent = 'center';
+
+		const ok = document.createElement('button');
+		ok.textContent = 'OK';
+		ok.style.background = '#ef4444';
+		ok.style.border = 'none';
+		ok.style.color = '#fff';
+		ok.style.fontWeight = '700';
+		ok.style.padding = '10px 24px';
+		ok.style.borderRadius = '8px';
+		ok.style.cursor = 'pointer';
+		ok.addEventListener('click', () => overlay.remove());
+
+		box.appendChild(title);
+		box.appendChild(msg);
+		box.appendChild(errorList);
+		actions.appendChild(ok);
+		box.appendChild(actions);
+		overlay.appendChild(box);
+		document.body.appendChild(overlay);
+
+		overlay.addEventListener('keydown', (e) => {
+			if (e.key === 'Escape') overlay.remove();
+		});
+		ok.focus();
+	};
+
 	// Edit Date Form Submission
 	if (editDateForm) {
 		editDateForm.addEventListener('submit', async (e) => {
@@ -169,6 +329,70 @@ document.addEventListener('DOMContentLoaded', () => {
 			if (!currentEditEvent) return;
 			
 			const formData = new FormData(editDateForm);
+			const date = formData.get('date');
+			const startTime = formData.get('startTime');
+			const endTime = formData.get('endTime');
+			const deadline = formData.get('deadline');
+
+			// Validation - collect all errors
+			const errors = [];
+
+			// Date must be today or later
+			if (!date) {
+				errors.push('Event date is required.');
+			} else {
+				const today = new Date();
+				const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+				const evDateParts = date.split('-');
+				if (evDateParts.length !== 3) {
+					errors.push('Invalid event date format.');
+				} else {
+					const evDate = new Date(parseInt(evDateParts[0]), parseInt(evDateParts[1]) - 1, parseInt(evDateParts[2]));
+					if (evDate < todayDate) {
+						errors.push('Event date cannot be in the past.');
+					}
+
+					// Start and end times required and ordered
+					if (!startTime || !endTime) {
+						errors.push('Start and end times are required.');
+					} else {
+						const start = new Date(`${date}T${startTime}:00`);
+						const end = new Date(`${date}T${endTime}:00`);
+						if (!(start instanceof Date) || isNaN(start) || !(end instanceof Date) || isNaN(end)) {
+							errors.push('Invalid start or end time format.');
+						} else if (end.getTime() < start.getTime()) {
+							errors.push('End time cannot be before start time.');
+						} else if (end.getTime() === start.getTime()) {
+							errors.push('End time cannot be the same as start time.');
+						}
+					}
+
+					// Registration deadline required, after today and before event date
+					if (!deadline) {
+						errors.push('Registration deadline is required.');
+					} else {
+						const rdParts = deadline.split('-');
+						if (rdParts.length !== 3) {
+							errors.push('Invalid registration deadline format.');
+						} else {
+							const rd = new Date(parseInt(rdParts[0]), parseInt(rdParts[1]) - 1, parseInt(rdParts[2]));
+							if (rd.getTime() <= todayDate.getTime()) {
+								errors.push('Registration deadline must be after today.');
+							}
+							if (rd.getTime() >= evDate.getTime()) {
+								errors.push('Registration deadline must be before the event date.');
+							}
+						}
+					}
+				}
+			}
+
+			// If there are validation errors, show them
+			if (errors.length > 0) {
+				showEditValidationErrors(errors);
+				return;
+			}
+			
 			const submitBtn = editDateForm.querySelector('.btn-form-submit');
 			submitBtn.disabled = true;
 			submitBtn.textContent = 'Saving...';
@@ -180,21 +404,19 @@ document.addEventListener('DOMContentLoaded', () => {
 					body: JSON.stringify({
 						eventId: currentEditEvent.id,
 						type: 'date',
-						date: formData.get('date'),
-						startTime: formData.get('startTime'),
-						endTime: formData.get('endTime') || null,
-						deadline: formData.get('deadline') || null
+						date: date,
+						startTime: startTime,
+						endTime: endTime,
+						deadline: deadline
 					})
 				});
 				
 				const data = await response.json();
 				if (response.ok && data.success) {
-					alert('Date and time updated successfully!');
 					closeEditDateModal();
-					// Trigger event detail reload if needed
-					if (window.reloadEventDetails) {
-						await window.reloadEventDetails();
-					}
+					showEditConfirmation('Date and time updated successfully.', () => {
+						location.reload();
+					});
 				} else {
 					alert('Failed to update date: ' + (data.message || 'Unknown error'));
 				}

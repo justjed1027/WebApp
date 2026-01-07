@@ -602,7 +602,7 @@ if ($subRes && $subRes->num_rows > 0) {
         <p class="create-event-subtitle">Update the event schedule</p>
       </div>
       
-      <form class="create-event-form" id="editDateForm">
+      <form class="create-event-form" id="editDateForm" novalidate>
         <div class="form-section">
           <h3 class="form-section-title">Date & Time</h3>
           
@@ -620,13 +620,13 @@ if ($subRes && $subRes->num_rows > 0) {
           
           <div class="form-row">
             <div class="form-group">
-              <label for="editEventEndTime">End Time</label>
-              <input type="time" id="editEventEndTime" name="endTime">
+              <label for="editEventEndTime">End Time <span class="required">*</span></label>
+              <input type="time" id="editEventEndTime" name="endTime" required>
             </div>
             
             <div class="form-group">
-              <label for="editEventDeadline">Registration Deadline</label>
-              <input type="date" id="editEventDeadline" name="deadline">
+              <label for="editEventDeadline">Registration Deadline <span class="required">*</span></label>
+              <input type="date" id="editEventDeadline" name="deadline" required>
             </div>
           </div>
         </div>

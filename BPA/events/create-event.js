@@ -327,8 +327,10 @@ document.addEventListener('DOMContentLoaded', () => {
 					const end = new Date(`${formData.date}T${formData.endTime}:00`);
 					if (!(start instanceof Date) || isNaN(start) || !(end instanceof Date) || isNaN(end)) {
 						errors.push('Invalid start or end time format.');
-					} else if (end.getTime() <= start.getTime()) {
-						errors.push('End time must be after start time.');
+					} else if (end.getTime() < start.getTime()) {
+						errors.push('End time cannot be before start time.');
+					} else if (end.getTime() === start.getTime()) {
+						errors.push('End time cannot be the same as start time.');
 					}
 				}
 
