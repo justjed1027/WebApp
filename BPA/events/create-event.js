@@ -155,6 +155,103 @@ document.addEventListener('DOMContentLoaded', () => {
 		// Focus trap start
 		ok.focus();
 	};
+
+	// Validation errors popup - shows all errors at once
+	const showValidationErrors = (errors) => {
+		const overlay = document.createElement('div');
+		overlay.style.position = 'fixed';
+		overlay.style.inset = '0';
+		overlay.style.background = 'rgba(0,0,0,0.5)';
+		overlay.style.display = 'flex';
+		overlay.style.alignItems = 'center';
+		overlay.style.justifyContent = 'center';
+		overlay.style.zIndex = '10000';
+
+		const box = document.createElement('div');
+		box.style.width = 'min(92vw, 480px)';
+		box.style.maxHeight = '80vh';
+		box.style.background = '#0f172a';
+		box.style.color = '#e2e8f0';
+		box.style.border = '1px solid #334155';
+		box.style.borderRadius = '12px';
+		box.style.boxShadow = '0 10px 30px rgba(0,0,0,0.35)';
+		box.style.padding = '20px';
+		box.style.overflowY = 'auto';
+
+		const title = document.createElement('div');
+		title.textContent = 'Validation Errors';
+		title.style.fontSize = '18px';
+		title.style.fontWeight = '600';
+		title.style.marginBottom = '12px';
+		title.style.color = '#ef4444';
+
+		const msg = document.createElement('div');
+		msg.textContent = 'Please fix the following issues before creating the event:';
+		msg.style.opacity = '0.85';
+		msg.style.marginBottom = '16px';
+		msg.style.fontSize = '14px';
+
+		const errorList = document.createElement('ul');
+		errorList.style.textAlign = 'left';
+		errorList.style.listStyle = 'none';
+		errorList.style.padding = '0';
+		errorList.style.margin = '0 0 20px 0';
+		errors.forEach(err => {
+			const li = document.createElement('li');
+			li.style.padding = '8px 12px';
+			li.style.marginBottom = '6px';
+			li.style.background = '#1e293b';
+			li.style.border = '1px solid #ef4444';
+			li.style.borderRadius = '6px';
+			li.style.fontSize = '14px';
+			li.style.display = 'flex';
+			li.style.alignItems = 'flex-start';
+			li.style.gap = '8px';
+
+			const icon = document.createElement('span');
+			icon.textContent = '⚠';
+			icon.style.color = '#ef4444';
+			icon.style.fontSize = '16px';
+			icon.style.flexShrink = '0';
+
+			const text = document.createElement('span');
+			text.textContent = err;
+			text.style.flex = '1';
+
+			li.appendChild(icon);
+			li.appendChild(text);
+			errorList.appendChild(li);
+		});
+
+		const actions = document.createElement('div');
+		actions.style.display = 'flex';
+		actions.style.justifyContent = 'center';
+
+		const ok = document.createElement('button');
+		ok.textContent = 'OK';
+		ok.style.background = '#ef4444';
+		ok.style.border = 'none';
+		ok.style.color = '#fff';
+		ok.style.fontWeight = '700';
+		ok.style.padding = '10px 24px';
+		ok.style.borderRadius = '8px';
+		ok.style.cursor = 'pointer';
+		ok.addEventListener('click', () => overlay.remove());
+
+		box.appendChild(title);
+		box.appendChild(msg);
+		box.appendChild(errorList);
+		actions.appendChild(ok);
+		box.appendChild(actions);
+		overlay.appendChild(box);
+		document.body.appendChild(overlay);
+
+		// Close on Escape
+		overlay.addEventListener('keydown', (e) => {
+			if (e.key === 'Escape') overlay.remove();
+		});
+		ok.focus();
+	};
 	
 	// Escape key to close
 	document.addEventListener('keydown', (e) => {
@@ -185,9 +282,87 @@ document.addEventListener('DOMContentLoaded', () => {
 			contactEmail: document.getElementById('eventContactEmail').value
 		};
 
-		// Validate description length
-		if (formData.description.length < 50) {
-			alert('Description must be at least 50 characters long.');
+		// Frontend validations - collect all errors
+		const errors = [];
+
+		// Required fields
+		if (!formData.title || formData.title.trim() === '') {
+			errors.push('Event title is required.');
+		}
+		if (!formData.category || formData.category === '') {
+			errors.push('Event category is required.');
+		}
+		if (!formData.description || formData.description.trim() === '') {
+			errors.push('Event description is required.');
+		} else if (formData.description.length < 50) {
+			errors.push('Description must be at least 50 characters long.');
+		}
+		if (!formData.location || formData.location.trim() === '') {
+			errors.push('Venue/location is required.');
+		}
+		if (!formData.organizer || formData.organizer.trim() === '') {
+			errors.push('Organizer name is required.');
+		}
+
+		// Date must be today or later
+		if (!formData.date) {
+			errors.push('Event date is required.');
+		} else {
+			const today = new Date();
+			const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+			const evDateParts = formData.date.split('-');
+			if (evDateParts.length !== 3) {
+				errors.push('Invalid event date format.');
+			} else {
+				const evDate = new Date(parseInt(evDateParts[0]), parseInt(evDateParts[1]) - 1, parseInt(evDateParts[2]));
+				if (evDate < todayDate) {
+					errors.push('Event date cannot be in the past.');
+				}
+
+				// Start and end times required and ordered
+				if (!formData.startTime || !formData.endTime) {
+					errors.push('Start and end times are required.');
+				} else {
+					const start = new Date(`${formData.date}T${formData.startTime}:00`);
+					const end = new Date(`${formData.date}T${formData.endTime}:00`);
+					if (!(start instanceof Date) || isNaN(start) || !(end instanceof Date) || isNaN(end)) {
+						errors.push('Invalid start or end time format.');
+					} else if (end.getTime() <= start.getTime()) {
+						errors.push('End time must be after start time.');
+					}
+				}
+
+				// Registration deadline required, after today and before event date
+				if (!formData.registrationDeadline) {
+					errors.push('Registration deadline is required.');
+				} else {
+					const rdParts = formData.registrationDeadline.split('-');
+					if (rdParts.length !== 3) {
+						errors.push('Invalid registration deadline format.');
+					} else {
+						const rd = new Date(parseInt(rdParts[0]), parseInt(rdParts[1]) - 1, parseInt(rdParts[2]));
+						if (rd.getTime() <= todayDate.getTime()) {
+							errors.push('Registration deadline must be after today.');
+						}
+						if (rd.getTime() >= evDate.getTime()) {
+							errors.push('Registration deadline must be before the event date.');
+						}
+					}
+				}
+			}
+		}
+
+		// Capacity 1..500
+		const cap = parseInt(formData.capacity, 10);
+		if (!Number.isInteger(cap)) {
+			errors.push('Capacity is required and must be a number.');
+		} else if (cap < 1 || cap > 500) {
+			errors.push('Capacity must be between 1 and 500.');
+		}
+
+		// If there are validation errors, show them all at once
+		if (errors.length > 0) {
+			showValidationErrors(errors);
 			return;
 		}
 

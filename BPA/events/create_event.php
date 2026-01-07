@@ -66,6 +66,69 @@ $startTime = $data['startTime'] ?? null;
 $endTime = $data['endTime'] ?? null;
 $subjectId = (int)($data['category'] ?? 0);
 
+// Additional validations
+try {
+    // Validate event date not in the past (date-only comparison)
+    if (empty($events_date)) {
+        throw new Exception('Event date is required');
+    }
+    $eventDateObj = DateTime::createFromFormat('Y-m-d', $events_date);
+    if (!$eventDateObj) {
+        throw new Exception('Invalid event date format');
+    }
+    $today = new DateTime('today');
+    if ($eventDateObj < $today) {
+        throw new Exception('Event date cannot be in the past');
+    }
+
+    // Validate start and end times
+    if (empty($startTime) || empty($endTime)) {
+        throw new Exception('Start and end times are required');
+    }
+    $startDT = DateTime::createFromFormat('Y-m-d H:i', $events_date . ' ' . $startTime);
+    $endDT = DateTime::createFromFormat('Y-m-d H:i', $events_date . ' ' . $endTime);
+    if (!$startDT || !$endDT) {
+        throw new Exception('Invalid start or end time');
+    }
+    if ($endDT <= $startDT) {
+        throw new Exception('End time must be after start time');
+    }
+    // Normalize combined datetimes for insert
+    $startDateTime = $startDT->format('Y-m-d H:i:s');
+    $endDateTime = $endDT->format('Y-m-d H:i:s');
+
+    // Validate capacity 1..500
+    if ($capacity === null || !is_int($capacity)) {
+        throw new Exception('Capacity is required and must be a number');
+    }
+    if ($capacity < 1 || $capacity > 500) {
+        throw new Exception('Capacity must be between 1 and 500');
+    }
+
+    // Registration deadline is required, must be after today and before the event date
+    if (empty($deadline)) {
+        throw new Exception('Registration deadline is required');
+    }
+    // Try parsing as date first, then datetime
+    $deadlineObj = DateTime::createFromFormat('Y-m-d', $deadline) ?: DateTime::createFromFormat('Y-m-d H:i', $deadline);
+    if (!$deadlineObj) {
+        throw new Exception('Invalid registration deadline');
+    }
+    // Compare dates only
+    $deadlineDay = (clone $deadlineObj)->setTime(0, 0, 0);
+    if ($deadlineDay <= $today) {
+        throw new Exception('Registration deadline must be after today');
+    }
+    if ($deadlineDay >= $eventDateObj) {
+        throw new Exception('Registration deadline must be before the event date');
+    }
+} catch (Exception $e) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+    $db->closeConnection();
+    exit;
+}
+
 // Combine date and start time into DATETIME format if needed (events_start)
 $startDateTime = null;
 if ($events_date && $startTime) {

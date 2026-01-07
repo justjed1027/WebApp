@@ -411,7 +411,7 @@ if ($subRes && $subRes->num_rows > 0) {
         <p class="create-event-subtitle">Fill in the details to create your event</p>
       </div>
       
-      <form class="create-event-form" id="createEventForm">
+      <form class="create-event-form" id="createEventForm" novalidate>
         <div class="form-section">
           <h3 class="form-section-title">Basic Information</h3>
           
