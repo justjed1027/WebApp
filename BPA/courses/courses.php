@@ -103,7 +103,7 @@ $courseGroups = [
           </svg>
         </div>
         <div class="profile-info">
-          <a href="#" class="view-profile-link">View Profile</a>
+          <a href="../profile/profile.php" class="view-profile-link">View Profile</a>
         </div>
       </div>
     </div>
