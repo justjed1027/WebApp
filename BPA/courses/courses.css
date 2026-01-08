@@ -169,6 +169,37 @@ body.light-mode .search-container:focus-within svg {
   margin-bottom: 48px;
 }
 
+/* Course Section Wrapper */
+.course-section {
+  margin-bottom: 60px;
+}
+
+.course-section:last-of-type {
+  margin-bottom: 32px;
+}
+
+.course-section .section-header {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.course-section .section-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  letter-spacing: -0.5px;
+  color: var(--text-primary);
+}
+
+.course-section .section-description {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin: 0;
+  font-weight: 400;
+}
+
+
 .course-group-card {
   background: var(--background-card);
   border: 1px solid var(--border-color);

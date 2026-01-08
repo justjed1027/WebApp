@@ -8,73 +8,106 @@ if (!isset($_SESSION['user_id'])) {
 }
 require_once '../components/sidecontent.php';
 
-// Course topic groups - organized learning resources by subject
-$courseGroups = [
-  [
-    'id' => 'mathematics',
-    'name' => 'Mathematics',
-    'icon' => '📐',
-    'color' => '#3b82f6',
-    'resourceCount' => 24,
-    'description' => 'Algebra, calculus, geometry, and more'
-  ],
-  [
-    'id' => 'computer-science',
-    'name' => 'Computer Science',
-    'icon' => '💻',
-    'color' => '#8b5cf6',
-    'resourceCount' => 38,
-    'description' => 'Programming, data structures, and algorithms'
-  ],
-  [
-    'id' => 'science',
-    'name' => 'Science',
-    'icon' => '🔬',
-    'color' => '#10b981',
-    'resourceCount' => 31,
-    'description' => 'Physics, chemistry, biology, and environmental science'
-  ],
-  [
-    'id' => 'english',
-    'name' => 'English',
-    'icon' => '📚',
-    'color' => '#f59e0b',
-    'resourceCount' => 19,
-    'description' => 'Literature, writing, and language skills'
-  ],
-  [
-    'id' => 'history',
-    'name' => 'History',
-    'icon' => '🏛️',
-    'color' => '#ef4444',
-    'resourceCount' => 22,
-    'description' => 'World history, civilizations, and historical events'
-  ],
-  [
-    'id' => 'art',
-    'name' => 'Art & Design',
-    'icon' => '🎨',
-    'color' => '#ec4899',
-    'resourceCount' => 16,
-    'description' => 'Visual arts, design principles, and creativity'
-  ],
-  [
-    'id' => 'business',
-    'name' => 'Business & Economics',
-    'icon' => '💼',
-    'color' => '#06b6d4',
-    'resourceCount' => 20,
-    'description' => 'Business fundamentals, economics, and entrepreneurship'
-  ],
-  [
-    'id' => 'music',
-    'name' => 'Music',
-    'icon' => '🎵',
-    'color' => '#a855f7',
-    'resourceCount' => 13,
-    'description' => 'Music theory, instruments, and composition'
-  ]
+$user_id = $_SESSION['user_id'];
+$db = new DatabaseConnection();
+$conn = $db->connection;
+
+// Category icon and color mapping
+$categoryStyles = [
+  'Mathematics' => ['icon' => '📐', 'color' => '#3b82f6'],
+  'Computer Science' => ['icon' => '💻', 'color' => '#8b5cf6'],
+  'Science' => ['icon' => '🔬', 'color' => '#10b981'],
+  'English' => ['icon' => '📚', 'color' => '#f59e0b'],
+  'History' => ['icon' => '🏛️', 'color' => '#ef4444'],
+  'Art & Design' => ['icon' => '🎨', 'color' => '#ec4899'],
+  'Business & Economics' => ['icon' => '💼', 'color' => '#06b6d4'],
+  'Music' => ['icon' => '🎵', 'color' => '#a855f7'],
+  'Languages' => ['icon' => '🌐', 'color' => '#14b8a6']
 ];
+
+// Fetch user's skills (subjects they know)
+$userSkillsQuery = "
+  SELECT DISTINCT s.category_id, sc.category_name
+  FROM user_skills us
+  INNER JOIN subjects s ON us.us_subject_id = s.subject_id
+  INNER JOIN subjectcategories sc ON s.category_id = sc.category_id
+  WHERE us.us_user_id = ? AND sc.category_id != 3
+";
+$stmt = $conn->prepare($userSkillsQuery);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$userSkillCategories = [];
+while ($row = $result->fetch_assoc()) {
+  $userSkillCategories[] = $row['category_id'];
+}
+$stmt->close();
+
+// Fetch user's interests (subjects they want to learn)
+$userInterestsQuery = "
+  SELECT DISTINCT s.category_id, sc.category_name
+  FROM user_interests ui
+  INNER JOIN subjects s ON ui.ui_subject_id = s.subject_id
+  INNER JOIN subjectcategories sc ON s.category_id = sc.category_id
+  WHERE ui.ui_user_id = ? AND sc.category_id != 3
+";
+$stmt = $conn->prepare($userInterestsQuery);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$userInterestCategories = [];
+while ($row = $result->fetch_assoc()) {
+  $userInterestCategories[] = $row['category_id'];
+}
+$stmt->close();
+
+// Fetch all categories with subject counts (excluding category_id 3)
+$categoriesQuery = "
+  SELECT 
+    sc.category_id,
+    sc.category_name,
+    COUNT(s.subject_id) as resource_count
+  FROM subjectcategories sc
+  LEFT JOIN subjects s ON sc.category_id = s.category_id
+  WHERE sc.category_id != 3
+  GROUP BY sc.category_id, sc.category_name
+  ORDER BY sc.category_name ASC
+";
+$categoriesResult = $conn->query($categoriesQuery);
+
+// Organize categories into sections
+$wantToLearn = [];      // In interests but NOT in skills
+$buildingSkills = [];   // In BOTH interests AND skills
+$myExpertise = [];      // In skills but NOT in interests
+$otherCourses = [];     // Not in either interests or skills
+
+while ($cat = $categoriesResult->fetch_assoc()) {
+  $catId = $cat['category_id'];
+  $catName = $cat['category_name'];
+  
+  $categoryData = [
+    'id' => $catId,
+    'name' => $catName,
+    'icon' => $categoryStyles[$catName]['icon'] ?? '📖',
+    'color' => $categoryStyles[$catName]['color'] ?? '#6b7280',
+    'resourceCount' => $cat['resource_count']
+  ];
+  
+  $inSkills = in_array($catId, $userSkillCategories);
+  $inInterests = in_array($catId, $userInterestCategories);
+  
+  if ($inInterests && !$inSkills) {
+    $wantToLearn[] = $categoryData;
+  } elseif ($inInterests && $inSkills) {
+    $buildingSkills[] = $categoryData;
+  } elseif ($inSkills && !$inInterests) {
+    $myExpertise[] = $categoryData;
+  } else {
+    $otherCourses[] = $categoryData;
+  }
+}
+
+$conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -234,26 +267,115 @@ $courseGroups = [
           <p>Explore topics across all subjects. Share knowledge and learn together.</p>
         </section>
 
-        <!-- Topic Categories Grid -->
-        <section class="course-groups">
-          <?php foreach ($courseGroups as $group): ?>
-            <a href="course-list.php?group=<?php echo $group['id']; ?>" class="course-group-card" data-group="<?php echo $group['id']; ?>">
-              <div class="group-icon" style="background: <?php echo $group['color']; ?>20; color: <?php echo $group['color']; ?>">
-                <span class="icon-emoji"><?php echo $group['icon']; ?></span>
-              </div>
-              <div class="group-info">
-                <h3><?php echo $group['name']; ?></h3>
-                <p><?php echo $group['description']; ?></p>
-                <div class="group-meta">
-                  <span class="course-count"><?php echo $group['resourceCount']; ?> resources</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8" />
-                  </svg>
+        <!-- Topic Categories Grid - Dynamically Organized -->
+        
+        <?php if (!empty($wantToLearn)): ?>
+        <section class="course-section">
+          <div class="section-header">
+            <h3 class="section-title">📚 Want to Learn</h3>
+            <p class="section-description">Subjects you're interested in exploring</p>
+          </div>
+          <div class="course-groups">
+            <?php foreach ($wantToLearn as $group): ?>
+              <a href="course-list.php?category=<?php echo $group['id']; ?>" class="course-group-card" data-group="<?php echo $group['id']; ?>">
+                <div class="group-icon" style="background: <?php echo $group['color']; ?>20; color: <?php echo $group['color']; ?>">
+                  <span class="icon-emoji"><?php echo $group['icon']; ?></span>
                 </div>
-              </div>
-            </a>
-          <?php endforeach; ?>
+                <div class="group-info">
+                  <h3><?php echo htmlspecialchars($group['name']); ?></h3>
+                  <div class="group-meta">
+                    <span class="course-count"><?php echo $group['resourceCount']; ?> resources</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                      <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8" />
+                    </svg>
+                  </div>
+                </div>
+              </a>
+            <?php endforeach; ?>
+          </div>
         </section>
+        <?php endif; ?>
+
+        <?php if (!empty($buildingSkills)): ?>
+        <section class="course-section">
+          <div class="section-header">
+            <h3 class="section-title">🚀 Building Skills</h3>
+            <p class="section-description">Areas where you're expanding your expertise</p>
+          </div>
+          <div class="course-groups">
+            <?php foreach ($buildingSkills as $group): ?>
+              <a href="course-list.php?category=<?php echo $group['id']; ?>" class="course-group-card" data-group="<?php echo $group['id']; ?>">
+                <div class="group-icon" style="background: <?php echo $group['color']; ?>20; color: <?php echo $group['color']; ?>">
+                  <span class="icon-emoji"><?php echo $group['icon']; ?></span>
+                </div>
+                <div class="group-info">
+                  <h3><?php echo htmlspecialchars($group['name']); ?></h3>
+                  <div class="group-meta">
+                    <span class="course-count"><?php echo $group['resourceCount']; ?> resources</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                      <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8" />
+                    </svg>
+                  </div>
+                </div>
+              </a>
+            <?php endforeach; ?>
+          </div>
+        </section>
+        <?php endif; ?>
+
+        <?php if (!empty($myExpertise)): ?>
+        <section class="course-section">
+          <div class="section-header">
+            <h3 class="section-title">⭐ My Expertise</h3>
+            <p class="section-description">Subjects you have skills in</p>
+          </div>
+          <div class="course-groups">
+            <?php foreach ($myExpertise as $group): ?>
+              <a href="course-list.php?category=<?php echo $group['id']; ?>" class="course-group-card" data-group="<?php echo $group['id']; ?>">
+                <div class="group-icon" style="background: <?php echo $group['color']; ?>20; color: <?php echo $group['color']; ?>">
+                  <span class="icon-emoji"><?php echo $group['icon']; ?></span>
+                </div>
+                <div class="group-info">
+                  <h3><?php echo htmlspecialchars($group['name']); ?></h3>
+                  <div class="group-meta">
+                    <span class="course-count"><?php echo $group['resourceCount']; ?> resources</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                      <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8" />
+                    </svg>
+                  </div>
+                </div>
+              </a>
+            <?php endforeach; ?>
+          </div>
+        </section>
+        <?php endif; ?>
+
+        <?php if (!empty($otherCourses)): ?>
+        <section class="course-section">
+          <div class="section-header">
+            <h3 class="section-title">🌟 Other Courses</h3>
+            <p class="section-description">Explore more subjects and discover new interests</p>
+          </div>
+          <div class="course-groups">
+            <?php foreach ($otherCourses as $group): ?>
+              <a href="course-list.php?category=<?php echo $group['id']; ?>" class="course-group-card" data-group="<?php echo $group['id']; ?>">
+                <div class="group-icon" style="background: <?php echo $group['color']; ?>20; color: <?php echo $group['color']; ?>">
+                  <span class="icon-emoji"><?php echo $group['icon']; ?></span>
+                </div>
+                <div class="group-info">
+                  <h3><?php echo htmlspecialchars($group['name']); ?></h3>
+                  <div class="group-meta">
+                    <span class="course-count"><?php echo $group['resourceCount']; ?> resources</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                      <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8" />
+                    </svg>
+                  </div>
+                </div>
+              </a>
+            <?php endforeach; ?>
+          </div>
+        </section>
+        <?php endif; ?>
       </div>
 
       <!-- Side Content -->
