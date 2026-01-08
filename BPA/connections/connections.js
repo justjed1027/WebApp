@@ -19,6 +19,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Initialize connection action buttons
   initializeConnectionActions();
+
+  // Initialize unconnect buttons
+  initializeUnconnectButtons();
 });
 
 function initializeThemeToggle() {
@@ -118,3 +121,52 @@ window.ConnectionsPage = {
   handleConnectionsSearch,
   handleFindStudents
 };
+
+function initializeUnconnectButtons() {
+  const unconnectButtons = document.querySelectorAll('.btn-unconnect');
+  const modal = document.getElementById('unconnectModal');
+  const confirmBtn = document.getElementById('confirmUnconnect');
+  const cancelBtn = document.getElementById('cancelUnconnect');
+
+  if (!modal || !confirmBtn || !cancelBtn) return;
+
+  let activeForm = null;
+
+  const openModal = (form) => {
+    activeForm = form;
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+  };
+
+  const closeModal = () => {
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    activeForm = null;
+  };
+
+  unconnectButtons.forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.preventDefault();
+      const form = this.closest('form');
+      if (!form) { return; }
+      openModal(form);
+    });
+  });
+
+  confirmBtn.addEventListener('click', () => {
+    if (activeForm) {
+      activeForm.submit();
+    }
+    closeModal();
+  });
+
+  cancelBtn.addEventListener('click', () => {
+    closeModal();
+  });
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+}

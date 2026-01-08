@@ -309,6 +309,10 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
           <div class="connections-grid">
             <?php while ($row = $connections->fetch_assoc()): ?>
               <div class="connection-card">
+                <form action="remove_connection.php" method="POST" class="unconnect-form">
+                  <input type="hidden" name="connection_id" value="<?php echo (int)$row['connection_id']; ?>">
+                  <button type="button" class="btn-unconnect" aria-label="Remove connection" data-connection-id="<?php echo (int)$row['connection_id']; ?>">&times;</button>
+                </form>
                 <div class="connection-header">
                   <div class="user-avatar"></div>
                   <div class="user-info">
@@ -384,6 +388,18 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     <!-- Side Content -->
     <?php renderSideContent('connections', ['hide' => ['trending_topics']]); ?>
   </main>
+
+  <!-- Unconnect confirmation modal -->
+  <div id="unconnectModal" class="modal-overlay" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="unconnectTitle">
+      <h4 id="unconnectTitle">Remove connection?</h4>
+      <p class="modal-body">This will remove the connection. You can send a new request later.</p>
+      <div class="modal-actions">
+        <button type="button" class="btn-decline" id="cancelUnconnect">Keep Connection</button>
+        <button type="button" class="btn-accept" id="confirmUnconnect">Remove Connection</button>
+      </div>
+    </div>
+  </div>
   
   <script src="../components/sidecontent.js"></script>
   <script src="connections.js"></script>
