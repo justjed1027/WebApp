@@ -943,9 +943,9 @@ body:not(.light-mode) .search-input::placeholder {
 /* ===== MAIN CONTENT AREA ===== */
 .main-content {
   margin-left: var(--sidebar-collapsed-width);
-  margin-top: var(--topbar-height);
-  padding: 40px 24px 24px 24px;
-  min-height: calc(100vh - var(--topbar-height));
+  margin-top: 0;
+  padding: 24px 24px 24px 24px;
+  min-height: 100vh;
   transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 

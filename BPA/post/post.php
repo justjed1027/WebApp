@@ -434,9 +434,7 @@ profile svg
     <!-- Top Section: Logo & Profile -->
     <div class="sidebar-top">
       <div class="sidebar-logo">
-        <div class="logo-placeholder">
-          <img src="../images/skillswaplogotrans.png" alt="SkillSwap Logo">
-        </div>
+        <div class="logo-placeholder"></div>
         <span class="logo-text">SkillSwap</span>
       </div>
 
@@ -447,7 +445,7 @@ profile svg
           </svg>
         </div>
         <div class="profile-info">
-          <a href="../profile/profile.php" class="view-profile-link">View Profile</a>
+          <a href="#" class="view-profile-link">View Profile</a>
         </div>
       </div>
     </div>
@@ -460,6 +458,13 @@ profile svg
             <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5" />
           </svg>
           <span>Dashboard</span>
+        </a>
+
+        <a href="post.php" class="nav-link active" data-tooltip="Posts">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M6.428 1.151C6.708.591 7.213 0 8 0s1.292.592 1.572 1.151C9.861 1.73 10 2.431 10 3v3.691l5.17 2.585a1.5 1.5 0 0 1 .83 1.342V12a.5.5 0 0 1-.582.493l-5.507-.918-.375 2.253 1.318 1.318A.5.5 0 0 1 10.5 16h-5a.5.5 0 0 1-.354-.854l1.319-1.318-.376-2.253-5.507.918A.5.5 0 0 1 0 12v-1.382a1.5 1.5 0 0 1 .83-1.342L6 6.691V3c0-.568.14-1.271.428-1.849"/>
+          </svg>
+          <span>Posts</span>
         </a>
 
         <a href="../dms/dms.php" class="nav-link" data-tooltip="Direct Messages">
@@ -497,7 +502,7 @@ profile svg
     <div class="sidebar-bottom">
       <div class="nav-divider"></div>
 
-      <a href="../settings/settings.php" class="nav-link" data-tooltip="Settings">
+      <a href="#" class="nav-link" data-tooltip="Settings">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
           <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z" />
         </svg>
@@ -537,47 +542,13 @@ profile svg
     </div>
   </div>
 
-  <!-- Top Bar Navigation -->
-  <header class="topbar">
-    <div class="topbar-left"></div>
-    <div class="topbar-center">
-      <h1 class="page-title">Posts</h1>
-    </div>
-    <div class="topbar-right">
-      <div class="search-container">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
-        </svg>
-        <input type="text" class="search-input" placeholder="Search people, posts, and courses...">
-      </div>
-
-      <a href="../notifications/notifications.php" class="icon-btn" aria-label="Notifications" id="notificationBtn" style="text-decoration: none;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z" />
-        </svg>
-        <span class="badge" id="notificationBadge"><?php echo $notificationCountDisplay; ?></span>
-      </a>
-
-      <a href="../dms/dms.php" class="icon-btn" aria-label="Messages" style="text-decoration: none;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M5 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0m4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2" />
-          <path d="m2.165 15.803.02-.004c1.83-.363 2.948-.842 3.468-1.105A9 9 0 0 0 8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6a10.4 10.4 0 0 1-.524 2.318l-.003.011a11 11 0 0 1-.244.637c-.079.186.074.394.273.362a22 22 0 0 0 .693-.125m.8-3.108a1 1 0 0 0-.287-.801C1.618 10.83 1 9.468 1 8c0-3.192 3.004-6 7-6s7 2.808 7 6-3.004 6-7 6a8 8 0 0 1-2.088-.272 1 1 0 0 0-.711.074c-.387.196-1.24.57-2.634.893a11 11 0 0 0 .398-2" />
-        </svg>
-        <span class="badge"><?php echo $unreadDmCount; ?></span>
-      </a>
-
-      <div class="profile-dropdown">
-        <button class="profile-btn">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
-          </svg>
-        </button>
-      </div>
-    </div>
-  </header>
-
   <!-- Main Content Area -->
   <main class="main-content">
+    <!-- Twitter/X style header -->
+    <div class="page-header">
+      <h2 class="page-header-title">Home</h2>
+    </div>
+    
     <!-- Create Post (inline form) -->
     <div class="create-post-card">
       <div class="create-post-header">
@@ -586,150 +557,197 @@ profile svg
             <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
           </svg>
         </div>
-            <form id="inline-post-form" action="post.php" method="POST" enctype="multipart/form-data">
-              <textarea name="content" class="create-post-input" placeholder="Ask a question or share something helpful..." rows="3"></textarea>
-              <div class="file-row" style="margin-top:8px; display:flex; align-items:center; gap:8px;">
-                <input type="file" id="avatar" name="avatar" accept="image/*" style="display:inline-block;">
-                <span id="fileLabel" style="color:#ddd;">Pick a file to upload</span>
-                <button type="button" id="filePreviewBtn" class="create-post-btn" style="padding:6px 10px;">Preview</button>
-                <button type="button" id="fileRemoveBtn" class="create-post-btn" style="padding:6px 10px; background:#551A8B;">Remove</button>
+        <div class="create-post-form-wrapper">
+          <form id="inline-post-form" action="post.php" method="POST" enctype="multipart/form-data">
+            <textarea name="content" class="create-post-input" placeholder="What's happening?"></textarea>
+            
+            <div class="reply-restriction">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16M8 4a.905.905 0 0 1 .9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995A.905.905 0 0 1 8 4m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+              </svg>
+              <span>Everyone can reply</span>
+            </div>
+            
+            <div class="post-options-bar">
+              <div class="post-icons">
+                <label for="avatar" class="icon-option" title="Add image">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+                    <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1z"/>
+                  </svg>
+                  <input type="file" id="avatar" name="avatar" accept="image/*" style="display:none;">
+                </label>
+                <button type="button" class="icon-option" title="GIF">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m7.5-6.923c-.67.204-1.335.82-1.887 1.855q-.215.403-.395.872c.705.157 1.472.257 2.282.287zM4.249 3.539q.214-.577.481-1.078a7 7 0 0 1 .597-.933A7 7 0 0 0 3.051 3.05q.544.277 1.198.49zM3.509 7.5c.036-1.07.188-2.087.436-3.008a9 9 0 0 1-1.565-.667A6.96 6.96 0 0 0 1.018 7.5zm1.4-2.741a12.3 12.3 0 0 0-.4 2.741H7.5V5.091c-.91-.03-1.783-.145-2.591-.332M8.5 5.09V7.5h2.99a12.3 12.3 0 0 0-.399-2.741c-.808.187-1.681.301-2.591.332zM4.51 8.5c.035.987.176 1.914.399 2.741A13.6 13.6 0 0 1 7.5 10.91V8.5zm3.99 0v2.409c.91.03 1.783.145 2.591.332.223-.827.364-1.754.4-2.741zm-3.282 3.696q.18.469.395.872c.552 1.035 1.218 1.65 1.887 1.855V11.91c-.81.03-1.577.13-2.282.287zm.11 2.276a7 7 0 0 1-.598-.933 9 9 0 0 1-.481-1.079 8.4 8.4 0 0 0-1.198.49 7 7 0 0 0 2.276 1.522zm-1.383-2.964A13.4 13.4 0 0 1 3.508 8.5h-2.49a6.96 6.96 0 0 0 1.362 3.675c.47-.258.995-.482 1.565-.667m6.728 2.964a7 7 0 0 0 2.275-1.521 8.4 8.4 0 0 0-1.197-.49 9 9 0 0 1-.481 1.078 7 7 0 0 1-.597.933M8.5 11.909v3.014c.67-.204 1.335-.82 1.887-1.855q.216-.403.395-.872A12.6 12.6 0 0 0 8.5 11.91zm3.555-.401c.57.185 1.095.409 1.565.667A6.96 6.96 0 0 0 14.982 8.5h-2.49a13.4 13.4 0 0 1-.437 3.008M14.982 7.5a6.96 6.96 0 0 0-1.362-3.675c-.47.258-.995.482-1.565.667.248.92.4 1.938.437 3.008zM11.27 2.461q.266.502.482 1.078a8.4 8.4 0 0 0 1.196-.49 7 7 0 0 0-2.275-1.52c.218.283.418.597.597.932m-.488 1.343a8 8 0 0 0-.395-.872C9.835 1.897 9.17 1.282 8.5 1.077V4.09c.81-.03 1.577-.13 2.282-.287z"/>
+                  </svg>
+                </button>
+                <button type="button" class="icon-option" title="Poll">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z"/>
+                  </svg>
+                </button>
+                <button type="button" class="icon-option" title="Emoji">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                    <path d="M4.285 9.567a.5.5 0 0 1 .683.183A3.5 3.5 0 0 0 8 11.5a3.5 3.5 0 0 0 3.032-1.75.5.5 0 1 1 .866.5A4.5 4.5 0 0 1 8 12.5a4.5 4.5 0 0 1-3.898-2.25.5.5 0 0 1 .183-.683M7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5m4 0c0 .828-.448 1.5-1 1.5s-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5"/>
+                  </svg>
+                </button>
+                <button type="button" class="icon-option" title="Schedule">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M6.445 11.688V6.354h-.633A13 13 0 0 0 4.5 7.16v.695c.375-.257.969-.62 1.258-.777h.012v4.61zm1.188-1.305c.047.64.594 1.406 1.703 1.406 1.258 0 2-1.066 2-2.871 0-1.934-.781-2.668-1.953-2.668-.926 0-1.797.672-1.797 1.809 0 1.16.824 1.77 1.676 1.77.746 0 1.23-.376 1.383-.79h.027c-.004 1.316-.461 2.164-1.305 2.164-.664 0-1.008-.45-1.05-.82zm2.953-2.317c0 .696-.559 1.18-1.184 1.18-.601 0-1.144-.383-1.144-1.2 0-.823.582-1.21 1.168-1.21.633 0 1.16.398 1.16 1.23"/>
+                    <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+                  </svg>
+                </button>
+                <button type="button" class="icon-option" title="Location">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
+                  </svg>
+                </button>
               </div>
+              <button type="submit" class="post-btn">Post</button>
+            </div>
+            <div id="fileLabel" class="file-label"></div>
+          </form>
+        </div>
       </div>
-          <div class="create-post-actions">
-            <button type="submit" class="create-post-btn">Submit</button>
-            </form>
-          </div>
     </div>
 
     <!-- Posts Feed -->
     <div id="posts-container">
       <?php if (count($posts) === 0): ?>
-          <div class="post" style="background:#fff3cd;border:1px solid #ffeebaff;padding:16px;margin-bottom:16px;color:black;">No posts yet.</div>
+          <div class="post" style="background:var(--background-card);border:1px solid var(--border-color);padding:24px;margin-bottom:16px;text-align:center;color:var(--text-secondary);">No posts yet.</div>
         <?php else: ?>
           <?php foreach ($posts as $post): ?>
-            <div class="post" style="background:#fff;border-radius:8px;padding:16px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
-              <div class="post-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-                <?php $displayName = !empty($post['user_username']) ? $post['user_username'] : ('User #' . intval($post['user_id'])); ?>
-                <div style="display:flex;align-items:center;gap:12px;flex:1;">
-                  <div class="post-author-avatar" style="width:40px;height:40px;border-radius:50%;background:#e9ecef;color:#333;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:1rem;">
-                    <?php
-                      $initial = '';
-                      if (!empty($post['user_username'])) {
-                        $initial = mb_strtoupper(mb_substr($post['user_username'], 0, 1));
-                      } else {
-                        $initial = 'U';
-                      }
-                      echo htmlspecialchars($initial);
-                    ?>
-                  </div>
-                  <div style="display:flex;flex-direction:column;">
-                    <div style="font-weight:600;color:#111"><?php echo htmlspecialchars($displayName); ?></div>
-                    <div style="font-size:0.85rem;color:#666"><?php echo isset($post['created_at']) ? htmlspecialchars(timeAgo($post['created_at'])) : 'just now'; ?></div>
-                  </div>
-                </div>
-
-                <!-- Post Menu Button -->
-                <div style="position:relative;">
-                  <button class="post-menu-btn" data-post-id="<?php echo intval($post['post_id']); ?>" title="Post options" style="background:none;border:none;cursor:pointer;color:#666;font-size:1.2rem;padding:4px 8px;margin-left:8px;">
-                    ⋮
-                  </button>
-                  <div class="post-menu-dropdown" style="position:absolute;right:0;background:#fff;border:1px solid #ddd;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);z-index:10;min-width:140px;display:none;white-space:nowrap;">
-                    <?php if ($user->user_is_admin): ?>
-                      <!-- Admin Options -->
-                      <button class="post-menu-item delete-post-option" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#d32f2f;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
-                        🗑 Delete Post
-                      </button>
-                      <div style="border-top:1px solid #e0e0e0;"></div>
-                      <button class="post-menu-item admin-action-1" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#333;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
-                        📌 Pin Post
-                      </button>
-                      <button class="post-menu-item admin-action-2" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#333;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
-                        ⭐ Feature Post
-                      </button>
-                    <?php else: ?>
-                      <!-- Regular User Options -->
-                      <button class="post-menu-item user-action-report" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#333;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
-                        🚩 Report Post
-                      </button>
-                      <button class="post-menu-item user-action-save" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#333;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
-                        🔖 Save Post
-                      </button>
-                      <button class="post-menu-item user-action-hide" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#333;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
-                        👁️‍🗨️ Hide Post
-                      </button>
-                    <?php endif; ?>
-                  </div>
-                </div>
-
+            <div class="post">
+              <div class="post-avatar">
                 <?php
-                  $payload = [
-                    'content' => $post['content'] ?? '',
-                    // normalize file path so client-side modal can load it correctly
-                    'file_path' => !empty($post['file_path']) ? publicPath($post['file_path']) : '',
-                    'username' => $displayName,
-                    'created_at' => $post['created_at'] ?? ''
-                  ];
-                  $payloadAttr = htmlspecialchars(json_encode($payload), ENT_QUOTES, 'UTF-8');
+                  $initial = '';
+                  if (!empty($post['user_username'])) {
+                    $initial = mb_strtoupper(mb_substr($post['user_username'], 0, 1));
+                  } else {
+                    $initial = 'U';
+                  }
+                  echo htmlspecialchars($initial);
                 ?>
-
-                <div>
-                  <button type="button" class="view-post-btn create-post-btn" data-post="<?php echo $payloadAttr; ?>" style="padding:6px 10px;">View</button>
-                </div>
               </div>
-              <div class="post-content" style="color:#333;line-height:1.5;">
-                <p style="margin:0;"><?php echo nl2br(htmlspecialchars(mb_strlen($post['content']) > 400 ? mb_substr($post['content'],0,400) . '...' : $post['content'])); ?></p>
+              
+              <div class="post-body">
+                <div class="post-header">
+                  <?php $displayName = !empty($post['user_username']) ? $post['user_username'] : ('User #' . intval($post['user_id'])); ?>
+                  <div class="post-user-info">
+                    <span class="post-username"><?php echo htmlspecialchars($displayName); ?></span>
+                    <span class="post-handle">@<?php echo htmlspecialchars(strtolower(str_replace(' ', '', $displayName))); ?></span>
+                    <span class="post-dot">·</span>
+                    <span class="post-time"><?php echo isset($post['created_at']) ? htmlspecialchars(timeAgo($post['created_at'])) : 'just now'; ?></span>
+                  </div>
+
+                  <!-- Post Menu Button -->
+                  <div class="post-menu-wrapper">
+                    <button class="post-menu-btn" data-post-id="<?php echo intval($post['post_id']); ?>" title="More">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3"/>
+                      </svg>
+                    </button>
+                    <div class="post-menu-dropdown" style="display:none;">
+                      <?php if ($user->user_is_admin): ?>
+                        <button class="post-menu-item delete-post-option" data-post-id="<?php echo intval($post['post_id']); ?>">
+                          🗑 Delete Post
+                        </button>
+                        <div class="menu-divider"></div>
+                        <button class="post-menu-item admin-action-1" data-post-id="<?php echo intval($post['post_id']); ?>">
+                          📌 Pin Post
+                        </button>
+                        <button class="post-menu-item admin-action-2" data-post-id="<?php echo intval($post['post_id']); ?>">
+                          ⭐ Feature Post
+                        </button>
+                      <?php else: ?>
+                        <button class="post-menu-item user-action-report" data-post-id="<?php echo intval($post['post_id']); ?>">
+                          🚩 Report Post
+                        </button>
+                        <button class="post-menu-item user-action-save" data-post-id="<?php echo intval($post['post_id']); ?>">
+                          🔖 Save Post
+                        </button>
+                        <button class="post-menu-item user-action-hide" data-post-id="<?php echo intval($post['post_id']); ?>">
+                          👁️‍🗨️ Hide Post
+                        </button>
+                      <?php endif; ?>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="post-content">
+                  <p><?php echo nl2br(htmlspecialchars(mb_strlen($post['content']) > 400 ? mb_substr($post['content'],0,400) . '...' : $post['content'])); ?></p>
                   <?php if (!empty($post['file_path'])):
-                    // normalize path for browser
                     $publicPath = publicPath($post['file_path']);
                   ?>
-                  <div style="margin-top:8px;">
                     <?php $ext = strtolower(pathinfo($post['file_path'], PATHINFO_EXTENSION)); ?>
                     <?php if (in_array($ext, ['jpg','jpeg','png','gif','webp'])): ?>
-                      <img src="<?php echo htmlspecialchars($publicPath); ?>" alt="attachment" style="max-width:200px;border-radius:8px;display:block;margin-top:8px;" />
+                      <img src="<?php echo htmlspecialchars($publicPath); ?>" alt="attachment" class="post-image" />
                     <?php else: ?>
-                      <div style="margin-top:8px;color:#555;font-size:0.9rem;">Attachment: <a href="<?php echo htmlspecialchars($publicPath); ?>" target="_blank">Open</a></div>
+                      <div class="post-attachment">Attachment: <a href="<?php echo htmlspecialchars($publicPath); ?>" target="_blank">Open</a></div>
                     <?php endif; ?>
-                  </div>
-                <?php endif; ?>
-              </div>
-
-              <!-- Comment Section -->
-              <div class="post-actions" style="display:flex;gap:16px;margin-top:12px;padding-top:12px;border-top:1px solid #e9ecef;">
-                <button class="view-comments-btn" data-post-id="<?php echo intval($post['post_id']); ?>" style="background:none;border:none;color:#666;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:0.9rem;padding:4px 8px;border-radius:4px;transition:all 0.2s;">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M2.678 11.894a1 1 0 0 1 .287.801 11 11 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8 8 0 0 0 8 14c3.996 0 7-2.807 7-6s-3.004-6-7-6-7 2.808-7 6c0 1.468.617 2.83 1.678 3.894m-.493 3.905a22 22 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a10 10 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105"/>
-                  </svg>
-                  <span class="view-comments-text">View Comments</span>
-                </button>
-                <button class="write-comment-btn" data-post-id="<?php echo intval($post['post_id']); ?>" style="background:none;border:none;color:#551A8B;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:0.9rem;padding:4px 8px;border-radius:4px;transition:all 0.2s;">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
-                  </svg>
-                  <span>Write Comment</span>
-                </button>
-              </div>
-
-              <!-- Comments Container (initially hidden) -->
-              <div class="post-comments-section" data-post-id="<?php echo intval($post['post_id']); ?>" style="display:none;margin-top:12px;border-top:1px solid #e9ecef;padding-top:12px;">
-                <!-- Comments List -->
-                <div class="comments-list" data-post-id="<?php echo intval($post['post_id']); ?>">
-                  <!-- Comments will be loaded here dynamically -->
+                  <?php endif; ?>
                 </div>
-              </div>
 
-              <!-- Comment Input Form (initially hidden) -->
-              <div class="comment-input-section" data-post-id="<?php echo intval($post['post_id']); ?>" style="display:none;margin-top:12px;border-top:1px solid #e9ecef;padding-top:12px;">
-                <form class="comment-form" data-post-id="<?php echo intval($post['post_id']); ?>">
-                  <textarea class="comment-input" placeholder="Write a comment..." rows="2" style="width:100%;padding:8px 12px;border:1px solid #ddd;border-radius:6px;resize:vertical;font-family:inherit;font-size:0.9rem;"></textarea>
-                  <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px;">
-                    <button type="button" class="comment-cancel-btn" data-post-id="<?php echo intval($post['post_id']); ?>" style="padding:6px 14px;background:#e0e0e0;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">Cancel</button>
-                    <button type="submit" class="comment-submit-btn" style="padding:6px 14px;background:#551A8B;color:white;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">Post Comment</button>
+                <!-- Post Actions -->
+                <div class="post-actions">
+                  <button class="action-btn write-comment-btn" data-post-id="<?php echo intval($post['post_id']); ?>">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M2.678 11.894a1 1 0 0 1 .287.801 11 11 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8 8 0 0 0 8 14c3.996 0 7-2.807 7-6s-3.004-6-7-6-7 2.808-7 6c0 1.468.617 2.83 1.678 3.894m-.493 3.905a22 22 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a10 10 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105"/>
+                    </svg>
+                    <span class="action-count"></span>
+                  </button>
+                  
+                  <button class="action-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                      <path fill-rule="evenodd" d="M1.5 1.5A.5.5 0 0 0 1 2v4.8a2.5 2.5 0 0 0 2.5 2.5h9.793l-3.347 3.346a.5.5 0 0 0 .708.708l4.2-4.2a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 8.3H3.5A1.5 1.5 0 0 1 2 6.8V2a.5.5 0 0 0-.5-.5"/>
+                    </svg>
+                    <span class="action-count"></span>
+                  </button>
+                  
+                  <button class="action-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+                    </svg>
+                    <span class="action-count"></span>
+                  </button>
+                  
+                  <button class="action-btn view-comments-btn" data-post-id="<?php echo intval($post['post_id']); ?>">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z"/>
+                    </svg>
+                    <span class="action-count"></span>
+                  </button>
+                  
+                  <button class="action-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1 1 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4 4 0 0 1-.128-1.287z"/>
+                      <path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243z"/>
+                    </svg>
+                  </button>
+                </div>
+
+                <!-- Comments Container (initially hidden) -->
+                <div class="post-comments-section" data-post-id="<?php echo intval($post['post_id']); ?>" style="display:none;">
+                  <div class="comments-list" data-post-id="<?php echo intval($post['post_id']); ?>">
+                    <!-- Comments will be loaded here dynamically -->
                   </div>
-                </form>
-              </div>
+                </div>
 
-              <!-- Inline Delete Confirmation -->
-              <div class="post-delete-confirmation" data-post-id="<?php echo intval($post['post_id']); ?>" style="display:none;background:#fff3cd;border:1px solid #ffecb5;border-radius:4px;padding:8px 10px;margin-top:8px;text-align:right;max-width:fit-content;margin-left:auto;">
+                <!-- Comment Input Form (initially hidden) -->
+                <div class="comment-input-section" data-post-id="<?php echo intval($post['post_id']); ?>" style="display:none;">
+                  <form class="comment-form" data-post-id="<?php echo intval($post['post_id']); ?>">
+                    <textarea class="comment-input" placeholder="Post your reply..." rows="2"></textarea>
+                    <div class="comment-form-actions">
+                      <button type="button" class="comment-cancel-btn" data-post-id="<?php echo intval($post['post_id']); ?>">Cancel</button>
+                      <button type="submit" class="comment-submit-btn">Reply</button>
+                    </div>
+                  </form>
+                </div>
+
+                <!-- Inline Delete Confirmation -->
+                <div class="post-delete-confirmation" data-post-id="<?php echo intval($post['post_id']); ?>" style="display:none;">
                 <div style="color:#333;font-size:0.8rem;margin-bottom:6px;text-align:left;">Delete this post?</div>
                 <div style="display:flex;gap:6px;justify-content:flex-end;">
                   <button class="post-delete-cancel" data-post-id="<?php echo intval($post['post_id']); ?>" style="padding:4px 10px;background:#e0e0e0;border:none;border-radius:3px;cursor:pointer;font-size:0.8rem;transition:background 0.2s;">Cancel</button>
@@ -1186,6 +1204,8 @@ profile svg
       // Poll notification badge every 10 seconds
       setInterval(updateNotificationBadge, 10000);
     </script>
+
+    <!-- Sidebar hover effect is now handled by calendar.css -->
   </body>
 
   </html>
