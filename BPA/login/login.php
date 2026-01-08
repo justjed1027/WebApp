@@ -69,7 +69,7 @@
                 if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === 1) {
                     header("Location: ../post/post.php?admin=1");
                 } else {
-                    header("Location: ../post/post.php");
+                    header("Location: ../courses/courses.php");
                 }
             }else{
                 $invalid_login = true;
