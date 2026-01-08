@@ -2,8 +2,7 @@
 
 .events-container {
   max-width: 1280px;
-  margin: 0 auto;
-  padding: 40px 32px;
+  padding: 0px 5px;
 }
 
 .events-main {
@@ -144,6 +143,7 @@
 
 .featured-track {
   display: flex;
+  justify-content: center;
   gap: 24px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
@@ -247,7 +247,8 @@ body:not(.light-mode) .carousel-dots .dot.active { background: #e5e7eb; }
   overflow: hidden;
   margin-bottom: 56px;
   display: grid;
-  grid-template-columns: 480px 1fr;
+  grid-template-columns: 600px 1fr;
+  min-height: 480px;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid rgba(229, 231, 235, 0.5);
   position: relative;
