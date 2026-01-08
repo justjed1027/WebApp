@@ -8,101 +8,121 @@ if (!isset($_SESSION['user_id'])) {
 }
 require_once '../components/sidecontent.php';
 
-// Get the course group from URL
-$groupId = isset($_GET['group']) ? $_GET['group'] : 'mathematics';
+$user_id = $_SESSION['user_id'];
+$db = new DatabaseConnection();
+$conn = $db->connection;
 
-// Hardcoded course data organized by group
-$allCourses = [
-  'mathematics' => [
-    ['id' => 'math-101', 'title' => 'Algebra I', 'studentsLearning' => 42, 'resourceCount' => 18],
-    ['id' => 'math-102', 'title' => 'Algebra II', 'studentsLearning' => 38, 'resourceCount' => 15],
-    ['id' => 'math-201', 'title' => 'Geometry', 'studentsLearning' => 46, 'resourceCount' => 21],
-    ['id' => 'math-301', 'title' => 'Calculus I', 'studentsLearning' => 36, 'resourceCount' => 24],
-    ['id' => 'math-302', 'title' => 'Calculus II', 'studentsLearning' => 34, 'resourceCount' => 22],
-    ['id' => 'math-401', 'title' => 'Linear Algebra', 'studentsLearning' => 29, 'resourceCount' => 17],
-    ['id' => 'math-501', 'title' => 'Statistics', 'studentsLearning' => 51, 'resourceCount' => 26],
-    ['id' => 'math-601', 'title' => 'Discrete Mathematics', 'studentsLearning' => 26, 'resourceCount' => 19]
-  ],
-  'computer-science' => [
-    ['id' => 'cs-101', 'title' => 'Introduction to Programming', 'studentsLearning' => 62, 'resourceCount' => 28],
-    ['id' => 'cs-102', 'title' => 'Python Programming', 'studentsLearning' => 48, 'resourceCount' => 32],
-    ['id' => 'cs-201', 'title' => 'Data Structures', 'studentsLearning' => 39, 'resourceCount' => 25],
-    ['id' => 'cs-202', 'title' => 'Algorithms', 'studentsLearning' => 37, 'resourceCount' => 24],
-    ['id' => 'cs-301', 'title' => 'Web Development', 'studentsLearning' => 56, 'resourceCount' => 35],
-    ['id' => 'cs-302', 'title' => 'Database Systems', 'studentsLearning' => 35, 'resourceCount' => 22],
-    ['id' => 'cs-401', 'title' => 'Machine Learning', 'studentsLearning' => 54, 'resourceCount' => 31],
-    ['id' => 'cs-402', 'title' => 'Artificial Intelligence', 'studentsLearning' => 47, 'resourceCount' => 29],
-    ['id' => 'cs-501', 'title' => 'Computer Networks', 'studentsLearning' => 32, 'resourceCount' => 20],
-    ['id' => 'cs-502', 'title' => 'Operating Systems', 'studentsLearning' => 36, 'resourceCount' => 23],
-    ['id' => 'cs-601', 'title' => 'Cybersecurity', 'studentsLearning' => 41, 'resourceCount' => 27],
-    ['id' => 'cs-602', 'title' => 'Mobile App Development', 'studentsLearning' => 44, 'resourceCount' => 26]
-  ],
-  'science' => [
-    ['id' => 'sci-101', 'title' => 'General Biology', 'studentsLearning' => 38, 'resourceCount' => 26],
-    ['id' => 'sci-102', 'title' => 'General Chemistry', 'studentsLearning' => 41, 'resourceCount' => 28],
-    ['id' => 'sci-201', 'title' => 'Physics I', 'studentsLearning' => 32, 'resourceCount' => 24],
-    ['id' => 'sci-202', 'title' => 'Physics II', 'studentsLearning' => 28, 'resourceCount' => 22],
-    ['id' => 'sci-301', 'title' => 'Organic Chemistry', 'studentsLearning' => 34, 'resourceCount' => 25],
-    ['id' => 'sci-302', 'title' => 'Molecular Biology', 'studentsLearning' => 30, 'resourceCount' => 21],
-    ['id' => 'sci-401', 'title' => 'Genetics', 'studentsLearning' => 36, 'resourceCount' => 27],
-    ['id' => 'sci-501', 'title' => 'Environmental Science', 'studentsLearning' => 39, 'resourceCount' => 29],
-    ['id' => 'sci-601', 'title' => 'Astronomy', 'studentsLearning' => 47, 'resourceCount' => 31],
-    ['id' => 'sci-701', 'title' => 'Anatomy & Physiology', 'studentsLearning' => 37, 'resourceCount' => 26]
-  ],
-  'english' => [
-    ['id' => 'eng-101', 'title' => 'English Composition', 'studentsLearning' => 40, 'resourceCount' => 22],
-    ['id' => 'eng-201', 'title' => 'American Literature', 'studentsLearning' => 35, 'resourceCount' => 28],
-    ['id' => 'eng-202', 'title' => 'British Literature', 'studentsLearning' => 32, 'resourceCount' => 26],
-    ['id' => 'eng-301', 'title' => 'Creative Writing', 'studentsLearning' => 38, 'resourceCount' => 24],
-    ['id' => 'eng-401', 'title' => 'Shakespeare Studies', 'studentsLearning' => 29, 'resourceCount' => 19],
-    ['id' => 'eng-501', 'title' => 'World Literature', 'studentsLearning' => 36, 'resourceCount' => 25]
-  ],
-  'history' => [
-    ['id' => 'hist-101', 'title' => 'World History I', 'studentsLearning' => 37, 'resourceCount' => 24],
-    ['id' => 'hist-102', 'title' => 'World History II', 'studentsLearning' => 34, 'resourceCount' => 22],
-    ['id' => 'hist-201', 'title' => 'American History', 'studentsLearning' => 41, 'resourceCount' => 27],
-    ['id' => 'hist-301', 'title' => 'European History', 'studentsLearning' => 33, 'resourceCount' => 25],
-    ['id' => 'hist-401', 'title' => 'Ancient Civilizations', 'studentsLearning' => 36, 'resourceCount' => 26],
-    ['id' => 'hist-501', 'title' => 'Medieval History', 'studentsLearning' => 28, 'resourceCount' => 20],
-    ['id' => 'hist-601', 'title' => 'Modern History', 'studentsLearning' => 38, 'resourceCount' => 23]
-  ],
-  'art' => [
-    ['id' => 'art-101', 'title' => 'Introduction to Art', 'studentsLearning' => 44, 'resourceCount' => 24],
-    ['id' => 'art-201', 'title' => 'Drawing & Sketching', 'studentsLearning' => 37, 'resourceCount' => 20],
-    ['id' => 'art-301', 'title' => 'Painting Techniques', 'studentsLearning' => 34, 'resourceCount' => 22],
-    ['id' => 'art-205', 'title' => 'Digital Art & Design', 'studentsLearning' => 52, 'resourceCount' => 38],
-    ['id' => 'art-501', 'title' => 'Art History', 'studentsLearning' => 35, 'resourceCount' => 28]
-  ],
-  'business' => [
-    ['id' => 'bus-101', 'title' => 'Introduction to Business', 'studentsLearning' => 47, 'resourceCount' => 26],
-    ['id' => 'bus-201', 'title' => 'Marketing Fundamentals', 'studentsLearning' => 41, 'resourceCount' => 29],
-    ['id' => 'bus-301', 'title' => 'Financial Accounting', 'studentsLearning' => 36, 'resourceCount' => 24],
-    ['id' => 'bus-401', 'title' => 'Entrepreneurship', 'studentsLearning' => 44, 'resourceCount' => 32],
-    ['id' => 'bus-501', 'title' => 'Business Strategy', 'studentsLearning' => 34, 'resourceCount' => 27],
-    ['id' => 'bus-601', 'title' => 'Economics', 'studentsLearning' => 38, 'resourceCount' => 25]
-  ],
-  'music' => [
-    ['id' => 'mus-101', 'title' => 'Music Theory I', 'studentsLearning' => 34, 'resourceCount' => 22],
-    ['id' => 'mus-201', 'title' => 'Music History', 'studentsLearning' => 28, 'resourceCount' => 24],
-    ['id' => 'mus-301', 'title' => 'Piano Performance', 'studentsLearning' => 30, 'resourceCount' => 19],
-    ['id' => 'mus-401', 'title' => 'Music Composition', 'studentsLearning' => 26, 'resourceCount' => 18]
-  ]
+// Get the category ID from URL parameter
+$categoryId = isset($_GET['category']) ? intval($_GET['category']) : 0;
+
+// Category icon and color mapping
+$categoryStyles = [
+  'Mathematics' => ['icon' => '📐', 'color' => '#3b82f6'],
+  'Computer Science' => ['icon' => '💻', 'color' => '#8b5cf6'],
+  'Science' => ['icon' => '🔬', 'color' => '#10b981'],
+  'English' => ['icon' => '📚', 'color' => '#f59e0b'],
+  'History' => ['icon' => '🏛️', 'color' => '#ef4444'],
+  'Art & Design' => ['icon' => '🎨', 'color' => '#ec4899'],
+  'Business & Economics' => ['icon' => '💼', 'color' => '#06b6d4'],
+  'Music' => ['icon' => '🎵', 'color' => '#a855f7'],
+  'Languages' => ['icon' => '🌐', 'color' => '#14b8a6']
 ];
 
-// Group metadata
-$groupInfo = [
-  'mathematics' => ['name' => 'Mathematics', 'icon' => '📐', 'color' => '#3b82f6'],
-  'computer-science' => ['name' => 'Computer Science', 'icon' => '💻', 'color' => '#8b5cf6'],
-  'science' => ['name' => 'Science', 'icon' => '🔬', 'color' => '#10b981'],
-  'english' => ['name' => 'English', 'icon' => '📚', 'color' => '#f59e0b'],
-  'history' => ['name' => 'History', 'icon' => '🏛️', 'color' => '#ef4444'],
-  'art' => ['name' => 'Art', 'icon' => '🎨', 'color' => '#ec4899'],
-  'business' => ['name' => 'Business', 'icon' => '💼', 'color' => '#06b6d4'],
-  'music' => ['name' => 'Music', 'icon' => '🎵', 'color' => '#a855f7']
+// Fetch category information
+$categoryQuery = "SELECT category_id, category_name FROM subjectcategories WHERE category_id = ? LIMIT 1";
+$stmt = $conn->prepare($categoryQuery);
+$stmt->bind_param("i", $categoryId);
+$stmt->execute();
+$result = $stmt->get_result();
+$categoryInfo = $result->fetch_assoc();
+$stmt->close();
+
+if (!$categoryInfo) {
+  header('Location: courses.php');
+  exit();
+}
+
+$categoryName = $categoryInfo['category_name'];
+$group = [
+  'name' => $categoryName,
+  'icon' => $categoryStyles[$categoryName]['icon'] ?? '📖',
+  'color' => $categoryStyles[$categoryName]['color'] ?? '#6b7280'
 ];
 
-$courses = isset($allCourses[$groupId]) ? $allCourses[$groupId] : [];
-$group = isset($groupInfo[$groupId]) ? $groupInfo[$groupId] : ['name' => 'Courses', 'icon' => '📖', 'color' => '#6b7280'];
+// Fetch user's subject interests (subjects they want to learn)
+$userInterestsQuery = "SELECT ui_subject_id FROM user_interests WHERE ui_user_id = ?";
+$stmt = $conn->prepare($userInterestsQuery);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$userInterestIds = [];
+while ($row = $result->fetch_assoc()) {
+  $userInterestIds[] = $row['ui_subject_id'];
+}
+$stmt->close();
+
+// Fetch user's skills (subjects they know)
+$userSkillsQuery = "SELECT us_subject_id FROM user_skills WHERE us_user_id = ?";
+$stmt = $conn->prepare($userSkillsQuery);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$userSkillIds = [];
+while ($row = $result->fetch_assoc()) {
+  $userSkillIds[] = $row['us_subject_id'];
+}
+$stmt->close();
+
+// Fetch all subjects in this category with engagement stats
+$subjectsQuery = "
+  SELECT 
+    s.subject_id,
+    s.subject_name,
+    COUNT(DISTINCT ui.ui_user_id) as students_learning,
+    0 as resource_count
+  FROM subjects s
+  LEFT JOIN user_interests ui ON s.subject_id = ui.ui_subject_id
+  WHERE s.category_id = ?
+  GROUP BY s.subject_id, s.subject_name
+  ORDER BY s.subject_name ASC
+";
+$stmt = $conn->prepare($subjectsQuery);
+$stmt->bind_param("i", $categoryId);
+$stmt->execute();
+$result = $stmt->get_result();
+
+// Organize subjects into three sections
+$interestedIn = [];    // Subjects user wants to learn
+$skillsIn = [];        // Subjects user has knowledge in
+$otherSubjects = [];   // Subjects not in either list
+
+while ($subject = $result->fetch_assoc()) {
+  $subjectId = $subject['subject_id'];
+  
+  $subjectData = [
+    'id' => $subject['subject_id'],
+    'title' => $subject['subject_name'],
+    'studentsLearning' => $subject['students_learning'],
+    'resourceCount' => $subject['resource_count']
+  ];
+  
+  $isInterest = in_array($subjectId, $userInterestIds);
+  $isSkill = in_array($subjectId, $userSkillIds);
+  
+  if ($isInterest) {
+    $interestedIn[] = $subjectData;
+  } elseif ($isSkill) {
+    $skillsIn[] = $subjectData;
+  } else {
+    $otherSubjects[] = $subjectData;
+  }
+}
+
+$stmt->close();
+$conn->close();
+
+// Calculate total subject count
+$totalSubjects = count($interestedIn) + count($skillsIn) + count($otherSubjects);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -269,33 +289,106 @@ $group = isset($groupInfo[$groupId]) ? $groupInfo[$groupId] : ['name' => 'Course
 
         <!-- Topic Count -->
         <div class="course-count">
-          <span id="courseCount"><?php echo count($courses); ?></span> topics available
+          <span id="courseCount"><?php echo $totalSubjects; ?></span> topics available
         </div>
 
-        <!-- Topics List -->
-        <div class="courses-list-grid" id="coursesList">
-          <?php foreach ($courses as $course): ?>
-            <a href="course-detail.php?id=<?php echo $course['id']; ?>" class="course-list-card">
-              <div class="course-list-header">
-                <h3><?php echo $course['title']; ?></h3>
-              </div>
-              <div class="course-list-stats">
-                <span class="stat">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
-                  </svg>
-                  <?php echo $course['studentsLearning']; ?> exploring
-                </span>
-                <span class="stat">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M6 0a.5.5 0 0 1 .5.5V3h3V.5a.5.5 0 0 1 1 0V3h1a2 2 0 0 1 2 2v3.5a.5.5 0 0 1-1 0V5h-11v8a1 1 0 0 0 1 1h4.5a.5.5 0 0 1 0 1h-4.5A2 2 0 0 1 0 13V5a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 1 0V3h3V.5A.5.5 0 0 1 6 0M9.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5z"/>
-                  </svg>
-                  <?php echo $course['resourceCount']; ?> resources
-                </span>
-              </div>
-            </a>
-          <?php endforeach; ?>
+        <!-- Topics List - Organized by User Preferences -->
+        
+        <?php if (!empty($interestedIn)): ?>
+        <div class="subject-section">
+          <div class="subject-section-header">
+            <h3 class="subject-section-title">📚 Want to Learn</h3>
+            <p class="subject-section-description">Subjects you're interested in exploring</p>
+          </div>
+          <div class="courses-list-grid">
+            <?php foreach ($interestedIn as $subject): ?>
+              <a href="course-detail.php?id=<?php echo $subject['id']; ?>" class="course-list-card">
+                <div class="course-list-header">
+                  <h3><?php echo htmlspecialchars($subject['title']); ?></h3>
+                </div>
+                <div class="course-list-stats">
+                  <span class="stat">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
+                    </svg>
+                    <?php echo $subject['studentsLearning']; ?> exploring
+                  </span>
+                  <span class="stat">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M6 0a.5.5 0 0 1 .5.5V3h3V.5a.5.5 0 0 1 1 0V3h1a2 2 0 0 1 2 2v3.5a.5.5 0 0 1-1 0V5h-11v8a1 1 0 0 0 1 1h4.5a.5.5 0 0 1 0 1h-4.5A2 2 0 0 1 0 13V5a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 1 0V3h3V.5A.5.5 0 0 1 6 0M9.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5z"/>
+                    </svg>
+                    <?php echo $subject['resourceCount']; ?> resources
+                  </span>
+                </div>
+              </a>
+            <?php endforeach; ?>
+          </div>
         </div>
+        <?php endif; ?>
+
+        <?php if (!empty($skillsIn)): ?>
+        <div class="subject-section">
+          <div class="subject-section-header">
+            <h3 class="subject-section-title">⭐ My Skills</h3>
+            <p class="subject-section-description">Subjects you have knowledge in</p>
+          </div>
+          <div class="courses-list-grid">
+            <?php foreach ($skillsIn as $subject): ?>
+              <a href="course-detail.php?id=<?php echo $subject['id']; ?>" class="course-list-card">
+                <div class="course-list-header">
+                  <h3><?php echo htmlspecialchars($subject['title']); ?></h3>
+                </div>
+                <div class="course-list-stats">
+                  <span class="stat">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
+                    </svg>
+                    <?php echo $subject['studentsLearning']; ?> exploring
+                  </span>
+                  <span class="stat">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M6 0a.5.5 0 0 1 .5.5V3h3V.5a.5.5 0 0 1 1 0V3h1a2 2 0 0 1 2 2v3.5a.5.5 0 0 1-1 0V5h-11v8a1 1 0 0 0 1 1h4.5a.5.5 0 0 1 0 1h-4.5A2 2 0 0 1 0 13V5a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 1 0V3h3V.5A.5.5 0 0 1 6 0M9.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5z"/>
+                    </svg>
+                    <?php echo $subject['resourceCount']; ?> resources
+                  </span>
+                </div>
+              </a>
+            <?php endforeach; ?>
+          </div>
+        </div>
+        <?php endif; ?>
+
+        <?php if (!empty($otherSubjects)): ?>
+        <div class="subject-section">
+          <div class="subject-section-header">
+            <h3 class="subject-section-title">🌟 Other Topics</h3>
+            <p class="subject-section-description">Explore more subjects and discover new interests</p>
+          </div>
+          <div class="courses-list-grid">
+            <?php foreach ($otherSubjects as $subject): ?>
+              <a href="course-detail.php?id=<?php echo $subject['id']; ?>" class="course-list-card">
+                <div class="course-list-header">
+                  <h3><?php echo htmlspecialchars($subject['title']); ?></h3>
+                </div>
+                <div class="course-list-stats">
+                  <span class="stat">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
+                    </svg>
+                    <?php echo $subject['studentsLearning']; ?> exploring
+                  </span>
+                  <span class="stat">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M6 0a.5.5 0 0 1 .5.5V3h3V.5a.5.5 0 0 1 1 0V3h1a2 2 0 0 1 2 2v3.5a.5.5 0 0 1-1 0V5h-11v8a1 1 0 0 0 1 1h4.5a.5.5 0 0 1 0 1h-4.5A2 2 0 0 1 0 13V5a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 1 0V3h3V.5A.5.5 0 0 1 6 0M9.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5z"/>
+                    </svg>
+                    <?php echo $subject['resourceCount']; ?> resources
+                  </span>
+                </div>
+              </a>
+            <?php endforeach; ?>
+          </div>
+        </div>
+        <?php endif; ?>
       </div>
 
       <!-- Side Content -->
