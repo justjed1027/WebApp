@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize sidebar toggle
     initializeSidebarToggle();
+
+    // Ensure connect buttons submit correctly with loading state
+    initializeConnectButtons();
 });
 
 // Theme toggle functionality
@@ -36,6 +39,35 @@ function initializeThemeToggle() {
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
         });
     }
+}
+
+// Ensure connect buttons still submit after showing loading state
+function initializeConnectButtons() {
+    const connectButtons = document.querySelectorAll('.btn-connect');
+    connectButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            const originalText = this.innerHTML;
+            const form = this.closest('form');
+
+            this.innerHTML = '...';
+            this.disabled = true;
+
+            if (form) {
+                e.preventDefault();
+                if (typeof form.requestSubmit === 'function') {
+                    form.requestSubmit(this);
+                } else {
+                    form.submit();
+                }
+            }
+
+            // Fallback restore in case navigation doesn't occur
+            setTimeout(() => {
+                this.innerHTML = originalText;
+                this.disabled = false;
+            }, 4000);
+        });
+    });
 }
 
 // Search functionality
