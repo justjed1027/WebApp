@@ -20,12 +20,13 @@ $receiverId = (int) $_SESSION['user_id'];
 
 $db = new DatabaseConnection();
 $connObj = new Connection($db->connection);
+$result = 'invalid_action';
 
 if ($action === 'accept') {
     $result = $connObj->acceptRequest($connectionId, $receiverId);
     
     // Create notification when accepting a friend request
-    if ($result === 'success') {
+    if ($result === 'accepted') {
         $notif = new Notification($db->connection);
         
         // Get the requester's ID from the connections table
@@ -57,7 +58,8 @@ if ($action === 'accept') {
             );
         }
     }
-    $result = 'invalid_action';
+} elseif ($action === 'decline') {
+    $result = $connObj->declineRequest($connectionId, $receiverId);
 }
 
 header("Location: connections.php?msg=" . urlencode($result));

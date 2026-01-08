@@ -118,7 +118,7 @@ class Connection {
     public function getConnections($userId)
     {
         $sql = "
-            SELECT u.user_id, u.user_username, c.status
+            SELECT c.connection_id, u.user_id, u.user_username, c.status
             FROM connections c
             JOIN user u ON (u.user_id = c.requester_id OR u.user_id = c.receiver_id)
             WHERE (c.requester_id = ? OR c.receiver_id = ?)
@@ -134,6 +134,25 @@ class Connection {
         $result = $stmt->get_result();
         $stmt->close();
         return $result;
+    }
+
+    public function removeConnection($connectionId, $userId)
+    {
+        $sql = "DELETE FROM connections WHERE connection_id = ? AND (requester_id = ? OR receiver_id = ?)";
+        $stmt = $this->connection->prepare($sql);
+        if ($stmt === false) {
+            return 'error_prepare';
+        }
+        $stmt->bind_param('iii', $connectionId, $userId, $userId);
+        if ($stmt->execute()) {
+            $affected = $stmt->affected_rows;
+            $stmt->close();
+            return $affected > 0 ? 'deleted' : 'not_authorized_or_missing';
+        } else {
+            $err = $stmt->error;
+            $stmt->close();
+            return 'error:' . $err;
+        }
     }
 
 }

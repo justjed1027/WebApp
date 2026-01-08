@@ -19,6 +19,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Initialize connection action buttons
   initializeConnectionActions();
+
+  // Initialize unconnect buttons
+  initializeUnconnectButtons();
 });
 
 function initializeThemeToggle() {
@@ -79,30 +82,30 @@ function initializeConnectionActions() {
   
   actionButtons.forEach(button => {
     button.addEventListener('click', function(e) {
-      // Add loading state
       const originalText = this.innerHTML;
+      const form = this.closest('form');
+
+      // Add loading state and prevent duplicate submissions
       this.innerHTML = '...';
       this.disabled = true;
       
-      // Re-enable after form submission (fallback)
+      if (form) {
+        e.preventDefault();
+        // Ensure the form actually submits even though the button is disabled
+        if (typeof form.requestSubmit === 'function') {
+          form.requestSubmit(this);
+        } else {
+          form.submit();
+        }
+      }
+
+      // Fallback re-enable if navigation does not occur
       setTimeout(() => {
         this.innerHTML = originalText;
         this.disabled = false;
-      }, 3000);
+      }, 4000);
     });
   });
-
-  // Legacy button interactions
-  document.querySelectorAll('.btn-connect').forEach(btn => {
-    btn.addEventListener('click', function() {
-      btn.textContent = 'Connected';
-      btn.disabled = true;
-      btn.style.background = '#e5e7eb';
-      btn.style.color = '#888';
-      btn.style.cursor = 'default';
-    });
-  });
-
   document.querySelectorAll('.side-follow').forEach(btn => {
     btn.addEventListener('click', function(e) {
       e.preventDefault();
@@ -118,3 +121,52 @@ window.ConnectionsPage = {
   handleConnectionsSearch,
   handleFindStudents
 };
+
+function initializeUnconnectButtons() {
+  const unconnectButtons = document.querySelectorAll('.btn-unconnect');
+  const modal = document.getElementById('unconnectModal');
+  const confirmBtn = document.getElementById('confirmUnconnect');
+  const cancelBtn = document.getElementById('cancelUnconnect');
+
+  if (!modal || !confirmBtn || !cancelBtn) return;
+
+  let activeForm = null;
+
+  const openModal = (form) => {
+    activeForm = form;
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+  };
+
+  const closeModal = () => {
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    activeForm = null;
+  };
+
+  unconnectButtons.forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.preventDefault();
+      const form = this.closest('form');
+      if (!form) { return; }
+      openModal(form);
+    });
+  });
+
+  confirmBtn.addEventListener('click', () => {
+    if (activeForm) {
+      activeForm.submit();
+    }
+    closeModal();
+  });
+
+  cancelBtn.addEventListener('click', () => {
+    closeModal();
+  });
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+}
