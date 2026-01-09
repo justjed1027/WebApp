@@ -8,96 +8,105 @@ if (!isset($_SESSION['user_id'])) {
 }
 require_once '../components/sidecontent.php';
 
-// Get course ID from URL
-$courseId = isset($_GET['id']) ? $_GET['id'] : 'cs-102';
+$user_id = $_SESSION['user_id'];
+$db = new DatabaseConnection();
+$conn = $db->connection;
 
-// Course topic data - skillshare information hub model
-$courseDatabase = [
-  'cs-102' => [
-    'id' => 'cs-102',
-    'title' => 'Python Programming',
-    'group' => 'Computer Science',
-    'groupId' => 'computer-science',
-    'description' => 'Explore Python programming resources, connect with fellow learners, and share knowledge. This topic hub covers fundamental programming concepts, data structures, object-oriented programming, and practical applications.',
-    'studentsLearning' => 48,
-    'studentsFluent' => 32,
-    'resources' => [
-      ['name' => 'Official Python Documentation', 'url' => 'https://docs.python.org', 'type' => 'Documentation'],
-      ['name' => 'VS Code', 'url' => 'https://code.visualstudio.com', 'type' => 'IDE'],
-      ['name' => 'PyCharm', 'url' => 'https://jetbrains.com/pycharm', 'type' => 'IDE'],
-      ['name' => 'Jupyter Notebooks', 'url' => 'https://jupyter.org', 'type' => 'Tool'],
-      ['name' => 'Python Package Index (PyPI)', 'url' => 'https://pypi.org', 'type' => 'Repository'],
-      ['name' => 'Real Python Tutorials', 'url' => 'https://realpython.com', 'type' => 'Learning Platform']
-    ],
-    'relatedEvents' => [
-      ['title' => 'Python Study Group', 'date' => 'Dec 15, 2025', 'time' => '2:00 PM'],
-      ['title' => 'Data Structures Workshop', 'date' => 'Dec 18, 2025', 'time' => '4:00 PM'],
-      ['title' => 'Python Project Showcase', 'date' => 'Dec 22, 2025', 'time' => '1:00 PM']
-    ],
-    'recentPosts' => [
-      ['author' => 'Sarah Chen', 'title' => 'Best Python libraries for data analysis?', 'replies' => 12, 'time' => '2h ago'],
-      ['author' => 'Mike Johnson', 'title' => 'My first Python project - feedback welcome!', 'replies' => 8, 'time' => '5h ago'],
-      ['author' => 'Emily Rodriguez', 'title' => 'Help with list comprehensions', 'replies' => 15, 'time' => '1d ago']
-    ]
-  ],
-  'math-301' => [
-    'id' => 'math-301',
-    'title' => 'Calculus I',
-    'group' => 'Mathematics',
-    'groupId' => 'mathematics',
-    'description' => 'Explore differential calculus resources including limits, derivatives, and applications. Connect with students studying calculus and share problem-solving strategies.',
-    'studentsLearning' => 36,
-    'studentsFluent' => 24,
-    'resources' => [
-      ['name' => 'Khan Academy Calculus', 'url' => 'https://khanacademy.org/math/calculus-1', 'type' => 'Learning Platform'],
-      ['name' => 'Desmos Graphing Calculator', 'url' => 'https://desmos.com/calculator', 'type' => 'Tool'],
-      ['name' => 'Wolfram Alpha', 'url' => 'https://wolframalpha.com', 'type' => 'Calculator'],
-      ['name' => 'Paul\'s Online Math Notes', 'url' => 'https://tutorial.math.lamar.edu', 'type' => 'Tutorial'],
-      ['name' => 'GeoGebra', 'url' => 'https://geogebra.org', 'type' => 'Visualization Tool']
-    ],
-    'relatedEvents' => [
-      ['title' => 'Calculus Help Session', 'date' => 'Dec 14, 2025', 'time' => '3:00 PM'],
-      ['title' => 'Optimization Problems Workshop', 'date' => 'Dec 19, 2025', 'time' => '2:00 PM']
-    ],
-    'recentPosts' => [
-      ['author' => 'Alex Martinez', 'title' => 'Chain rule confusion - help needed', 'replies' => 9, 'time' => '1h ago'],
-      ['author' => 'Jessica Williams', 'title' => 'Real-world applications of derivatives', 'replies' => 14, 'time' => '4h ago'],
-      ['author' => 'David Chen', 'title' => 'Study group forming for finals', 'replies' => 6, 'time' => '1d ago']
-    ]
-  ],
-  'art-205' => [
-    'id' => 'art-205',
-    'title' => 'Digital Art & Design',
-    'group' => 'Art & Design',
-    'groupId' => 'art-design',
-    'description' => 'Explore digital art and graphic design resources, connect with creative students, and share your work. This topic hub covers digital illustration, UI/UX design, photo editing, and creative tools for visual communication.',
-    'studentsLearning' => 52,
-    'studentsFluent' => 38,
-    'resources' => [
-      ['name' => 'Canva', 'url' => 'https://canva.com', 'type' => 'Design Tool'],
-      ['name' => 'Figma', 'url' => 'https://figma.com', 'type' => 'UI/UX Tool'],
-      ['name' => 'Adobe Creative Cloud', 'url' => 'https://adobe.com/creativecloud', 'type' => 'Software Suite'],
-      ['name' => 'Procreate', 'url' => 'https://procreate.com', 'type' => 'Digital Painting'],
-      ['name' => 'Dribbble', 'url' => 'https://dribbble.com', 'type' => 'Inspiration'],
-      ['name' => 'Behance', 'url' => 'https://behance.net', 'type' => 'Portfolio Platform'],
-      ['name' => 'Color Hunt', 'url' => 'https://colorhunt.co', 'type' => 'Color Palettes'],
-      ['name' => 'Unsplash', 'url' => 'https://unsplash.com', 'type' => 'Stock Photos']
-    ],
-    'relatedEvents' => [
-      ['title' => 'Design Critique Session', 'date' => 'Dec 16, 2025', 'time' => '5:00 PM'],
-      ['title' => 'Figma UI Design Workshop', 'date' => 'Dec 20, 2025', 'time' => '3:00 PM'],
-      ['title' => 'Portfolio Review & Feedback', 'date' => 'Dec 23, 2025', 'time' => '6:00 PM']
-    ],
-    'recentPosts' => [
-      ['author' => 'Emma Thompson', 'title' => 'Best free alternatives to Adobe Creative Cloud?', 'replies' => 18, 'time' => '3h ago'],
-      ['author' => 'Carlos Rivera', 'title' => 'Just finished my first logo design - thoughts?', 'replies' => 11, 'time' => '6h ago'],
-      ['author' => 'Lily Zhang', 'title' => 'Tips for choosing color palettes?', 'replies' => 22, 'time' => '1d ago']
-    ]
-  ]
+// Get subject ID from URL parameter
+$subject_id = isset($_GET['id']) ? intval($_GET['id']) : null;
+
+if (!$subject_id) {
+  header('Location: courses.php');
+  exit();
+}
+
+// Fetch subject details
+$subjectQuery = "
+  SELECT s.subject_id, s.subject_name, s.description, sc.category_id, sc.category_name
+  FROM subjects s
+  JOIN subjectcategories sc ON s.category_id = sc.category_id
+  WHERE s.subject_id = ?
+";
+$stmt = $conn->prepare($subjectQuery);
+$stmt->bind_param("i", $subject_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$subject = $result->fetch_assoc();
+$stmt->close();
+
+if (!$subject) {
+  header('Location: courses.php');
+  exit();
+}
+
+// Fetch students learning this subject
+$studentsLearningQuery = "SELECT COUNT(DISTINCT ui_user_id) as count FROM user_interests WHERE ui_subject_id = ?";
+$stmt = $conn->prepare($studentsLearningQuery);
+$stmt->bind_param("i", $subject_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$studentsLearning = $result->fetch_assoc()['count'];
+$stmt->close();
+
+// Fetch students fluent in this subject
+$studentsFuentQuery = "SELECT COUNT(DISTINCT us_user_id) as count FROM user_skills WHERE us_subject_id = ?";
+$stmt = $conn->prepare($studentsFuentQuery);
+$stmt->bind_param("i", $subject_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$studentsFluent = $result->fetch_assoc()['count'];
+$stmt->close();
+
+// Fetch events for this subject
+$eventsQuery = "
+  SELECT e.events_id, e.events_title, e.events_date, e.events_start, e.events_description
+  FROM events e
+  JOIN event_subjects es ON e.events_id = es.es_event_id
+  WHERE es.es_subject_id = ? AND e.events_date >= CURDATE()
+  ORDER BY e.events_date ASC
+  LIMIT 10
+";
+$stmt = $conn->prepare($eventsQuery);
+$stmt->bind_param("i", $subject_id);
+$stmt->execute();
+$eventsResult = $stmt->get_result();
+$events = [];
+while ($row = $eventsResult->fetch_assoc()) {
+  $events[] = $row;
+}
+$stmt->close();
+
+// Fetch posts/forum discussions for this subject
+// Note: The current posts table doesn't have subject_id, so we'll fetch recent posts
+// You may want to add a posts_subject_id column or use a different approach
+$postsQuery = "
+  SELECT p.post_id, p.content as posts_title, u.user_username as user_name, p.created_at as posts_timestamp,
+         (SELECT COUNT(*) FROM post_comments WHERE post_id = p.post_id) as comment_count
+  FROM posts p
+  JOIN user u ON p.user_id = u.user_id
+  ORDER BY p.created_at DESC
+  LIMIT 10
+";
+$stmt = $conn->prepare($postsQuery);
+$stmt->execute();
+$postsResult = $stmt->get_result();
+$posts = [];
+while ($row = $postsResult->fetch_assoc()) {
+  $posts[] = $row;
+}
+$stmt->close();
+
+$course = [
+  'id' => $subject['subject_id'],
+  'title' => $subject['subject_name'],
+  'group' => $subject['category_name'],
+  'groupId' => strtolower(str_replace(' ', '-', $subject['category_name'])),
+  'description' => $subject['description'],
+  'studentsLearning' => $studentsLearning,
+  'studentsFluent' => $studentsFluent,
+  'relatedEvents' => $events,
+  'recentPosts' => $posts
 ];
-
-// Get course or default
-$course = isset($courseDatabase[$courseId]) ? $courseDatabase[$courseId] : $courseDatabase['cs-102'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -291,17 +300,6 @@ $course = isset($courseDatabase[$courseId]) ? $courseDatabase[$courseId] : $cour
               
               <div class="stat-item">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
-                  <path d="M2.5 5.5a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-2a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0 4a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m6-6a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1H9a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1H9a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1H9a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1H9a.5.5 0 0 1-.5-.5"/>
-                </svg>
-                <div>
-                  <strong><?php echo count($course['resources']); ?></strong>
-                  <span>Resources</span>
-                </div>
-              </div>
-              
-              <div class="stat-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
                   <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z"/>
                   <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
                 </svg>
@@ -317,7 +315,6 @@ $course = isset($courseDatabase[$courseId]) ? $courseDatabase[$courseId] : $cour
         <!-- Tabs Navigation -->
         <div class="course-tabs">
           <button class="tab-btn active" data-tab="overview">Overview</button>
-          <button class="tab-btn" data-tab="resources">Resources</button>
           <button class="tab-btn" data-tab="students">Students</button>
           <button class="tab-btn" data-tab="events">Events</button>
           <button class="tab-btn" data-tab="posts">Posts & Forums</button>
@@ -342,10 +339,6 @@ $course = isset($courseDatabase[$courseId]) ? $courseDatabase[$courseId] : $cour
                 <span>Students fluent and available to help</span>
               </div>
               <div class="stat-box">
-                <strong><?php echo count($course['resources']); ?></strong>
-                <span>Curated learning resources</span>
-              </div>
-              <div class="stat-box">
                 <strong><?php echo count($course['relatedEvents']); ?></strong>
                 <span>Upcoming related events</span>
               </div>
@@ -355,31 +348,6 @@ $course = isset($courseDatabase[$courseId]) ? $courseDatabase[$courseId] : $cour
           <div class="content-card">
             <h2>Get Involved</h2>
             <p>Join study groups, attend events, share resources, and connect with other learners in this topic area. Use the tabs above to explore resources, find students to collaborate with, and join relevant discussions.</p>
-          </div>
-        </div>
-
-        <div class="tab-content" id="resources">
-          <div class="content-card">
-            <h2>Learning Resources</h2>
-            <p class="section-intro">Curated tools, websites, and resources to help you learn <?php echo $course['title']; ?>.</p>
-            <div class="resources-list">
-              <?php foreach ($course['resources'] as $resource): ?>
-                <div class="resource-item">
-                  <div class="resource-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
-                      <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m7.5-6.923c-.67.204-1.335.82-1.887 1.855A8 8 0 0 0 5.145 4H7.5zM4.09 4a9.3 9.3 0 0 1 .64-1.539 7 7 0 0 1 .597-.933A7.03 7.03 0 0 0 2.255 4zm-.582 3.5c.03-.877.138-1.718.312-2.5H1.674a7 7 0 0 0-.656 2.5zM4.847 5a12.5 12.5 0 0 0-.338 2.5H7.5V5zM8.5 5v2.5h2.99a12.5 12.5 0 0 0-.337-2.5zM4.51 8.5a12.5 12.5 0 0 0 .337 2.5H7.5V8.5zm3.99 0V11h2.653c.187-.765.306-1.608.338-2.5zM5.145 12q.208.58.468 1.068c.552 1.035 1.218 1.65 1.887 1.855V12zm.182 2.472a7 7 0 0 1-.597-.933A9.3 9.3 0 0 1 4.09 12H2.255a7 7 0 0 0 3.072 2.472M3.82 11a13.7 13.7 0 0 1-.312-2.5h-2.49c.062.89.291 1.733.656 2.5zm6.853 3.472A7 7 0 0 0 13.745 12H11.91a9.3 9.3 0 0 1-.64 1.539 7 7 0 0 1-.597.933M8.5 12v2.923c.67-.204 1.335-.82 1.887-1.855q.26-.487.468-1.068zm3.68-1h2.146c.365-.767.594-1.61.656-2.5h-2.49a13.7 13.7 0 0 1-.312 2.5m2.802-3.5a7 7 0 0 0-.656-2.5H12.18c.174.782.282 1.623.312 2.5zM11.27 2.461c.247.464.462.98.64 1.539h1.835a7 7 0 0 0-3.072-2.472c.218.284.418.598.597.933M10.855 4a8 8 0 0 0-.468-1.068C9.835 1.897 9.17 1.282 8.5 1.077V4z"/>
-                    </svg>
-                  </div>
-                  <div class="resource-info">
-                    <div class="resource-header">
-                      <h4><?php echo $resource['name']; ?></h4>
-                      <span class="resource-type-badge"><?php echo $resource['type']; ?></span>
-                    </div>
-                    <a href="<?php echo $resource['url']; ?>" target="_blank" class="resource-link">Visit Resource →</a>
-                  </div>
-                </div>
-              <?php endforeach; ?>
-            </div>
           </div>
         </div>
 
@@ -401,21 +369,25 @@ $course = isset($courseDatabase[$courseId]) ? $courseDatabase[$courseId] : $cour
           <div class="content-card">
             <h2>Related Events</h2>
             <div class="events-list">
-              <?php foreach ($course['relatedEvents'] as $event): ?>
-                <div class="event-item">
-                  <div class="event-date-box">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                      <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z"/>
-                      <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
-                    </svg>
+              <?php if (!empty($course['relatedEvents'])): ?>
+                <?php foreach ($course['relatedEvents'] as $event): ?>
+                  <div class="event-item">
+                    <div class="event-date-box">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z"/>
+                        <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+                      </svg>
+                    </div>
+                    <div class="event-info">
+                      <h4><?php echo htmlspecialchars($event['events_title']); ?></h4>
+                      <p><?php echo date('M d, Y', strtotime($event['events_date'])); ?> <?php echo $event['events_start'] ? '• ' . $event['events_start'] : ''; ?></p>
+                    </div>
+                    <button class="btn-secondary btn-sm">View Details</button>
                   </div>
-                  <div class="event-info">
-                    <h4><?php echo $event['title']; ?></h4>
-                    <p><?php echo $event['date']; ?> • <?php echo $event['time']; ?></p>
-                  </div>
-                  <button class="btn-secondary btn-sm">View Details</button>
-                </div>
-              <?php endforeach; ?>
+                <?php endforeach; ?>
+              <?php else: ?>
+                <p style="text-align: center; color: var(--text-secondary); padding: 20px;">No upcoming events for this subject yet.</p>
+              <?php endif; ?>
             </div>
           </div>
         </div>
@@ -424,20 +396,24 @@ $course = isset($courseDatabase[$courseId]) ? $courseDatabase[$courseId] : $cour
           <div class="content-card">
             <h2>Recent Discussions</h2>
             <div class="posts-list">
-              <?php foreach ($course['recentPosts'] as $post): ?>
-                <div class="post-item">
-                  <div class="post-avatar">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
-                      <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
-                    </svg>
+              <?php if (!empty($course['recentPosts'])): ?>
+                <?php foreach ($course['recentPosts'] as $post): ?>
+                  <div class="post-item">
+                    <div class="post-avatar">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                      </svg>
+                    </div>
+                    <div class="post-content">
+                      <h4><?php echo htmlspecialchars($post['posts_title']); ?></h4>
+                      <p class="post-meta">by <?php echo htmlspecialchars($post['user_name']); ?> • <?php echo $post['comment_count']; ?> replies • <?php echo date('M d', strtotime($post['posts_timestamp'])); ?></p>
+                    </div>
+                    <button class="btn-secondary btn-sm">View Thread</button>
                   </div>
-                  <div class="post-content">
-                    <h4><?php echo $post['title']; ?></h4>
-                    <p class="post-meta">by <?php echo $post['author']; ?> • <?php echo $post['replies']; ?> replies • <?php echo $post['time']; ?></p>
-                  </div>
-                  <button class="btn-secondary btn-sm">View Thread</button>
-                </div>
-              <?php endforeach; ?>
+                <?php endforeach; ?>
+              <?php else: ?>
+                <p style="text-align: center; color: var(--text-secondary); padding: 20px;">No discussions yet. Start one!</p>
+              <?php endif; ?>
             </div>
             <button class="btn-primary" style="margin-top: 20px;">View All Discussions →</button>
           </div>

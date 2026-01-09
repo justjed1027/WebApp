@@ -148,6 +148,11 @@ function initializeCourseTabs() {
     
     if (!tabButtons.length || !tabContents.length) return;
     
+    // Set initial active tab content
+    if (tabContents.length > 0) {
+        tabContents[0].classList.add('active');
+    }
+    
     tabButtons.forEach(button => {
         button.addEventListener('click', () => {
             const targetTab = button.dataset.tab;
