@@ -78,14 +78,17 @@ $subjectsQuery = "
   SELECT 
     s.subject_id,
     s.subject_name,
+    s.description,
     COUNT(DISTINCT ui.ui_user_id) as students_learning,
+    COUNT(DISTINCT es.es_event_id) as event_count,
     0 as resource_count
   FROM subjects s
   LEFT JOIN user_interests ui ON s.subject_id = ui.ui_subject_id
+  LEFT JOIN event_subjects es ON s.subject_id = es.es_subject_id
   WHERE s.category_id = ?
-  GROUP BY s.subject_id, s.subject_name
+  GROUP BY s.subject_id, s.subject_name, s.description
   ORDER BY s.subject_name ASC
-";
+";;
 $stmt = $conn->prepare($subjectsQuery);
 $stmt->bind_param("i", $categoryId);
 $stmt->execute();
@@ -102,7 +105,9 @@ while ($subject = $result->fetch_assoc()) {
   $subjectData = [
     'id' => $subject['subject_id'],
     'title' => $subject['subject_name'],
+    'description' => $subject['description'] ?? '',
     'studentsLearning' => $subject['students_learning'],
+    'eventCount' => $subject['event_count'],
     'resourceCount' => $subject['resource_count']
   ];
   
@@ -303,10 +308,11 @@ $totalSubjects = count($interestedIn) + count($skillsIn) + count($otherSubjects)
           <div class="courses-list-grid">
             <?php foreach ($interestedIn as $subject): ?>
               <a href="course-detail.php?id=<?php echo $subject['id']; ?>" class="course-list-card">
-                <div class="course-list-header">
+                <div class="course-list-header" style="text-align: center;">
                   <h3><?php echo htmlspecialchars($subject['title']); ?></h3>
+                  <p class="subject-description"><?php echo htmlspecialchars($subject['description']); ?></p>
                 </div>
-                <div class="course-list-stats">
+                <div class="course-list-stats" style="justify-content: center;">
                   <span class="stat">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
                       <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
@@ -317,7 +323,7 @@ $totalSubjects = count($interestedIn) + count($skillsIn) + count($otherSubjects)
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
                       <path d="M6 0a.5.5 0 0 1 .5.5V3h3V.5a.5.5 0 0 1 1 0V3h1a2 2 0 0 1 2 2v3.5a.5.5 0 0 1-1 0V5h-11v8a1 1 0 0 0 1 1h4.5a.5.5 0 0 1 0 1h-4.5A2 2 0 0 1 0 13V5a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 1 0V3h3V.5A.5.5 0 0 1 6 0M9.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5z"/>
                     </svg>
-                    <?php echo $subject['resourceCount']; ?> resources
+                    <?php echo $subject['eventCount']; ?> events
                   </span>
                 </div>
               </a>
@@ -335,10 +341,11 @@ $totalSubjects = count($interestedIn) + count($skillsIn) + count($otherSubjects)
           <div class="courses-list-grid">
             <?php foreach ($skillsIn as $subject): ?>
               <a href="course-detail.php?id=<?php echo $subject['id']; ?>" class="course-list-card">
-                <div class="course-list-header">
+                <div class="course-list-header" style="text-align: center;">
                   <h3><?php echo htmlspecialchars($subject['title']); ?></h3>
+                  <p class="subject-description"><?php echo htmlspecialchars($subject['description']); ?></p>
                 </div>
-                <div class="course-list-stats">
+                <div class="course-list-stats" style="justify-content: center;">
                   <span class="stat">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
                       <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
@@ -349,7 +356,7 @@ $totalSubjects = count($interestedIn) + count($skillsIn) + count($otherSubjects)
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
                       <path d="M6 0a.5.5 0 0 1 .5.5V3h3V.5a.5.5 0 0 1 1 0V3h1a2 2 0 0 1 2 2v3.5a.5.5 0 0 1-1 0V5h-11v8a1 1 0 0 0 1 1h4.5a.5.5 0 0 1 0 1h-4.5A2 2 0 0 1 0 13V5a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 1 0V3h3V.5A.5.5 0 0 1 6 0M9.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5z"/>
                     </svg>
-                    <?php echo $subject['resourceCount']; ?> resources
+                    <?php echo $subject['eventCount']; ?> events
                   </span>
                 </div>
               </a>
@@ -367,10 +374,11 @@ $totalSubjects = count($interestedIn) + count($skillsIn) + count($otherSubjects)
           <div class="courses-list-grid">
             <?php foreach ($otherSubjects as $subject): ?>
               <a href="course-detail.php?id=<?php echo $subject['id']; ?>" class="course-list-card">
-                <div class="course-list-header">
+                <div class="course-list-header" style="text-align: center;">
                   <h3><?php echo htmlspecialchars($subject['title']); ?></h3>
+                  <p class="subject-description"><?php echo htmlspecialchars($subject['description']); ?></p>
                 </div>
-                <div class="course-list-stats">
+                <div class="course-list-stats" style="justify-content: center;">
                   <span class="stat">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
                       <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
@@ -381,7 +389,7 @@ $totalSubjects = count($interestedIn) + count($skillsIn) + count($otherSubjects)
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
                       <path d="M6 0a.5.5 0 0 1 .5.5V3h3V.5a.5.5 0 0 1 1 0V3h1a2 2 0 0 1 2 2v3.5a.5.5 0 0 1-1 0V5h-11v8a1 1 0 0 0 1 1h4.5a.5.5 0 0 1 0 1h-4.5A2 2 0 0 1 0 13V5a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 1 0V3h3V.5A.5.5 0 0 1 6 0M9.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5z"/>
                     </svg>
-                    <?php echo $subject['resourceCount']; ?> resources
+                    <?php echo $subject['eventCount']; ?> events
                   </span>
                 </div>
               </a>
