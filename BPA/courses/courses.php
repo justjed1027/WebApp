@@ -66,11 +66,12 @@ $categoriesQuery = "
   SELECT 
     sc.category_id,
     sc.category_name,
+    sc.category_description,
     COUNT(s.subject_id) as resource_count
   FROM subjectcategories sc
   LEFT JOIN subjects s ON sc.category_id = s.category_id
   WHERE sc.category_id != 3
-  GROUP BY sc.category_id, sc.category_name
+  GROUP BY sc.category_id, sc.category_name, sc.category_description
   ORDER BY sc.category_name ASC
 ";
 $categoriesResult = $conn->query($categoriesQuery);
@@ -88,6 +89,7 @@ while ($cat = $categoriesResult->fetch_assoc()) {
   $categoryData = [
     'id' => $catId,
     'name' => $catName,
+    'description' => $cat['category_description'] ?? '',
     'icon' => $categoryStyles[$catName]['icon'] ?? '📖',
     'color' => $categoryStyles[$catName]['color'] ?? '#6b7280',
     'resourceCount' => $cat['resource_count']
@@ -281,9 +283,10 @@ $conn->close();
                 <div class="group-icon" style="background: <?php echo $group['color']; ?>20; color: <?php echo $group['color']; ?>">
                   <span class="icon-emoji"><?php echo $group['icon']; ?></span>
                 </div>
-                <div class="group-info">
+                <div class="group-info" style="text-align: center;">
                   <h3><?php echo htmlspecialchars($group['name']); ?></h3>
-                  <div class="group-meta">
+                  <p class="group-description"><?php echo htmlspecialchars($group['description']); ?></p>
+                  <div class="group-meta" style="justify-content: center;">
                     <span class="course-count"><?php echo $group['resourceCount']; ?> resources</span>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                       <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8" />
@@ -308,9 +311,10 @@ $conn->close();
                 <div class="group-icon" style="background: <?php echo $group['color']; ?>20; color: <?php echo $group['color']; ?>">
                   <span class="icon-emoji"><?php echo $group['icon']; ?></span>
                 </div>
-                <div class="group-info">
+                <div class="group-info" style="text-align: center;">
                   <h3><?php echo htmlspecialchars($group['name']); ?></h3>
-                  <div class="group-meta">
+                  <p class="group-description"><?php echo htmlspecialchars($group['description']); ?></p>
+                  <div class="group-meta" style="justify-content: center;">
                     <span class="course-count"><?php echo $group['resourceCount']; ?> resources</span>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                       <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8" />
@@ -335,9 +339,10 @@ $conn->close();
                 <div class="group-icon" style="background: <?php echo $group['color']; ?>20; color: <?php echo $group['color']; ?>">
                   <span class="icon-emoji"><?php echo $group['icon']; ?></span>
                 </div>
-                <div class="group-info">
+                <div class="group-info" style="text-align: center;">
                   <h3><?php echo htmlspecialchars($group['name']); ?></h3>
-                  <div class="group-meta">
+                  <p class="group-description"><?php echo htmlspecialchars($group['description']); ?></p>
+                  <div class="group-meta" style="justify-content: center;">
                     <span class="course-count"><?php echo $group['resourceCount']; ?> resources</span>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                       <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8" />
@@ -362,9 +367,10 @@ $conn->close();
                 <div class="group-icon" style="background: <?php echo $group['color']; ?>20; color: <?php echo $group['color']; ?>">
                   <span class="icon-emoji"><?php echo $group['icon']; ?></span>
                 </div>
-                <div class="group-info">
+                <div class="group-info" style="text-align: center;">
                   <h3><?php echo htmlspecialchars($group['name']); ?></h3>
-                  <div class="group-meta">
+                  <p class="group-description"><?php echo htmlspecialchars($group['description']); ?></p>
+                  <div class="group-meta" style="justify-content: center;">
                     <span class="course-count"><?php echo $group['resourceCount']; ?> resources</span>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                       <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8" />
