@@ -30,8 +30,20 @@ while ($row = $subjects_result->fetch_assoc()) {
     $subjects_by_category[$row['category_id']][] = $row;
 }
 
-
-
+// Fetch previously selected interests for this user
+$user_id = $_SESSION['user_id'] ?? null;
+$selected_interests = [];
+if ($user_id) {
+    $interests_query = "SELECT ui_subject_id FROM user_interests WHERE ui_user_id = ?";
+    $stmt = $conn->prepare($interests_query);
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $interests_result = $stmt->get_result();
+    while ($row = $interests_result->fetch_assoc()) {
+        $selected_interests[] = $row['ui_subject_id'];
+    }
+    $stmt->close();
+}
 
 $user = new User();
 
@@ -106,8 +118,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                       foreach ($subjects_by_category[$cat_id] as $subject) {
                           $subject_id = $subject['subject_id'];
                           $subject_name = htmlspecialchars($subject['subject_name']);
+                          $is_checked = in_array($subject_id, $selected_interests) ? 'checked' : '';
                           echo "<label class='course'>";
-                          echo "<input type='checkbox' name='subjects[]' value='{$subject_id}'> {$subject_name}";
+                          echo "<input type='checkbox' name='subjects[]' value='{$subject_id}' {$is_checked}> {$subject_name}";
                           echo "</label>";
                       }
                   } else {

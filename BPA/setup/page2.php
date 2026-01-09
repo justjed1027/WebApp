@@ -30,7 +30,20 @@ while ($row = $subjects_result->fetch_assoc()) {
     $subjects_by_category[$row['category_id']][] = $row;
 }
 
-
+// Fetch previously selected skills for this user
+$user_id = $_SESSION['user_id'] ?? null;
+$selected_skills = [];
+if ($user_id) {
+    $skills_query = "SELECT us_subject_id FROM user_skills WHERE us_user_id = ?";
+    $stmt = $conn->prepare($skills_query);
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $skills_result = $stmt->get_result();
+    while ($row = $skills_result->fetch_assoc()) {
+        $selected_skills[] = $row['us_subject_id'];
+    }
+    $stmt->close();
+}
 
 $user = new User();
 
@@ -105,8 +118,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                       foreach ($subjects_by_category[$cat_id] as $subject) {
                           $subject_id = $subject['subject_id'];
                           $subject_name = htmlspecialchars($subject['subject_name']);
+                          $is_checked = in_array($subject_id, $selected_skills) ? 'checked' : '';
                           echo "<label class='course'>";
-                          echo "<input type='checkbox' name='subjects[]' value='{$subject_id}'> {$subject_name}";
+                          echo "<input type='checkbox' name='subjects[]' value='{$subject_id}' {$is_checked}> {$subject_name}";
                           echo "</label>";
                       }
                   } else {
