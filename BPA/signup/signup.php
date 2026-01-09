@@ -130,6 +130,15 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         </svg>
                     </button>
                 </div>
+                <div id="password-requirements" class="password-requirements">
+                    <p class="requirements-title">Password must include:</p>
+                    <ul>
+                        <li id="req-length" class="req invalid">At least 8 characters</li>
+                        <li id="req-upper" class="req invalid">At least one uppercase letter</li>
+                        <li id="req-number" class="req invalid">At least one number</li>
+                        <li id="req-special" class="req invalid">At least one special character</li>
+                    </ul>
+                </div>
                 <?php if (!empty($errors['password'])): ?>
                         <p class="error"><?php echo $errors['password']; ?></p>
                 <?php endif; ?>
@@ -164,6 +173,26 @@ function googleSignIn(){
     });
     window.location.href = authUrl;
 }
+
+// Inline password requirement checks (kept small and local)
+document.addEventListener('DOMContentLoaded', function(){
+    const pwd = document.getElementById('password');
+    if (!pwd) return;
+    const update = (id, ok) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.classList.toggle('valid', ok);
+        el.classList.toggle('invalid', !ok);
+    };
+    const check = (v) => {
+        update('req-length', v.length >= 8);
+        update('req-upper', /[A-Z]/.test(v));
+        update('req-number', /\d/.test(v));
+        update('req-special', /[^A-Za-z0-9]/.test(v));
+    };
+    pwd.addEventListener('input', () => check(pwd.value));
+    check(pwd.value);
+});
 </script>
 </body>
 </html>

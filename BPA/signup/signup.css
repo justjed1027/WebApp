@@ -31,3 +31,14 @@ body{margin:0;min-height:100vh;background:#f5f5f5;overflow-x:hidden}
 .right-panel{flex:1;background:url('../login/images/login.png') right center/cover no-repeat;background-color:#0a0a0a;position:relative}
 .right-panel::before{content:'';position:absolute;inset:0;backdrop-filter:blur(3px);pointer-events:none}
 .hidden{display:none}
+
+/* Password requirements UI */
+.password-requirements{margin-top:.5rem;margin-bottom:1rem;text-align:left;color:rgba(255,255,255,.8)}
+.password-requirements .requirements-title{font-size:.85rem;font-weight:600;letter-spacing:.3px;margin-bottom:.35rem;opacity:.9}
+.password-requirements ul{list-style:none;padding-left:0;margin:.25rem 0}
+.password-requirements .req{display:flex;align-items:center;gap:.5rem;margin:.2rem 0;font-size:.95rem}
+.password-requirements .req::before{content:'•';color:rgba(255,255,255,.6)}
+.password-requirements .valid{color:#86efac}
+.password-requirements .valid::before{content:'✓';color:#86efac}
+.password-requirements .invalid{color:#fca5a5}
+.password-requirements .invalid::before{content:'✗';color:#fca5a5}
