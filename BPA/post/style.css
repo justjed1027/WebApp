@@ -7,6 +7,143 @@
   display: none !important;
 }
 
+/* Force sidebar hover expansion to work */
+.sidebar {
+  width: var(--sidebar-collapsed-width) !important;
+  max-width: var(--sidebar-collapsed-width) !important;
+}
+
+.sidebar:hover {
+  width: var(--sidebar-width) !important;
+  max-width: var(--sidebar-width) !important;
+}
+
+/* Ensure text labels show on hover */
+.sidebar:hover .nav-link span {
+  opacity: 1 !important;
+  width: auto !important;
+}
+
+.sidebar .nav-link span {
+  opacity: 0 !important;
+  width: 0 !important;
+}
+
+/* Ensure logo text shows on hover */
+.sidebar:hover .logo-text {
+  opacity: 1 !important;
+  width: auto !important;
+}
+
+.sidebar .logo-text {
+  opacity: 0 !important;
+  width: 0 !important;
+}
+
+/* Ensure profile info shows on hover */
+.sidebar:hover .profile-info {
+  opacity: 1 !important;
+  max-height: 100px !important;
+}
+
+.sidebar .profile-info {
+  opacity: 0 !important;
+  max-height: 0 !important;
+}
+
+/* Ensure nav links align left on hover */
+.sidebar:hover .nav-link {
+  justify-content: flex-start !important;
+  gap: 14px !important;
+}
+
+.sidebar .nav-link {
+  justify-content: center !important;
+  gap: 0 !important;
+}
+
+/* Ensure profile avatar sizes match other pages */
+.sidebar .profile-avatar {
+  width: 32px !important;
+  height: 32px !important;
+}
+
+.sidebar:hover .profile-avatar {
+  width: 44px !important;
+  height: 44px !important;
+}
+
+.sidebar .profile-avatar svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.sidebar:hover .profile-avatar svg {
+  width: 22px !important;
+  height: 22px !important;
+}
+
+/* Ensure profile layout matches other pages */
+.sidebar .sidebar-profile {
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 0 !important;
+  padding: 8px !important;
+  background: transparent !important;
+  border-radius: 50% !important;
+}
+
+.sidebar:hover .sidebar-profile {
+  flex-direction: row !important;
+  gap: 14px !important;
+  padding: 12px !important;
+  background: var(--background-hover) !important;
+  border-radius: var(--border-radius) !important;
+}
+
+/* Ensure theme toggle matches other pages */
+.sidebar .theme-toggle {
+  padding: 8px 0 !important;
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.sidebar:hover .theme-toggle {
+  padding: 8px 4px !important;
+  justify-content: flex-start !important;
+}
+
+.sidebar .toggle-switch {
+  width: 40px !important;
+  height: 40px !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 auto !important;
+}
+
+.sidebar:hover .toggle-switch {
+  width: 95px !important;
+  max-width: 95px !important;
+  height: 40px !important;
+  background: var(--background-hover) !important;
+  padding: 4px !important;
+  border: 1px solid var(--border-color) !important;
+  margin: 0 !important;
+}
+
+.sidebar .toggle-slider {
+  width: 40px !important;
+  height: 40px !important;
+}
+
+.sidebar:hover .toggle-slider {
+  width: 32px !important;
+  height: 32px !important;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%) !important;
+  box-shadow: 0 2px 8px rgba(31, 255, 147, 0.3) !important;
+}
+
 /* ===== MAIN CONTENT AREA - TWITTER/X STYLE ===== */
 .main-content {
   margin-left: calc(50% - 300px + var(--sidebar-collapsed-width) / 2);

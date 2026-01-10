@@ -1205,7 +1205,31 @@ profile svg
       setInterval(updateNotificationBadge, 10000);
     </script>
 
-    <!-- Sidebar hover effect is now handled by calendar.css -->
+    <!-- Theme Toggle Script -->
+    <script>
+      // Theme Toggle
+      document.addEventListener('DOMContentLoaded', function() {
+        const themeToggleSidebar = document.getElementById('themeToggle');
+        const body = document.body;
+        const savedTheme = localStorage.getItem('theme');
+        
+        // Apply saved theme on load
+        if (savedTheme === 'light') {
+          body.classList.add('light-mode');
+        }
+        
+        // Theme toggle function
+        function toggleTheme() {
+          body.classList.toggle('light-mode');
+          localStorage.setItem('theme', body.classList.contains('light-mode') ? 'light' : 'dark');
+        }
+        
+        // Add event listener to sidebar toggle
+        if (themeToggleSidebar) {
+          themeToggleSidebar.addEventListener('click', toggleTheme);
+        }
+      });
+    </script>
   </body>
 
   </html>
