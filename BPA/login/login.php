@@ -41,9 +41,28 @@
             if($userid != 0){
                 $_SESSION['user_id'] = $userid;
 
-                // Populate user to read admin flag and email
+                // Populate user to read admin flag and ban status
                 $user = new User();
                 $user->populate($userid);
+
+                // Check if user is banned - query database directly
+                require_once '../database/DatabaseConnection.php';
+                $db = new DatabaseConnection();
+                $banCheckStmt = $db->connection->prepare("SELECT user_is_banned FROM user WHERE user_id = ?");
+                $banCheckStmt->bind_param("i", $userid);
+                $banCheckStmt->execute();
+                $banCheckResult = $banCheckStmt->get_result();
+                $banRow = $banCheckResult->fetch_assoc();
+                $banCheckStmt->close();
+                
+                if ($banRow && (int)$banRow['user_is_banned'] === 1) {
+                    session_destroy();
+                    $_SESSION['login_error'] = 'Your account has been banned and you cannot log in.';
+                    $db->closeConnection();
+                    header("Location: login.php");
+                    exit;
+                }
+                $db->closeConnection();
 
                 // If this login email is the admin email, ensure admin flag
                 if (strtolower($email) === strtolower($ADMIN_EMAIL)) {
