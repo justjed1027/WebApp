@@ -867,8 +867,11 @@ body.has-side-content .main-content {
   gap: 20px;
   align-items: start;
   max-width: none;
-  margin-left: var(--sidebar-width);
-  margin-top: var(--topbar-height);
+  /* Use collapsed sidebar width by default so content isn't offset
+     to the expanded sidebar size when the nav is collapsed. */
+  margin-left: var(--sidebar-collapsed-width);
+  /* No top offset by default (topbar removed on this page) */
+  margin-top: 0;
   /* Reduce top and left spacing so content sits closer to top/sidebar */
   padding: 12px 16px;
   min-height: calc(100vh - var(--topbar-height));
@@ -877,12 +880,20 @@ body.has-side-content .main-content {
 
 .main-content {
   margin-left: var(--sidebar-collapsed-width);
-  margin-top: var(--topbar-height);
+  /* No top offset by default (add only when topbar exists) */
+  margin-top: 0;
   /* Keep main content offset for the topbar but reduce inner padding */
   padding: 12px 16px;
   min-height: calc(100vh - var(--topbar-height));
   transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   max-width: none;
+}
+
+/* Apply top offset only when a topbar is present */
+.has-topbar .main-content,
+body .topbar + .main-content,
+.topbar ~ .main-content {
+  margin-top: var(--topbar-height);
 }
 .post-section {
   width: 100%;
