@@ -157,7 +157,7 @@ async function selectConversation(conversationId, otherUserId, otherUsername, is
     }
     
     // Update header with online status
-    headerName.textContent = otherUsername;
+    headerName.innerHTML = `<a href="../profile/profile.php?user_id=${otherUserId}" style="text-decoration:none;color:inherit;cursor:pointer;transition:color 0.2s;" onmouseover="this.style.color='#551A8B'" onmouseout="this.style.color='inherit'">${escapeHtml(otherUsername)}</a>`;
     const statusEl = chatHeader.querySelector('.dm-header-status');
     if (statusEl) {
         statusEl.textContent = isOnline ? '🟢 Online' : '⚫ Offline';
