@@ -324,8 +324,6 @@ profile svg
   <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
 </svg>
 */
-
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -540,213 +538,175 @@ profile svg
     </div>
   </div>
 
-  <!-- Top Bar Navigation -->
-  <header class="topbar">
-    <div class="topbar-left"></div>
-    <div class="topbar-center">
-      <h1 class="page-title">Posts</h1>
-    </div>
-    <div class="topbar-right">
-      <div class="search-container">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
-        </svg>
-        <input type="text" class="search-input" placeholder="Search people, posts, and courses...">
-      </div>
-
-      <a href="../notifications/notifications.php" class="icon-btn" aria-label="Notifications" id="notificationBtn" style="text-decoration: none;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z" />
-        </svg>
-        <span class="badge" id="notificationBadge"><?php echo $notificationCountDisplay; ?></span>
-      </a>
-
-      <a href="../dms/dms.php" class="icon-btn" aria-label="Messages" style="text-decoration: none;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M5 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0m4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2" />
-          <path d="m2.165 15.803.02-.004c1.83-.363 2.948-.842 3.468-1.105A9 9 0 0 0 8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6a10.4 10.4 0 0 1-.524 2.318l-.003.011a11 11 0 0 1-.244.637c-.079.186.074.394.273.362a22 22 0 0 0 .693-.125m.8-3.108a1 1 0 0 0-.287-.801C1.618 10.83 1 9.468 1 8c0-3.192 3.004-6 7-6s7 2.808 7 6-3.004 6-7 6a8 8 0 0 1-2.088-.272 1 1 0 0 0-.711.074c-.387.196-1.24.57-2.634.893a11 11 0 0 0 .398-2" />
-        </svg>
-        <span class="badge"><?php echo $unreadDmCount; ?></span>
-      </a>
-
-      <div class="profile-dropdown">
-        <button class="profile-btn">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
-          </svg>
-        </button>
-      </div>
-    </div>
-  </header>
-
   <!-- Main Content Area -->
   <main class="main-content">
     <!-- Create Post (inline form) -->
-    <div class="create-post-card">
-      <div class="create-post-header">
-        <div class="user-avatar-small">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
-          </svg>
-        </div>
-            <form id="inline-post-form" action="post.php" method="POST" enctype="multipart/form-data">
-              <textarea name="content" class="create-post-input" placeholder="Ask a question or share something helpful..." rows="3"></textarea>
-              <div class="file-row" style="margin-top:8px; display:flex; align-items:center; gap:8px;">
-                <input type="file" id="avatar" name="avatar" accept="image/*" style="display:inline-block;">
-                <span id="fileLabel" style="color:#ddd;">Pick a file to upload</span>
-                <button type="button" id="filePreviewBtn" class="create-post-btn" style="padding:6px 10px;">Preview</button>
-                <button type="button" id="fileRemoveBtn" class="create-post-btn" style="padding:6px 10px; background:#551A8B;">Remove</button>
-              </div>
-      </div>
-          <div class="create-post-actions">
-            <button type="submit" class="create-post-btn">Submit</button>
-            </form>
+    <div class=posts-section>
+      <div class="create-post-card">
+        <div class="create-post-header">
+          <div class="user-avatar-small">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
+            </svg>
           </div>
-    </div>
-
-    <!-- Posts Feed -->
-    <div id="posts-container">
-      <?php if (count($posts) === 0): ?>
-          <div class="post" style="background:#fff3cd;border:1px solid #ffeebaff;padding:16px;margin-bottom:16px;color:black;">No posts yet.</div>
-        <?php else: ?>
-          <?php foreach ($posts as $post): ?>
-            <div class="post" style="background:#fff;border-radius:8px;padding:16px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
-              <div class="post-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-                <?php $displayName = !empty($post['user_username']) ? $post['user_username'] : ('User #' . intval($post['user_id'])); ?>
-                <div style="display:flex;align-items:center;gap:12px;flex:1;">
-                  <a href="../profile/profile.php?user_id=<?php echo intval($post['user_id']); ?>" style="text-decoration:none;cursor:pointer;">
-                    <div class="post-author-avatar" style="width:40px;height:40px;border-radius:50%;background:#e9ecef;color:#333;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:1rem;transition:background 0.2s;" onmouseover="this.style.background='#d9dcdf'" onmouseout="this.style.background='#e9ecef'">
-                      <?php
-                        $initial = '';
-                        if (!empty($post['user_username'])) {
-                          $initial = mb_strtoupper(mb_substr($post['user_username'], 0, 1));
-                        } else {
-                          $initial = 'U';
-                        }
-                        echo htmlspecialchars($initial);
-                      ?>
-                    </div>
-                  </a>
-                  <div style="display:flex;flex-direction:column;">
-                    <a href="../profile/profile.php?user_id=<?php echo intval($post['user_id']); ?>" style="font-weight:600;color:#111;text-decoration:none;cursor:pointer;transition:color 0.2s;" onmouseover="this.style.color='#551A8B'" onmouseout="this.style.color='#111'"><?php echo htmlspecialchars($displayName); ?></a>
-                    <div style="font-size:0.85rem;color:#666"><?php echo isset($post['created_at']) ? htmlspecialchars(timeAgo($post['created_at'])) : 'just now'; ?></div>
-                  </div>
+              <form id="inline-post-form" action="post.php" method="POST" enctype="multipart/form-data">
+                <textarea name="content" class="create-post-input" placeholder="Ask a question or share something helpful..." rows="3"></textarea>
+                <div class="file-row" style="margin-top:8px; display:flex; align-items:center; gap:8px;">
+                  <input type="file" id="avatar" name="avatar" accept="image/*" style="display:inline-block;">
+                  <span id="fileLabel" style="color:#ddd;">Pick a file to upload</span>
+                  <button type="button" id="filePreviewBtn" class="create-post-btn" style="padding:6px 10px;">Preview</button>
+                  <button type="button" id="fileRemoveBtn" class="create-post-btn" style="padding:6px 10px; background:#551A8B;">Remove</button>
                 </div>
-
-                <!-- Post Menu Button -->
-                <div style="position:relative;">
-                  <button class="post-menu-btn" data-post-id="<?php echo intval($post['post_id']); ?>" title="Post options" style="background:none;border:none;cursor:pointer;color:#666;font-size:1.2rem;padding:4px 8px;margin-left:8px;">
-                    ⋮
-                  </button>
-                  <div class="post-menu-dropdown" style="position:absolute;right:0;background:#fff;border:1px solid #ddd;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);z-index:10;min-width:140px;display:none;white-space:nowrap;">
-                    <?php if ($user->user_is_admin): ?>
-                      <!-- Admin Options -->
-                      <button class="post-menu-item delete-post-option" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#d32f2f;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
-                        🗑 Delete Post
-                      </button>
-                      <div style="border-top:1px solid #e0e0e0;"></div>
-                      <button class="post-menu-item admin-action-1" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#333;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
-                        📌 Pin Post
-                      </button>
-                      <button class="post-menu-item admin-action-2" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#333;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
-                        ⭐ Feature Post
-                      </button>
-                    <?php else: ?>
-                      <!-- Regular User Options -->
-                      <button class="post-menu-item user-action-report" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#333;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
-                        🚩 Report Post
-                      </button>
-                      <button class="post-menu-item user-action-save" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#333;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
-                        🔖 Save Post
-                      </button>
-                      <button class="post-menu-item user-action-hide" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#333;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
-                        👁️‍🗨️ Hide Post
-                      </button>
-                    <?php endif; ?>
-                  </div>
-                </div>
-
-                <?php
-                  $payload = [
-                    'content' => $post['content'] ?? '',
-                    // normalize file path so client-side modal can load it correctly
-                    'file_path' => !empty($post['file_path']) ? publicPath($post['file_path']) : '',
-                    'username' => $displayName,
-                    'created_at' => $post['created_at'] ?? ''
-                  ];
-                  $payloadAttr = htmlspecialchars(json_encode($payload), ENT_QUOTES, 'UTF-8');
-                ?>
-
-                <div>
-                  <button type="button" class="view-post-btn create-post-btn" data-post="<?php echo $payloadAttr; ?>" style="padding:6px 10px;">View</button>
-                </div>
-              </div>
-              <div class="post-content" style="color:#333;line-height:1.5;">
-                <p style="margin:0;"><?php echo nl2br(htmlspecialchars(mb_strlen($post['content']) > 400 ? mb_substr($post['content'],0,400) . '...' : $post['content'])); ?></p>
-                  <?php if (!empty($post['file_path'])):
-                    // normalize path for browser
-                    $publicPath = publicPath($post['file_path']);
-                  ?>
-                  <div style="margin-top:8px;">
-                    <?php $ext = strtolower(pathinfo($post['file_path'], PATHINFO_EXTENSION)); ?>
-                    <?php if (in_array($ext, ['jpg','jpeg','png','gif','webp'])): ?>
-                      <img src="<?php echo htmlspecialchars($publicPath); ?>" alt="attachment" style="max-width:200px;border-radius:8px;display:block;margin-top:8px;" />
-                    <?php else: ?>
-                      <div style="margin-top:8px;color:#555;font-size:0.9rem;">Attachment: <a href="<?php echo htmlspecialchars($publicPath); ?>" target="_blank">Open</a></div>
-                    <?php endif; ?>
-                  </div>
-                <?php endif; ?>
-              </div>
-
-              <!-- Comment Section -->
-              <div class="post-actions" style="display:flex;gap:16px;margin-top:12px;padding-top:12px;border-top:1px solid #e9ecef;">
-                <button class="view-comments-btn" data-post-id="<?php echo intval($post['post_id']); ?>" style="background:none;border:none;color:#666;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:0.9rem;padding:4px 8px;border-radius:4px;transition:all 0.2s;">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M2.678 11.894a1 1 0 0 1 .287.801 11 11 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8 8 0 0 0 8 14c3.996 0 7-2.807 7-6s-3.004-6-7-6-7 2.808-7 6c0 1.468.617 2.83 1.678 3.894m-.493 3.905a22 22 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a10 10 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105"/>
-                  </svg>
-                  <span class="view-comments-text">View Comments</span>
-                </button>
-                <button class="write-comment-btn" data-post-id="<?php echo intval($post['post_id']); ?>" style="background:none;border:none;color:#551A8B;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:0.9rem;padding:4px 8px;border-radius:4px;transition:all 0.2s;">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
-                  </svg>
-                  <span>Write Comment</span>
-                </button>
-              </div>
-
-              <!-- Comments Container (initially hidden) -->
-              <div class="post-comments-section" data-post-id="<?php echo intval($post['post_id']); ?>" style="display:none;margin-top:12px;border-top:1px solid #e9ecef;padding-top:12px;">
-                <!-- Comments List -->
-                <div class="comments-list" data-post-id="<?php echo intval($post['post_id']); ?>">
-                  <!-- Comments will be loaded here dynamically -->
-                </div>
-              </div>
-
-              <!-- Comment Input Form (initially hidden) -->
-              <div class="comment-input-section" data-post-id="<?php echo intval($post['post_id']); ?>" style="display:none;margin-top:12px;border-top:1px solid #e9ecef;padding-top:12px;">
-                <form class="comment-form" data-post-id="<?php echo intval($post['post_id']); ?>">
-                  <textarea class="comment-input" placeholder="Write a comment..." rows="2" style="width:100%;padding:8px 12px;border:1px solid #ddd;border-radius:6px;resize:vertical;font-family:inherit;font-size:0.9rem;"></textarea>
-                  <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px;">
-                    <button type="button" class="comment-cancel-btn" data-post-id="<?php echo intval($post['post_id']); ?>" style="padding:6px 14px;background:#e0e0e0;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">Cancel</button>
-                    <button type="submit" class="comment-submit-btn" style="padding:6px 14px;background:#551A8B;color:white;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">Post Comment</button>
-                  </div>
-                </form>
-              </div>
-
-              <!-- Inline Delete Confirmation -->
-              <div class="post-delete-confirmation" data-post-id="<?php echo intval($post['post_id']); ?>" style="display:none;background:#fff3cd;border:1px solid #ffecb5;border-radius:4px;padding:8px 10px;margin-top:8px;text-align:right;max-width:fit-content;margin-left:auto;">
-                <div style="color:#333;font-size:0.8rem;margin-bottom:6px;text-align:left;">Delete this post?</div>
-                <div style="display:flex;gap:6px;justify-content:flex-end;">
-                  <button class="post-delete-cancel" data-post-id="<?php echo intval($post['post_id']); ?>" style="padding:4px 10px;background:#e0e0e0;border:none;border-radius:3px;cursor:pointer;font-size:0.8rem;transition:background 0.2s;">Cancel</button>
-                  <button class="post-delete-confirm" data-post-id="<?php echo intval($post['post_id']); ?>" style="padding:4px 10px;background:#d32f2f;color:white;border:none;border-radius:3px;cursor:pointer;font-size:0.8rem;transition:background 0.2s;">Delete</button>
-                </div>
-              </div>
+        </div>
+            <div class="create-post-actions">
+              <button type="submit" class="create-post-btn">Submit</button>
+              </form>
             </div>
-          <?php endforeach; ?>
-        <?php endif; ?>
+      </div>
 
+      <!-- Posts Feed -->
+      <div id="posts-container">
+        <?php if (count($posts) === 0): ?>
+            <div class="post" style="background:#fff3cd;border:1px solid #ffeebaff;padding:16px;margin-bottom:16px;color:black;">No posts yet.</div>
+          <?php else: ?>
+            <?php foreach ($posts as $post): ?>
+              <div class="post" style="background:#fff;border-radius:8px;padding:16px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+                <div class="post-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                  <?php $displayName = !empty($post['user_username']) ? $post['user_username'] : ('User #' . intval($post['user_id'])); ?>
+                  <div style="display:flex;align-items:center;gap:12px;flex:1;">
+                    <a href="../profile/profile.php?user_id=<?php echo intval($post['user_id']); ?>" style="text-decoration:none;cursor:pointer;">
+                      <div class="post-author-avatar" style="width:40px;height:40px;border-radius:50%;background:#e9ecef;color:#333;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:1rem;transition:background 0.2s;" onmouseover="this.style.background='#d9dcdf'" onmouseout="this.style.background='#e9ecef'">
+                        <?php
+                          $initial = '';
+                          if (!empty($post['user_username'])) {
+                            $initial = mb_strtoupper(mb_substr($post['user_username'], 0, 1));
+                          } else {
+                            $initial = 'U';
+                          }
+                          echo htmlspecialchars($initial);
+                        ?>
+                      </div>
+                    </a>
+                    <div style="display:flex;flex-direction:column;">
+                      <a href="../profile/profile.php?user_id=<?php echo intval($post['user_id']); ?>" style="font-weight:600;color:#111;text-decoration:none;cursor:pointer;transition:color 0.2s;" onmouseover="this.style.color='#551A8B'" onmouseout="this.style.color='#111'"><?php echo htmlspecialchars($displayName); ?></a>
+                      <div style="font-size:0.85rem;color:#666"><?php echo isset($post['created_at']) ? htmlspecialchars(timeAgo($post['created_at'])) : 'just now'; ?></div>
+                    </div>
+                  </div>
+
+                  <!-- Post Menu Button -->
+                  <div style="position:relative;">
+                    <button class="post-menu-btn" data-post-id="<?php echo intval($post['post_id']); ?>" title="Post options" style="background:none;border:none;cursor:pointer;color:#666;font-size:1.2rem;padding:4px 8px;margin-left:8px;">
+                      ⋮
+                    </button>
+                    <div class="post-menu-dropdown" style="position:absolute;right:0;background:#fff;border:1px solid #ddd;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);z-index:10;min-width:140px;display:none;white-space:nowrap;">
+                      <?php if ($user->user_is_admin): ?>
+                        <!-- Admin Options -->
+                        <button class="post-menu-item delete-post-option" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#d32f2f;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
+                          🗑 Delete Post
+                        </button>
+                        <div style="border-top:1px solid #e0e0e0;"></div>
+                        <button class="post-menu-item admin-action-1" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#333;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
+                          📌 Pin Post
+                        </button>
+                        <button class="post-menu-item admin-action-2" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#333;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
+                          ⭐ Feature Post
+                        </button>
+                      <?php else: ?>
+                        <!-- Regular User Options -->
+                        <button class="post-menu-item user-action-report" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#333;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
+                          🚩 Report Post
+                        </button>
+                        <button class="post-menu-item user-action-save" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#333;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
+                          🔖 Save Post
+                        </button>
+                        <button class="post-menu-item user-action-hide" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#333;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">
+                          👁️‍🗨️ Hide Post
+                        </button>
+                      <?php endif; ?>
+                    </div>
+                  </div>
+
+                  <?php
+                    $payload = [
+                      'content' => $post['content'] ?? '',
+                      // normalize file path so client-side modal can load it correctly
+                      'file_path' => !empty($post['file_path']) ? publicPath($post['file_path']) : '',
+                      'username' => $displayName,
+                      'created_at' => $post['created_at'] ?? ''
+                    ];
+                    $payloadAttr = htmlspecialchars(json_encode($payload), ENT_QUOTES, 'UTF-8');
+                  ?>
+
+                  <div>
+                    <button type="button" class="view-post-btn create-post-btn" data-post="<?php echo $payloadAttr; ?>" style="padding:6px 10px;">View</button>
+                  </div>
+                </div>
+                <div class="post-content" style="color:#333;line-height:1.5;">
+                  <p style="margin:0;"><?php echo nl2br(htmlspecialchars(mb_strlen($post['content']) > 400 ? mb_substr($post['content'],0,400) . '...' : $post['content'])); ?></p>
+                    <?php if (!empty($post['file_path'])):
+                      // normalize path for browser
+                      $publicPath = publicPath($post['file_path']);
+                    ?>
+                    <div style="margin-top:8px;">
+                      <?php $ext = strtolower(pathinfo($post['file_path'], PATHINFO_EXTENSION)); ?>
+                      <?php if (in_array($ext, ['jpg','jpeg','png','gif','webp'])): ?>
+                        <img src="<?php echo htmlspecialchars($publicPath); ?>" alt="attachment" style="max-width:200px;border-radius:8px;display:block;margin-top:8px;" />
+                      <?php else: ?>
+                        <div style="margin-top:8px;color:#555;font-size:0.9rem;">Attachment: <a href="<?php echo htmlspecialchars($publicPath); ?>" target="_blank">Open</a></div>
+                      <?php endif; ?>
+                    </div>
+                  <?php endif; ?>
+                </div>
+
+                <!-- Comment Section -->
+                <div class="post-actions" style="display:flex;gap:16px;margin-top:12px;padding-top:12px;border-top:1px solid #e9ecef;">
+                  <button class="view-comments-btn" data-post-id="<?php echo intval($post['post_id']); ?>" style="background:none;border:none;color:#666;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:0.9rem;padding:4px 8px;border-radius:4px;transition:all 0.2s;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M2.678 11.894a1 1 0 0 1 .287.801 11 11 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8 8 0 0 0 8 14c3.996 0 7-2.807 7-6s-3.004-6-7-6-7 2.808-7 6c0 1.468.617 2.83 1.678 3.894m-.493 3.905a22 22 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a10 10 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105"/>
+                    </svg>
+                    <span class="view-comments-text">View Comments</span>
+                  </button>
+                  <button class="write-comment-btn" data-post-id="<?php echo intval($post['post_id']); ?>" style="background:none;border:none;color:#551A8B;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:0.9rem;padding:4px 8px;border-radius:4px;transition:all 0.2s;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
+                    </svg>
+                    <span>Write Comment</span>
+                  </button>
+                </div>
+
+                <!-- Comments Container (initially hidden) -->
+                <div class="post-comments-section" data-post-id="<?php echo intval($post['post_id']); ?>" style="display:none;margin-top:12px;border-top:1px solid #e9ecef;padding-top:12px;">
+                  <!-- Comments List -->
+                  <div class="comments-list" data-post-id="<?php echo intval($post['post_id']); ?>">
+                    <!-- Comments will be loaded here dynamically -->
+                  </div>
+                </div>
+
+                <!-- Comment Input Form (initially hidden) -->
+                <div class="comment-input-section" data-post-id="<?php echo intval($post['post_id']); ?>" style="display:none;margin-top:12px;border-top:1px solid #e9ecef;padding-top:12px;">
+                  <form class="comment-form" data-post-id="<?php echo intval($post['post_id']); ?>">
+                    <textarea class="comment-input" placeholder="Write a comment..." rows="2" style="width:100%;padding:8px 12px;border:1px solid #ddd;border-radius:6px;resize:vertical;font-family:inherit;font-size:0.9rem;"></textarea>
+                    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px;">
+                      <button type="button" class="comment-cancel-btn" data-post-id="<?php echo intval($post['post_id']); ?>" style="padding:6px 14px;background:#e0e0e0;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">Cancel</button>
+                      <button type="submit" class="comment-submit-btn" style="padding:6px 14px;background:#551A8B;color:white;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;">Post Comment</button>
+                    </div>
+                  </form>
+                </div>
+
+                <!-- Inline Delete Confirmation -->
+                <div class="post-delete-confirmation" data-post-id="<?php echo intval($post['post_id']); ?>" style="display:none;background:#fff3cd;border:1px solid #ffecb5;border-radius:4px;padding:8px 10px;margin-top:8px;text-align:right;max-width:fit-content;margin-left:auto;">
+                  <div style="color:#333;font-size:0.8rem;margin-bottom:6px;text-align:left;">Delete this post?</div>
+                  <div style="display:flex;gap:6px;justify-content:flex-end;">
+                    <button class="post-delete-cancel" data-post-id="<?php echo intval($post['post_id']); ?>" style="padding:4px 10px;background:#e0e0e0;border:none;border-radius:3px;cursor:pointer;font-size:0.8rem;transition:background 0.2s;">Cancel</button>
+                    <button class="post-delete-confirm" data-post-id="<?php echo intval($post['post_id']); ?>" style="padding:4px 10px;background:#d32f2f;color:white;border:none;border-radius:3px;cursor:pointer;font-size:0.8rem;transition:background 0.2s;">Delete</button>
+                  </div>
+                </div>
+              </div>
+            <?php endforeach; ?>
+          <?php endif; ?>
+
+      </div>
     </div>
-
     <!-- Post Detail Modal -->
     <div id="postDetailModal" class="modal-backdrop" role="dialog" aria-hidden="true">
       <div class="modal-box" id="postDetailBox">
@@ -763,12 +723,8 @@ profile svg
         <div style="text-align:center;margin-top:12px;"><button id="postDetailClose" class="modal-close">Close</button></div>
       </div>
     </div>
-
+    <?php renderSideContent('posts'); ?>
   </main>
-
-  <!-- Side Content -->
-  <?php renderSideContent('posts'); ?>
-
 </body>
 
     <script src="script.js?v=20251103"></script>

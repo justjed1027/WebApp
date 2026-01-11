@@ -861,14 +861,16 @@ body.light-mode .toggle-slider {
 
 /* ===== MAIN CONTENT AREA ===== */
 body.has-side-content .main-content {
-  display: grid;
+  display: flex;
+  flex-direction: row;
   grid-template-columns: 1fr 320px;
   gap: 20px;
   align-items: start;
-  max-width: 1400px;
+  max-width: none;
   margin-left: var(--sidebar-width);
   margin-top: var(--topbar-height);
-  padding: 36px 40px;
+  /* Reduce top and left spacing so content sits closer to top/sidebar */
+  padding: 12px 16px;
   min-height: calc(100vh - var(--topbar-height));
   transition: margin-left var(--transition-normal);
 }
@@ -876,12 +878,25 @@ body.has-side-content .main-content {
 .main-content {
   margin-left: var(--sidebar-collapsed-width);
   margin-top: var(--topbar-height);
-  padding: 36px 40px;
+  /* Keep main content offset for the topbar but reduce inner padding */
+  padding: 12px 16px;
   min-height: calc(100vh - var(--topbar-height));
   transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  max-width: 900px;
+  max-width: none;
+}
+.post-section {
+  width: 100%;
+  max-width: none;
 }
 
+/* Ensure posts feed and individual posts span the full width of the content area */
+#posts-container,
+.posts-section,
+.post {
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+}
 .sidebar:hover ~ .topbar ~ .main-content {
   margin-left: var(--sidebar-width);
 }
