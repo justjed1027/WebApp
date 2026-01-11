@@ -74,6 +74,7 @@ try {
         $comments[] = [
             'comment_id' => $row['comment_id'],
             'comment_text' => $row['comment_text'],
+            'user_id' => $row['user_id'],
             'username' => $row['user_username'] ?? 'User #' . $row['user_id'],
             'time_ago' => timeAgoShort($row['created_at']),
             'created_at' => $row['created_at']

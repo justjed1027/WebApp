@@ -116,7 +116,13 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                         </svg>
                     </div>
                     <div class="profile-info">
-                        <a href="#" class="view-profile-link">View Profile</a>
+                        <a href="../profile/profile.php" class="view-profile-link">View Profile - <?php if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === 1){
+          echo 'Admin';
+        } 
+         else{
+            echo 'Student';
+          }
+        ?></a>
                     </div>
                 </div>
             </div>
@@ -280,13 +286,15 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                             $displayName = $fullName ?: 'Student';
                             ?>
                             <div class="student-card" data-name="<?php echo strtolower(htmlspecialchars($row['user_username'] . ' ' . $fullName)); ?>">
-                                <div class="connection-header">
-                                    <div class="user-avatar"></div>
-                                    <div class="user-info">
-                                        <h4 class="user-name"><?php echo htmlspecialchars($row['user_username']); ?></h4>
-                                        <p class="user-details"><?php echo htmlspecialchars($displayName); ?></p>
+                                <a href="../profile/profile.php?user_id=<?php echo intval($userId); ?>" style="text-decoration:none;color:inherit;display:block;">
+                                    <div class="connection-header" style="cursor:pointer;">
+                                        <div class="user-avatar" style="transition:background 0.2s;" onmouseover="this.style.background='#d9dcdf'" onmouseout="this.style.background=''"></div>
+                                        <div class="user-info">
+                                            <h4 class="user-name" style="transition:color 0.2s;" onmouseover="this.style.color='#551A8B'" onmouseout="this.style.color=''"><?php echo htmlspecialchars($row['user_username']); ?></h4>
+                                            <p class="user-details"><?php echo htmlspecialchars($displayName); ?></p>
+                                        </div>
                                     </div>
-                                </div>
+                                </a>
                                 <div class="connection-actions">
                                     <?php if ($isConnected): ?>
                                         <span class="status-badge connected">Connected</span>

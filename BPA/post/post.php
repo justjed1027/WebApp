@@ -447,7 +447,10 @@ profile svg
           </svg>
         </div>
         <div class="profile-info">
-          <a href="../profile/profile.php" class="view-profile-link">View Profile</a>
+          <a href="../profile/profile.php" class="view-profile-link">View Profile - <?php if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === 1){
+          echo 'Admin';
+        } 
+        ?></a>
         </div>
       </div>
     </div>
@@ -611,19 +614,21 @@ profile svg
               <div class="post-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
                 <?php $displayName = !empty($post['user_username']) ? $post['user_username'] : ('User #' . intval($post['user_id'])); ?>
                 <div style="display:flex;align-items:center;gap:12px;flex:1;">
-                  <div class="post-author-avatar" style="width:40px;height:40px;border-radius:50%;background:#e9ecef;color:#333;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:1rem;">
-                    <?php
-                      $initial = '';
-                      if (!empty($post['user_username'])) {
-                        $initial = mb_strtoupper(mb_substr($post['user_username'], 0, 1));
-                      } else {
-                        $initial = 'U';
-                      }
-                      echo htmlspecialchars($initial);
-                    ?>
-                  </div>
+                  <a href="../profile/profile.php?user_id=<?php echo intval($post['user_id']); ?>" style="text-decoration:none;cursor:pointer;">
+                    <div class="post-author-avatar" style="width:40px;height:40px;border-radius:50%;background:#e9ecef;color:#333;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:1rem;transition:background 0.2s;" onmouseover="this.style.background='#d9dcdf'" onmouseout="this.style.background='#e9ecef'">
+                      <?php
+                        $initial = '';
+                        if (!empty($post['user_username'])) {
+                          $initial = mb_strtoupper(mb_substr($post['user_username'], 0, 1));
+                        } else {
+                          $initial = 'U';
+                        }
+                        echo htmlspecialchars($initial);
+                      ?>
+                    </div>
+                  </a>
                   <div style="display:flex;flex-direction:column;">
-                    <div style="font-weight:600;color:#111"><?php echo htmlspecialchars($displayName); ?></div>
+                    <a href="../profile/profile.php?user_id=<?php echo intval($post['user_id']); ?>" style="font-weight:600;color:#111;text-decoration:none;cursor:pointer;transition:color 0.2s;" onmouseover="this.style.color='#551A8B'" onmouseout="this.style.color='#111'"><?php echo htmlspecialchars($displayName); ?></a>
                     <div style="font-size:0.85rem;color:#666"><?php echo isset($post['created_at']) ? htmlspecialchars(timeAgo($post['created_at'])) : 'just now'; ?></div>
                   </div>
                 </div>
@@ -1100,12 +1105,12 @@ profile svg
                   const initial = comment.username ? comment.username.charAt(0).toUpperCase() : 'U';
                   html += `
                     <div class="comment-item" style="display:flex;gap:10px;margin-bottom:14px;padding:10px;background:#f8f9fa;border-radius:6px;">
-                      <div class="comment-avatar" style="width:32px;height:32px;border-radius:50%;background:#e9ecef;display:flex;align-items:center;justify-content:center;font-weight:600;color:#333;font-size:0.85rem;flex-shrink:0;">
+                      <div class="comment-avatar" style="width:32px;height:32px;border-radius:50%;background:#e9ecef;display:flex;align-items:center;justify-content:center;font-weight:600;color:#333;font-size:0.85rem;flex-shrink:0;cursor:pointer;" onclick="window.location.href='../profile/profile.php?user_id=${comment.user_id}';" title="View profile">
                         ${escapeHtml(initial)}
                       </div>
                       <div style="flex:1;">
                         <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-                          <span style="font-weight:600;color:#333;font-size:0.9rem;">${escapeHtml(comment.username)}</span>
+                          <a href="../profile/profile.php?user_id=${comment.user_id}" style="font-weight:600;color:#333;font-size:0.9rem;text-decoration:none;cursor:pointer;transition:color 0.2s;" onmouseover="this.style.color='#551A8B'" onmouseout="this.style.color='#333'">${escapeHtml(comment.username)}</a>
                           <span style="color:#999;font-size:0.8rem;">${escapeHtml(comment.time_ago)}</span>
                         </div>
                         <div style="color:#555;font-size:0.9rem;line-height:1.4;">${escapeHtml(comment.comment_text).replace(/\n/g, '<br>')}</div>

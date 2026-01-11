@@ -107,7 +107,13 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
           </svg>
         </div>
         <div class="profile-info">
-          <a href="#" class="view-profile-link">View Profile</a>
+          <a href="#" class="view-profile-link">View Profile - <?php if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === 1){
+          echo 'Admin';}
+           else{
+            echo 'Student';
+          }
+        
+        ?></a>
         </div>
       </div>
     </div>
@@ -257,14 +263,16 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
           <div class="connections-grid">
             <?php while ($req = $pending->fetch_assoc()): ?>
               <div class="connection-card">
-                <div class="connection-header">
-                  <div class="user-avatar"></div>
-                  <div class="user-info">
-                    <h4 class="user-name"><?php echo htmlspecialchars($req['user_username']); ?></h4>
-                    <?php $mutual = getMutualConnectionsCount($con, (int)$_SESSION['user_id'], (int)$req['requester_id']); ?>
-                    <p class="user-details"><?php echo (int)$mutual; ?> mutual connections</p>
+                <a href="../profile/profile.php?user_id=<?php echo intval($req['requester_id']); ?>" style="text-decoration:none;color:inherit;display:block;">
+                  <div class="connection-header" style="cursor:pointer;">
+                    <div class="user-avatar" style="transition:background 0.2s;" onmouseover="this.style.background='#d9dcdf'" onmouseout="this.style.background=''"></div>
+                    <div class="user-info">
+                      <h4 class="user-name" style="transition:color 0.2s;" onmouseover="this.style.color='#551A8B'" onmouseout="this.style.color=''"><?php echo htmlspecialchars($req['user_username']); ?></h4>
+                      <?php $mutual = getMutualConnectionsCount($con, (int)$_SESSION['user_id'], (int)$req['requester_id']); ?>
+                      <p class="user-details"><?php echo (int)$mutual; ?> mutual connections</p>
+                    </div>
                   </div>
-                </div>
+                </a>
                 <div class="connection-actions">
                   <form action="respond_request.php" method="POST" style="display:inline">
                     <input type="hidden" name="connection_id" value="<?php echo $req['connection_id']; ?>">
@@ -313,13 +321,15 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                   <input type="hidden" name="connection_id" value="<?php echo (int)$row['connection_id']; ?>">
                   <button type="button" class="btn-unconnect" aria-label="Remove connection" data-connection-id="<?php echo (int)$row['connection_id']; ?>">&times;</button>
                 </form>
-                <div class="connection-header">
-                  <div class="user-avatar"></div>
-                  <div class="user-info">
-                    <h4 class="user-name"><?php echo htmlspecialchars($row['user_username']); ?></h4>
-                    <p class="user-details">Connected Student</p>
+                <a href="../profile/profile.php?user_id=<?php echo intval($row['user_id']); ?>" style="text-decoration:none;color:inherit;display:block;">
+                  <div class="connection-header" style="cursor:pointer;">
+                    <div class="user-avatar" style="transition:background 0.2s;" onmouseover="this.style.background='#d9dcdf'" onmouseout="this.style.background=''"></div>
+                    <div class="user-info">
+                      <h4 class="user-name" style="transition:color 0.2s;" onmouseover="this.style.color='#551A8B'" onmouseout="this.style.color=''"><?php echo htmlspecialchars($row['user_username']); ?></h4>
+                      <p class="user-details">Connected Student</p>
+                    </div>
                   </div>
-                </div>
+                </a>
                 <div class="connection-actions">
                   <a href="../dms/dms.php?user_id=<?php echo $row['user_id']; ?>" class="btn-message">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -356,11 +366,13 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             <?php while ($row = $recommended->fetch_assoc()): ?>
               <?php $mutual = getMutualConnectionsCount($con, (int)$userId, (int)$row['user_id']); ?>
               <div class="recommendation-card">
-                <div class="user-avatar"></div>
-                <div class="user-info">
-                  <h4 class="user-name"><?php echo htmlspecialchars($row['user_username']); ?></h4>
-                  <p class="user-details"><?php echo (int)$mutual; ?> mutual connections</p>
-                </div>
+                <a href="../profile/profile.php?user_id=<?php echo intval($row['user_id']); ?>" style="text-decoration:none;color:inherit;display:block;flex-grow:1;">
+                  <div class="user-avatar" style="cursor:pointer;transition:background 0.2s;margin:0 auto;" onmouseover="this.style.background='#d9dcdf'" onmouseout="this.style.background=''"></div>
+                  <div class="user-info">
+                    <h4 class="user-name" style="cursor:pointer;transition:color 0.2s;" onmouseover="this.style.color='#551A8B'" onmouseout="this.style.color=''"><?php echo htmlspecialchars($row['user_username']); ?></h4>
+                    <p class="user-details"><?php echo (int)$mutual; ?> mutual connections</p>
+                  </div>
+                </a>
                 <form action="send_request.php" method="POST">
                   <input type="hidden" name="receiver_id" value="<?php echo htmlspecialchars($row['user_id']); ?>">
                   <button type="submit" class="btn-connect">Connect</button>
