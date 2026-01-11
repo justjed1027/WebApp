@@ -3,7 +3,6 @@ session_start();
 require_once '../database/User.php';
 require_once '../database/DatabaseConnection.php';
 require_once '../database/Notification.php';
-require_once '../components/sidecontent.php';
 
 // Function to convert timestamp to "time ago" format
 function timeAgo($timestamp)
@@ -335,7 +334,6 @@ profile svg
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SkillSwap — Posts</title>
   <link rel="stylesheet" href="style.css?v=nav-20251022">
-  <link rel="stylesheet" href="../components/sidecontent.css">
   <style>
     
     .create-post-input {
@@ -427,7 +425,7 @@ profile svg
   </style>
 </head>
 
-<body class="has-side-content">
+<body>
 
   <!-- Sidebar Navigation -->
   <aside class="sidebar" id="sidebar">
@@ -618,61 +616,60 @@ profile svg
           <?php else: ?>
             <?php foreach ($posts as $post): ?>
               <div class="post">
-                <div class="post-avatar">
-                  <?php
-                    $initial = '';
-                    if (!empty($post['user_username'])) {
-                      $initial = mb_strtoupper(mb_substr($post['user_username'], 0, 1));
-                    } else {
-                      $initial = 'U';
-                    }
-                    echo htmlspecialchars($initial);
-                  ?>
+                <div class="post-header-top">
+                  <div class="post-avatar">
+                    <?php
+                      $initial = '';
+                      if (!empty($post['user_username'])) {
+                        $initial = mb_strtoupper(mb_substr($post['user_username'], 0, 1));
+                      } else {
+                        $initial = 'U';
+                      }
+                      echo htmlspecialchars($initial);
+                    ?>
+                  </div>
+                  <div class="post-menu-wrapper">
+                    <button class="post-menu-btn" data-post-id="<?php echo intval($post['post_id']); ?>" title="More">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3"/>
+                      </svg>
+                    </button>
+                    <div class="post-menu-dropdown" style="display:none;">
+                      <?php if ($user->user_is_admin): ?>
+                        <button class="post-menu-item delete-post-option" data-post-id="<?php echo intval($post['post_id']); ?>">
+                          🗑 Delete Post
+                        </button>
+                        <div class="menu-divider"></div>
+                        <button class="post-menu-item admin-action-1" data-post-id="<?php echo intval($post['post_id']); ?>">
+                          📌 Pin Post
+                        </button>
+                        <button class="post-menu-item admin-action-2" data-post-id="<?php echo intval($post['post_id']); ?>">
+                          ⭐ Feature Post
+                        </button>
+                      <?php else: ?>
+                        <button class="post-menu-item user-action-report" data-post-id="<?php echo intval($post['post_id']); ?>">
+                          🚩 Report Post
+                        </button>
+                        <button class="post-menu-item user-action-save" data-post-id="<?php echo intval($post['post_id']); ?>">
+                          🔖 Save Post
+                        </button>
+                        <button class="post-menu-item user-action-hide" data-post-id="<?php echo intval($post['post_id']); ?>">
+                          👁️‍🗨️ Hide Post
+                        </button>
+                      <?php endif; ?>
+                    </div>
+                  </div>
                 </div>
                 
                 <div class="post-body">
-                  <div class="post-header">
-                    <?php $displayName = !empty($post['user_username']) ? $post['user_username'] : ('User #' . intval($post['user_id'])); ?>
-                    <div class="post-user-info">
-                      <span class="post-username"><?php echo htmlspecialchars($displayName); ?></span>
-                      <span class="post-handle">@<?php echo htmlspecialchars(strtolower(str_replace(' ', '', $displayName))); ?></span>
-                      <span class="post-dot">·</span>
-                      <span class="post-time"><?php echo isset($post['created_at']) ? htmlspecialchars(timeAgo($post['created_at'])) : 'just now'; ?></span>
-                    </div>
-
-                    <!-- Post Menu Button -->
-                    <div class="post-menu-wrapper">
-                      <button class="post-menu-btn" data-post-id="<?php echo intval($post['post_id']); ?>" title="More">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
-                          <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3"/>
-                        </svg>
-                      </button>
-                      <div class="post-menu-dropdown" style="display:none;">
-                        <?php if ($user->user_is_admin): ?>
-                          <button class="post-menu-item delete-post-option" data-post-id="<?php echo intval($post['post_id']); ?>">
-                            🗑 Delete Post
-                          </button>
-                          <div class="menu-divider"></div>
-                          <button class="post-menu-item admin-action-1" data-post-id="<?php echo intval($post['post_id']); ?>">
-                            📌 Pin Post
-                          </button>
-                          <button class="post-menu-item admin-action-2" data-post-id="<?php echo intval($post['post_id']); ?>">
-                            ⭐ Feature Post
-                          </button>
-                        <?php else: ?>
-                          <button class="post-menu-item user-action-report" data-post-id="<?php echo intval($post['post_id']); ?>">
-                            🚩 Report Post
-                          </button>
-                          <button class="post-menu-item user-action-save" data-post-id="<?php echo intval($post['post_id']); ?>">
-                            🔖 Save Post
-                          </button>
-                          <button class="post-menu-item user-action-hide" data-post-id="<?php echo intval($post['post_id']); ?>">
-                            👁️‍🗨️ Hide Post
-                          </button>
-                        <?php endif; ?>
-                      </div>
-                    </div>
+                <div class="post-header">
+                  <?php $displayName = !empty($post['user_username']) ? $post['user_username'] : ('User #' . intval($post['user_id'])); ?>
+                  <div class="post-user-info">
+                    <span class="post-username"><?php echo htmlspecialchars($displayName); ?></span>
+                    <span class="post-handle">@<?php echo htmlspecialchars(strtolower(str_replace(' ', '', $displayName))); ?></span>
+                    <span class="post-time"><?php echo isset($post['created_at']) ? htmlspecialchars(timeAgo($post['created_at'])) : 'just now'; ?></span>
                   </div>
+                </div>
 
                   <div class="post-content">
                     <p><?php echo nl2br(htmlspecialchars(mb_strlen($post['content']) > 400 ? mb_substr($post['content'],0,400) . '...' : $post['content'])); ?></p>
@@ -777,9 +774,6 @@ profile svg
 
     </div> <!-- /post-content2 (Box 2: Posts Feed) -->
       </div> <!-- /posts-column -->
-
-      <!-- Side Content -->
-      <?php renderSideContent('posts'); ?>
     </div> <!-- /page-content -->
   </main>
 

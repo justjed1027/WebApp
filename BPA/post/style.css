@@ -368,38 +368,41 @@
   border: 1px solid var(--border-color);
 }
 
-/* Posts Feed - Twitter/X Style */
+/* Posts Feed - Grid Layout with Separate Boxes */
 #posts-container {
-  border: 1px solid var(--border-color);
-  border-top: none;
-}
-
-/* Posts Feed - Box Container with Spacing */
-#posts-container {
-  background: var(--background-card);
-  border: 1px solid var(--border-color);
-  border-radius: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
   padding: 0;
-  box-shadow: var(--shadow-sm);
-  overflow: hidden;
+  box-shadow: none;
+  overflow: visible;
 }
 
 .post {
   background: var(--background-card);
-  border-bottom: 1px solid var(--border-color);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
   padding: 24px;
   display: flex;
-  gap: 20px;
+  flex-direction: column;
+  gap: 16px;
   transition: all var(--transition-normal);
   cursor: pointer;
-}
-
-.post:last-child {
-  border-bottom: none;
+  box-shadow: var(--shadow-sm);
 }
 
 .post:hover {
   background: var(--background-hover);
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-4px);
+}
+
+.post:last-child {
+  border-bottom: 1px solid var(--border-color);
 }
 
 .post-avatar {
@@ -416,28 +419,39 @@
   font-weight: 700;
 }
 
-.post-body {
-  flex: 1;
-  min-width: 0;
-}
-
-.post-header {
+.post-header-top {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 12px;
 }
 
+.post-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0;
+}
+
 .post-user-info {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   min-width: 0;
+  width: 100%;
 }
 
 .post-username {
   color: var(--text-primary);
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 700;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -450,7 +464,7 @@
 
 .post-handle {
   color: var(--text-secondary);
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 400;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -463,7 +477,7 @@
 
 .post-time {
   color: var(--text-muted);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 400;
 }
 
@@ -560,45 +574,36 @@
 
 .post-content {
   color: var(--text-primary);
-  font-size: 16px;
-  line-height: 1.6;
-  margin-bottom: 20px;
+  font-size: 15px;
+  line-height: 1.5;
+  margin-bottom: 12px;
   word-wrap: break-word;
 }
 
 .post-content p {
-  margin: 0 0 12px 0;
+  margin: 0 0 8px 0;
 }
 
 .post-content p:last-child {
   margin-bottom: 0;
 }
 
-/* Post Content 2 Wrapper - Second Box for Posts Feed */
-.post-content2 {
-  background: var(--background-secondary);
-  padding: 32px;
-  border-radius: 16px;
-  border: 1px solid var(--border-color);
-  margin-top: 24px;
-}
-
 .post-image {
   width: 100%;
-  max-height: 450px;
+  max-height: 350px;
   object-fit: cover;
   border-radius: 12px;
   border: 1px solid var(--border-color);
-  margin-top: 16px;
+  margin-top: 12px;
 }
 
 .post-attachment {
-  margin-top: 16px;
-  padding: 16px 20px;
+  margin-top: 12px;
+  padding: 12px 16px;
   background: var(--background-hover);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
-  font-size: 14px;
+  border-radius: 8px;
+  font-size: 13px;
   color: var(--text-secondary);
 }
 
@@ -615,9 +620,9 @@
 /* Post Actions - Clean Button Layout */
 .post-actions {
   display: flex;
-  gap: 12px;
-  margin-top: 20px;
-  padding-top: 16px;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 12px;
   border-top: 1px solid var(--border-color);
   flex-wrap: wrap;
 }
@@ -625,15 +630,15 @@
 .action-btn {
   display: flex;
   align-items: center;
-  gap: 8px;
-  background: var(--background-hover);
+  gap: 6px;
+  background: transparent;
   border: 1px solid var(--border-color);
   color: var(--text-secondary);
   cursor: pointer;
-  padding: 10px 20px;
-  border-radius: 12px;
+  padding: 8px 16px;
+  border-radius: 10px;
   transition: all var(--transition-normal);
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
 }
 
