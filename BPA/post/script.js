@@ -1,9 +1,6 @@
-// ===== SIDEBAR COLLAPSE INITIALIZATION =====
+// ===== SIDEBAR HOVER FUNCTIONALITY =====
 // Sidebar starts collapsed and expands on hover (handled by CSS)
-const sidebar = document.getElementById('sidebar');
-if (sidebar) {
-    sidebar.classList.add('collapsed');
-}
+// No JavaScript needed for hover expand/collapse
 
 // ===== THEME TOGGLE =====
 const themeToggle = document.getElementById('themeToggle');

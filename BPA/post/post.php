@@ -333,6 +333,7 @@ profile svg
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SkillSwap — Posts</title>
   <link rel="stylesheet" href="style.css?v=nav-20251022">
+  <link rel="stylesheet" href="../calendar/calendar.css">
   <link rel="stylesheet" href="../components/sidecontent.css">
   <style>
     
@@ -427,14 +428,12 @@ profile svg
 
 <body class="has-side-content">
 
-  <!-- Sidebar Navigation -->
+  <!-- Sidebar Navigation (copied from courses page for working hover expand) -->
   <aside class="sidebar" id="sidebar">
     <!-- Top Section: Logo & Profile -->
     <div class="sidebar-top">
       <div class="sidebar-logo">
-        <div class="logo-placeholder">
-          <img src="../images/skillswaplogotrans.png" alt="SkillSwap Logo">
-        </div>
+        <div class="logo-placeholder"></div>
         <span class="logo-text">SkillSwap</span>
       </div>
 
@@ -446,9 +445,12 @@ profile svg
         </div>
         <div class="profile-info">
           <a href="../profile/profile.php" class="view-profile-link">View Profile - <?php if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === 1){
-          echo 'Admin';
-        } 
+          echo 'Admin';}
+          else{
+            echo 'Student';
+          }
         ?></a>
+         
         </div>
       </div>
     </div>
@@ -461,6 +463,13 @@ profile svg
             <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5" />
           </svg>
           <span>Dashboard</span>
+        </a>
+
+        <a href="post.php" class="nav-link active" data-tooltip="Posts">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M6.428 1.151C6.708.591 7.213 0 8 0s1.292.592 1.572 1.151C9.861 1.73 10 2.431 10 3v3.691l5.17 2.585a1.5 1.5 0 0 1 .83 1.342V12a.5.5 0 0 1-.582.493l-5.507-.918-.375 2.253 1.318 1.318A.5.5 0 0 1 10.5 16h-5a.5.5 0 0 1-.354-.854l1.319-1.318-.376-2.253-5.507.918A.5.5 0 0 1 0 12v-1.382a1.5 1.5 0 0 1 .83-1.342L6 6.691V3c0-.568.14-1.271.428-1.849"/>
+          </svg>
+          <span>Posts</span>
         </a>
 
         <a href="../dms/dms.php" class="nav-link" data-tooltip="Direct Messages">
@@ -498,7 +507,7 @@ profile svg
     <div class="sidebar-bottom">
       <div class="nav-divider"></div>
 
-      <a href="../settings/settings.php" class="nav-link" data-tooltip="Settings">
+      <a href="#" class="nav-link" data-tooltip="Settings">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
           <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z" />
         </svg>
@@ -729,6 +738,20 @@ profile svg
 
     <script src="script.js?v=20251103"></script>
     <script>
+      // ===== THEME TOGGLE =====
+      document.addEventListener('DOMContentLoaded', () => {
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') body.classList.add('light-mode');
+        if (themeToggle) {
+          themeToggle.addEventListener('click', () => {
+            body.classList.toggle('light-mode');
+            localStorage.setItem('theme', body.classList.contains('light-mode') ? 'light' : 'dark');
+          });
+        }
+      });
+
       // Helper function to escape HTML
       function escapeHtml(text) {
         const map = {

@@ -908,10 +908,6 @@ body .topbar + .main-content,
   max-width: none;
   box-sizing: border-box;
 }
-.sidebar:hover ~ .topbar ~ .main-content {
-  margin-left: var(--sidebar-width);
-}
-
 .sidebar.collapsed ~ .topbar ~ .main-content {
   margin-left: var(--sidebar-collapsed-width);
 }
