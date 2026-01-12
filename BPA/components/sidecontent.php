@@ -192,45 +192,153 @@ function renderSideContent($currentPage = '', $options = []) {
         <div class="side-card">
             <div class="side-card-header">
                 <h3 class="side-card-title">Suggested Collaborators</h3>
-                <a href="../connections/connections.html" class="side-card-link">See All</a>
+                <a href="../connections/connections.php" class="side-card-link">See All</a>
             </div>
-            <div class="side-card-body">
-                <?php 
-                $collaboratorCount = 0;
-                $maxCollaborators = $limitSuggestedCollaborators ?? 3; // Default to 3 if not limited
-                ?>
-                <?php if ($collaboratorCount < $maxCollaborators): ?>
-                <div class="side-collab-item">
-                    <div class="side-collab-avatar avatar-4"></div>
-                    <div class="side-collab-info">
-                        <h4 class="side-collab-name">Emily Chen</h4>
-                        <p class="side-collab-field">Data Science</p>
-                    </div>
-                    <button class="side-collab-btn">Follow</button>
-                </div>
-                <?php $collaboratorCount++; endif; ?>
-                <?php if ($collaboratorCount < $maxCollaborators): ?>
-                <div class="side-collab-item">
-                    <div class="side-collab-avatar avatar-5"></div>
-                    <div class="side-collab-info">
-                        <h4 class="side-collab-name">Marcus Johnson</h4>
-                        <p class="side-collab-field">Mechanical Engineering</p>
-                    </div>
-                    <button class="side-collab-btn">Follow</button>
-                </div>
-                <?php $collaboratorCount++; endif; ?>
-                <?php if ($collaboratorCount < $maxCollaborators): ?>
-                <div class="side-collab-item">
-                    <div class="side-collab-avatar avatar-6"></div>
-                    <div class="side-collab-info">
-                        <h4 class="side-collab-name">Sophia Williams</h4>
-                        <p class="side-collab-field">Graphic Design</p>
-                    </div>
-                    <button class="side-collab-btn">Follow</button>
-                </div>
-                <?php $collaboratorCount++; endif; ?>
+            <div class="side-card-body" id="suggestedCollaboratorsContainer">
+                <div class="loading-placeholder">Loading collaborators...</div>
             </div>
         </div>
+        
+        <script>
+        (function() {
+            const limit = <?php echo $limitSuggestedCollaborators ?? 5; ?>;
+            
+            // Fetch suggested collaborators from backend
+            fetch('/WebApp/BPA/components/get_suggested_collaborators.php?limit=' + limit)
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    return response.text();
+                })
+                .then(text => {
+                    console.log('Raw response:', text);
+                    const data = JSON.parse(text);
+                    const container = document.getElementById('suggestedCollaboratorsContainer');
+                    
+                    console.log('Parsed data:', data);
+                    
+                    if (data.error) {
+                        console.error('Collaborators API error:', data.error);
+                        if (data.debug) console.error('Debug info:', data.debug);
+                        container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px; font-size: 12px;">Error: ' + data.error + '</p>';
+                        return;
+                    }
+                    
+                    if (!data.success) {
+                        console.log('Request not successful');
+                        container.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">No suggestions at this time</p>';
+                        return;
+                    }
+                    
+                    if (!data.collaborators || data.collaborators.length === 0) {
+                        console.log('No collaborators in response');
+                        container.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">No suggestions at this time</p>';
+                        return;
+                    }
+                    
+                    console.log('Found ' + data.collaborators.length + ' collaborators');
+                    let html = '';
+                    data.collaborators.forEach((collab, index) => {
+                        const avatarClass = 'avatar-' + ((index % 6) + 1);
+                        // Truncate skills to first 4, add ellipsis if more
+                        const skillsArray = collab.field.split(', ');
+                        const displaySkills = skillsArray.slice(0, 4).join(', ') + (skillsArray.length > 4 ? ', ...' : '');
+                        html += `
+                            <div class="side-collab-item">
+                                <div class="side-collab-avatar ${avatarClass}"></div>
+                                <div class="side-collab-info">
+                                    <h4 class="side-collab-name">${collab.firstname} ${collab.lastname}</h4>
+                                    <p class="side-collab-field" title="All skills: ${collab.field}">${displaySkills}</p>
+                                </div>
+                                <button class="side-collab-btn" data-user-id="${collab.user_id}">Follow</button>
+                            </div>
+                        `;
+                    });
+                    
+                    container.innerHTML = html;
+                    
+                    // Check connection status for each user and update button
+                    container.querySelectorAll('.side-collab-btn').forEach(btn => {
+                        const userId = btn.getAttribute('data-user-id');
+                        
+                        // Check connection status
+                        fetch('/WebApp/BPA/components/check_connection_status.php?user_id=' + userId)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.status === 'connected') {
+                                    btn.textContent = 'Connected';
+                                    btn.disabled = true;
+                                    btn.style.borderColor = '#666';
+                                    btn.style.color = '#666';
+                                } else if (data.status === 'pending') {
+                                    btn.textContent = 'Pending';
+                                    btn.disabled = true;
+                                    btn.style.borderColor = '#ff9f00';
+                                    btn.style.color = '#ff9f00';
+                                }
+                            })
+                            .catch(error => console.error('Error checking status:', error));
+                        
+                        // Add click listener
+                        btn.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            const userId = this.getAttribute('data-user-id');
+                            sendConnectionRequest(userId, this);
+                        });
+                    });
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                    const container = document.getElementById('suggestedCollaboratorsContainer');
+                    container.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">Unable to load suggestions</p>';
+                });
+            
+            function sendConnectionRequest(userId, button) {
+                // First check if already connected
+                fetch('/WebApp/BPA/components/check_connection_status.php?user_id=' + userId)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Connection status:', data);
+                        if (data.status === 'connected') {
+                            button.textContent = 'Connected';
+                            button.disabled = true;
+                            button.style.borderColor = '#666';
+                            button.style.color = '#666';
+                            return;
+                        } else if (data.status === 'pending') {
+                            button.textContent = 'Pending';
+                            button.disabled = true;
+                            button.style.borderColor = '#ff9f00';
+                            button.style.color = '#ff9f00';
+                            return;
+                        }
+                        
+                        // Not connected, send request
+                        console.log('Sending connection request to user', userId);
+                        fetch('/WebApp/BPA/connections/send_request.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            body: 'receiver_id=' + encodeURIComponent(userId)
+                        })
+                        .then(response => {
+                            console.log('Send request response status:', response.status);
+                            return response.text();
+                        })
+                        .then(data => {
+                            console.log('Send request response:', data);
+                            // If we got here without error, request was sent
+                            button.textContent = 'Pending';
+                            button.disabled = true;
+                            button.style.borderColor = '#ff9f00';
+                            button.style.color = '#ff9f00';
+                        })
+                        .catch(error => console.error('Error sending request:', error));
+                    })
+                    .catch(error => console.error('Error checking connection:', error));
+            }
+        })();
+        </script>
         <?php endif; ?>
 
         <?php if ($showTrendingTopics): ?>
