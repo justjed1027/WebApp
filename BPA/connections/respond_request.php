@@ -25,7 +25,7 @@ $result = 'invalid_action';
 if ($action === 'accept') {
     $result = $connObj->acceptRequest($connectionId, $receiverId);
     
-    // Create notification when accepting a friend request
+    // Create notification when accepting a friend request and delete the request notification
     if ($result === 'accepted') {
         $notif = new Notification($db->connection);
         
@@ -45,6 +45,13 @@ if ($action === 'accept') {
             $userResult = $userQuery->get_result();
             $userData = $userResult->fetch_assoc();
             $username = $userData['user_username'] ?? 'Someone';
+            
+            // Delete the friend request notification for the receiver
+            $deleteQuery = $db->connection->prepare(
+                "DELETE FROM notifications WHERE user_id = ? AND type = 'friend_request' AND actor_user_id = ?"
+            );
+            $deleteQuery->bind_param("ii", $receiverId, $requesterId);
+            $deleteQuery->execute();
             
             // Create notification for the requester
             $notif->createNotification(

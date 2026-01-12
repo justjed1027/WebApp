@@ -361,10 +361,8 @@ $conn->close();
 
       <!-- Side Content -->
       <?php 
-        // Hide a few sidebar boxes on the courses page
-        renderSideContent('courses', [
-          'hide' => ['notifications']
-        ]);
+        // Display all side components on the courses page
+        renderSideContent('courses');
       ?>
     </div>
   </main>

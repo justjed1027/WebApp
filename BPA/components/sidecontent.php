@@ -32,6 +32,7 @@ function renderSideContent($currentPage = '', $options = []) {
     $limitTrendingTopics = null;
     $limitNotifications = null;
     $limitRecentDMs = null;
+    $limitUpcomingEvents = null;
     $limitSuggestedCollaborators = null;
     if (isset($options['limit']) && is_array($options['limit'])) {
         if (isset($options['limit']['trendingTopics']) || isset($options['limit']['trending_topics'])) {
@@ -42,6 +43,9 @@ function renderSideContent($currentPage = '', $options = []) {
         }
         if (isset($options['limit']['recentDms']) || isset($options['limit']['recent_dms'])) {
             $limitRecentDMs = (int)($options['limit']['recentDms'] ?? $options['limit']['recent_dms']);
+        }
+        if (isset($options['limit']['upcomingEvents']) || isset($options['limit']['upcoming_events'])) {
+            $limitUpcomingEvents = (int)($options['limit']['upcomingEvents'] ?? $options['limit']['upcoming_events']);
         }
         if (isset($options['limit']['suggestedCollaborators']) || isset($options['limit']['suggested_collaborators'])) {
             $limitSuggestedCollaborators = (int)($options['limit']['suggestedCollaborators'] ?? $options['limit']['suggested_collaborators']);
@@ -56,52 +60,100 @@ function renderSideContent($currentPage = '', $options = []) {
         <div class="side-card">
             <div class="side-card-header">
                 <h3 class="side-card-title">Notifications</h3>
-                <a href="#" class="side-card-link">See All</a>
+                <a href="../notifications/notifications.php" class="side-card-link">See All</a>
             </div>
             <div class="side-card-body">
                 <?php 
-                $notificationCount = 0;
-                $maxNotifications = $limitNotifications ?? 3; // Default to 3 if not limited
+                // Fetch recent notifications from database
+                $notifications = [];
+                if (isset($_SESSION['user_id'])) {
+                    $currentUserId = $_SESSION['user_id'];
+                    require_once __DIR__ . '/../database/DatabaseConnection.php';
+                    require_once __DIR__ . '/../database/Notification.php';
+                    
+                    $dbConn = new DatabaseConnection();
+                    $db = $dbConn->connection;
+                    $notificationObj = new Notification($db);
+                    
+                    // Fetch recent notifications
+                    $maxNotifications = $limitNotifications ?? 3;
+                    $result = $notificationObj->getRecentNotifications($currentUserId, $maxNotifications);
+                    
+                    while ($row = $result->fetch_assoc()) {
+                        // Calculate time ago
+                        $createdTime = strtotime($row['created_at']);
+                        $now = time();
+                        $diff = $now - $createdTime;
+                        
+                        if ($diff < 60) {
+                            $timeAgo = 'Just now';
+                        } elseif ($diff < 3600) {
+                            $minutes = floor($diff / 60);
+                            $timeAgo = $minutes . 'm ago';
+                        } elseif ($diff < 86400) {
+                            $hours = floor($diff / 3600);
+                            $timeAgo = $hours . 'h ago';
+                        } else {
+                            $days = floor($diff / 86400);
+                            $timeAgo = $days . 'd ago';
+                        }
+                        
+                        $notifications[] = [
+                            'type' => $row['type'],
+                            'title' => $row['title'],
+                            'description' => $row['description'],
+                            'time' => $timeAgo,
+                            'is_read' => $row['is_read'],
+                            'actor' => $row['user_username'] ?? 'Someone'
+                        ];
+                    }
+                    $dbConn->closeConnection();
+                }
+                
+                // Display notifications or empty state
+                if (empty($notifications)): 
                 ?>
-                <?php if ($notificationCount < $maxNotifications): ?>
-                <div class="notification-item unread">
-                    <div class="notification-icon notification-like">
+                    <p style="color: #666; text-align: center; padding: 20px; font-size: 14px;">No notifications yet</p>
+                <?php 
+                else:
+                    foreach ($notifications as $notif):
+                        $unreadClass = !$notif['is_read'] ? ' unread' : '';
+                        
+                        // Determine icon based on notification type
+                        $iconType = 'notification-comment';
+                        if ($notif['type'] == 'friend_accepted') {
+                            $iconType = 'notification-like';
+                        } elseif ($notif['type'] == 'event_created') {
+                            $iconType = 'notification-event';
+                        } elseif ($notif['type'] == 'post_comment') {
+                            $iconType = 'notification-comment';
+                        }
+                ?>
+                <div class="notification-item<?php echo $unreadClass; ?>">
+                    <div class="notification-icon <?php echo $iconType; ?>">
+                        <?php if ($notif['type'] == 'friend_accepted'): ?>
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
                             <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
                         </svg>
-                    </div>
-                    <div class="notification-content">
-                        <p><strong>Sarah Chen</strong> liked your post</p>
-                        <span class="notification-time">5m ago</span>
-                    </div>
-                </div>
-                <?php $notificationCount++; endif; ?>
-                <?php if ($notificationCount < $maxNotifications): ?>
-                <div class="notification-item unread">
-                    <div class="notification-icon notification-comment">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M2.678 11.894a1 1 0 0 1 .287.801 11 11 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8 8 0 0 0 8 14c3.996 0 7-2.807 7-6s-3.004-6-7-6-7 2.808-7 6c0 1.468.617 2.83 1.678 3.894m-.493 3.905a22 22 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a10 10 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105"/>
-                        </svg>
-                    </div>
-                    <div class="notification-content">
-                        <p><strong>Alex Kim</strong> commented on your post</p>
-                        <span class="notification-time">12m ago</span>
-                    </div>
-                </div>
-                <?php $notificationCount++; endif; ?>
-                <?php if ($notificationCount < $maxNotifications): ?>
-                <div class="notification-item">
-                    <div class="notification-icon notification-event">
+                        <?php elseif ($notif['type'] == 'event_created'): ?>
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
                             <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
                         </svg>
+                        <?php else: ?>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M2.678 11.894a1 1 0 0 1 .287.801 11 11 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8 8 0 0 0 8 14c3.996 0 7-2.807 7-6s-3.004-6-7-6-7 2.808-7 6c0 1.468.617 2.83 1.678 3.894m-.493 3.905a22 22 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a10 10 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105"/>
+                        </svg>
+                        <?php endif; ?>
                     </div>
                     <div class="notification-content">
-                        <p>Event reminder: <strong>Web Dev Workshop</strong></p>
-                        <span class="notification-time">1h ago</span>
+                        <p><?php echo htmlspecialchars($notif['title']); ?></p>
+                        <span class="notification-time"><?php echo htmlspecialchars($notif['time']); ?></span>
                     </div>
                 </div>
-                <?php $notificationCount++; endif; ?>
+                <?php 
+                    endforeach;
+                endif;
+                ?>
             </div>
         </div>
         <?php endif; ?>
@@ -114,39 +166,97 @@ function renderSideContent($currentPage = '', $options = []) {
                 <a href="../events/events.php" class="side-card-link">See All</a>
             </div>
             <div class="side-card-body">
-                <div class="side-event-item">
+                <?php 
+                // Fetch upcoming events from database
+                $upcomingEvents = [];
+                if (isset($_SESSION['user_id'])) {
+                    $currentUserId = $_SESSION['user_id'];
+                    require_once __DIR__ . '/../database/DatabaseConnection.php';
+                    $dbConn = new DatabaseConnection();
+                    $db = $dbConn->connection;
+                    
+                    // Get upcoming events matching user's interests
+                    $sql = "
+                    SELECT DISTINCT
+                        e.events_id,
+                        e.events_title,
+                        e.events_date,
+                        e.events_start,
+                        e.events_end,
+                        e.events_deadline
+                    FROM events e
+                    INNER JOIN event_subjects es ON e.events_id = es.es_event_id
+                    INNER JOIN user_interests ui ON es.es_subject_id = ui.ui_subject_id AND ui.ui_user_id = ?
+                    WHERE 
+                        TIMESTAMP(e.events_date, COALESCE(e.events_start, '23:59:59')) > NOW()
+                        AND (e.events_deadline IS NULL OR TIMESTAMP(e.events_deadline, '23:59:59') > NOW())
+                        AND NOT EXISTS(
+                            SELECT 1 FROM event_participants ep 
+                            WHERE ep.ep_event_id = e.events_id AND ep.ep_user_id = ?
+                        )
+                        AND e.events_visibility = 'public'
+                    GROUP BY e.events_id
+                    ORDER BY e.events_date ASC
+                    LIMIT " . ($limitUpcomingEvents ?? 3);
+                    
+                    $stmt = $db->prepare($sql);
+                    if ($stmt) {
+                        $stmt->bind_param("ii", $currentUserId, $currentUserId);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+                        
+                        while ($row = $result->fetch_assoc()) {
+                            $eventDate = new DateTime($row['events_date']);
+                            $day = $eventDate->format('d');
+                            $month = $eventDate->format('M');
+                            
+                            // Format time display
+                            $timeDisplay = '';
+                            if ($row['events_start']) {
+                                $startTime = new DateTime($row['events_date'] . ' ' . $row['events_start']);
+                                $endTime = $row['events_end'] ? new DateTime($row['events_date'] . ' ' . $row['events_end']) : null;
+                                $timeDisplay = $startTime->format('h:i A');
+                                if ($endTime) {
+                                    $timeDisplay .= ' - ' . $endTime->format('h:i A');
+                                }
+                            }
+                            
+                            $upcomingEvents[] = [
+                                'id' => $row['events_id'],
+                                'title' => $row['events_title'],
+                                'day' => $day,
+                                'month' => $month,
+                                'time' => $timeDisplay,
+                                'date' => $eventDate
+                            ];
+                        }
+                        $stmt->close();
+                    }
+                    $dbConn->closeConnection();
+                }
+                
+                // Display events
+                if (empty($upcomingEvents)) {
+                    echo '<p style="color: #666; text-align: center; padding: 20px; font-size: 14px;">No upcoming events matching your interests</p>';
+                } else {
+                    foreach ($upcomingEvents as $event):
+                ?>
+                <a href="../events/events.php?event_id=<?php echo $event['id']; ?>" class="side-event-item">
                     <div class="side-event-date">
-                        <span class="side-event-day">14</span>
-                        <span class="side-event-month">Oct</span>
+                        <span class="side-event-day"><?php echo htmlspecialchars($event['day']); ?></span>
+                        <span class="side-event-month"><?php echo htmlspecialchars($event['month']); ?></span>
                     </div>
                     <div class="side-event-info">
-                        <h4 class="side-event-title">Data Structures Final Exam</h4>
-                        <p class="side-event-meta">10:00 AM - 12:00 PM</p>
-                        <span class="side-event-badge exam">Exam</span>
+                        <h4 class="side-event-title"><?php echo htmlspecialchars($event['title']); ?></h4>
+                        <?php if ($event['time']): ?>
+                        <p class="side-event-meta"><?php echo htmlspecialchars($event['time']); ?></p>
+                        <?php endif; ?>
                     </div>
-                </div>
-                <div class="side-event-item">
-                    <div class="side-event-date">
-                        <span class="side-event-day">17</span>
-                        <span class="side-event-month">Oct</span>
-                    </div>
-                    <div class="side-event-info">
-                        <h4 class="side-event-title">Web Development Workshop</h4>
-                        <p class="side-event-meta">2:00 PM - 5:00 PM</p>
-                        <span class="side-event-badge workshop">Workshop</span>
-                    </div>
-                </div>
-                <div class="side-event-item">
-                    <div class="side-event-date">
-                        <span class="side-event-day">19</span>
-                        <span class="side-event-month">Oct</span>
-                    </div>
-                    <div class="side-event-info">
-                        <h4 class="side-event-title">Research Paper Deadline</h4>
-                        <p class="side-event-meta">11:59 PM</p>
-                        <span class="side-event-badge assignment">Assignment</span>
-                    </div>
-                </div>
+                </a>
+                <?php 
+                    endforeach;
+                }
+                ?>
             </div>
         </div>
         <?php endif; ?>
