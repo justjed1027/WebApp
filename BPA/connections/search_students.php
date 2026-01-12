@@ -12,16 +12,36 @@ if (empty($_SESSION['user_id'])) {
 
 $currentUserId = $_SESSION['user_id'];
 $searchQuery = isset($_GET['q']) ? trim($_GET['q']) : '';
+$page = isset($_GET['page']) && is_numeric($_GET['page']) && $_GET['page'] > 0 ? (int)$_GET['page'] : 1;
+$perPage = 12;
+$offset = ($page - 1) * $perPage;
 
 if (empty($searchQuery)) {
-    echo json_encode(['students' => []]);
+    echo json_encode(['students' => [], 'total' => 0, 'totalPages' => 0, 'currentPage' => 1]);
     exit();
 }
 
 $db = new DatabaseConnection();
 $con = $db->connection;
 
-// Search for users matching the query
+// First, get total count of matching users
+$countSql = "SELECT COUNT(*) as total
+        FROM user u
+        LEFT JOIN profile p ON u.user_id = p.user_id
+        WHERE u.user_id != ? 
+        AND (u.user_username LIKE ? OR p.user_firstname LIKE ? OR p.user_lastname LIKE ? OR CONCAT(p.user_firstname, ' ', p.user_lastname) LIKE ?)";
+
+$searchParam = '%' . $searchQuery . '%';
+$countStmt = $con->prepare($countSql);
+$countStmt->bind_param("issss", $currentUserId, $searchParam, $searchParam, $searchParam, $searchParam);
+$countStmt->execute();
+$countResult = $countStmt->get_result();
+$totalCount = $countResult->fetch_assoc()['total'];
+$countStmt->close();
+
+$totalPages = ceil($totalCount / $perPage);
+
+// Search for users matching the query with pagination
 $searchParam = '%' . $searchQuery . '%';
 $sql = "SELECT u.user_id, u.user_username, u.user_email, p.user_firstname, p.user_lastname 
         FROM user u
@@ -29,10 +49,10 @@ $sql = "SELECT u.user_id, u.user_username, u.user_email, p.user_firstname, p.use
         WHERE u.user_id != ? 
         AND (u.user_username LIKE ? OR p.user_firstname LIKE ? OR p.user_lastname LIKE ? OR CONCAT(p.user_firstname, ' ', p.user_lastname) LIKE ?)
         ORDER BY u.user_username ASC
-        LIMIT 100";
+        LIMIT ? OFFSET ?";
 
 $stmt = $con->prepare($sql);
-$stmt->bind_param("issss", $currentUserId, $searchParam, $searchParam, $searchParam, $searchParam);
+$stmt->bind_param("isssiii", $currentUserId, $searchParam, $searchParam, $searchParam, $searchParam, $perPage, $offset);
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -110,4 +130,10 @@ foreach ($students as &$student) {
     $student['connection_status'] = $connectionStatuses[$student['user_id']] ?? 'none';
 }
 
-echo json_encode(['students' => $students, 'count' => count($students)]);
+echo json_encode([
+    'students' => $students, 
+    'total' => $totalCount,
+    'totalPages' => $totalPages,
+    'currentPage' => $page,
+    'perPage' => $perPage
+]);

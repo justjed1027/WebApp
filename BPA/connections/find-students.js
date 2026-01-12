@@ -78,6 +78,8 @@ function initializeSearch() {
     const searchInput = document.getElementById('studentSearch');
     const clearBtn = document.getElementById('clearSearch');
     const studentsGrid = document.getElementById('studentsGrid');
+    let currentSearchQuery = '';
+    let currentSearchPage = 1;
     
     if (!searchInput) return;
     
@@ -110,7 +112,9 @@ function initializeSearch() {
                 window.location.href = url.toString();
             } else if (searchTerm.length >= 2) {
                 // Perform AJAX search across all users
-                performSearch(searchTerm);
+                currentSearchQuery = searchTerm;
+                currentSearchPage = 1;
+                performSearch(searchTerm, 1);
             }
         }, 400);
     });
@@ -130,11 +134,11 @@ function initializeSearch() {
     }
     
     // Perform AJAX search
-    function performSearch(query) {
+    function performSearch(query, page = 1) {
         // Show loading state
         studentsGrid.innerHTML = '<div class="search-loading">Searching...</div>';
         
-        fetch(`search_students.php?q=${encodeURIComponent(query)}`)
+        fetch(`search_students.php?q=${encodeURIComponent(query)}&page=${page}`)
             .then(response => response.json())
             .then(data => {
                 if (data.error) {
@@ -142,7 +146,7 @@ function initializeSearch() {
                     return;
                 }
                 
-                displaySearchResults(data.students, query);
+                displaySearchResults(data, query);
             })
             .catch(error => {
                 console.error('Search failed:', error);
@@ -151,7 +155,15 @@ function initializeSearch() {
     }
     
     // Display search results
-    function displaySearchResults(students, query) {
+    function displaySearchResults(data, query) {
+        const { students, total, totalPages, currentPage } = data;
+        
+        // Update the count badge
+        updateCountBadge(total);
+        
+        // Update or create pagination controls
+        updateSearchPagination(totalPages, currentPage, query);
+        
         if (students.length === 0) {
             studentsGrid.innerHTML = `
                 <div class="search-empty-state" style="display: block; grid-column: 1 / -1;">
@@ -213,6 +225,130 @@ function initializeSearch() {
         
         // Re-initialize connect buttons
         initializeConnectButtons();
+    }
+    
+    // Update count badge
+    function updateCountBadge(count) {
+        const headerRow = document.querySelector('.students-header-row h3');
+        if (headerRow) {
+            let badge = headerRow.querySelector('.count-badge');
+            if (badge) {
+                badge.textContent = count;
+            } else {
+                badge = document.createElement('span');
+                badge.className = 'count-badge';
+                badge.textContent = count;
+                headerRow.appendChild(badge);
+            }
+        }
+    }
+    
+    // Update search pagination
+    function updateSearchPagination(totalPages, currentPage, query) {
+        let paginationContainer = document.querySelector('.pagination-controls');
+        
+        if (totalPages <= 1) {
+            // Hide pagination if only 1 page or less
+            if (paginationContainer) {
+                paginationContainer.style.display = 'none';
+            }
+            return;
+        }
+        
+        // Show pagination
+        if (paginationContainer) {
+            paginationContainer.style.display = 'flex';
+        } else {
+            // Create pagination container if it doesn't exist
+            const headerRow = document.querySelector('.students-header-row');
+            if (headerRow) {
+                paginationContainer = document.createElement('div');
+                paginationContainer.className = 'pagination-controls';
+                headerRow.appendChild(paginationContainer);
+            } else {
+                return;
+            }
+        }
+        
+        // Build pagination HTML
+        let paginationHtml = `
+            <button class="pagination-btn" id="searchPrevPage" ${currentPage <= 1 ? 'disabled' : ''}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
+                </svg>
+            </button>
+            
+            <div class="page-numbers">
+        `;
+        
+        const startPage = Math.max(1, currentPage - 2);
+        const endPage = Math.min(totalPages, currentPage + 2);
+        
+        if (startPage > 1) {
+            paginationHtml += `<button class="page-number search-page-btn" data-page="1">1</button>`;
+            if (startPage > 2) {
+                paginationHtml += `<span class="page-ellipsis">...</span>`;
+            }
+        }
+        
+        for (let i = startPage; i <= endPage; i++) {
+            const activeClass = i === currentPage ? ' active' : '';
+            paginationHtml += `<button class="page-number search-page-btn${activeClass}" data-page="${i}">${i}</button>`;
+        }
+        
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                paginationHtml += `<span class="page-ellipsis">...</span>`;
+            }
+            paginationHtml += `<button class="page-number search-page-btn" data-page="${totalPages}">${totalPages}</button>`;
+        }
+        
+        paginationHtml += `
+            </div>
+            
+            <button class="pagination-btn" id="searchNextPage" ${currentPage >= totalPages ? 'disabled' : ''}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+                </svg>
+            </button>
+            
+            <div class="page-jump">
+                <input type="number" id="searchPageInput" min="1" max="${totalPages}" placeholder="${currentPage}" class="page-input" title="Enter page number">
+            </div>
+        `;
+        
+        paginationContainer.innerHTML = paginationHtml;
+        
+        // Add event listeners for search pagination
+        const pageButtons = paginationContainer.querySelectorAll('.search-page-btn');
+        pageButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const page = parseInt(this.getAttribute('data-page'));
+                performSearch(query, page);
+            });
+        });
+        
+        const prevBtn = document.getElementById('searchPrevPage');
+        if (prevBtn && !prevBtn.disabled) {
+            prevBtn.addEventListener('click', () => performSearch(query, currentPage - 1));
+        }
+        
+        const nextBtn = document.getElementById('searchNextPage');
+        if (nextBtn && !nextBtn.disabled) {
+            nextBtn.addEventListener('click', () => performSearch(query, currentPage + 1));
+        }
+        
+        const pageInput = document.getElementById('searchPageInput');
+        if (pageInput) {
+            pageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const page = parseInt(this.value);
+                    if (page && page >= 1 && page <= totalPages) {
+                        performSearch(query, page);
+                    }
+                }
+            });
+        }
     }
     
     // Helper to escape HTML
