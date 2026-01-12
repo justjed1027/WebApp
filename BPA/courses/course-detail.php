@@ -273,11 +273,20 @@ $course = [
       <div class="course-detail-content">
         <!-- Navigation Breadcrumb -->
         <div class="breadcrumb">
-          <a href="courses.php">Courses</a>
-          <span>/</span>
-          <a href="course-list.php?group=<?php echo $course['groupId']; ?>"><?php echo $course['group']; ?></a>
-          <span>/</span>
-          <span class="current"><?php echo $course['title']; ?></span>
+          <a href="../courses/courses.php" class="breadcrumb-link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5"/>
+            </svg>
+            Dashboard
+          </a>
+          <svg class="breadcrumb-separator" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+          </svg>
+          <a href="course-list.php?category=<?php echo $subject['category_id']; ?>" class="breadcrumb-link"><?php echo $course['group']; ?></a>
+          <svg class="breadcrumb-separator" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+          </svg>
+          <span class="breadcrumb-current"><?php echo $course['title']; ?></span>
         </div>
 
         <!-- Course Header -->
@@ -368,13 +377,13 @@ $course = [
           <div class="content-card">
             <h2>Students Learning This Topic</h2>
             <p class="section-intro"><?php echo $course['studentsLearning']; ?> students are currently learning <?php echo $course['title']; ?>. Connect with them to form study groups!</p>
-            <button class="btn-primary">Browse Learners →</button>
+            <button class="btn-primary" id="browseLearners" data-subject-id="<?php echo $course['id']; ?>">Browse Learners →</button>
           </div>
           
           <div class="content-card">
             <h2>Students Fluent in This Topic</h2>
             <p class="section-intro"><?php echo $course['studentsFluent']; ?> students are fluent in <?php echo $course['title']; ?> and available to help. Reach out for guidance!</p>
-            <button class="btn-primary">Find Mentors →</button>
+            <button class="btn-primary" id="findMentors" data-subject-id="<?php echo $course['id']; ?>">Find Mentors →</button>
           </div>
         </div>
 
@@ -437,6 +446,32 @@ $course = [
       <?php renderSideContent('courses'); ?>
     </div>
   </main>
+
+  <!-- Students Modal -->
+  <div id="studentsModal" class="students-modal" style="display: none;">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">Students</h2>
+        <button class="modal-close" id="closeModal">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+          </svg>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="modal-header-row">
+          <div class="modal-students-count" id="modalCount"></div>
+          <div class="modal-pagination" id="modalPagination" style="display: none;"></div>
+        </div>
+        
+        <div class="modal-students-grid" id="modalStudentsGrid">
+          <div class="search-loading">Loading students...</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="courses.js"></script>
   <script src="../components/sidecontent.js"></script>

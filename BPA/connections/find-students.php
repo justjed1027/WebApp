@@ -31,15 +31,62 @@ $userFirstName = $userProfile['user_firstname'] ?? $user->user_username;
 $userLastName = $userProfile['user_lastname'] ?? '';
 $userFullName = trim($userFirstName . ' ' . $userLastName) ?: $user->user_username;
 
-// Get all users except current user with their profile info
+// Pagination settings
+$studentsPerPage = 12;
+$currentPage = isset($_GET['page']) && is_numeric($_GET['page']) && $_GET['page'] > 0 ? (int)$_GET['page'] : 1;
+$offset = ($currentPage - 1) * $studentsPerPage;
+
+// Check if there's a search query
+$searchQuery = isset($_GET['search']) ? trim($_GET['search']) : '';
+
+// Build the WHERE clause for search
+$whereClause = "u.user_id != ?";
+$searchParam = null;
+if (!empty($searchQuery)) {
+    $whereClause .= " AND (u.user_username LIKE ? OR p.user_firstname LIKE ? OR p.user_lastname LIKE ? OR CONCAT(p.user_firstname, ' ', p.user_lastname) LIKE ?)";
+    $searchParam = '%' . $searchQuery . '%';
+}
+
+// Get total count of users (with search filter if applicable)
+if (!empty($searchQuery)) {
+    $countSql = "SELECT COUNT(*) as total FROM user u 
+                 LEFT JOIN profile p ON u.user_id = p.user_id 
+                 WHERE " . $whereClause;
+    $countStmt = $con->prepare($countSql);
+    $countStmt->bind_param("issss", $currentUserId, $searchParam, $searchParam, $searchParam, $searchParam);
+} else {
+    $countSql = "SELECT COUNT(*) as total FROM user WHERE user_id != ?";
+    $countStmt = $con->prepare($countSql);
+    $countStmt->bind_param("i", $currentUserId);
+}
+$countStmt->execute();
+$countResult = $countStmt->get_result();
+$totalUsers = $countResult->fetch_assoc()['total'];
+$countStmt->close();
+
+$totalPages = ceil($totalUsers / $studentsPerPage);
+
+// Ensure current page is within valid range
+if ($currentPage > $totalPages && $totalPages > 0) {
+    $currentPage = $totalPages;
+    $offset = ($currentPage - 1) * $studentsPerPage;
+}
+
+// Get all users except current user with their profile info (with pagination and search)
 $sql = "SELECT u.user_id, u.user_username, u.user_email, p.user_firstname, p.user_lastname 
         FROM user u
         LEFT JOIN profile p ON u.user_id = p.user_id
-        WHERE u.user_id != ? 
-        ORDER BY u.user_username ASC";
+        WHERE " . $whereClause . "
+        ORDER BY u.user_username ASC
+        LIMIT ? OFFSET ?";
 
-$stmt = $con->prepare($sql);
-$stmt->bind_param("i", $currentUserId);
+if (!empty($searchQuery)) {
+    $stmt = $con->prepare($sql);
+    $stmt->bind_param("isssiii", $currentUserId, $searchParam, $searchParam, $searchParam, $searchParam, $studentsPerPage, $offset);
+} else {
+    $stmt = $con->prepare($sql);
+    $stmt->bind_param("iii", $currentUserId, $studentsPerPage, $offset);
+}
 $stmt->execute();
 $allUsers = $stmt->get_result();
 $stmt->close();
@@ -259,20 +306,73 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             <div class="connections-content-card">
                 <h3>Search Students</h3>
                 <div class="search-container">
-                    <input type="text" id="studentSearch" placeholder="Search by name or username..." class="search-input">
+                    <input type="text" id="studentSearch" name="search" placeholder="Search by name or username..." class="search-input" value="<?php echo htmlspecialchars($searchQuery); ?>" autocomplete="off">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16" class="search-icon">
                         <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
                     </svg>
+                    <button type="button" class="search-clear-btn" id="clearSearch" title="Clear search" style="display: none;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                        </svg>
+                    </button>
                 </div>
             </div>
 
             <!-- All Students Card -->
             <div class="connections-content-card">
-                <h3>All Students 
-                    <?php if ($allUsers && $allUsers->num_rows > 0): ?>
-                        <span class="count-badge"><?php echo $allUsers->num_rows; ?></span>
+                <div class="students-header-row">
+                    <h3>All Students 
+                        <?php if ($totalUsers > 0): ?>
+                            <span class="count-badge"><?php echo $totalUsers; ?></span>
+                        <?php endif; ?>
+                    </h3>
+                    
+                    <?php if ($totalPages > 1): ?>
+                    <div class="pagination-controls">
+                        <button class="pagination-btn" id="prevPage" <?php echo $currentPage <= 1 ? 'disabled' : ''; ?> data-page="<?php echo $currentPage - 1; ?>">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
+                            </svg>
+                        </button>
+                        
+                        <div class="page-numbers" id="pageNumbers">
+                            <?php
+                            $startPage = max(1, $currentPage - 2);
+                            $endPage = min($totalPages, $currentPage + 2);
+                            
+                            if ($startPage > 1) {
+                                echo '<button class="page-number" data-page="1">1</button>';
+                                if ($startPage > 2) {
+                                    echo '<span class="page-ellipsis">...</span>';
+                                }
+                            }
+                            
+                            for ($i = $startPage; $i <= $endPage; $i++) {
+                                $activeClass = ($i == $currentPage) ? ' active' : '';
+                                echo '<button class="page-number' . $activeClass . '" data-page="' . $i . '">' . $i . '</button>';
+                            }
+                            
+                            if ($endPage < $totalPages) {
+                                if ($endPage < $totalPages - 1) {
+                                    echo '<span class="page-ellipsis">...</span>';
+                                }
+                                echo '<button class="page-number" data-page="' . $totalPages . '">' . $totalPages . '</button>';
+                            }
+                            ?>
+                        </div>
+                        
+                        <button class="pagination-btn" id="nextPage" <?php echo $currentPage >= $totalPages ? 'disabled' : ''; ?> data-page="<?php echo $currentPage + 1; ?>">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+                            </svg>
+                        </button>
+                        
+                        <div class="page-jump">
+                            <input type="number" id="pageInput" min="1" max="<?php echo $totalPages; ?>" placeholder="<?php echo $currentPage; ?>" class="page-input" title="Enter page number">
+                        </div>
+                    </div>
                     <?php endif; ?>
-                </h3>
+                </div>
 
                 <?php if ($allUsers && $allUsers->num_rows > 0): ?>
                     <div class="students-grid" id="studentsGrid">

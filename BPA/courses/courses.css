@@ -652,25 +652,48 @@ body.light-mode .search-container:focus-within svg {
 .breadcrumb {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.875rem;
+  gap: 10px;
+  font-size: 0.9rem;
+  margin-top: 85px;
   margin-bottom: 24px;
-  color: var(--text-muted);
+  padding: 12px 16px;
+  background: var(--background-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  width: fit-content;
 }
 
-.breadcrumb a {
+.breadcrumb-link {
   color: var(--text-secondary);
   text-decoration: none;
   transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 500;
 }
 
-.breadcrumb a:hover {
+.breadcrumb-link:hover {
   color: var(--primary-color);
+  background: var(--background-main);
 }
 
-.breadcrumb .current {
+.breadcrumb-link svg {
+  flex-shrink: 0;
+}
+
+.breadcrumb-separator {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+
+.breadcrumb-current {
   color: var(--text-primary);
   font-weight: 600;
+  padding: 4px 8px;
 }
 
 /* Course Detail Header */
@@ -1564,3 +1587,254 @@ body.light-mode .btn-secondary:hover {
   }
 }
 
+/* ===== STUDENTS MODAL STYLES ===== */
+.students-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  position: relative;
+  background: var(--background-main);
+  border-radius: 12px;
+  max-width: 1000px;
+  width: 90%;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  z-index: 10001;
+}
+
+.modal-header {
+  padding: 24px 32px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+}
+
+.modal-close:hover {
+  background: var(--background-secondary);
+  color: var(--text-primary);
+}
+
+.modal-body {
+  padding: 24px 32px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.modal-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 20px;
+}
+
+.modal-students-count {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.modal-students-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.modal-pagination {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Reuse student card styles from connections */
+.modal-students-grid .student-card {
+  background: var(--background-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px;
+  transition: all var(--transition-fast);
+}
+
+.modal-students-grid .student-card:hover {
+  border-color: var(--primary-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.modal-students-grid .connection-header {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.modal-students-grid .user-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+  flex-shrink: 0;
+}
+
+.modal-students-grid .user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.modal-students-grid .user-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 4px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.modal-students-grid .user-details {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.modal-students-grid .connection-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.modal-students-grid .btn-connect,
+.modal-students-grid .btn-message {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+}
+
+.modal-students-grid .btn-connect {
+  background: var(--primary-color);
+  color: white;
+  flex: 1;
+}
+
+.modal-students-grid .btn-connect:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.modal-students-grid .btn-message {
+  background: var(--background-main);
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+
+.modal-students-grid .btn-message:hover {
+  background: var(--primary-color);
+  color: white;
+}
+
+.modal-students-grid .status-badge {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: 1px solid;
+  display: inline-block;
+}
+
+.modal-students-grid .status-badge.connected {
+  background: rgba(76, 175, 80, 0.1);
+  color: #4caf50;
+  border-color: rgba(76, 175, 80, 0.3);
+}
+
+.modal-students-grid .status-badge.pending {
+  background: rgba(255, 152, 0, 0.1);
+  color: #ff9800;
+  border-color: rgba(255, 152, 0, 0.3);
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    width: 95%;
+    max-height: 90vh;
+  }
+  
+  .modal-header,
+  .modal-body {
+    padding: 20px;
+  }
+  
+  .modal-students-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .modal-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .modal-pagination {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 1024px) {
+  .modal-students-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
