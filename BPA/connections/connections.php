@@ -369,7 +369,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     </div> <!-- End calendar-container -->
     
     <!-- Side Content -->
-    <?php renderSideContent('connections', ['hide' => ['trending_topics']]); ?>
+    <?php renderSideContent('connections', ['hide' => []]); ?>
   </main>
 
   <!-- Unconnect confirmation modal -->

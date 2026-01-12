@@ -326,7 +326,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         </div>
 
         <!-- Side Content -->
-        <?php renderSideContent('connections', ['hide' => ['trending_topics']]); ?>
+        <?php renderSideContent('connections', ['hide' => []]); ?>
     </main>
 
     <script src="../components/sidecontent.js"></script>

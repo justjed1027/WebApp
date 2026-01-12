@@ -11,9 +11,9 @@ function renderSideContent($currentPage = '', $options = []) {
     // Defaults by page
     $showNotifications = !in_array($currentPage, ['notifications']);
     $showUpcomingEvents = !in_array($currentPage, ['calendar', 'events']);
-    $showRecentDMs = !in_array($currentPage, ['dms', 'messages']);
+    $showRecentDMs = true; // Always show Recent Messages
     $showSuggestedCollaborators = !in_array($currentPage, ['connections']);
-    $showTrendingTopics = !in_array($currentPage, ['forum']);
+    $showTrendingTopics = false; // Replaced by Recent Messages
 
     // Optional overrides per page via $options['hide']
     // Example: renderSideContent('courses', ['hide' => ['notifications', 'recentDMs']])
@@ -23,6 +23,7 @@ function renderSideContent($currentPage = '', $options = []) {
         if (in_array('upcomingevents', $hide) || in_array('upcoming_events', $hide)) { $showUpcomingEvents = false; }
         if (in_array('recentdms', $hide) || in_array('recent_dms', $hide) || in_array('messages', $hide)) { $showRecentDMs = false; }
         if (in_array('suggestedcollaborators', $hide) || in_array('suggested_collaborators', $hide) || in_array('collaborators', $hide)) { $showSuggestedCollaborators = false; }
+        // Trending topics kept for backward compatibility but no longer shown by default
         if (in_array('trendingtopics', $hide) || in_array('trending_topics', $hide) || in_array('topics', $hide)) { $showTrendingTopics = false; }
     }
 
@@ -158,31 +159,125 @@ function renderSideContent($currentPage = '', $options = []) {
                 <a href="../dms/index.html" class="side-card-link">View All</a>
             </div>
             <div class="side-card-body">
-                <div class="side-dm-item unread">
-                    <div class="side-dm-avatar avatar-1"></div>
+                <?php 
+                // Fetch recent messages from database
+                $recentMessages = [];
+                if (isset($_SESSION['user_id'])) {
+                    $currentUserId = $_SESSION['user_id'];
+                    require_once __DIR__ . '/../database/DatabaseConnection.php';
+                    $dbConn = new DatabaseConnection();
+                    $db = $dbConn->connection;
+                    
+                    // Get recent conversations with last message info
+                    $sql = "SELECT 
+                        c.conversation_id,
+                        CASE 
+                            WHEN c.user1_id = ? THEN c.user2_id
+                            ELSE c.user1_id
+                        END AS other_user_id,
+                        (SELECT user_username FROM user WHERE user_id = 
+                            CASE 
+                                WHEN c.user1_id = ? THEN c.user2_id
+                                ELSE c.user1_id
+                            END
+                        ) AS other_username,
+                        (SELECT message_text FROM messages 
+                         WHERE conversation_id = c.conversation_id 
+                         ORDER BY sent_at DESC LIMIT 1) AS last_message,
+                        (SELECT sent_at FROM messages 
+                         WHERE conversation_id = c.conversation_id 
+                         ORDER BY sent_at DESC LIMIT 1) AS last_message_time,
+                        (SELECT COUNT(*) FROM messages 
+                         WHERE conversation_id = c.conversation_id 
+                         AND sender_id != ? 
+                         AND is_read = FALSE) AS unread_count
+                    FROM conversations c
+                    WHERE (c.user1_id = ? OR c.user2_id = ?)
+                    AND EXISTS (
+                        SELECT 1 FROM connections conn
+                        WHERE conn.status = 'accepted'
+                        AND (
+                            (conn.requester_id = c.user1_id AND conn.receiver_id = c.user2_id)
+                            OR (conn.requester_id = c.user2_id AND conn.receiver_id = c.user1_id)
+                        )
+                    )
+                    ORDER BY last_message_time DESC
+                    LIMIT " . ($limitRecentDMs ?? 3);
+                    
+                    $stmt = $db->prepare($sql);
+                    if ($stmt) {
+                        $stmt->bind_param("iiiii", $currentUserId, $currentUserId, $currentUserId, $currentUserId, $currentUserId);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+                        
+                        while ($row = $result->fetch_assoc()) {
+                            // Calculate time ago
+                            $sentTime = strtotime($row['last_message_time']);
+                            $now = time();
+                            $diff = $now - $sentTime;
+                            
+                            if ($diff < 60) {
+                                $timeAgo = 'Just now';
+                            } elseif ($diff < 3600) {
+                                $minutes = floor($diff / 60);
+                                $timeAgo = $minutes . 'm ago';
+                            } elseif ($diff < 86400) {
+                                $hours = floor($diff / 3600);
+                                $timeAgo = $hours . 'h ago';
+                            } elseif ($diff < 604800) {
+                                $days = floor($diff / 86400);
+                                $timeAgo = $days . 'd ago';
+                            } else {
+                                $timeAgo = date('M j', $sentTime);
+                            }
+                            
+                            // Truncate message preview
+                            $messagePreview = $row['last_message'];
+                            if (strlen($messagePreview) > 35) {
+                                $messagePreview = substr($messagePreview, 0, 32) . '...';
+                            }
+                            
+                            $recentMessages[] = [
+                                'conversation_id' => $row['conversation_id'],
+                                'name' => $row['other_username'],
+                                'message' => $messagePreview,
+                                'time' => $timeAgo,
+                                'avatar' => 'avatar-' . (($row['other_user_id'] % 6) + 1),
+                                'unread' => (int)$row['unread_count'] > 0,
+                                'badge' => (int)$row['unread_count']
+                            ];
+                        }
+                        $stmt->close();
+                    }
+                    $dbConn->closeConnection();
+                }
+                
+                // Fallback to sample data if no messages
+                if (empty($recentMessages)) {
+                    $recentMessages = [
+                        ['conversation_id' => null, 'name' => 'No Messages', 'message' => 'Start a conversation with your connections', 'time' => '', 'avatar' => 'avatar-1', 'unread' => false, 'badge' => 0]
+                    ];
+                }
+                
+                foreach ($recentMessages as $msg):
+                    $unreadClass = $msg['unread'] ? ' unread' : '';
+                    $clickable = isset($msg['conversation_id']) ? ' style="cursor: pointer;"' : '';
+                    $conversationId = $msg['conversation_id'] ?? '';
+                ?>
+                <a href="<?php echo $conversationId ? '../dms/dms.php?conversation_id=' . $conversationId : '#'; ?>" class="side-dm-item<?php echo $unreadClass; ?>" <?php echo $clickable; ?>>
+                    <div class="side-dm-avatar <?php echo $msg['avatar']; ?>"></div>
                     <div class="side-dm-content">
-                        <h4 class="side-dm-name">Jessica Williams</h4>
-                        <p class="side-dm-message">Can you review my code before...</p>
-                        <span class="side-dm-time">2m ago</span>
+                        <h4 class="side-dm-name"><?php echo htmlspecialchars($msg['name']); ?></h4>
+                        <p class="side-dm-message"><?php echo htmlspecialchars($msg['message']); ?></p>
+                        <?php if (!empty($msg['time'])): ?>
+                        <span class="side-dm-time"><?php echo htmlspecialchars($msg['time']); ?></span>
+                        <?php endif; ?>
                     </div>
-                    <span class="side-dm-badge">3</span>
-                </div>
-                <div class="side-dm-item">
-                    <div class="side-dm-avatar avatar-2"></div>
-                    <div class="side-dm-content">
-                        <h4 class="side-dm-name">Michael Chen</h4>
-                        <p class="side-dm-message">Thanks for the help with the project!</p>
-                        <span class="side-dm-time">1h ago</span>
-                    </div>
-                </div>
-                <div class="side-dm-item">
-                    <div class="side-dm-avatar avatar-3"></div>
-                    <div class="side-dm-content">
-                        <h4 class="side-dm-name">Study Group</h4>
-                        <p class="side-dm-message">Meeting at 3pm tomorrow?</p>
-                        <span class="side-dm-time">3h ago</span>
-                    </div>
-                </div>
+                    <?php if (isset($msg['badge']) && $msg['badge'] > 0): ?>
+                    <span class="side-dm-badge"><?php echo $msg['badge']; ?></span>
+                    <?php endif; ?>
+                </a>
+                <?php endforeach; ?>
             </div>
         </div>
         <?php endif; ?>

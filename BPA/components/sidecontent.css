@@ -265,11 +265,26 @@
   transition: all 0.2s ease;
   cursor: pointer;
   position: relative;
+  text-decoration: none !important;
+  color: inherit;
+}
+
+.side-dm-item * {
+  text-decoration: none !important;
+  color: inherit !important;
 }
 
 .side-dm-item:hover {
   background: var(--background-hover, rgba(255, 255, 255, 0.06));
   transform: scale(1.02);
+  text-decoration: none !important;
+}
+
+.side-dm-item:visited,
+.side-dm-item:active,
+.side-dm-item:focus {
+  text-decoration: none !important;
+  color: inherit;
 }
 
 .side-dm-item.unread {

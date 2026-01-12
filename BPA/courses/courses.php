@@ -361,10 +361,9 @@ $conn->close();
 
       <!-- Side Content -->
       <?php 
-        // Hide a few sidebar boxes and limit trending topics on the courses page
+        // Hide a few sidebar boxes on the courses page
         renderSideContent('courses', [
-          'hide' => ['notifications', 'recentDMs'],
-          'limit' => ['trendingTopics' => 2]
+          'hide' => ['notifications']
         ]);
       ?>
     </div>

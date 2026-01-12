@@ -187,7 +187,7 @@ if (!isset($_SESSION['user_id'])) {
 
     <!-- Side Content -->
     <?php renderSideContent('dms', [
-        'hide' => ['trending_topics', 'upcoming_events'], 
+        'hide' => ['upcoming_events'], 
         'limit' => ['notifications' => 2, 'recent_dms' => 2, 'suggested_collaborators' => 2]
     ]); ?>
     
