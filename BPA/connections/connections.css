@@ -1130,6 +1130,207 @@ body.light-mode .search-input {
   color: var(--text-primary);
 }
 
+/* Search loading and error states */
+.search-loading,
+.search-error {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  grid-column: 1 / -1;
+}
+
+.search-loading {
+  color: var(--primary-color);
+}
+
+.search-error {
+  color: #ff5252;
+}
+
+/* Pagination Styles */
+.students-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.students-header-row h3 {
+  margin: 0;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pagination-btn {
+  background: var(--background-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  color: var(--text-primary);
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pagination-btn svg {
+  pointer-events: none;
+}
+
+.page-numbers {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.page-number {
+  background: var(--background-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.page-number:hover {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+.page-number.active {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+  font-weight: 600;
+}
+
+.page-ellipsis {
+  color: var(--text-secondary);
+  padding: 0 4px;
+  font-size: 0.9rem;
+}
+
+.page-jump {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 8px;
+  padding-left: 12px;
+  border-left: 1px solid var(--border-color);
+}
+
+.page-input {
+  background: var(--background-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  width: 50px;
+  height: 36px;
+  padding: 0 8px;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  text-align: center;
+  transition: all var(--transition-fast);
+  font-weight: 500;
+}
+
+.page-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  background: var(--background-main);
+}
+
+.page-input::placeholder {
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Search form styling */
+.search-form {
+  position: relative;
+}
+
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 14px;
+  color: var(--text-secondary);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.search-clear-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  padding: 0;
+  z-index: 1;
+}
+
+.search-clear-btn:hover {
+  color: var(--primary-color);
+  background: var(--background-secondary);
+  transform: translateY(-50%) rotate(90deg);
+}
+
+.search-clear-btn svg {
+  pointer-events: none;
+  display: block;
+}
+
+.search-input {
+  padding-left: 44px;
+  padding-right: 44px;
+}
+
 /* Responsive Design for Find Students */
 @media (max-width: 768px) {
   .students-grid {
@@ -1160,5 +1361,21 @@ body.light-mode .search-input {
   .status-badge, .btn-connect, .btn-message {
     text-align: center;
     justify-content: center;
+  }
+  
+  .students-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .pagination-controls {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .page-jump {
+    margin-left: 0;
+    padding-left: 0;
+    border-left: none;
   }
 }
