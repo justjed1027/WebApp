@@ -112,7 +112,8 @@ document.addEventListener('DOMContentLoaded', () => {
 			const response = await fetch('get_featured_events.php');
 			const data = await response.json();
 
-			console.log('Featured events loaded:', data);
+			console.log('Featured events response:', data);
+			console.log('Response status:', response.status);
 
 			if (data.success && data.events && data.events.length > 0) {
 				featuredEvents = data.events;
@@ -121,6 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				renderFeaturedCarousel();
 			} else {
 				// Show no events message
+				console.log('No featured events found. Data:', data);
 				featuredTrack.innerHTML = `
 					<div class="no-featured-events" style="text-align: center; padding: 4rem 2rem; color: var(--text-secondary);">
 						<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" viewBox="0 0 16 16" style="opacity: 0.3; margin-bottom: 1rem;">
@@ -135,9 +137,11 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 		} catch (error) {
 			console.error('Failed to load featured events:', error);
+			console.error('Error details:', error.message, error.stack);
 			featuredTrack.innerHTML = `
 				<div class="featured-error" style="text-align: center; padding: 4rem 2rem; color: var(--text-error);">
 					<p>Failed to load featured events. Please try refreshing the page.</p>
+					<p style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.5rem;">Error: ${error.message}</p>
 				</div>
 			`;
 		}

@@ -247,29 +247,392 @@ $db->closeConnection();
                     .admin-status p {
                         margin: 4px 0;
                     }
+
+                    .status-active {
+                        color: #10b981 !important;
+                    }
+
+                    .status-banned {
+                        color: #ef4444 !important;
+                    }
+
+                    .status-deleted {
+                        color: #888 !important;
+                    }
+                </style>
+
+                <div id="adminModal" class="admin-modal">
+                    <div class="admin-modal-content">
+                        <div class="admin-modal-header">
+                            <h3 id="modalTitle">Confirm Action</h3>
+                            <button class="admin-modal-close" onclick="closeAdminModal()">&times;</button>
+                        </div>
+                        <div class="admin-modal-body">
+                            <p id="modalMessage">Are you sure?</p>
+                            <div id="modalDetails" style="display: none; margin-top: 12px; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 6px; max-height: 300px; overflow-y: auto;">
+                                <!-- Activity details will go here -->
+                            </div>
+                        </div>
+                        <div class="admin-modal-footer">
+                            <button id="modalCancelBtn" class="admin-modal-btn admin-modal-btn-cancel" onclick="closeAdminModal()">Cancel</button>
+                            <button id="modalConfirmBtn" class="admin-modal-btn admin-modal-btn-confirm" onclick="executeAdminAction()">Confirm</button>
+                        </div>
+                    </div>
+                </div>
+
+                <style>
+                    .admin-modal {
+                        display: none;
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0, 0, 0, 0.7);
+                        z-index: 1000;
+                        justify-content: center;
+                        align-items: center;
+                    }
+
+                    .admin-modal.active {
+                        display: flex;
+                    }
+
+                    .admin-modal-content {
+                        background: #1a1a1a;
+                        border: 2px solid #22c55e;
+                        border-radius: 12px;
+                        width: 90%;
+                        max-width: 500px;
+                        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+                    }
+
+                    .admin-modal-header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        padding: 20px;
+                        border-bottom: 1px solid rgba(34, 197, 94, 0.3);
+                    }
+
+                    .admin-modal-header h3 {
+                        margin: 0;
+                        color: #22c55e;
+                        font-size: 1.3rem;
+                    }
+
+                    .admin-modal-close {
+                        background: none;
+                        border: none;
+                        color: #888;
+                        font-size: 28px;
+                        cursor: pointer;
+                        padding: 0;
+                        width: 32px;
+                        height: 32px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        border-radius: 6px;
+                        transition: all 0.2s ease;
+                    }
+
+                    .admin-modal-close:hover {
+                        background: rgba(255, 255, 255, 0.1);
+                        color: #fff;
+                    }
+
+                    .admin-modal-body {
+                        padding: 20px;
+                        color: #e0e0e0;
+                    }
+
+                    .admin-modal-body p {
+                        margin: 0;
+                        line-height: 1.5;
+                    }
+
+                    .admin-modal-footer {
+                        display: flex;
+                        gap: 12px;
+                        padding: 20px;
+                        border-top: 1px solid rgba(34, 197, 94, 0.3);
+                        justify-content: flex-end;
+                    }
+
+                    .admin-modal-btn {
+                        padding: 10px 20px;
+                        border: none;
+                        border-radius: 6px;
+                        font-size: 0.95rem;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                    }
+
+                    .admin-modal-btn-cancel {
+                        background: #444;
+                        color: #e0e0e0;
+                    }
+
+                    .admin-modal-btn-cancel:hover {
+                        background: #555;
+                    }
+
+                    .admin-modal-btn-confirm {
+                        background: #22c55e;
+                        color: #0b0b0b;
+                    }
+
+                    .admin-modal-btn-confirm:hover {
+                        background: #16a34a;
+                    }
+
+                    .admin-modal-btn-confirm.danger {
+                        background: #ef4444;
+                        color: white;
+                    }
+
+                    .admin-modal-btn-confirm.danger:hover {
+                        background: #dc2626;
+                    }
                 </style>
 
                 <script>
-                    function banUser(userId) {
-                        if (confirm('Are you sure you want to ban this user? They will no longer be able to log in.')) {
-                            alert('Ban functionality coming soon! User ID: ' + userId);
-                            // TODO: Implement ban user endpoint
+                    let currentAdminAction = null;
+                    let currentUserId = null;
+
+                    function checkUserBanStatus(userId) {
+                        fetch('backend/check_ban_status.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ user_id: userId })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            const statusDisplay = document.getElementById('userStatusDisplay');
+                            if (data.user_is_banned === 1) {
+                                statusDisplay.textContent = 'Banned';
+                                statusDisplay.className = 'status-banned';
+                            } else {
+                                statusDisplay.textContent = 'Active';
+                                statusDisplay.className = 'status-active';
+                            }
+                        })
+                        .catch(error => console.error('Error checking ban status:', error));
+                    }
+
+                    function showAdminModal(title, message, confirmText = 'Confirm', isDanger = false) {
+                        document.getElementById('modalTitle').textContent = title;
+                        document.getElementById('modalMessage').textContent = message;
+                        document.getElementById('modalDetails').style.display = 'none';
+                        document.getElementById('modalDetails').innerHTML = '';
+                        
+                        const confirmBtn = document.getElementById('modalConfirmBtn');
+                        const cancelBtn = document.getElementById('modalCancelBtn');
+                        
+                        confirmBtn.textContent = confirmText;
+                        confirmBtn.style.display = 'block';
+                        cancelBtn.textContent = 'Cancel';
+                        
+                        if (isDanger) {
+                            confirmBtn.classList.add('danger');
+                        } else {
+                            confirmBtn.classList.remove('danger');
                         }
+                        
+                        document.getElementById('adminModal').classList.add('active');
+                    }
+
+                    function closeAdminModal() {
+                        document.getElementById('adminModal').classList.remove('active');
+                        currentAdminAction = null;
+                        currentUserId = null;
+                    }
+
+                    function executeAdminAction() {
+                        if (!currentAdminAction) return;
+                        currentAdminAction();
+                    }
+
+                    function banUser(userId) {
+                        currentUserId = userId;
+                        currentAdminAction = () => {
+                            fetch('backend/ban_user.php', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ user_id: userId })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    showSuccessMessage('User Banned', '✓ ' + data.message);
+                                    setTimeout(() => checkUserBanStatus(userId), 500);
+                                } else {
+                                    showErrorMessage('Error', '✗ ' + data.message);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                showErrorMessage('Error', 'An error occurred: ' + error.message);
+                            });
+                        };
+
+                        showAdminModal('Ban User', 'Are you sure you want to ban this user? They will no longer be able to log in.', 'Ban User', true);
                     }
 
                     function viewUserActivity(userId) {
-                        alert('View activity functionality coming soon! User ID: ' + userId);
-                        // TODO: Implement view user activity endpoint
+                        fetch('backend/view_user_activity.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ user_id: userId })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                document.getElementById('modalTitle').textContent = `Activity: ${data.username}`;
+                                document.getElementById('modalMessage').textContent = 'User Activity Summary';
+                                
+                                let detailsHTML = `
+                                    <div style="color: #e0e0e0;">
+                                        <p><strong>Posts:</strong> ${data.posts_count}</p>
+                                        <p><strong>Comments:</strong> ${data.comments_count}</p>
+                                `;
+                                
+                                if (data.posts.length > 0) {
+                                    detailsHTML += '<p style="margin-top: 12px; font-weight: 600; color: #22c55e;">Recent Posts:</p>';
+                                    data.posts.slice(0, 5).forEach(post => {
+                                        const shortContent = post.content.substring(0, 60) + (post.content.length > 60 ? '...' : '');
+                                        detailsHTML += `<p style="font-size: 0.9rem; margin: 6px 0;"><span style="color: #888;">${post.created_at}</span><br>${escapeHtml(shortContent)}</p>`;
+                                    });
+                                }
+                                
+                                detailsHTML += '</div>';
+                                
+                                const detailsDiv = document.getElementById('modalDetails');
+                                detailsDiv.innerHTML = detailsHTML;
+                                detailsDiv.style.display = 'block';
+                                
+                                document.getElementById('adminModal').classList.add('active');
+                                document.getElementById('modalConfirmBtn').style.display = 'none';
+                                document.getElementById('modalCancelBtn').textContent = 'Close';
+                                
+                                currentAdminAction = null;
+                            } else {
+                                showErrorMessage('Error', '✗ ' + data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showErrorMessage('Error', 'An error occurred: ' + error.message);
+                        });
                     }
 
                     function deleteUser(userId) {
-                        if (confirm('WARNING: This will permanently delete this user and all their data. This cannot be undone. Are you sure?')) {
-                            if (confirm('This is a final confirmation. Delete this user permanently?')) {
-                                alert('Delete functionality coming soon! User ID: ' + userId);
-                                // TODO: Implement delete user endpoint
-                            }
-                        }
+                        currentUserId = userId;
+                        
+                        showAdminModal(
+                            'Delete User (Step 1 of 2)',
+                            'WARNING: This will permanently delete this user and all their data. This cannot be undone. Are you absolutely sure?',
+                            'Yes, Continue',
+                            true
+                        );
+                        
+                        currentAdminAction = () => {
+                            // Show second confirmation (modal stays open)
+                            showAdminModal(
+                                'Delete User (Final Confirmation)',
+                                'This is your final warning. Deleting this user will permanently remove all their posts, comments, connections, and profile data. Click "Delete Permanently" to proceed.',
+                                'Delete Permanently',
+                                true
+                            );
+                            
+                            currentAdminAction = () => {
+                                fetch('backend/delete_user.php', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({ user_id: userId })
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        showSuccessMessage('User Deleted', '✓ ' + data.message + '\n\nRedirecting to dashboard in 2 seconds...');
+                                        const statusDisplay = document.getElementById('userStatusDisplay');
+                                        statusDisplay.textContent = 'Deleted';
+                                        statusDisplay.className = 'status-deleted';
+                                        
+                                        setTimeout(() => {
+                                            window.location.href = '../courses/courses.php';
+                                        }, 2000);
+                                    } else {
+                                        showErrorMessage('Error', '✗ ' + data.message);
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                    showErrorMessage('Error', 'An error occurred: ' + error.message);
+                                });
+                            };
+                        };
                     }
+
+                    function showSuccessMessage(title, message) {
+                        document.getElementById('modalTitle').textContent = title;
+                        document.getElementById('modalMessage').textContent = message;
+                        document.getElementById('modalDetails').style.display = 'none';
+                        
+                        const confirmBtn = document.getElementById('modalConfirmBtn');
+                        confirmBtn.style.display = 'none';
+                        document.getElementById('modalCancelBtn').textContent = 'Close';
+                        
+                        document.getElementById('adminModal').classList.add('active');
+                        currentAdminAction = null;
+                    }
+
+                    function showErrorMessage(title, message) {
+                        document.getElementById('modalTitle').textContent = title;
+                        document.getElementById('modalMessage').textContent = message;
+                        document.getElementById('modalDetails').style.display = 'none';
+                        
+                        const confirmBtn = document.getElementById('modalConfirmBtn');
+                        confirmBtn.style.display = 'none';
+                        document.getElementById('modalCancelBtn').textContent = 'Close';
+                        
+                        document.getElementById('adminModal').classList.add('active');
+                        currentAdminAction = null;
+                    }
+
+                    function escapeHtml(text) {
+                        const map = {
+                            '&': '&amp;',
+                            '<': '&lt;',
+                            '>': '&gt;',
+                            '"': '&quot;',
+                            "'": '&#039;'
+                        };
+                        return text.replace(/[&<>"']/g, m => map[m]);
+                    }
+
+                    // Close modal when clicking outside of it
+                    document.addEventListener('click', function(event) {
+                        const modal = document.getElementById('adminModal');
+                        if (event.target === modal) {
+                            closeAdminModal();
+                        }
+                    });
+
+                    // Check initial user status when page loads
+                    document.addEventListener('DOMContentLoaded', function() {
+                        checkUserBanStatus(<?php echo intval($viewingUserId); ?>);
+                    });
                 </script>
             <?php endif; ?>
         </div>

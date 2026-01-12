@@ -35,7 +35,7 @@ require_once '../components/sidecontent.php';
           </svg>
         </div>
         <div class="profile-info">
-          <a href="#" class="view-profile-link">View Profile - <?php if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === 1){
+          <a href="..//profile/profile.php" class="view-profile-link">View Profile - <?php if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === 1){
           echo 'Admin';
           }
            else{
