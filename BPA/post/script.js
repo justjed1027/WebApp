@@ -2,20 +2,28 @@
 // Sidebar starts collapsed and expands on hover (handled by CSS)
 // No JavaScript needed for hover expand/collapse
 
-// ===== THEME TOGGLE =====
-const themeToggle = document.getElementById('themeToggle');
-const body = document.body;
-const savedTheme = localStorage.getItem('theme');
-if (savedTheme === 'light') body.classList.add('light-mode');
-if (themeToggle) {
-    themeToggle.addEventListener('click', () => {
-        body.classList.toggle('light-mode');
-        localStorage.setItem('theme', body.classList.contains('light-mode') ? 'light' : 'dark');
-    });
-}
-
 // All handlers run after DOM is ready
 document.addEventListener('DOMContentLoaded', function () {
+    // ===== THEME TOGGLE =====
+    const themeToggle = document.getElementById('themeToggle');
+    const body = document.body;
+    const savedTheme = localStorage.getItem('theme');
+    
+    // Apply saved theme
+    if (savedTheme === 'light') {
+        body.classList.add('light-mode');
+    }
+    
+    // Add click handler
+    if (themeToggle) {
+        themeToggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            body.classList.toggle('light-mode');
+            const newTheme = body.classList.contains('light-mode') ? 'light' : 'dark';
+            localStorage.setItem('theme', newTheme);
+        });
+    }
+
     // Auto-resize behavior for the top textarea (.create-post-input)
     function autoResizeTextarea(el) {
         if (!el) return;

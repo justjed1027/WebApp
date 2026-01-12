@@ -480,6 +480,10 @@ body {
   box-shadow: 0 0 8px rgba(31, 255, 147, 0.4);
 }
 
+.nav-link:hover::before {
+  opacity: 0;
+}
+
 .sidebar.collapsed .nav-link.active::before {
   opacity: 0;
 }
@@ -606,7 +610,32 @@ body {
 
 .sidebar.collapsed .toggle-switch {
   width: 46px;
+  height: 46px;
   margin: 0 auto;
+  padding: 5px;
+}
+
+.sidebar.collapsed .toggle-slider {
+  transform: translateX(0) !important;
+}
+
+/* In collapsed mode, hide one icon and show the other based on theme */
+.sidebar.collapsed .sun-icon {
+  display: none;
+}
+
+.sidebar.collapsed .moon-icon {
+  display: block;
+}
+
+.sidebar.collapsed.light-mode .sun-icon,
+body.light-mode .sidebar.collapsed .sun-icon {
+  display: block;
+}
+
+.sidebar.collapsed.light-mode .moon-icon,
+body.light-mode .sidebar.collapsed .moon-icon {
+  display: none;
 }
 
 .toggle-slider {
@@ -646,10 +675,6 @@ body.light-mode .moon-icon {
 
 body.light-mode .toggle-slider {
   transform: translateX(calc(100% - 8px));
-}
-
-.sidebar.collapsed.light-mode .toggle-slider {
-  transform: translateX(0);
 }
 
 /* ===== TOP BAR NAVIGATION ===== */
@@ -861,11 +886,6 @@ body.light-mode .toggle-slider {
 
 /* ===== MAIN CONTENT AREA ===== */
 body.has-side-content .main-content {
-  display: flex;
-  flex-direction: row;
-  grid-template-columns: 1fr 320px;
-  gap: 20px;
-  align-items: start;
   max-width: none;
   /* Use collapsed sidebar width by default so content isn't offset
      to the expanded sidebar size when the nav is collapsed. */
@@ -912,40 +932,57 @@ body .topbar + .main-content,
   margin-left: var(--sidebar-collapsed-width);
 }
 
+/* Container boxes for post sections - matching courses/events style */
+.box1,
+.box2 {
+  background: #1a1a1a;
+  padding: 32px;
+  border-radius: 16px;
+  border: 1px solid #2a2a2a;
+  margin-bottom: 24px;
+}
+
+.box1 {
+  margin-top: 12px;
+}
+
+/* Light mode styling for containers */
+body.light-mode .box1,
+body.light-mode .box2 {
+  background: #ffffff;
+  border-color: #e0e0e0;
+}
+
+/* Update create-post-card and post backgrounds for dark mode */
+.create-post-card,
+.post {
+  background: #0b0b0b;
+}
+
+/* Light mode card backgrounds */
+body.light-mode .create-post-card,
+body.light-mode .post {
+  background: #f5f5f5;
+}
+
+/* Add top margin to side-content on post page to align with posts */
+.side-content {
+  margin-top: 12px;
+}
+
 /* Create Post Card - Redesigned */
 .create-post-card {
-  background: linear-gradient(135deg, var(--background-card) 0%, var(--background-secondary) 100%);
-  border: 2px solid transparent;
-  background-clip: padding-box;
+  border: 1px solid var(--border-color);
   border-radius: 20px;
   padding: 28px;
-  margin-bottom: 32px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  transition: all var(--transition-fast);
-  position: relative;
-  overflow: hidden;
-}
-
-.create-post-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--primary-color), #00d9ff, var(--primary-color));
-  background-size: 200% 100%;
-  animation: shimmer 3s linear infinite;
-}
-
-@keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  margin-bottom: 0;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
 }
 
 .create-post-card:hover {
-  box-shadow: 0 12px 48px rgba(31, 255, 147, 0.2), 0 0 0 2px var(--primary-color);
-  transform: translateY(-4px);
+  border-color: rgba(0, 217, 126, 0.24);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+  transform: translateY(-2px);
 }
 
 .create-post-header {
@@ -1096,40 +1133,28 @@ body .topbar + .main-content,
 #posts-container {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
 
 .post {
-  background: var(--background-card);
-  border: 2px solid var(--border-color);
+  border: 1px solid var(--border-color);
   border-radius: 20px;
   padding: 28px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
-  transition: all var(--transition-fast);
-  position: relative;
-  overflow: hidden;
-}
-
-.post::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 4px;
-  height: 100%;
-  background: linear-gradient(180deg, var(--primary-color), #00d9ff);
-  opacity: 0;
-  transition: opacity var(--transition-fast);
-}
-
-.post:hover::before {
-  opacity: 1;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
 }
 
 .post:hover {
-  border-color: var(--primary-color);
-  box-shadow: 0 8px 32px rgba(31, 255, 147, 0.2), 0 0 0 1px var(--primary-color);
-  transform: translateY(-4px) scale(1.01);
+  border-color: rgba(0, 217, 126, 0.24);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+  transform: translateY(-2px);
+}
+
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
 }
 
 .post-header {
@@ -1170,6 +1195,53 @@ body .topbar + .main-content,
   line-height: 1.8;
   font-size: 15px;
   margin-bottom: 16px;
+}
+
+/* Username and author links */
+.post-author-link {
+  font-weight: 600;
+  color: var(--text-primary) !important;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.post-author-link:hover {
+  color: var(--primary-color) !important;
+}
+
+/* Timestamp text */
+.post-timestamp {
+  font-size: 0.85rem;
+  color: var(--text-secondary) !important;
+}
+
+/* Comment author link */
+.comment-author-link {
+  font-weight: 600;
+  color: var(--text-primary) !important;
+  font-size: 0.9rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.comment-author-link:hover {
+  color: var(--primary-color) !important;
+}
+
+/* Comment text */
+.comment-text {
+  color: var(--text-primary) !important;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* Avatar backgrounds */
+.post-author-avatar,
+.comment-avatar {
+  background: var(--background-hover) !important;
+  color: var(--text-primary) !important;
 }
 
 /* Post Menu Button - Redesigned */
