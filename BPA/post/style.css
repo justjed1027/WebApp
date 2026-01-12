@@ -648,8 +648,10 @@ body.light-mode .toggle-slider {
   transform: translateX(calc(100% - 8px));
 }
 
-.sidebar.collapsed.light-mode .toggle-slider {
-  transform: translateX(0);
+/* Light mode toggle works even when sidebar is collapsed */
+body.light-mode .sidebar .toggle-slider,
+body.light-mode .sidebar.collapsed .toggle-slider {
+  transform: translateX(calc(100% - 8px));
 }
 
 /* ===== TOP BAR NAVIGATION ===== */
@@ -861,11 +863,6 @@ body.light-mode .toggle-slider {
 
 /* ===== MAIN CONTENT AREA ===== */
 body.has-side-content .main-content {
-  display: flex;
-  flex-direction: row;
-  grid-template-columns: 1fr 320px;
-  gap: 20px;
-  align-items: start;
   max-width: none;
   /* Use collapsed sidebar width by default so content isn't offset
      to the expanded sidebar size when the nav is collapsed. */
@@ -912,6 +909,11 @@ body .topbar + .main-content,
   margin-left: var(--sidebar-collapsed-width);
 }
 
+/* Add top margin to side-content on post page to align with posts */
+.side-content {
+  margin-top: 12px;
+}
+
 /* Create Post Card - Redesigned */
 .create-post-card {
   background: linear-gradient(135deg, var(--background-card) 0%, var(--background-secondary) 100%);
@@ -919,28 +921,10 @@ body .topbar + .main-content,
   background-clip: padding-box;
   border-radius: 20px;
   padding: 28px;
+  margin-top: 12px;
   margin-bottom: 32px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   transition: all var(--transition-fast);
-  position: relative;
-  overflow: hidden;
-}
-
-.create-post-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--primary-color), #00d9ff, var(--primary-color));
-  background-size: 200% 100%;
-  animation: shimmer 3s linear infinite;
-}
-
-@keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
 }
 
 .create-post-card:hover {

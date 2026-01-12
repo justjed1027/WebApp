@@ -339,8 +339,7 @@ profile svg
     
     .create-post-input {
       display: block;
-      width: 360px;
-      max-width: 100%;
+      width: 100%;
       min-height: 72px;
       height: auto; 
       padding: 12px 14px;
@@ -549,8 +548,9 @@ profile svg
 
   <!-- Main Content Area -->
   <main class="main-content">
-    <!-- Create Post (inline form) -->
-    <div class=posts-section>
+    <div class="page-content">
+      <!-- Create Post (inline form) -->
+      <div class="posts-section">
       <div class="create-post-card">
         <div class="create-post-header">
           <div class="user-avatar-small">
@@ -716,6 +716,8 @@ profile svg
 
       </div>
     </div>
+    <?php renderSideContent('posts'); ?>
+    </div>
     <!-- Post Detail Modal -->
     <div id="postDetailModal" class="modal-backdrop" role="dialog" aria-hidden="true">
       <div class="modal-box" id="postDetailBox">
@@ -732,26 +734,11 @@ profile svg
         <div style="text-align:center;margin-top:12px;"><button id="postDetailClose" class="modal-close">Close</button></div>
       </div>
     </div>
-    <?php renderSideContent('posts'); ?>
   </main>
 </body>
 
     <script src="script.js?v=20251103"></script>
     <script>
-      // ===== THEME TOGGLE =====
-      document.addEventListener('DOMContentLoaded', () => {
-        const themeToggle = document.getElementById('themeToggle');
-        const body = document.body;
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'light') body.classList.add('light-mode');
-        if (themeToggle) {
-          themeToggle.addEventListener('click', () => {
-            body.classList.toggle('light-mode');
-            localStorage.setItem('theme', body.classList.contains('light-mode') ? 'light' : 'dark');
-          });
-        }
-      });
-
       // Helper function to escape HTML
       function escapeHtml(text) {
         const map = {
