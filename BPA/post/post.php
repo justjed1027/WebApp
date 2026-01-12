@@ -336,17 +336,28 @@ profile svg
   <link rel="stylesheet" href="../calendar/calendar.css">
   <link rel="stylesheet" href="../components/sidecontent.css">
   <style>
-    
-    .create-post-input {
-      display: block;
+    #inline-post-form {
       width: 100%;
+      flex: 1;
+    }
+
+    .input-with-submit {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .input-with-submit .create-post-input {
+      flex: 1;
+      min-width: 0;
       min-height: 72px;
       height: auto; 
       padding: 12px 14px;
       border-radius: 12px;
-      background: rgba(255,255,255,0.03);
-      color: inherit;
-      border: 1px solid rgba(255,255,255,0.06);
+      background: var(--background-secondary);
+      color: var(--text-primary);
+      border: 2px solid var(--border-color);
       resize: none; 
       overflow: hidden; 
       font-family: inherit;
@@ -355,8 +366,99 @@ profile svg
       field-sizing: content;    
     }
 
-   
-    .create-post-actions { margin-top: 8px; }
+    .input-with-submit .create-post-input:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 4px var(--primary-light), 0 8px 24px rgba(31, 255, 147, 0.15);
+      outline: none;
+    }
+
+    .create-post-submit-btn {
+      background: linear-gradient(135deg, var(--primary-color) 0%, #00d9ff 100%);
+      border: none;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      min-width: 48px;
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--background-main);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(31, 255, 147, 0.3);
+      flex-shrink: 0;
+    }
+
+    .create-post-submit-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(31, 255, 147, 0.5);
+    }
+
+    .create-post-submit-btn:active {
+      transform: scale(0.95);
+    }
+
+    .create-post-submit-btn svg {
+      transition: transform 0.3s ease;
+    }
+
+    .create-post-submit-btn:hover svg {
+      transform: translateX(2px);
+    }
+
+    /* File upload button styling */
+    .file-upload-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+
+    .file-upload-wrapper input[type="file"] {
+      position: absolute;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+
+    .file-upload-btn {
+      background: var(--background-hover);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 8px 16px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-block;
+    }
+
+    .file-upload-btn:hover {
+      background: var(--background-card);
+      border-color: var(--primary-color);
+      color: var(--text-primary);
+      transform: translateY(-2px);
+    }
+
+    .file-action-btn {
+      background: var(--background-hover);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 8px 16px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .file-action-btn:hover {
+      background: var(--background-card);
+      border-color: var(--primary-color);
+      color: var(--text-primary);
+      transform: translateY(-2px);
+    }
   </style>
   <style>
     /* Modal for file preview */
@@ -371,14 +473,15 @@ profile svg
     }
     .modal-backdrop.active { display:flex; }
     .modal-box {
-      background: #111;
-      color: #fff;
+      background: var(--background-card);
+      color: var(--text-primary);
       padding: 18px;
       border-radius: 10px;
       max-width: 90%;
       max-height: 85%;
       overflow: auto;
       box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+      position: relative;
     }
     .modal-box img, .modal-box video {
       max-width: 100%;
@@ -387,13 +490,44 @@ profile svg
       margin: 0 auto;
     }
     .modal-close {
-      display:inline-block;
-      margin-top:8px;
-      padding:6px 10px;
-      background:#333;
-      color:#fff;
-      border-radius:6px;
-      cursor:pointer;
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 32px;
+      height: 32px;
+      background: var(--background-hover);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      transition: all 0.3s ease;
+      padding: 0;
+      margin: 0;
+    }
+    .modal-close:hover {
+      background: var(--background-main);
+      color: var(--text-primary);
+      transform: scale(1.1);
+    }
+    /* Modal scrollbar styling */
+    .modal-box::-webkit-scrollbar {
+      width: 8px;
+    }
+    .modal-box::-webkit-scrollbar-track {
+      background: var(--background-secondary);
+      border-radius: 4px;
+    }
+    .modal-box::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 4px;
+    }
+    .modal-box::-webkit-scrollbar-thumb:hover {
+      background: var(--primary-color);
     }
   </style>
   <style>
@@ -415,9 +549,6 @@ profile svg
     }
     .write-comment-btn {
       font-weight: 600;
-    }
-    .write-comment-btn:hover {
-      color: #441570;
     }
     .comment-submit-btn:hover {
       background: #441570;
@@ -463,7 +594,7 @@ profile svg
           </svg>
           <span>Dashboard</span>
         </a>
-       <a href="../post/post.php" class="nav-link" data-tooltip="Posts">
+       <a href="../post/post.php" class="nav-link active" data-tooltip="Posts">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
             <path d="M6.428 1.151C6.708.591 7.213 0 8 0s1.292.592 1.572 1.151C9.861 1.73 10 2.431 10 3v3.691l5.17 2.585a1.5 1.5 0 0 1 .83 1.342V12a.5.5 0 0 1-.582.493l-5.507-.918-.375 2.253 1.318 1.318A.5.5 0 0 1 10.5 16h-5a.5.5 0 0 1-.354-.854l1.319-1.318-.376-2.253-5.507.918A.5.5 0 0 1 0 12v-1.382a1.5 1.5 0 0 1 .83-1.342L6 6.691V3c0-.568.14-1.271.428-1.849"/>
           </svg>
@@ -540,8 +671,8 @@ profile svg
   <!-- File preview modal -->
   <div id="filePreviewModal" class="modal-backdrop" role="dialog" aria-hidden="true">
     <div class="modal-box" id="filePreviewContent">
+      <button id="modalCloseBtn" class="modal-close">&times;</button>
       <div id="filePreviewInner"></div>
-      <div style="text-align:center;"><button id="modalCloseBtn" class="modal-close">Close</button></div>
     </div>
   </div>
 
@@ -553,24 +684,31 @@ profile svg
       <div class="box1">
         <div class="create-post-card">
           <div class="create-post-header">
-            <div class="user-avatar-small">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
-              </svg>
-            </div>
                 <form id="inline-post-form" action="post.php" method="POST" enctype="multipart/form-data">
-                  <textarea name="content" class="create-post-input" placeholder="Ask a question or share something helpful..." rows="3"></textarea>
-                  <div class="file-row" style="margin-top:8px; display:flex; align-items:center; gap:8px;">
-                    <input type="file" id="avatar" name="avatar" accept="image/*" style="display:inline-block;">
-                    <span id="fileLabel" style="color:#ddd;">Pick a file to upload</span>
-                    <button type="button" id="filePreviewBtn" class="create-post-btn" style="padding:6px 10px;">Preview</button>
-                    <button type="button" id="fileRemoveBtn" class="create-post-btn" style="padding:6px 10px; background:#551A8B;">Remove</button>
+                  <div class="input-with-submit">
+                    <div class="user-avatar-small">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
+                      </svg>
+                    </div>
+                    <textarea name="content" class="create-post-input" placeholder="Ask a question or share something helpful..." rows="3"></textarea>
+                    <button type="submit" class="create-post-submit-btn" title="Submit post">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+                      </svg>
+                    </button>
                   </div>
-          </div>
-              <div class="create-post-actions">
-                <button type="submit" class="create-post-btn">Submit</button>
+                  <div class="file-row" style="margin-top:16px; padding-top:16px; border-top:1px solid var(--border-color); display:flex; align-items:center; gap:8px;">
+                    <div class="file-upload-wrapper">
+                      <label for="avatar" class="file-upload-btn">Choose File</label>
+                      <input type="file" id="avatar" name="avatar" accept="image/*">
+                    </div>
+                    <span id="fileLabel" style="color:var(--text-muted); margin-left:auto;">Pick a file to upload</span>
+                    <button type="button" id="filePreviewBtn" class="file-action-btn">Preview</button>
+                    <button type="button" id="fileRemoveBtn" class="file-action-btn">Remove</button>
+                  </div>
                 </form>
-              </div>
+          </div>
         </div>
       </div>
 
@@ -677,7 +815,7 @@ profile svg
                       </svg>
                       <span class="view-comments-text">View Comments</span>
                     </button>
-                    <button class="write-comment-btn" data-post-id="<?php echo intval($post['post_id']); ?>" style="background:none;border:none;color:#551A8B;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:0.9rem;padding:4px 8px;border-radius:4px;transition:all 0.2s;">
+                    <button class="write-comment-btn" data-post-id="<?php echo intval($post['post_id']); ?>" style="background:none;border:none;color:#666;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:0.9rem;padding:4px 8px;border-radius:4px;transition:all 0.2s;">
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                         <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
                       </svg>
@@ -724,6 +862,7 @@ profile svg
     <!-- Post Detail Modal -->
     <div id="postDetailModal" class="modal-backdrop" role="dialog" aria-hidden="true">
       <div class="modal-box" id="postDetailBox">
+        <button id="postDetailClose" class="modal-close">&times;</button>
         <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px;">
           <div id="postDetailAvatar" class="post-author-avatar" style="width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:1.1rem;"></div>
           <div>
@@ -734,7 +873,6 @@ profile svg
         <div id="postDetailContent" style="color:var(--text-primary);line-height:1.5;margin-bottom:12px;"></div>
         <div id="postDetailMedia" style="text-align:center;">
         </div>
-        <div style="text-align:center;margin-top:12px;"><button id="postDetailClose" class="modal-close">Close</button></div>
       </div>
     </div>
   </main>
