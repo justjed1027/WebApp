@@ -1295,6 +1295,25 @@ nav a:hover {
   background: var(--background-primary);
 }
 
+/* Custom scrollbar styles */
+.session-messages::-webkit-scrollbar {
+  width: 8px;
+}
+
+.session-messages::-webkit-scrollbar-track {
+  background: var(--background-primary);
+}
+
+.session-messages::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.session-messages::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
 .session-message {
   display: flex;
   margin-bottom: 10px;
