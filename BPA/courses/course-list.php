@@ -94,9 +94,10 @@ $stmt->bind_param("i", $categoryId);
 $stmt->execute();
 $result = $stmt->get_result();
 
-// Organize subjects into three sections
-$interestedIn = [];    // Subjects user wants to learn
-$skillsIn = [];        // Subjects user has knowledge in
+// Organize subjects into four sections
+$buildingSkills = [];  // Subjects user has skills in AND wants to learn
+$interestedIn = [];    // Subjects user wants to learn (but doesn't have skill)
+$skillsIn = [];        // Subjects user has knowledge in (but no interest)
 $otherSubjects = [];   // Subjects not in either list
 
 while ($subject = $result->fetch_assoc()) {
@@ -114,7 +115,9 @@ while ($subject = $result->fetch_assoc()) {
   $isInterest = in_array($subjectId, $userInterestIds);
   $isSkill = in_array($subjectId, $userSkillIds);
   
-  if ($isInterest) {
+  if ($isInterest && $isSkill) {
+    $buildingSkills[] = $subjectData;
+  } elseif ($isInterest) {
     $interestedIn[] = $subjectData;
   } elseif ($isSkill) {
     $skillsIn[] = $subjectData;
@@ -127,7 +130,7 @@ $stmt->close();
 $conn->close();
 
 // Calculate total subject count
-$totalSubjects = count($interestedIn) + count($skillsIn) + count($otherSubjects);
+$totalSubjects = count($buildingSkills) + count($interestedIn) + count($skillsIn) + count($otherSubjects);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -268,6 +271,39 @@ $totalSubjects = count($interestedIn) + count($skillsIn) + count($otherSubjects)
         </div>
 
         <!-- Topics List - Organized by User Preferences -->
+        
+        <?php if (!empty($buildingSkills)): ?>
+        <div class="subject-section">
+          <div class="subject-section-header">
+            <h3 class="subject-section-title">🚀 Building Skills</h3>
+            <p class="subject-section-description">Subjects you're actively improving in</p>
+          </div>
+          <div class="courses-list-grid">
+            <?php foreach ($buildingSkills as $subject): ?>
+              <a href="course-detail.php?id=<?php echo $subject['id']; ?>" class="course-list-card">
+                <div class="course-list-header" style="text-align: center;">
+                  <h3><?php echo htmlspecialchars($subject['title']); ?></h3>
+                  <p class="subject-description"><?php echo htmlspecialchars($subject['description']); ?></p>
+                </div>
+                <div class="course-list-stats" style="justify-content: center;">
+                  <span class="stat">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
+                    </svg>
+                    <?php echo $subject['studentsLearning']; ?> exploring
+                  </span>
+                  <span class="stat">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M6 0a.5.5 0 0 1 .5.5V3h3V.5a.5.5 0 0 1 1 0V3h1a2 2 0 0 1 2 2v3.5a.5.5 0 0 1-1 0V5h-11v8a1 1 0 0 0 1 1h4.5a.5.5 0 0 1 0 1h-4.5A2 2 0 0 1 0 13V5a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 1 0V3h3V.5A.5.5 0 0 1 6 0M9.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5z"/>
+                    </svg>
+                    <?php echo $subject['eventCount']; ?> events
+                  </span>
+                </div>
+              </a>
+            <?php endforeach; ?>
+          </div>
+        </div>
+        <?php endif; ?>
         
         <?php if (!empty($interestedIn)): ?>
         <div class="subject-section">
