@@ -447,3 +447,381 @@ function initializeStudentsModal() {
         return div.innerHTML;
     }
 }
+
+// Event Modal and Pagination Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    initializeEventModal();
+    initializeEventPagination();
+});
+
+function initializeEventModal() {
+    const modal = document.getElementById('eventModal');
+    const modalClose = document.getElementById('modalClose');
+    const modalOverlay = document.getElementById('modalOverlay');
+    const btnExpandDescription = document.getElementById('btnExpandDescription');
+    const btnRegister = document.getElementById('btnRegisterEvent');
+    const viewDetailsButtons = document.querySelectorAll('.course-view-details');
+    
+    if (!modal) return;
+    
+    let currentEventId = null;
+    
+    // View Details buttons
+    viewDetailsButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const eventId = this.getAttribute('data-event-id');
+            openEventModal(eventId);
+        });
+    });
+    
+    // Close modal
+    if (modalClose) {
+        modalClose.addEventListener('click', closeModal);
+    }
+    
+    if (modalOverlay) {
+        modalOverlay.addEventListener('click', closeModal);
+    }
+    
+    // Expand description
+    if (btnExpandDescription) {
+        btnExpandDescription.addEventListener('click', function() {
+            const descText = document.getElementById('modalDescription');
+            descText.classList.toggle('expanded');
+            btnExpandDescription.textContent = descText.classList.contains('expanded') ? 'Read less' : 'Read more';
+        });
+    }
+    
+    // Register button
+    if (btnRegister) {
+        btnRegister.addEventListener('click', async function() {
+            if (!currentEventId) return;
+            
+            btnRegister.disabled = true;
+            btnRegister.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="M11.251.068a.5.5 0 0 1 .227.58L9.677 6.5H13a.5.5 0 0 1 .364.843l-8 8.5a.5.5 0 0 1-.842-.49L6.323 9.5H3a.5.5 0 0 1-.364-.843l8-8.5a.5.5 0 0 1 .615-.09z"/></svg> Registering...';
+            
+            try {
+                const response = await fetch('../events/register_event.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ eventId: currentEventId })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Success - close modal and reload page to update event list
+                    closeModal();
+                    location.reload();
+                } else {
+                    alert(data.message || 'Failed to register for event');
+                    btnRegister.disabled = false;
+                    btnRegister.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z"/> </svg> Register for Event';
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                alert('Failed to register for event. Please try again.');
+                btnRegister.disabled = false;
+                btnRegister.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z"/></svg> Register for Event';
+            }
+        });
+    }
+    
+    // Escape key closes modal
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !modal.hasAttribute('hidden')) {
+            closeModal();
+        }
+    });
+    
+    function openEventModal(eventId) {
+        // Find event in courseEventsData
+        if (typeof courseEventsData === 'undefined') {
+            console.error('Course events data not available');
+            return;
+        }
+        
+        const event = courseEventsData.find(e => e.events_id == eventId);
+        if (!event) {
+            console.error('Event not found:', eventId);
+            return;
+        }
+        
+        currentEventId = eventId;
+        populateModal(event);
+        modal.removeAttribute('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeModal() {
+        modal.setAttribute('hidden', '');
+        document.body.style.overflow = '';
+        currentEventId = null;
+        const descText = document.getElementById('modalDescription');
+        if (descText) {
+            descText.classList.remove('expanded');
+        }
+        if (btnExpandDescription) {
+            btnExpandDescription.textContent = 'Read more';
+        }
+        if (btnRegister) {
+            btnRegister.disabled = false;
+            btnRegister.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z"/></svg> Register for Event';
+        }
+    }
+    
+    function populateModal(event) {
+        // Get event image
+        const imageUrl = getEventImage(event);
+        const modalImage = document.getElementById('modalImage');
+        const modalTitle = document.getElementById('modalTitle');
+        
+        if (modalImage) {
+            modalImage.src = imageUrl;
+            modalImage.alt = event.events_title || 'Event';
+        }
+        
+        if (modalTitle) {
+            modalTitle.textContent = event.events_title || 'Event';
+        }
+        
+        // Format date
+        const eventDate = new Date(event.events_date + 'T00:00:00');
+        const dateStr = eventDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        const timeRange = getTimeRange(event.events_start, event.events_end);
+        
+        const modalDate = document.getElementById('modalDate');
+        if (modalDate) {
+            modalDate.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+                </svg>
+                <span>${dateStr}</span>
+            `;
+        }
+        
+        const modalTime = document.getElementById('modalTime');
+        if (modalTime) {
+            modalTime.innerHTML = timeRange ? `
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
+                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
+                </svg>
+                <span>${timeRange}</span>
+            ` : '';
+        }
+        
+        const modalLocation = document.getElementById('modalLocation');
+        if (modalLocation) {
+            modalLocation.innerHTML = event.events_location ? `
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
+                </svg>
+                <span>${event.events_location}</span>
+            ` : '';
+        }
+        
+        // Participants
+        const capacity = event.events_capacity || 0;
+        const count = event.registration_count || 0;
+        const participantWord = count === 1 ? 'participant' : 'participants';
+        const participantText = capacity > 0 ? `${count}/${capacity} ${participantWord}` : `${count} ${participantWord}`;
+        
+        const modalParticipants = document.getElementById('modalParticipants');
+        if (modalParticipants) {
+            modalParticipants.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
+                </svg>
+                <span>${participantText}</span>
+            `;
+        }
+        
+        // Tags
+        const subjects = event.subjects ? event.subjects.split(',').map(s => s.trim()) : [];
+        const modalTags = document.getElementById('modalTags');
+        if (modalTags) {
+            modalTags.innerHTML = subjects.map(subject => 
+                `<span class="event-tag">#${subject.toLowerCase().replace(/\s+/g, '')}</span>`
+            ).join('');
+        }
+        
+        const modalDescription = document.getElementById('modalDescription');
+        if (modalDescription) {
+            modalDescription.textContent = event.events_description || 'No description available.';
+        }
+        
+        // Event details
+        const modalCategory = document.getElementById('modalCategory');
+        if (modalCategory) {
+            modalCategory.textContent = subjects[0] || 'General';
+        }
+        
+        const modalOrganizer = document.getElementById('modalOrganizer');
+        if (modalOrganizer) {
+            modalOrganizer.textContent = event.events_organization || 'N/A';
+        }
+        
+        const capacityText = event.events_capacity ? `${event.events_capacity} spots` : 'Unlimited';
+        const modalCapacity = document.getElementById('modalCapacity');
+        if (modalCapacity) {
+            modalCapacity.textContent = capacityText;
+        }
+        
+        let deadlineStr = 'Open';
+        if (event.events_deadline) {
+            const deadlineDate = new Date(event.events_deadline + 'T00:00:00');
+            const deadlineDateStr = deadlineDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            deadlineStr = `Open until ${deadlineDateStr}`;
+        }
+        const modalRegistration = document.getElementById('modalRegistration');
+        if (modalRegistration) {
+            modalRegistration.textContent = deadlineStr;
+        }
+    }
+    
+    function getEventImage(event) {
+        if (event.events_img) return event.events_img;
+        const subject = (event.subjects || '').toLowerCase();
+        if (subject.includes('computer') || subject.includes('programming')) {
+            return 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=1000&h=280&fit=crop';
+        } else if (subject.includes('data') || subject.includes('science')) {
+            return 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1000&h=280&fit=crop';
+        } else if (subject.includes('design') || subject.includes('ui') || subject.includes('ux')) {
+            return 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1000&h=280&fit=crop';
+        }
+        return 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1000&h=280&fit=crop';
+    }
+    
+    function formatTime(timeStr) {
+        if (!timeStr) return '';
+        if (timeStr.includes(':') && !timeStr.includes('-')) {
+            const [hours, minutes] = timeStr.split(':');
+            const hour = parseInt(hours);
+            const minute = parseInt(minutes);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const displayHour = hour % 12 || 12;
+            return `${displayHour}:${minute.toString().padStart(2, '0')} ${ampm}`;
+        }
+        const date = new Date(timeStr);
+        if (isNaN(date.getTime())) return '';
+        return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+    }
+    
+    function getTimeRange(startTime, endTime) {
+        if (!startTime && !endTime) return '';
+        if (startTime && endTime) {
+            const start = formatTime(startTime);
+            const end = formatTime(endTime);
+            return `${start} - ${end}`;
+        }
+        return formatTime(startTime || endTime);
+    }
+}
+
+function initializeEventPagination() {
+    const eventsList = document.getElementById('eventsList');
+    const prevBtn = document.getElementById('eventsPrevPage');
+    const nextBtn = document.getElementById('eventsNextPage');
+    const pageNumbers = document.getElementById('eventsPageNumbers');
+    
+    if (!eventsList) return;
+    
+    const eventsPerPage = 3;
+    let currentPage = 1;
+    const eventItems = eventsList.querySelectorAll('.event-item');
+    const totalEvents = eventItems.length;
+    const totalPages = Math.ceil(totalEvents / eventsPerPage);
+    
+    function showPage(page) {
+        currentPage = page;
+        
+        // Hide all events
+        eventItems.forEach((item, index) => {
+            const startIndex = (page - 1) * eventsPerPage;
+            const endIndex = startIndex + eventsPerPage;
+            
+            if (index >= startIndex && index < endIndex) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+        
+        // Update pagination buttons
+        if (prevBtn) {
+            prevBtn.disabled = page <= 1;
+            prevBtn.setAttribute('data-page', page - 1);
+        }
+        
+        if (nextBtn) {
+            nextBtn.disabled = page >= totalPages;
+            nextBtn.setAttribute('data-page', page + 1);
+        }
+        
+        // Update page number buttons
+        if (pageNumbers) {
+            const pageNumButtons = pageNumbers.querySelectorAll('.page-number');
+            pageNumButtons.forEach(btn => {
+                const btnPage = parseInt(btn.getAttribute('data-page'));
+                if (btnPage === page) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+        
+        // Re-attach event listeners to visible View Details buttons
+        const visibleButtons = eventsList.querySelectorAll('.event-item:not([style*="display: none"]) .course-view-details');
+        visibleButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const eventId = this.getAttribute('data-event-id');
+                const modal = document.getElementById('eventModal');
+                if (modal && typeof courseEventsData !== 'undefined') {
+                    const event = courseEventsData.find(e => e.events_id == eventId);
+                    if (event) {
+                        // Trigger the modal open (reuse the existing function)
+                        this.click();
+                    }
+                }
+            });
+        });
+    }
+    
+    // Initial page display
+    showPage(1);
+    
+    // Previous button
+    if (prevBtn) {
+        prevBtn.addEventListener('click', function() {
+            if (!this.disabled) {
+                const page = parseInt(this.getAttribute('data-page'));
+                showPage(page);
+            }
+        });
+    }
+    
+    // Next button
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function() {
+            if (!this.disabled) {
+                const page = parseInt(this.getAttribute('data-page'));
+                showPage(page);
+            }
+        });
+    }
+    
+    // Page number buttons
+    if (pageNumbers) {
+        const pageNumButtons = pageNumbers.querySelectorAll('.page-number');
+        pageNumButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const page = parseInt(this.getAttribute('data-page'));
+                showPage(page);
+            });
+        });
+    }
+}

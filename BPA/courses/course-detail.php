@@ -57,17 +57,26 @@ $result = $stmt->get_result();
 $studentsFluent = $result->fetch_assoc()['count'];
 $stmt->close();
 
-// Fetch events for this subject
+// Fetch events for this subject (excluding events user is registered for)
 $eventsQuery = "
-  SELECT e.events_id, e.events_title, e.events_date, e.events_start, e.events_description
+  SELECT e.events_id, e.events_title, e.events_date, e.events_start, e.events_end, 
+         e.events_location, e.events_description, e.events_img, e.events_capacity,
+         e.events_organization, e.events_deadline,
+         GROUP_CONCAT(DISTINCT s.subject_name SEPARATOR ', ') as subjects,
+         (SELECT COUNT(*) FROM event_participants ep WHERE ep.ep_event_id = e.events_id) as registration_count,
+         (EXISTS(SELECT 1 FROM event_participants ep2 WHERE ep2.ep_event_id = e.events_id AND ep2.ep_user_id = ?)) AS is_registered
   FROM events e
   JOIN event_subjects es ON e.events_id = es.es_event_id
-  WHERE es.es_subject_id = ? AND e.events_date >= CURDATE()
+  LEFT JOIN event_subjects es2 ON e.events_id = es2.es_event_id
+  LEFT JOIN subjects s ON es2.es_subject_id = s.subject_id
+  WHERE es.es_subject_id = ? 
+    AND e.events_date >= CURDATE()
+    AND NOT EXISTS(SELECT 1 FROM event_participants ep3 WHERE ep3.ep_event_id = e.events_id AND ep3.ep_user_id = ?)
+  GROUP BY e.events_id
   ORDER BY e.events_date ASC
-  LIMIT 10
 ";
 $stmt = $conn->prepare($eventsQuery);
-$stmt->bind_param("i", $subject_id);
+$stmt->bind_param("iii", $user_id, $subject_id, $user_id);
 $stmt->execute();
 $eventsResult = $stmt->get_result();
 $events = [];
@@ -350,11 +359,41 @@ $course = [
 
         <div class="tab-content" id="events">
           <div class="content-card">
-            <h2>Related Events</h2>
-            <div class="events-list">
+            <div class="events-header-row">
+              <h2>Related Events</h2>
+              <?php if (count($course['relatedEvents']) > 3): ?>
+              <div class="pagination-controls">
+                <button class="pagination-btn" id="eventsPrevPage" disabled data-page="1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
+                  </svg>
+                </button>
+                
+                <div class="page-numbers" id="eventsPageNumbers">
+                  <?php
+                  $totalEvents = count($course['relatedEvents']);
+                  $eventsPerPage = 3;
+                  $totalEventPages = ceil($totalEvents / $eventsPerPage);
+                  
+                  for ($i = 1; $i <= $totalEventPages; $i++) {
+                    $activeClass = ($i == 1) ? ' active' : '';
+                    echo '<button class="page-number' . $activeClass . '" data-page="' . $i . '">' . $i . '</button>';
+                  }
+                  ?>
+                </div>
+                
+                <button class="pagination-btn" id="eventsNextPage" <?php echo $totalEventPages <= 1 ? 'disabled' : ''; ?> data-page="2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+                  </svg>
+                </button>
+              </div>
+              <?php endif; ?>
+            </div>
+            <div class="events-list" id="eventsList">
               <?php if (!empty($course['relatedEvents'])): ?>
-                <?php foreach ($course['relatedEvents'] as $event): ?>
-                  <div class="event-item">
+                <?php foreach ($course['relatedEvents'] as $index => $event): ?>
+                  <div class="event-item" data-event-index="<?php echo $index; ?>" style="<?php echo $index >= 3 ? 'display: none;' : ''; ?>">
                     <div class="event-date-box">
                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
                         <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z"/>
@@ -363,9 +402,9 @@ $course = [
                     </div>
                     <div class="event-info">
                       <h4><?php echo htmlspecialchars($event['events_title']); ?></h4>
-                      <p><?php echo date('M d, Y', strtotime($event['events_date'])); ?> <?php echo $event['events_start'] ? '• ' . $event['events_start'] : ''; ?></p>
+                      <p><?php echo date('M d, Y', strtotime($event['events_date'])); ?> <?php echo $event['events_start'] ? '• ' . date('g:i A', strtotime($event['events_start'])) : ''; ?></p>
                     </div>
-                    <button class="btn-secondary btn-sm">View Details</button>
+                    <button class="btn-secondary btn-sm course-view-details" data-event-id="<?php echo $event['events_id']; ?>">View Details</button>
                   </div>
                 <?php endforeach; ?>
               <?php else: ?>
@@ -434,6 +473,77 @@ $course = [
     </div>
   </div>
 
+  <!-- Event Detail Modal -->
+  <div class="event-modal" id="eventModal" hidden>
+    <div class="modal-overlay" id="modalOverlay"></div>
+    <div class="modal-content">
+      <button class="modal-close" id="modalClose" aria-label="Close modal">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+        </svg>
+      </button>
+      
+      <div class="modal-header">
+        <img class="modal-event-image" id="modalImage" src="" alt="Event">
+        <div class="modal-header-content">
+          <h2 class="modal-event-title" id="modalTitle"></h2>
+          <div class="modal-event-meta">
+            <div class="modal-meta-item" id="modalDate"></div>
+            <div class="modal-meta-item" id="modalTime"></div>
+            <div class="modal-meta-item" id="modalLocation"></div>
+            <div class="modal-meta-item" id="modalParticipants"></div>
+          </div>
+          <div class="modal-event-tags" id="modalTags"></div>
+        </div>
+      </div>
+      
+      <div class="modal-body">
+        <div class="modal-section">
+          <h3 class="modal-section-title">About This Event</h3>
+          <div class="modal-description">
+            <p class="modal-description-text" id="modalDescription"></p>
+            <button class="btn-expand-description" id="btnExpandDescription">Read more</button>
+          </div>
+        </div>
+        
+        <div class="modal-section">
+          <h3 class="modal-section-title">Event Details</h3>
+          <div class="modal-details-grid">
+            <div class="modal-detail-row">
+              <span class="modal-detail-label">Category</span>
+              <span class="modal-detail-value" id="modalCategory"></span>
+            </div>
+            <div class="modal-detail-row">
+              <span class="modal-detail-label">Organizer</span>
+              <span class="modal-detail-value" id="modalOrganizer"></span>
+            </div>
+            <div class="modal-detail-row">
+              <span class="modal-detail-label">Capacity</span>
+              <span class="modal-detail-value" id="modalCapacity"></span>
+            </div>
+            <div class="modal-detail-row">
+              <span class="modal-detail-label">Registration</span>
+              <span class="modal-detail-value" id="modalRegistration"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-modal-register" id="btnRegisterEvent">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z"/>
+          </svg>
+          Register for Event
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Store events data for modal
+    const courseEventsData = <?php echo json_encode($course['relatedEvents']); ?>;
+  </script>
   <script src="courses.js"></script>
   <script src="../components/sidecontent.js"></script>
 </body>
