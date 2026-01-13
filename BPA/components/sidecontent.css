@@ -16,6 +16,10 @@
   .page-content {
     grid-template-columns: 1fr;
   }
+  
+  .side-content {
+    display: none;
+  }
 }
 
 .side-content {
