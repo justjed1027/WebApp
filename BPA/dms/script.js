@@ -47,6 +47,78 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
     
+    // Request session button
+    const requestSessionBtn = document.getElementById('requestSessionBtn');
+    if (requestSessionBtn) {
+        requestSessionBtn.addEventListener('click', openSessionRequestModal);
+    }
+    
+    // Tab switching
+    const tabBtns = document.querySelectorAll('.dm-tab-btn');
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', switchTab);
+    });
+    
+    // Load session requests on initialization
+    loadSessionRequests();
+    
+    // Refresh requests periodically
+    setInterval(loadSessionRequests, 30000);
+    
+    // Modal controls for session request
+    const sessionModal = document.getElementById('sessionRequestModal');
+    const closeSessionModal = document.getElementById('closeSessionModal');
+    const cancelSessionModal = document.getElementById('cancelSessionModal');
+    const sessionRequestForm = document.getElementById('sessionRequestForm');
+    
+    if (closeSessionModal) {
+        closeSessionModal.addEventListener('click', closeSessionRequestModal);
+    }
+    
+    if (cancelSessionModal) {
+        cancelSessionModal.addEventListener('click', closeSessionRequestModal);
+    }
+    
+    if (sessionRequestForm) {
+        sessionRequestForm.addEventListener('submit', submitSessionRequest);
+    }
+    
+    // Modal controls for time selection
+    const timeSelectionModal = document.getElementById('timeSelectionModal');
+    const closeTimeModal = document.getElementById('closeTimeModal');
+    const cancelTimeModal = document.getElementById('cancelTimeModal');
+    const timeSelectionForm = document.getElementById('timeSelectionForm');
+    
+    if (closeTimeModal) {
+        closeTimeModal.addEventListener('click', closeTimeSelectionModal);
+    }
+    
+    if (cancelTimeModal) {
+        cancelTimeModal.addEventListener('click', closeTimeSelectionModal);
+    }
+    
+    if (timeSelectionForm) {
+        timeSelectionForm.addEventListener('submit', handleTimeSubmit);
+    }
+    
+    // Close modal when clicking outside
+    if (timeSelectionModal) {
+        timeSelectionModal.addEventListener('click', (e) => {
+            if (e.target === timeSelectionModal) {
+                closeTimeSelectionModal();
+            }
+        });
+    }
+    
+    // Close modal when clicking outside
+    if (sessionModal) {
+        sessionModal.addEventListener('click', (e) => {
+            if (e.target === sessionModal) {
+                closeSessionRequestModal();
+            }
+        });
+    }
+    
     // Update online status every 30 seconds
     setInterval(() => {
         updateUserStatus('online');
@@ -66,7 +138,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 // Load all conversations
 async function loadConversations() {
     try {
-        const response = await fetch('backend/list_conversations.php');
+        const response = await fetch('./backend/list_conversations.php');
         console.log('Response status:', response.status);
 
         const text = await response.text();
@@ -224,7 +296,7 @@ async function sendMessage() {
     if (!text) return;
     
     try {
-        const response = await fetch('backend/send_message.php', {
+        const response = await fetch('./backend/send_message.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -258,7 +330,7 @@ async function sendMessage() {
 // Mark messages as read
 async function markAsRead(conversationId) {
     try {
-        await fetch('backend/mark_read.php', {
+        await fetch('./backend/mark_read.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -353,7 +425,7 @@ async function startConversationWithUser(userId) {
         console.log('Found user:', user);
         
         // Try to get or create conversation using start_conversation endpoint
-        const response = await fetch('backend/start_conversation.php', {
+        const response = await fetch('./backend/start_conversation.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -386,4 +458,521 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+// Open session request modal
+function openSessionRequestModal() {
+    if (!currentOtherUserId) {
+        showToast('Please select a conversation first', 'warning');
+        return;
+    }
+    
+    const sessionModal = document.getElementById('sessionRequestModal');
+    if (sessionModal) {
+        sessionModal.style.display = 'flex';
+    }
+}
+
+// Close session request modal
+function closeSessionRequestModal() {
+    const sessionModal = document.getElementById('sessionRequestModal');
+    if (sessionModal) {
+        sessionModal.style.display = 'none';
+    }
+    
+    // Reset form
+    const form = document.getElementById('sessionRequestForm');
+    if (form) {
+        form.reset();
+    }
+}
+
+// Submit session request with details
+async function submitSessionRequest(e) {
+    e.preventDefault();
+    
+    if (!currentOtherUserId) {
+        showToast('Please select a conversation first', 'warning');
+        return;
+    }
+    
+    const areaOfHelp = document.getElementById('areaOfHelp').value;
+    const description = document.getElementById('sessionDescription').value;
+    const duration = document.getElementById('sessionDuration').value;
+    const sessionType = document.getElementById('sessionType').value;
+    
+    try {
+        const response = await fetch('./backend/create_session_request.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                recipient_user_id: currentOtherUserId,
+                session_type: sessionType,
+                area_of_help: areaOfHelp,
+                description: description,
+                duration: duration
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast('Session request sent successfully!', 'success', 'Your request has been sent to your connection!');
+            closeSessionRequestModal();
+        } else {
+            showToast('Failed to send request', 'error', data.error || 'Please try again');
+        }
+    } catch (error) {
+        console.error('Error requesting session:', error);
+        showToast('Error sending request', 'error', error.message);
+    }
+}
+
+// Tab switching
+function switchTab(e) {
+    const tabName = e.currentTarget.dataset.tab;
+    
+    // Update button states
+    document.querySelectorAll('.dm-tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    e.currentTarget.classList.add('active');
+    
+    // Update content visibility
+    document.querySelectorAll('.dm-tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    
+    const tabContent = document.getElementById(tabName + 'Tab');
+    if (tabContent) {
+        tabContent.classList.add('active');
+    }
+}
+
+// Load session requests for current user
+async function loadSessionRequests() {
+    try {
+        const response = await fetch('./backend/get_session_requests.php');
+        const data = await response.json();
+        
+        if (data.success) {
+            renderSessionRequests(data.requests);
+            
+            // Update badge count
+            const badge = document.getElementById('requestBadge');
+            if (badge) {
+                if (data.count > 0) {
+                    badge.textContent = data.count;
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+        } else {
+            console.error('Error loading requests:', data.error);
+        }
+    } catch (error) {
+        console.error('Error fetching session requests:', error);
+    }
+}
+
+// Render session requests in the list
+function renderSessionRequests(requests) {
+    const requestsList = document.getElementById('requestsList');
+    
+    if (!requestsList) return;
+    
+    if (!requests || requests.length === 0) {
+        requestsList.innerHTML = '<div class="dm-empty-state">No pending requests</div>';
+        return;
+    }
+    
+    let html = '';
+    
+    requests.forEach(req => {
+        const createdDate = new Date(req.created_at);
+        const timeAgo = getTimeAgo(createdDate);
+        
+        html += `
+            <div class="dm-request-item">
+                <div class="dm-request-header">
+                    <div class="dm-request-requester">${escapeHtml(req.user_username)}</div>
+                    <div class="dm-request-time">${timeAgo}</div>
+                </div>
+                <div class="dm-request-subject">
+                    <span class="dm-request-badge">${escapeHtml(req.area_of_help)}</span>
+                    <span class="dm-request-badge">${escapeHtml(req.session_type)}</span>
+                </div>
+                <div class="dm-request-description">${escapeHtml(req.description)}</div>
+                <div class="dm-request-meta">
+                    <div class="dm-request-meta-item">
+                        <span>⏱️ ${req.duration} ${isNaN(req.duration) ? '' : 'min'}</span>
+                    </div>
+                </div>
+                <div class="dm-request-actions">
+                    <button class="btn-request btn-accept" onclick="respondSessionRequest(${req.request_id}, 'accept')">Accept</button>
+                    <button class="btn-request btn-reject" onclick="respondSessionRequest(${req.request_id}, 'reject')">Reject</button>
+                </div>
+            </div>
+        `;
+    });
+    
+    requestsList.innerHTML = html;
+}
+
+// Respond to session request
+async function respondSessionRequest(requestId, action) {
+    if (action === 'accept') {
+        // Show time selection modal instead of directly accepting
+        openTimeSelectionModal(requestId);
+    } else {
+        // Directly reject without time selection
+        submitSessionResponse(requestId, 'reject', null, null, null, null);
+    }
+}
+
+// Open time selection modal for accepting a request
+function openTimeSelectionModal(requestId) {
+    const modal = document.getElementById('timeSelectionModal');
+    if (modal) {
+        modal.dataset.requestId = requestId;
+        modal.style.display = 'flex';
+        
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('sessionDate').min = today;
+        document.getElementById('sessionDate').value = today;
+    }
+}
+
+// Close time selection modal
+function closeTimeSelectionModal() {
+    const modal = document.getElementById('timeSelectionModal');
+    if (modal) {
+        modal.style.display = 'none';
+        modal.dataset.requestId = '';
+    }
+    
+    // Reset form
+    const form = document.getElementById('timeSelectionForm');
+    if (form) {
+        form.reset();
+    }
+}
+
+// Submit session response with time details
+async function submitSessionResponse(requestId, action, sessionDate, startTime, endTime, sessionNotes) {
+    try {
+        const response = await fetch('./backend/respond_session_request.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                request_id: requestId,
+                action: action,
+                message: '',
+                session_date: sessionDate,
+                start_time: startTime,
+                end_time: endTime,
+                session_notes: sessionNotes
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            if (action === 'accept') {
+                showToast('Request Accepted!', 'success', `Session scheduled for ${sessionDate}`);
+            } else {
+                showToast('Request Rejected', 'info', 'The request has been rejected');
+            }
+            loadSessionRequests();
+            closeTimeSelectionModal();
+        } else {
+            showToast('Failed to respond', 'error', data.error || 'Please try again');
+        }
+    } catch (error) {
+        console.error('Error responding to request:', error);
+        showToast('Error responding', 'error', error.message);
+    }
+}
+
+// Utility: Get time ago string
+function getTimeAgo(date) {
+    const now = new Date();
+    const diff = now - date;
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    
+    if (minutes < 1) return 'Just now';
+    if (minutes < 60) return `${minutes}m ago`;
+    if (hours < 24) return `${hours}h ago`;
+    if (days < 7) return `${days}d ago`;
+    
+    return date.toLocaleDateString();
+}
+
+// Handle time selection form submission
+function handleTimeSubmit(e) {
+    e.preventDefault();
+    
+    const modal = document.getElementById('timeSelectionModal');
+    const requestId = parseInt(modal.dataset.requestId);
+    const sessionDate = document.getElementById('sessionDate').value;
+    const startTime = document.getElementById('sessionStartTime').value;
+    const endTime = document.getElementById('sessionEndTime').value;
+    const sessionNotes = document.getElementById('sessionNotes').value;
+    
+    // Validate times
+    if (startTime >= endTime) {
+        showToast('Invalid Time', 'error', 'End time must be after start time');
+        return;
+    }
+    
+    // Submit with all the details
+    submitSessionResponse(requestId, 'accept', sessionDate, startTime, endTime, sessionNotes);
+}
+
+// Toast Notification System
+function showToast(title, type = 'info', message = '') {
+    const container = document.getElementById('notificationContainer');
+    if (!container) return;
+    
+    // Determine icon based on type
+    let icon = 'ℹ️';
+    switch(type) {
+        case 'success':
+            icon = '✅';
+            break;
+        case 'error':
+            icon = '❌';
+            break;
+        case 'warning':
+            icon = '⚠️';
+            break;
+        case 'info':
+            icon = 'ℹ️';
+            break;
+    }
+    
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `
+        <span class="toast-icon">${icon}</span>
+        <div class="toast-content">
+            <div class="toast-title">${escapeHtml(title)}</div>
+            ${message ? `<div class="toast-message">${escapeHtml(message)}</div>` : ''}
+        </div>
+        <button class="toast-close" onclick="this.parentElement.remove()">✕</button>
+    `;
+    
+    container.appendChild(toast);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (toast.parentElement) {
+            toast.classList.add('removing');
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.remove();
+                }
+            }, 300);
+        }
+    }, 5000);
+}
+
+// ===== SESSION ROOM FUNCTIONS =====
+let currentSessionId = null;
+let sessionMessageRefreshInterval = null;
+
+function showTab(tabName) {
+    // Hide all tabs
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // Remove active class from all buttons
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Show selected tab
+    document.getElementById(tabName).classList.add('active');
+    
+    // Add active class to clicked button
+    event.target.classList.add('active');
+    
+    // Load content for selected tab
+    if (tabName === 'sessions-tab') {
+        loadActiveSessions();
+    } else if (tabName === 'requests-tab') {
+        loadSessionRequests();
+    }
+}
+
+async function loadActiveSessions() {
+    try {
+        const response = await fetch('./backend/get_active_sessions.php');
+        const data = await response.json();
+        
+        if (data.success) {
+            renderActiveSessions(data.sessions);
+            if (data.count > 0) {
+                document.getElementById('sessionBadge').textContent = data.count;
+                document.getElementById('sessionBadge').style.display = 'inline';
+            }
+        } else {
+            showToast('Error', 'error', data.error || 'Failed to load sessions');
+        }
+    } catch (error) {
+        console.error('Error loading sessions:', error);
+        showToast('Error', 'error', 'Failed to load sessions');
+    }
+}
+
+function renderActiveSessions(sessions) {
+    const container = document.getElementById('sessionsList');
+    container.innerHTML = '';
+    
+    if (sessions.length === 0) {
+        container.innerHTML = '<p style="padding: 15px; color: var(--text-secondary);">No active sessions</p>';
+        return;
+    }
+    
+    sessions.forEach(session => {
+        const otherUser = session.requester_id !== parseInt(document.body.dataset.userId) 
+            ? session.requester_name 
+            : session.recipient_name;
+        
+        const sessionDiv = document.createElement('div');
+        sessionDiv.className = 'session-item';
+        sessionDiv.innerHTML = `
+            <h4>${otherUser}</h4>
+            <p>📅 ${new Date(session.session_date).toLocaleDateString()}</p>
+            <p>🕐 ${session.session_start_time} - ${session.session_end_time}</p>
+            <p>${session.area_of_help}</p>
+        `;
+        sessionDiv.onclick = () => openSessionRoom(session);
+        container.appendChild(sessionDiv);
+    });
+}
+
+async function openSessionRoom(session) {
+    currentSessionId = session.request_id;
+    
+    const otherUser = session.requester_id !== parseInt(document.body.dataset.userId) 
+        ? session.requester_name 
+        : session.recipient_name;
+    
+    document.getElementById('sessionTitle').textContent = `Session with ${otherUser}`;
+    document.getElementById('sessionDetails').textContent = `${session.area_of_help} • ${new Date(session.session_date).toLocaleDateString()} at ${session.session_start_time}`;
+    
+    const modal = document.getElementById('sessionRoomModal');
+    modal.style.display = 'flex';
+    
+    // Load messages
+    await loadSessionMessages();
+    
+    // Start auto-refresh
+    if (sessionMessageRefreshInterval) clearInterval(sessionMessageRefreshInterval);
+    sessionMessageRefreshInterval = setInterval(loadSessionMessages, 3000);
+}
+
+function closeSessionRoom() {
+    document.getElementById('sessionRoomModal').style.display = 'none';
+    currentSessionId = null;
+    if (sessionMessageRefreshInterval) {
+        clearInterval(sessionMessageRefreshInterval);
+    }
+}
+
+async function loadSessionMessages() {
+    if (!currentSessionId) return;
+    
+    try {
+        const response = await fetch(`./backend/get_session_messages.php?session_id=${currentSessionId}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            renderSessionMessages(data.messages);
+        }
+    } catch (error) {
+        console.error('Error loading messages:', error);
+    }
+}
+
+function renderSessionMessages(messages) {
+    const container = document.getElementById('sessionMessagesContainer');
+    container.innerHTML = '';
+    
+    messages.forEach(msg => {
+        const messageDiv = document.createElement('div');
+        const isOwn = msg.user_id === parseInt(document.body.dataset.userId);
+        messageDiv.className = `session-message ${isOwn ? 'sent' : 'received'}`;
+        
+        const time = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
+        messageDiv.innerHTML = `
+            ${!isOwn ? `<div class="session-message-username">${msg.username}</div>` : ''}
+            <div class="session-message-bubble">${escapeHtml(msg.message)}</div>
+            <div style="font-size: 11px; color: var(--text-secondary); margin-top: 3px;">${time}</div>
+        `;
+        
+        container.appendChild(messageDiv);
+    });
+    
+    // Scroll to bottom
+    container.scrollTop = container.scrollHeight;
+}
+
+async function sendSessionMessage() {
+    const input = document.getElementById('sessionMessageInput');
+    const message = input.value.trim();
+    
+    if (!message) return;
+    
+    try {
+        const response = await fetch('./backend/send_session_message.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                session_id: currentSessionId,
+                message: message
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            input.value = '';
+            await loadSessionMessages();
+        } else {
+            showToast('Error', 'error', data.error || 'Failed to send message');
+        }
+    } catch (error) {
+        console.error('Error sending message:', error);
+        showToast('Error', 'error', 'Failed to send message');
+    }
+}
+
+function handleSessionKeyPress(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendSessionMessage();
+    }
+}
+
+function escapeHtml(text) {
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    return text.replace(/[&<>"']/g, m => map[m]);
 }

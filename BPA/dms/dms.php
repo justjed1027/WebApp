@@ -144,19 +144,41 @@ if (!isset($_SESSION['user_id'])) {
         <!-- Left Sidebar: Conversations List -->
         <div class="dm-sidebar">
           <div class="dm-sidebar-header">
-            <h2>
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M16 8c0 3.866-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.584.296-1.925.864-4.181 1.234-.2.032-.352-.176-.273-.362.354-.836.674-1.95.77-2.966C.744 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7M5 8a1 1 0 1 0-2 0 1 1 0 0 0 2 0m4 0a1 1 0 1 0-2 0 1 1 0 0 0 2 0m3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2" />
-              </svg>
-              <span>Messages</span>
-            </h2>
+            <div class="dm-sidebar-tabs">
+              <button class="dm-tab-btn active" data-tab="messages">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M16 8c0 3.866-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.584.296-1.925.864-4.181 1.234-.2.032-.352-.176-.273-.362.354-.836.674-1.95.77-2.966C.744 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7M5 8a1 1 0 1 0-2 0 1 1 0 0 0 2 0m4 0a1 1 0 1 0-2 0 1 1 0 0 0 2 0m3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2" />
+                </svg>
+                Messages
+              </button>
+              <button class="dm-tab-btn" data-tab="requests" id="requestsTabBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                  <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                </svg>
+                <span>Requests</span>
+                <span class="request-badge" id="requestBadge" style="display: none;">0</span>
+              </button>
+            </div>
           </div>
       <div class="dm-search">
         <input type="text" id="searchInput" placeholder="Search messages...">
       </div>
-      <div class="dm-list" id="conversationList">
-        <!-- Conversations will be loaded here by JavaScript -->
-        <div class="dm-empty-state">Loading conversations...</div>
+      
+      <!-- Messages Tab -->
+      <div class="dm-tab-content active" id="messagesTab">
+        <div class="dm-list" id="conversationList">
+          <!-- Conversations will be loaded here by JavaScript -->
+          <div class="dm-empty-state">Loading conversations...</div>
+        </div>
+      </div>
+      
+      <!-- Requests Tab -->
+      <div class="dm-tab-content" id="requestsTab">
+        <div class="dm-requests" id="requestsList">
+          <!-- Session requests will be loaded here by JavaScript -->
+          <div class="dm-empty-state">No pending requests</div>
+        </div>
       </div>
     </div>
     <div class="dm-main">
@@ -167,6 +189,7 @@ if (!isset($_SESSION['user_id'])) {
           <div class="dm-header-status">Online</div>
         </div>
         <div class="dm-header-actions">
+          <button title="Request Private Session" id="requestSessionBtn" class="session-request-btn">📅</button>
           <button title="Call">📞</button>
           <button title="Video">🎥</button>
           <button title="Info">ℹ️</button>
@@ -192,6 +215,103 @@ if (!isset($_SESSION['user_id'])) {
     ]); ?>
     
   </main><!-- Close main-content -->
+
+  <!-- Toast Notification Container -->
+  <div id="notificationContainer" class="notification-container"></div>
+
+  <!-- Private Session Request Modal -->
+  <div id="sessionRequestModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Request Private Session</h2>
+        <button class="modal-close" id="closeSessionModal">&times;</button>
+      </div>
+      <form id="sessionRequestForm">
+        <div class="form-group">
+          <label for="areaOfHelp">Area Needing Help *</label>
+          <select id="areaOfHelp" required>
+            <option value="">-- Select Subject --</option>
+            <option value="Mathematics">Mathematics</option>
+            <option value="Science">Science</option>
+            <option value="English">English</option>
+            <option value="History">History</option>
+            <option value="Programming">Programming</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="sessionDescription">What would you like help with? *</label>
+          <textarea id="sessionDescription" placeholder="Brief description of what you need help with..." required rows="4"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="sessionDuration">Preferred Duration *</label>
+          <select id="sessionDuration" required>
+            <option value="">-- Select Duration --</option>
+            <option value="15">15 minutes</option>
+            <option value="30">30 minutes</option>
+            <option value="60">1 hour</option>
+            <option value="120">2 hours</option>
+            <option value="flexible">Flexible</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="sessionType">Session Type *</label>
+          <select id="sessionType" required>
+            <option value="">-- Select Type --</option>
+            <option value="tutoring">Tutoring</option>
+            <option value="study_group">Study Group</option>
+            <option value="collaboration">Collaboration</option>
+            <option value="review">Review/Feedback</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" id="cancelSessionModal">Cancel</button>
+          <button type="submit" class="btn-submit">Send Request</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Time Selection Modal for Accepting Request -->
+  <div id="timeSelectionModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Choose Session Time</h2>
+        <button class="modal-close" id="closeTimeModal">&times;</button>
+      </div>
+      <form id="timeSelectionForm">
+        <div class="form-group">
+          <label for="sessionDate">Preferred Date *</label>
+          <input type="date" id="sessionDate" required />
+        </div>
+
+        <div class="form-group">
+          <label for="sessionStartTime">Start Time *</label>
+          <input type="time" id="sessionStartTime" required />
+        </div>
+
+        <div class="form-group">
+          <label for="sessionEndTime">End Time *</label>
+          <input type="time" id="sessionEndTime" required />
+        </div>
+
+        <div class="form-group">
+          <label for="sessionNotes">Additional Notes (Optional)</label>
+          <textarea id="sessionNotes" placeholder="Any additional details or preferences..." rows="3"></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" id="cancelTimeModal">Cancel</button>
+          <button type="submit" class="btn-submit">Confirm & Accept</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <script>
     // Check if coming from connections page with user_id
