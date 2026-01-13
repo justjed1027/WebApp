@@ -1006,6 +1006,7 @@ body.light-mode .post {
 
 .create-post-input {
   width: 100%;
+  max-width: 500px;
   background: transparent;
   border: 2px solid var(--border-color);
   border-radius: 16px;
@@ -1015,8 +1016,13 @@ body.light-mode .post {
   font-weight: 400;
   outline: none;
   transition: all var(--transition-fast);
-  resize: vertical;
+  resize: none;
   min-height: 60px;
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
   font-family: inherit;
 }
 

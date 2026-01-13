@@ -20,10 +20,33 @@
       color: inherit;
       border: 1px solid rgba(255,255,255,0.06);
       resize: vertical; /* allow user to expand vertically */
-      overflow: auto;
+      resize: none;
       font-family: inherit;
       font-size: 0.95rem;
       line-height: 1.3;
+    }
+
+    /* Word counter styling */
+    .word-count-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      padding: 0 4px;
+    }
+    
+    .word-count-display {
+      font-weight: 500;
+    }
+    
+    .word-count-display.warning {
+      color: var(--warning);
+    }
+    
+    .word-count-display.reached {
+      color: var(--error);
     }
 
     /* Slight tweak for the submit button spacing */
@@ -206,6 +229,9 @@
         </div>
             <form id="inline-post-form" action="post.php" method="POST">
               <textarea name="content" class="create-post-input" placeholder="Ask a question or share something helpful..." rows="3"></textarea>
+              <div class="word-count-container">
+                <span class="word-count-display"><span id="wordCount">0</span>/500</span>
+              </div>
       </div>
           <div class="create-post-actions">
             <button type="submit" class="create-post-btn">Submit</button>
