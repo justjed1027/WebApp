@@ -181,17 +181,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 	const searchInput = document.querySelector('.events-search');
 	const categorySelect = document.querySelector('.events-category');
 
-	const pastGrid = document.querySelector('.past-events-grid');
-
 	const applyFilters = async () => {
 		const q = searchInput ? searchInput.value.trim() : '';
 		const cat = (categorySelect && categorySelect.value && categorySelect.value !== 'All Categories') ? categorySelect.value : '';
 		// Upcoming events (status=upcoming)
 		const upcomingEvents = await fetchEvents('all', q, cat, 'upcoming');
 		renderEvents(upcomingGrid, upcomingEvents, 6);
-		// Past events (status=past)
-		const pastEvents = await fetchEvents('all', q, cat, 'past');
-		renderEvents(pastGrid, pastEvents, 6);
 	};
 
 	if (searchInput) {
