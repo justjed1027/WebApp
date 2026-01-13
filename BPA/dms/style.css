@@ -996,6 +996,22 @@ nav a:hover {
   color: var(--error);
 }
 
+.btn-session {
+  background: var(--accent-color);
+  color: white;
+  width: 100%;
+}
+
+.btn-session:hover {
+  background: var(--accent-color-hover);
+  transform: translateY(-2px);
+}
+
+.dm-request-item.accepted {
+  border-left: 4px solid var(--accent-color);
+  background: rgba(76, 175, 80, 0.05);
+}
+
 /* ===== TOAST NOTIFICATIONS ===== */
 .notification-container {
   position: fixed;
@@ -1100,6 +1116,85 @@ nav a:hover {
 .toast.removing {
   animation: slideOut 0.3s ease-out forwards;
 }
+/* ===== WAITING ROOM STYLES ===== */
+.waiting-room {
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+  height: 300px;
+  background: var(--background-card);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-lg);
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px;
+}
+
+.waiting-room-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+}
+
+.waiting-room h2 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 22px;
+}
+
+.waiting-room p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.waiting-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60px;
+}
+
+.spinner {
+  border: 4px solid var(--background-hover);
+  border-top: 4px solid var(--accent-color);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.waiting-message {
+  font-size: 13px !important;
+  color: var(--text-secondary) !important;
+}
+
+.btn-cancel {
+  padding: 10px 20px;
+  background: var(--background-hover);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  margin-top: 10px;
+}
+
+.btn-cancel:hover {
+  background: var(--error);
+  color: white;
+  border-color: var(--error);
+}
+
 /* ===== SESSION ROOM STYLES ===== */
 .session-list {
   display: flex;

@@ -27,6 +27,11 @@ const headerAvatar = document.getElementById('headerAvatar');
 
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
+    // Set current user ID from window global
+    currentUserId = window.currentUserId;
+    document.body.dataset.userId = currentUserId;
+    console.log('Initialized currentUserId:', currentUserId);
+    
     // Mark user as online
     updateUserStatus('online');
     
@@ -507,6 +512,7 @@ async function submitSessionRequest(e) {
             headers: {
                 'Content-Type': 'application/json'
             },
+            credentials: 'include',
             body: JSON.stringify({
                 recipient_user_id: currentOtherUserId,
                 session_type: sessionType,
@@ -554,7 +560,9 @@ function switchTab(e) {
 // Load session requests for current user
 async function loadSessionRequests() {
     try {
-        const response = await fetch('./backend/get_session_requests.php');
+        const response = await fetch('./backend/get_session_requests.php', {
+            credentials: 'include'
+        });
         const data = await response.json();
         
         if (data.success) {
@@ -595,8 +603,15 @@ function renderSessionRequests(requests) {
         const createdDate = new Date(req.created_at);
         const timeAgo = getTimeAgo(createdDate);
         
+        // Check if request is accepted
+        const isAccepted = req.status === 'accepted';
+        const actionButtons = isAccepted 
+            ? `<button class="btn-request btn-session" onclick="openSessionFromRequest({request_id: ${req.request_id}, requester_id: ${req.requester_id}, recipient_id: ${req.recipient_id}, user_username: '${escapeHtml(req.user_username)}', area_of_help: '${escapeHtml(req.area_of_help)}', session_date: '${req.session_date}', session_start_time: '${req.session_start_time}', session_end_time: '${req.session_end_time}'})">Enter Session</button>`
+            : `<button class="btn-request btn-accept" onclick="respondSessionRequest(${req.request_id}, 'accept')">Accept</button>
+               <button class="btn-request btn-reject" onclick="respondSessionRequest(${req.request_id}, 'reject')">Reject</button>`;
+        
         html += `
-            <div class="dm-request-item">
+            <div class="dm-request-item ${isAccepted ? 'accepted' : ''}">
                 <div class="dm-request-header">
                     <div class="dm-request-requester">${escapeHtml(req.user_username)}</div>
                     <div class="dm-request-time">${timeAgo}</div>
@@ -612,8 +627,7 @@ function renderSessionRequests(requests) {
                     </div>
                 </div>
                 <div class="dm-request-actions">
-                    <button class="btn-request btn-accept" onclick="respondSessionRequest(${req.request_id}, 'accept')">Accept</button>
-                    <button class="btn-request btn-reject" onclick="respondSessionRequest(${req.request_id}, 'reject')">Reject</button>
+                    ${actionButtons}
                 </div>
             </div>
         `;
@@ -670,6 +684,7 @@ async function submitSessionResponse(requestId, action, sessionDate, startTime, 
             headers: {
                 'Content-Type': 'application/json'
             },
+            credentials: 'include',
             body: JSON.stringify({
                 request_id: requestId,
                 action: action,
@@ -788,6 +803,83 @@ function showToast(title, type = 'info', message = '') {
 // ===== SESSION ROOM FUNCTIONS =====
 let currentSessionId = null;
 let sessionMessageRefreshInterval = null;
+let sessionReadyCheckInterval = null;
+let currentSessionData = null;
+
+// Open session from request button
+async function openSessionFromRequest(session) {
+    currentSessionData = session;
+    
+    // First, join the session
+    try {
+        const response = await fetch('./backend/join_session.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                session_id: session.request_id
+            }),
+            credentials: 'include'
+        });
+        
+        let data;
+        try {
+            data = await response.json();
+        } catch (parseError) {
+            showToast('Error', 'error', 'Invalid server response');
+            return;
+        }
+        
+        if (data.success) {
+            if (data.other_user_joined) {
+                // Other user already in, open chat directly
+                openSessionRoom(session);
+            } else {
+                // Show waiting room
+                showWaitingRoom(session);
+            }
+        } else {
+            showToast('Error', 'error', data.error || 'Failed to join session');
+        }
+    } catch (error) {
+        showToast('Error', 'error', 'Failed to join session');
+    }
+}
+
+function showWaitingRoom(session) {
+    const otherUser = session.requester_id !== parseInt(document.body.dataset.userId) 
+        ? session.requester_id 
+        : session.recipient_id;
+    
+    document.getElementById('waitingUserName').textContent = `Waiting for other participant to join...`;
+    document.getElementById('waitingRoomModal').style.display = 'flex';
+    
+    // Poll to check if other user is ready
+    sessionReadyCheckInterval = setInterval(async () => {
+        try {
+            const url = `./backend/check_session_ready.php?session_id=${session.request_id}`;
+            
+            const response = await fetch(url, {
+                credentials: 'include'
+            });
+            const data = await response.json();
+            
+            if (data.success && data.both_ready) {
+                clearInterval(sessionReadyCheckInterval);
+                document.getElementById('waitingRoomModal').style.display = 'none';
+                openSessionRoom(session);
+            }
+        } catch (error) {
+            console.error('Error checking session ready:', error);
+        }
+    }, 2000); // Check every 2 seconds
+}
+
+function closeWaitingRoom() {
+    document.getElementById('waitingRoomModal').style.display = 'none';
+    if (sessionReadyCheckInterval) {
+        clearInterval(sessionReadyCheckInterval);
+    }
+}
 
 function showTab(tabName) {
     // Hide all tabs
@@ -816,7 +908,9 @@ function showTab(tabName) {
 
 async function loadActiveSessions() {
     try {
-        const response = await fetch('./backend/get_active_sessions.php');
+        const response = await fetch('./backend/get_active_sessions.php', {
+            credentials: 'include'
+        });
         const data = await response.json();
         
         if (data.success) {
@@ -894,7 +988,9 @@ async function loadSessionMessages() {
     if (!currentSessionId) return;
     
     try {
-        const response = await fetch(`./backend/get_session_messages.php?session_id=${currentSessionId}`);
+        const response = await fetch(`./backend/get_session_messages.php?session_id=${currentSessionId}`, {
+            credentials: 'include'
+        });
         const data = await response.json();
         
         if (data.success) {
@@ -939,6 +1035,7 @@ async function sendSessionMessage() {
         const response = await fetch('./backend/send_session_message.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
             body: JSON.stringify({
                 session_id: currentSessionId,
                 message: message

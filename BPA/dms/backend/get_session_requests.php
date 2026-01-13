@@ -24,21 +24,26 @@ try {
     $conn = $db->getConnection();
     $recipientId = $_SESSION['user_id'];
     
-    // Get pending requests for this user
+    // Get all requests (pending and accepted) for this user
     $sql = "
     SELECT 
         sr.request_id,
         sr.requester_id,
+        sr.recipient_id,
         sr.session_type,
         sr.area_of_help,
         sr.description,
         sr.duration,
+        sr.status,
+        sr.session_date,
+        sr.session_start_time,
+        sr.session_end_time,
         sr.created_at,
         u.user_username,
         u.user_email
     FROM session_requests sr
     JOIN user u ON sr.requester_id = u.user_id
-    WHERE sr.recipient_id = ? AND sr.status = 'pending'
+    WHERE sr.recipient_id = ? AND (sr.status = 'pending' OR sr.status = 'accepted')
     ORDER BY sr.created_at DESC
     ";
     

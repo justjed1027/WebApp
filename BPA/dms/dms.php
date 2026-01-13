@@ -313,11 +313,48 @@ if (!isset($_SESSION['user_id'])) {
     </div>
   </div>
 
+  <!-- Waiting Room Modal -->
+  <div id="waitingRoomModal" class="modal" style="display: none;">
+    <div class="modal-content waiting-room">
+      <div class="waiting-room-content">
+        <h2>Waiting for Participant</h2>
+        <p id="waitingUserName"></p>
+        <div class="waiting-spinner">
+          <div class="spinner"></div>
+        </div>
+        <p class="waiting-message">Please wait while we connect you with your peer...</p>
+        <button class="btn-cancel" onclick="closeWaitingRoom()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Session Room Modal -->
+  <div id="sessionRoomModal" class="modal" style="display: none;">
+    <div class="modal-content session-room">
+      <div class="session-room-header">
+        <div class="session-info">
+          <h3 id="sessionTitle">Session Room</h3>
+          <p id="sessionDetails"></p>
+        </div>
+        <button class="close-btn" onclick="closeSessionRoom()">&times;</button>
+      </div>
+      <div class="session-messages" id="sessionMessagesContainer"></div>
+      <div class="session-input-area">
+        <input type="text" id="sessionMessageInput" placeholder="Type your message..." onkeypress="handleSessionKeyPress(event)">
+        <button onclick="sendSessionMessage()" class="send-btn">Send</button>
+      </div>
+    </div>
+  </div>
+
   <script>
+    // Set current user ID from PHP session
+    window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
+    
     // Check if coming from connections page with user_id
     const urlParams = new URLSearchParams(window.location.search);
     window.startUserId = urlParams.has('user_id') ? parseInt(urlParams.get('user_id')) : null;
     console.log('URL parameter user_id:', window.startUserId);
+    console.log('Current user ID:', window.currentUserId);
   </script>
   <script src="script.js"></script>
 </body>
