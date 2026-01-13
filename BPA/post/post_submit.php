@@ -8,8 +8,12 @@ if (!isset($_SESSION['user_id'])) {
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $content = trim($_POST["content"]);
+    
+    // Count words in content
+    $word_count = str_word_count($content);
+    $max_words = 500;
 
-    if (!empty($content)) {
+    if (!empty($content) && $word_count <= $max_words) {
         $db = new DatabaseConnection();
         $conn = $db->connection;
 
@@ -26,6 +30,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         $stmt->close();
         $conn->close();
+    } elseif ($word_count > $max_words) {
+        echo "Post content exceeds the maximum limit of 500 words. Current word count: " . $word_count;
     } else {
         echo "Post content cannot be empty.";
     }

@@ -9,79 +9,70 @@
 <body>
   <div class="dm-container">
     <div class="dm-sidebar">
-      <div class="dm-search">
-        <input type="text" placeholder="Search messages...">
+      <div class="dm-sidebar-tabs">
+        <button class="tab-btn active" onclick="showTab('messages-tab')">Messages</button>
+        <button class="tab-btn" onclick="showTab('requests-tab')">Requests <span id="requestBadge" class="badge" style="display:none;">0</span></button>
+        <button class="tab-btn" onclick="showTab('sessions-tab')">Sessions <span id="sessionBadge" class="badge" style="display:none;">0</span></button>
       </div>
-      <div class="dm-list">
-        <div class="dm-list-item active">
-          <div class="dm-avatar avatar1"></div>
-          <div class="dm-list-info">
-            <div class="dm-list-name">Alex Johnson <span class="dm-list-time">2:34 PM</span></div>
-            <div class="dm-list-preview">Thanks for your help with the proje...</div>
-          </div>
+      
+      <div id="messages-tab" class="tab-content active">
+        <div class="dm-search">
+          <input type="text" placeholder="Search messages...">
         </div>
-        <div class="dm-list-item">
-          <div class="dm-avatar avatar2"></div>
-          <div class="dm-list-info">
-            <div class="dm-list-name">Morgan Lee <span class="dm-list-time">10:15 AM</span> <span class="dm-list-unread">2</span></div>
-            <div class="dm-list-preview">When is the study group meet...</div>
-          </div>
-        </div>
-        <div class="dm-list-item">
-          <div class="dm-avatar avatar3"></div>
-          <div class="dm-list-info">
-            <div class="dm-list-name">Taylor Wilson <span class="dm-list-time">Yesterday</span></div>
-            <div class="dm-list-preview">I found a great resource for our res...</div>
-          </div>
-        </div>
-        <div class="dm-list-item">
-          <div class="dm-avatar avatar4"></div>
-          <div class="dm-list-info">
-            <div class="dm-list-name">Jamie Rivera <span class="dm-list-time">Yesterday</span></div>
-            <div class="dm-list-preview">Are you going to the workshop to...</div>
-          </div>
-        </div>
+        <div class="dm-list" id="messagesList"></div>
+      </div>
+      
+      <div id="requests-tab" class="tab-content">
+        <div class="request-list" id="requestsList"></div>
+      </div>
+      
+      <div id="sessions-tab" class="tab-content">
+        <div class="session-list" id="sessionsList"></div>
       </div>
     </div>
-    <div class="dm-main">
+    
+    <div class="dm-main" id="dmMain">
       <div class="dm-header">
         <div class="dm-header-avatar avatar1"></div>
         <div class="dm-header-info">
-          <div class="dm-header-name">Alex Johnson</div>
+          <div class="dm-header-name">Select a conversation</div>
           <div class="dm-header-status">Online</div>
         </div>
-        <div class="dm-header-actions">
-          <button title="Call">📞</button>
-          <button title="Video">🎥</button>
-          <button title="Info">ℹ️</button>
-          <button title="More">⋯</button>
+      </div>
+      <div class="dm-messages" id="messageArea"></div>
+      <div class="dm-input-row" id="inputRow"></div>
+    </div>
+    
+    <!-- Waiting Room Modal -->
+    <div id="waitingRoomModal" class="modal" style="display: none;">
+      <div class="modal-content waiting-room">
+        <div class="waiting-room-content">
+          <h2>Waiting for Participant</h2>
+          <p id="waitingUserName"></p>
+          <div class="waiting-spinner">
+            <div class="spinner"></div>
+          </div>
+          <p class="waiting-message">Please wait while we connect you with your peer...</p>
+          <button class="btn-cancel" onclick="closeWaitingRoom()">Cancel</button>
         </div>
       </div>
-      <div class="dm-messages">
-        <div class="dm-message dm-message-other">
-          <div class="dm-message-bubble">Hey, how are you doing with the assignment?</div>
-          <div class="dm-message-time">2:30 PM</div>
+    </div>
+    
+    <!-- Session Room Modal -->
+    <div id="sessionRoomModal" class="modal" style="display: none;">
+      <div class="modal-content session-room">
+        <div class="session-room-header">
+          <div class="session-info">
+            <h3 id="sessionTitle">Session Room</h3>
+            <p id="sessionDetails"></p>
+          </div>
+          <button class="close-btn" onclick="closeSessionRoom()">&times;</button>
         </div>
-        <div class="dm-message dm-message-me">
-          <div class="dm-message-bubble">I'm making good progress! Just stuck on the last problem.</div>
-          <div class="dm-message-time">2:31 PM</div>
+        <div class="session-messages" id="sessionMessagesContainer"></div>
+        <div class="session-input-area">
+          <input type="text" id="sessionMessageInput" placeholder="Type your message..." onkeypress="handleSessionKeyPress(event)">
+          <button onclick="sendSessionMessage()" class="send-btn">Send</button>
         </div>
-        <div class="dm-message dm-message-other">
-          <div class="dm-message-bubble">I can help you with that. What are you struggling with specifically?</div>
-          <div class="dm-message-time">2:32 PM</div>
-        </div>
-        <div class="dm-message dm-message-me">
-          <div class="dm-message-bubble">I'm having trouble with the binary search tree implementation. The delete operation is giving me errors.</div>
-          <div class="dm-message-time">2:33 PM</div>
-        </div>
-        <div class="dm-message dm-message-other">
-          <div class="dm-message-bubble">Thanks for your help with the project!</div>
-          <div class="dm-message-time">2:34 PM</div>
-        </div>
-      </div>
-      <div class="dm-input-row">
-        <input type="text" class="dm-input" placeholder="Type a message...">
-        <button class="dm-send-btn" title="Send">&#10148;</button>
       </div>
     </div>
   </div>

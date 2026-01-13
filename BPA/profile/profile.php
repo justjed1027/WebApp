@@ -87,7 +87,7 @@ $db->closeConnection();
 </head>
 <body>
     <div class="profile-container">
-        <a href="../courses/courses.php" class="back-link">← Back to Dashboard</a>
+        <a href="#" onclick="history.back(); return false;" class="back-link">← Back</a>
         
         <div class="profile-card">
             <div class="profile-header">

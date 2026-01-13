@@ -44,6 +44,54 @@ document.addEventListener('DOMContentLoaded', function () {
         window.addEventListener('resize', function () { autoResizeTextarea(textarea); });
     });
 
+    // Word count validation for post submissions
+    const inlinePostForm = document.getElementById('inline-post-form');
+    const contentTextarea = inlinePostForm ? inlinePostForm.querySelector('textarea[name="content"]') : null;
+    const wordCountDisplay = document.getElementById('wordCount');
+    const MAX_WORDS = 500;
+
+    if (contentTextarea && inlinePostForm) {
+        inlinePostForm.addEventListener('submit', function (e) {
+            const content = contentTextarea.value.trim();
+            const wordCount = content.split(/\s+/).filter(word => word.length > 0).length;
+            
+            if (wordCount > MAX_WORDS) {
+                e.preventDefault();
+                alert(`Your post exceeds the 500-word limit. Current word count: ${wordCount}`);
+            }
+        });
+
+        // Prevent typing beyond 500 words and update word count display
+        contentTextarea.addEventListener('input', function () {
+            const content = this.value;
+            const words = content.split(/\s+/).filter(word => word.length > 0);
+            const wordCount = words.length;
+            
+            if (wordCount > MAX_WORDS) {
+                // Truncate back to 500 words
+                const truncatedWords = words.slice(0, MAX_WORDS);
+                this.value = truncatedWords.join(' ');
+                
+                if (wordCountDisplay) {
+                    wordCountDisplay.textContent = MAX_WORDS;
+                    wordCountDisplay.parentElement.classList.add('reached');
+                }
+            } else {
+                if (wordCountDisplay) {
+                    wordCountDisplay.textContent = wordCount;
+                    wordCountDisplay.parentElement.classList.remove('reached');
+                    
+                    // Add warning at 80% (400 words)
+                    if (wordCount >= 400) {
+                        wordCountDisplay.parentElement.classList.add('warning');
+                    } else {
+                        wordCountDisplay.parentElement.classList.remove('warning');
+                    }
+                }
+            }
+        });
+    }
+
     // File label and preview modal logic
     const fileInput = document.getElementById('avatar');
     const fileLabel = document.getElementById('fileLabel');
