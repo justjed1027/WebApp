@@ -1,0 +1,306 @@
+================================================================================
+                    SKILLSWAP - LICENSES AND ATTRIBUTION
+================================================================================
+
+This file provides a quick reference for all external resources and their
+licenses used in the SkillSwap web application.
+
+For detailed information, see:
+  - ATTRIBUTION.html (comprehensive HTML document)
+  - IMAGE_CREDITS.md (image asset details)
+  - ATTRIBUTION_README.md (usage guide and compliance info)
+
+================================================================================
+                           EXTERNAL RESOURCES
+================================================================================
+
+1. GOOGLE FONTS - INTER
+   ────────────────────────────────────────────────────────────────────────
+   Location: /BPA/signup/signup.php, /BPA/login/login.php
+   Weights: 400, 600, 700
+   License: Open Font License (OFL) Version 1.1
+   Designer: Rasmus Andersson
+   URL: https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap
+   
+   Usage Rights: ✓ Commercial use, ✓ Modification, ✓ Distribution
+   Attribution Required in Code: ✗ No
+   License Details: https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
+
+2. GOOGLE FONTS - LEAGUE SPARTAN
+   ────────────────────────────────────────────────────────────────────────
+   Location: /BPA/landing/landing.php
+   Weights: 700, 800, 900
+   License: Open Font License (OFL) Version 1.1
+   Designer: The League of Moveable Type
+   URL: https://fonts.googleapis.com/css2?family=League+Spartan:wght@700;800;900&display=swap
+   
+   Usage Rights: ✓ Commercial use, ✓ Modification, ✓ Distribution
+   Attribution Required in Code: ✗ No
+   License Details: https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
+
+3. BOOTSTRAP ICONS (SVG STYLE)
+   ────────────────────────────────────────────────────────────────────────
+   Location: Multiple files (connections.php, courses.php, calendar.php, etc.)
+   Format: Inline SVG elements in HTML/PHP
+   License: MIT License
+   
+   Icons Used:
+     - bi-person-fill, bi-person-fill-add
+     - bi-house-door-fill
+     - bi-chat-dots-fill, bi-chat-dots
+     - bi-file-text-fill
+     - bi-people-fill
+     - bi-book
+     - bi-calendar, bi-calendar-event
+     - bi-gear-fill
+     - bi-box-arrow-right
+     - bi-brightness-high, bi-moon
+     - bi-search
+     - bi-envelope
+     - Plus various chevrons, arrows, and status indicators
+   
+   Usage Rights: ✓ Commercial use, ✓ Modification, ✓ Private/closed-source
+   Attribution Required: ✓ Yes (copyright notice)
+   Official Source: https://icons.getbootstrap.com/
+   License Details: https://opensource.org/licenses/MIT
+
+================================================================================
+                        CORE TECHNOLOGIES
+================================================================================
+
+4. PHP 7+
+   ────────────────────────────────────────────────────────────────────────
+   Type: Server-side scripting language
+   License: PHP License v3.01
+   URL: https://www.php.net/
+   
+   Usage Rights: ✓ Free and open-source
+   Attribution Required: No
+   Licensing Fees: None
+
+5. MySQL / MySQLi
+   ────────────────────────────────────────────────────────────────────────
+   Type: Relational database management system
+   License: GNU General Public License (GPL) v2
+   URL: https://www.mysql.com/
+   
+   Usage Rights: ✓ Free and open-source
+   Attribution Required: Recommended in documentation
+   Licensing Fees: None
+   Note: Backend use only - GPL does not apply to frontend code
+
+6. VANILLA JAVASCRIPT (NO FRAMEWORK)
+   ────────────────────────────────────────────────────────────────────────
+   Type: Client-side scripting
+   Standard: ECMAScript
+   
+   Usage Rights: ✓ No licensing required
+   External Libraries: None (pure JavaScript)
+   
+7. CSS3 & HTML5
+   ────────────────────────────────────────────────────────────────────────
+   Type: Markup and styling standards
+   Standard: W3C Specifications
+   
+   Usage Rights: ✓ No licensing required
+   External Frameworks: None (custom CSS, no Bootstrap/Tailwind)
+
+8. BROWSER APIS
+   ────────────────────────────────────────────────────────────────────────
+   - LocalStorage API (client-side data persistence)
+   - Fetch API (HTTP requests)
+   - Standard DOM APIs
+   
+   Usage Rights: ✓ Standard browser features, no licensing required
+
+================================================================================
+                        IMAGES & MEDIA ASSETS
+================================================================================
+
+For complete image attribution, license information, and sourcing details,
+refer to: /BPA/IMAGE_CREDITS.md
+
+Key Image Locations:
+  - /BPA/images/ - Logo files and general images
+  - /BPA/landing/img/ - Landing page images
+  - /BPA/login/images/ - Authentication page images
+  - /BPA/post/uploads/ - User-generated content
+
+================================================================================
+                        LICENSE SUMMARY TABLE
+================================================================================
+
+Resource               Type              License              Commercial Use
+──────────────────────────────────────────────────────────────────────────
+Google Fonts (Inter)   Font              OFL 1.1              ✓ Yes
+Google Fonts (League)  Font              OFL 1.1              ✓ Yes
+Bootstrap Icons        Icons (SVG)       MIT                  ✓ Yes
+PHP                    Language          PHP License v3.01    ✓ Yes
+MySQL                  Database          GPL v2               ✓ Yes
+JavaScript (Vanilla)   Language          ECMAScript (std)     ✓ Yes
+CSS3                   Language          W3C (standard)       ✓ Yes
+HTML5                  Markup            W3C (standard)       ✓ Yes
+
+================================================================================
+                        LICENSE TEXTS
+================================================================================
+
+OPEN FONT LICENSE (OFL) 1.1 - SUMMARY
+────────────────────────────────────────────────────────────────────────────
+Permissions:
+  ✓ Commercial use
+  ✓ Modification
+  ✓ Distribution
+  ✓ Private use
+  
+Conditions:
+  ⚠ Include copy of license and copyright notice with distribution
+  
+Limitations:
+  ✗ Cannot be sold by themselves
+  ✗ Cannot claim trademark ownership
+  
+Full License: https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
+
+MIT LICENSE - SUMMARY
+────────────────────────────────────────────────────────────────────────────
+Permissions:
+  ✓ Commercial use
+  ✓ Modification
+  ✓ Distribution
+  ✓ Private use
+  ✓ Sublicense
+  
+Conditions:
+  ⚠ Include copy of license and copyright notice
+  
+Limitations:
+  ✗ No liability
+  ✗ No warranty
+  
+Full License: https://opensource.org/licenses/MIT
+
+GNU GPL v2 - SUMMARY (Backend Only)
+────────────────────────────────────────────────────────────────────────────
+Permissions:
+  ✓ Commercial use
+  ✓ Modification
+  ✓ Distribution
+  
+Conditions:
+  ⚠ Disclose source code
+  ⚠ Include license
+  ⚠ State significant changes
+  ⚠ Modifications must be under same license
+  
+Limitations:
+  ✗ No liability
+  ✗ No warranty
+  
+Note: Applies to MySQL database only (backend). Does NOT apply to SkillSwap's
+      frontend code, which uses standard web technologies.
+  
+Full License: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+
+================================================================================
+                        COMPLIANCE STATUS
+================================================================================
+
+✓ All resources are licensed under permissive open-source licenses
+✓ No proprietary code or restricted-use libraries
+✓ No GPL-licensed frontend code
+✓ All fonts are freely available with no attribution required in code
+✓ No CDN tracking or analytics libraries requiring opt-out
+✓ Full transparency maintained in documentation
+
+Compliance Officer: [Add name/team]
+Last Verified: January 2026
+Next Audit: [Add planned date]
+
+================================================================================
+                        IMPORTANT NOTES
+================================================================================
+
+1. NO EXTERNAL CDN SCRIPTS
+   SkillSwap intentionally avoids external JavaScript frameworks (jQuery,
+   React, Vue, etc.) and CSS frameworks (Bootstrap, Tailwind). This ensures:
+   - Faster page loads
+   - Smaller bundle sizes
+   - Complete control over styling
+   - Easier maintenance
+   - Reduced external dependencies
+
+2. INLINE SVG ICONS
+   All SVG icons are embedded directly in HTML/PHP code. This provides:
+   - No external icon library dependencies
+   - Full color customization via CSS
+   - Fast loading
+   - Improved accessibility
+
+3. BACKEND-ONLY GPL
+   MySQL (GPL v2) is used only for backend database operations. The GPL
+   license does not apply to the SkillSwap frontend code, which uses
+   standard web technologies (HTML, CSS, JavaScript) with no license
+   restrictions.
+
+4. GOOGLE FONTS COMPLIANCE
+   Google Fonts are freely available and licensed under OFL. According to
+   Google's official documentation, no code-level attribution is required,
+   though attribution in documentation (like this file) is appreciated.
+
+5. CUSTOM SVG ELEMENTS
+   Some SVG icons are custom-created for SkillSwap and are not covered by
+   external licenses.
+
+================================================================================
+                        QUICK REFERENCE URLS
+================================================================================
+
+Google Fonts (Inter):
+  https://fonts.google.com/specimen/Inter
+
+Google Fonts (League Spartan):
+  https://fonts.google.com/specimen/League+Spartan
+
+Bootstrap Icons:
+  https://icons.getbootstrap.com/
+
+Open Font License (OFL):
+  https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
+
+MIT License:
+  https://opensource.org/licenses/MIT
+
+GNU General Public License v2:
+  https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+
+PHP License:
+  https://www.php.net/license/
+
+MySQL Official:
+  https://www.mysql.com/
+
+================================================================================
+                        FILE STRUCTURE
+================================================================================
+
+/BPA/
+├── ATTRIBUTION.html              ← Comprehensive HTML attribution document
+├── ATTRIBUTION_README.md         ← Usage guide and maintenance info
+├── LICENSES.txt                  ← This file (quick reference)
+├── IMAGE_CREDITS.md              ← Image asset attribution
+└── ... (other application files)
+
+================================================================================
+
+For additional information, questions, or compliance inquiries:
+  1. Review ATTRIBUTION.html (comprehensive version)
+  2. Check ATTRIBUTION_README.md (usage and maintenance guide)
+  3. Consult IMAGE_CREDITS.md (image-specific details)
+  4. Visit official source URLs listed above
+
+Last Updated: January 2026
+Version: 1.0
+Status: ✓ Compliant
+
+================================================================================

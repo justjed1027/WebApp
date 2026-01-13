@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillSwap - Attribution & Credits</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: white;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 3px solid #0ea5e9;
+            padding-bottom: 20px;
+        }
+        
+        h1 {
+            color: #0ea5e9;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .version {
+            color: #999;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+        
+        h2 {
+            color: #0ea5e9;
+            font-size: 1.8em;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            border-left: 4px solid #0ea5e9;
+            padding-left: 15px;
+        }
+        
+        h3 {
+            color: #1f2937;
+            font-size: 1.3em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        
+        .section {
+            margin-bottom: 35px;
+        }
+        
+        .resource-item {
+            background: #f9fafb;
+            border-left: 4px solid #0ea5e9;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        
+        .resource-item h4 {
+            color: #0ea5e9;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+        
+        .resource-item p {
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+        
+        .resource-item strong {
+            color: #1f2937;
+        }
+        
+        .license-badge {
+            display: inline-block;
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+        
+        .license-badge.mit {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .license-badge.ofl {
+            background: #dcfce7;
+            color: #166534;
+        }
+        
+        .license-badge.gpl {
+            background: #fce7f3;
+            color: #9d174d;
+        }
+        
+        .license-badge.cc0 {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .url {
+            color: #0ea5e9;
+            word-break: break-all;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: #f9fafb;
+        }
+        
+        table th {
+            background: #0ea5e9;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .warning {
+            background: #fef2f2;
+            border-left: 4px solid #ef4444;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .warning strong {
+            color: #dc2626;
+        }
+        
+        .info {
+            background: #ecfdf5;
+            border-left: 4px solid #10b981;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .toc {
+            background: #f0f9ff;
+            border: 1px solid #bfdbfe;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 30px;
+        }
+        
+        .toc h3 {
+            margin-top: 0;
+        }
+        
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .toc li {
+            margin-bottom: 8px;
+        }
+        
+        .toc a {
+            color: #0ea5e9;
+            text-decoration: none;
+        }
+        
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        
+        footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid #e5e7eb;
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        @media print {
+            body {
+                background: white;
+            }
+            .container {
+                max-width: 100%;
+                padding: 20px;
+            }
+            h2 {
+                page-break-after: avoid;
+            }
+            .resource-item {
+                page-break-inside: avoid;
+            }
+        }
+        
+        .page-break {
+            page-break-after: always;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>SkillSwap</h1>
+            <p class="subtitle">Attribution & Open Source Credits</p>
+            <p class="version">Generated: January 2026</p>
+        </header>
+        
+        <div class="toc">
+            <h3>Table of Contents</h3>
+            <ul>
+                <li><a href="#external-fonts">1. External Fonts & Typography</a></li>
+                <li><a href="#icons">2. SVG Icons & Iconography</a></li>
+                <li><a href="#technologies">3. Core Technologies & Frameworks</a></li>
+                <li><a href="#images">4. Images & Media Assets</a></li>
+                <li><a href="#acknowledgments">5. Acknowledgments</a></li>
+            </ul>
+        </div>
+        
+        <!-- EXTERNAL FONTS SECTION -->
+        <h2 id="external-fonts">1. External Fonts & Typography</h2>
+        
+        <div class="section">
+            <h3>Google Fonts</h3>
+            <p>SkillSwap uses high-quality, free, open-source fonts provided by Google Fonts. All fonts are served via Google's Content Delivery Network (CDN) and are licensed under the Open Font License (OFL).</p>
+            
+            <div class="resource-item">
+                <h4>Inter</h4>
+                <p><strong>Usage:</strong> Primary typography for signup, login, forgot password, and general UI elements</p>
+                <p><strong>Weights Used:</strong> 400 (Regular), 600 (Semi-Bold), 700 (Bold)</p>
+                <p><strong>Files Used In:</strong></p>
+                <ul>
+                    <li>/BPA/signup/signup.php</li>
+                    <li>/BPA/login/login.php</li>
+                </ul>
+                <p><strong>CDN URL:</strong> <span class="url">https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap</span></p>
+                <p><strong>Designer:</strong> Rasmus Andersson</p>
+                <div class="license-badge ofl">Open Font License (OFL) v1.1</div>
+                <p style="margin-top: 10px; font-size: 0.9em; color: #666;">
+                    Licensed under the SIL Open Font License, Version 1.1. You are permitted to use, modify, and distribute this font without restriction.
+                </p>
+                <p style="margin-top: 8px; font-size: 0.9em;"><strong>License URL:</strong> <span class="url">https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL</span></p>
+            </div>
+            
+            <div class="resource-item">
+                <h4>League Spartan</h4>
+                <p><strong>Usage:</strong> Display/heading typography for landing page hero sections and featured content</p>
+                <p><strong>Weights Used:</strong> 700 (Bold), 800 (Extra-Bold), 900 (Black)</p>
+                <p><strong>Files Used In:</strong></p>
+                <ul>
+                    <li>/BPA/landing/landing.php</li>
+                </ul>
+                <p><strong>CDN URL:</strong> <span class="url">https://fonts.googleapis.com/css2?family=League+Spartan:wght@700;800;900&display=swap</span></p>
+                <p><strong>Designer:</strong> The League of Moveable Type</p>
+                <div class="license-badge ofl">Open Font License (OFL) v1.1</div>
+                <p style="margin-top: 10px; font-size: 0.9em; color: #666;">
+                    Licensed under the SIL Open Font License, Version 1.1. Free for commercial and personal use.
+                </p>
+            </div>
+            
+            <div class="info">
+                <strong>✓ Compliance Note:</strong> All Google Fonts are freely available, openly licensed, and no attribution link is required in the source code. However, this document serves as formal attribution. No license key or API authentication is required for font usage.
+            </div>
+        </div>
+        
+        <!-- SVG ICONS SECTION -->
+        <h2 id="icons">2. SVG Icons & Iconography</h2>
+        
+        <div class="section">
+            <h3>Bootstrap Icons (SVG Style)</h3>
+            <p>SkillSwap uses SVG icons that follow the Bootstrap Icons design aesthetic. These are embedded directly as inline SVG elements in the HTML/PHP code. Icons are used extensively throughout the application for navigation, actions, and visual indicators.</p>
+            
+            <div class="resource-item">
+                <h4>Icon Classes & Usage</h4>
+                <p><strong>Icons Used:</strong></p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>bi-person-fill - User profile indicators</li>
+                    <li>bi-person-fill-add - Add connection/user actions</li>
+                    <li>bi-house-door-fill - Home/dashboard navigation</li>
+                    <li>bi-chat-dots-fill - Messaging/discussion icons</li>
+                    <li>bi-chat-dots - Chat/comment indicators</li>
+                    <li>bi-file-text-fill - Document/note references</li>
+                    <li>bi-people-fill - Group/community indicators</li>
+                    <li>bi-book - Learning resources</li>
+                    <li>bi-calendar - Date/event indicators</li>
+                    <li>bi-calendar-event - Event management</li>
+                    <li>bi-gear-fill - Settings/preferences</li>
+                    <li>bi-box-arrow-right - Logout/exit actions</li>
+                    <li>bi-brightness-high - Light theme toggle</li>
+                    <li>bi-moon - Dark theme toggle</li>
+                    <li>bi-search - Search functionality</li>
+                    <li>bi-envelope - Email/notification indicators</li>
+                    <li>Plus various chevrons, arrows, and status indicators</li>
+                </ul>
+                <p style="margin-top: 15px;"><strong>Files Using Icons:</strong> connections.php, courses.php, course-list.php, course-detail.php, calendar.php, events.php, post.php, forums.php, notifications.php, newpage/index.php, and many others.</p>
+                <div class="license-badge mit">MIT License</div>
+                <p style="margin-top: 10px; font-size: 0.9em; color: #666;">
+                    Bootstrap Icons are licensed under the MIT License. Free for use in commercial and personal projects.
+                </p>
+                <p style="margin-top: 8px; font-size: 0.9em;"><strong>Bootstrap Icons Official Site:</strong> <span class="url">https://icons.getbootstrap.com/</span></p>
+            </div>
+            
+            <div class="resource-item">
+                <h4>Custom SVG Elements</h4>
+                <p><strong>Description:</strong> Some SVG elements are custom-created or adapted specifically for the SkillSwap application design.</p>
+                <p><strong>Examples:</strong> Dropdown arrows, custom status indicators, theme toggles</p>
+                <p><strong>License:</strong> Proprietary (created for SkillSwap)</p>
+                <p style="margin-top: 10px; font-size: 0.9em; color: #666;">Custom SVG icons are the intellectual property of the SkillSwap development team.</p>
+            </div>
+            
+            <div class="info">
+                <strong>✓ Implementation Note:</strong> All icons are embedded as inline SVG elements in the HTML/PHP code. This approach provides: (1) No external dependencies, (2) Full color customization via CSS, (3) Fast loading, and (4) Improved accessibility with proper ARIA labels.
+            </div>
+        </div>
+        
+        <!-- TECHNOLOGIES SECTION -->
+        <h2 id="technologies">3. Core Technologies & Frameworks</h2>
+        
+        <div class="section">
+            <h3>Backend Technologies</h3>
+            
+            <div class="resource-item">
+                <h4>PHP 7+</h4>
+                <p><strong>Usage:</strong> Server-side scripting language for backend logic, database interactions, and server-rendered pages</p>
+                <div class="license-badge">PHP License v3.01</div>
+                <p style="margin-top: 10px; font-size: 0.9em;"><strong>Official Site:</strong> <span class="url">https://www.php.net/</span></p>
+                <p style="margin-top: 5px; font-size: 0.9em; color: #666;">PHP is free and open-source software. No licensing fees or attribution required for usage.</p>
+            </div>
+            
+            <div class="resource-item">
+                <h4>MySQL / MySQLi</h4>
+                <p><strong>Usage:</strong> Relational database management system for storing and retrieving application data</p>
+                <p><strong>Implementation:</strong> MySQLi (MySQL Improved) extension with prepared statements for security</p>
+                <div class="license-badge gpl">GNU General Public License v2</div>
+                <p style="margin-top: 10px; font-size: 0.9em;"><strong>Official Site:</strong> <span class="url">https://www.mysql.com/</span></p>
+                <p style="margin-top: 5px; font-size: 0.9em; color: #666;">MySQL is free and open-source. No licensing fees required.</p>
+            </div>
+            
+            <div class="resource-item">
+                <h4>XAMPP (Apache, PHP Stack)</h4>
+                <p><strong>Usage:</strong> Local development environment for SkillSwap development</p>
+                <p><strong>Components:</strong> Apache Web Server, PHP, MySQL, Perl</p>
+                <div class="license-badge">GPL License</div>
+                <p style="margin-top: 10px; font-size: 0.9em;"><strong>Official Site:</strong> <span class="url">https://www.apachefriends.org/</span></p>
+            </div>
+            
+            <h3 style="margin-top: 30px;">Frontend Technologies</h3>
+            
+            <div class="resource-item">
+                <h4>Vanilla JavaScript</h4>
+                <p><strong>Usage:</strong> Client-side interactivity, DOM manipulation, form validation, and dynamic behavior</p>
+                <p><strong>Approach:</strong> No external JavaScript frameworks (jQuery, React, Vue, etc.) - pure JavaScript</p>
+                <p style="margin-top: 10px; font-size: 0.9em; color: #666;">JavaScript is a standard web technology. No licensing or attribution required.</p>
+            </div>
+            
+            <div class="resource-item">
+                <h4>CSS3</h4>
+                <p><strong>Usage:</strong> Styling, layout, animations, and responsive design</p>
+                <p><strong>Features Used:</strong> CSS Variables (Custom Properties), Flexbox, Grid, Media Queries, Transitions</p>
+                <p style="margin-top: 10px; font-size: 0.9em; color: #666;">CSS is a standard web technology. No licensing or attribution required.</p>
+            </div>
+            
+            <div class="resource-item">
+                <h4>HTML5</h4>
+                <p><strong>Usage:</strong> Semantic markup and document structure</p>
+                <p style="margin-top: 10px; font-size: 0.9em; color: #666;">HTML is a standard web technology. No licensing or attribution required.</p>
+            </div>
+            
+            <h3 style="margin-top: 30px;">Browser APIs (No External Libraries)</h3>
+            
+            <div class="resource-item">
+                <h4>LocalStorage API</h4>
+                <p><strong>Usage:</strong> Client-side data persistence for form data, user preferences, and theme settings</p>
+                <p style="margin-top: 10px; font-size: 0.9em; color: #666;">LocalStorage is a standard browser API. No external library or attribution required.</p>
+            </div>
+            
+            <div class="info">
+                <strong>✓ Minimalist Approach:</strong> SkillSwap intentionally uses minimal external dependencies. The application uses only:
+                <ul style="margin-top: 10px; margin-left: 20px;">
+                    <li>Vanilla JavaScript (no jQuery, React, Vue, or other frameworks)</li>
+                    <li>Custom CSS (no Bootstrap, Tailwind, or other CSS frameworks)</li>
+                    <li>Standard browser APIs (LocalStorage, Fetch, etc.)</li>
+                    <li>Only external dependencies: Google Fonts and Bootstrap Icons style</li>
+                </ul>
+                <p style="margin-top: 10px;">This approach provides: faster page loads, smaller bundle sizes, complete control over styling, and easier maintenance.</p>
+            </div>
+        </div>
+        
+        <!-- IMAGES SECTION -->
+        <h2 id="images">4. Images & Media Assets</h2>
+        
+        <div class="section">
+            <h3>Image Asset Attribution</h3>
+            <p>For detailed information about all images used in SkillSwap, including licensing, sources, and usage rights, please refer to the <strong>IMAGE_CREDITS.md</strong> file located at <span class="url">/BPA/IMAGE_CREDITS.md</span>.</p>
+            
+            <div class="info">
+                <strong>Note:</strong> The IMAGE_CREDITS.md file contains:
+                <ul style="margin-top: 10px; margin-left: 20px;">
+                    <li>Logo files and their usage</li>
+                    <li>Landing page images with sources and licenses</li>
+                    <li>Authentication page background images</li>
+                    <li>External hosted images with license verification status</li>
+                    <li>User-uploaded content policies</li>
+                    <li>Guidelines for adding new images</li>
+                    <li>Recommended free image sources (Unsplash, Pexels, etc.)</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- ACKNOWLEDGMENTS SECTION -->
+        <h2 id="acknowledgments">5. Acknowledgments</h2>
+        
+        <div class="section">
+            <h3>Special Thanks</h3>
+            
+            <div class="resource-item">
+                <h4>Open Source Community</h4>
+                <p>SkillSwap is built upon the foundation of open-source software. We acknowledge and thank the countless developers, designers, and contributors who have made their work freely available to the community.</p>
+            </div>
+            
+            <div class="resource-item">
+                <h4>Google Fonts Team</h4>
+                <p>Special thanks to the Google Fonts team for curating and providing a beautiful collection of free, open-source typefaces that enhance SkillSwap's typography and user experience.</p>
+            </div>
+            
+            <div class="resource-item">
+                <h4>Bootstrap Icons</h4>
+                <p>Appreciation to the Bootstrap team for creating and maintaining Bootstrap Icons, which provides consistent, well-designed SVG icons that are freely available under the MIT License.</p>
+            </div>
+            
+            <h3 style="margin-top: 30px;">License Summary</h3>
+            
+            <table>
+                <tr>
+                    <th>Technology / Resource</th>
+                    <th>License</th>
+                    <th>Usage Rights</th>
+                </tr>
+                <tr>
+                    <td>Google Fonts (Inter, League Spartan)</td>
+                    <td>Open Font License (OFL)</td>
+                    <td>Free for commercial and personal use</td>
+                </tr>
+                <tr>
+                    <td>Bootstrap Icons</td>
+                    <td>MIT License</td>
+                    <td>Free for commercial and personal use</td>
+                </tr>
+                <tr>
+                    <td>PHP</td>
+                    <td>PHP License v3.01</td>
+                    <td>Free and open-source</td>
+                </tr>
+                <tr>
+                    <td>MySQL</td>
+                    <td>GNU General Public License (GPL)</td>
+                    <td>Free and open-source</td>
+                </tr>
+                <tr>
+                    <td>Vanilla JavaScript</td>
+                    <td>ECMAScript Standard</td>
+                    <td>No licensing required</td>
+                </tr>
+                <tr>
+                    <td>CSS3 / HTML5</td>
+                    <td>W3C Specifications</td>
+                    <td>No licensing required</td>
+                </tr>
+            </table>
+            
+            <h3 style="margin-top: 30px;">Compliance & Legal Notes</h3>
+            
+            <div class="info">
+                <strong>✓ License Compliance:</strong> All external resources used in SkillSwap are licensed under permissive open-source licenses (OFL, MIT, GPL) that allow:
+                <ul style="margin-top: 10px; margin-left: 20px;">
+                    <li>Commercial use</li>
+                    <li>Modification and distribution</li>
+                    <li>Private use</li>
+                    <li>Sublicensing</li>
+                </ul>
+            </div>
+            
+            <div class="warning">
+                <strong>⚠ Important:</strong> This attribution document should be kept up-to-date whenever new external resources are added to the SkillSwap project. For detailed image asset information, always refer to IMAGE_CREDITS.md file.
+            </div>
+        </div>
+        
+        <footer>
+            <p><strong>SkillSwap Attribution & Credits Document</strong></p>
+            <p>Generated: January 2026</p>
+            <p>For the latest version and detailed image credits, refer to:</p>
+            <p><span class="url">/BPA/ATTRIBUTION.html</span> and <span class="url">/BPA/IMAGE_CREDITS.md</span></p>
+            <p style="margin-top: 20px;">This document is provided for transparency and compliance with open-source licensing requirements.</p>
+        </footer>
+    </div>
+</body>
+</html>
