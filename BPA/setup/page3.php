@@ -3,6 +3,8 @@ session_start();
 require_once '../database/DatabaseConnection.php';
 require_once '../database/User.php';
 
+$error = isset($_GET['error']) ? $_GET['error'] : '';
+
 $db = new DatabaseConnection();
 $conn = $db->connection;
 
@@ -79,8 +81,14 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 <body data-step="3">
   <div class="setup-shell">
   <div class="header"><div class="logo">SkillSwap</div></div>
-  <h1 class="step-title">Creating your Account</h1>
+  <h1 class="step-title">Creating your Account/Editing Account</h1>
   <p class="subtitle">What do you want to learn?</p>
+
+  <?php if ($error === 'interests_required'): ?>
+    <div class="input-card" style="border:1px solid #ef4444; color:#fef2f2; background:rgba(239,68,68,0.08);">
+      Please select at least one interest before continuing.
+    </div>
+  <?php endif; ?>
 
   <!-- Form starts here -->
   <form action="learn_skills.php" method="POST">
@@ -119,7 +127,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                           $subject_id = $subject['subject_id'];
                           $subject_name = htmlspecialchars($subject['subject_name']);
                           $is_checked = in_array($subject_id, $selected_interests) ? 'checked' : '';
-                          echo "<label class='course'>";
+                          $courseClasses = 'course' . ($is_checked ? ' selected' : '');
+                          echo "<label class='{$courseClasses}' data-name='{$subject_name}'>";
                           echo "<input type='checkbox' name='subjects[]' value='{$subject_id}' {$is_checked}> {$subject_name}";
                           echo "</label>";
                       }
@@ -138,10 +147,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
     <!-- Only the "Next" button should be inside the form -->
     <div class="nav-bar">
-      <a class="btn btn-primary" href="page2.php">Back</a>
-      <a class="btn btn-ghost" href="page4.php">Skip for Now</a>
+      <button type="submit" name="nav" value="back" class="btn btn-ghost">Back</button>
       <div class="spacer"></div>
-      <button type="submit" class="btn btn-primary">Next</button>
+      <button type="submit" name="nav" value="next" class="btn btn-primary" id="interestsNext">Next</button>
     </div>
   </form>
   <!-- Form ends here -->

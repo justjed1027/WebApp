@@ -40,6 +40,14 @@ document.addEventListener('DOMContentLoaded', () => {
     fitToViewport();
     window.addEventListener('resize', fitToViewport);
 
+    if (preview) {
+      const existingAvatar = preview.dataset.existingAvatar;
+      if (existingAvatar) {
+        preview.style.background = `center/cover no-repeat url('${existingAvatar}')`;
+        preview.textContent = '';
+      }
+    }
+
     if (file && preview) {
       file.addEventListener('change', () => {
         const f = file.files && file.files[0];
@@ -71,6 +79,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const topic = document.getElementById('knownTopicFilter');
     const sort = document.getElementById('knownSortBy');
     const panel = document.getElementById('knownCoursesPanel');
+    const nextBtn = document.getElementById('skillsNext');
+
+    const updateNextState = () => {
+      const anyChecked = !!document.querySelector('.course input[type="checkbox"]:checked');
+      if (nextBtn) nextBtn.disabled = !anyChecked;
+    };
+
+    document.querySelectorAll('.course input[type="checkbox"]:checked').forEach(inp => {
+      const label = inp.closest('.course');
+      if (label) label.classList.add('selected');
+    });
+
+    document.querySelectorAll('.course input[type="checkbox"]').forEach(inp => {
+      inp.addEventListener('change', () => {
+        const label = inp.closest('.course');
+        if (label) label.classList.toggle('selected', inp.checked);
+        updateNextState();
+      });
+    });
 
     // Expand panel on click focus
     if (panel) {
@@ -143,6 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
     topic && topic.addEventListener('change', applyFilters);
     sort && sort.addEventListener('change', applyFilters);
     applyFilters();
+    updateNextState();
   }
 
   // PAGE 3: What You Want to Learn
@@ -152,6 +180,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const topic = document.getElementById('topicFilter');
     const sort = document.getElementById('sortBy');
     const panel = document.getElementById('coursesPanel');
+    const nextBtn = document.getElementById('interestsNext');
+
+    const updateNextState = () => {
+      const anyChecked = !!document.querySelector('.course input[type="checkbox"]:checked');
+      if (nextBtn) nextBtn.disabled = !anyChecked;
+    };
+
+    document.querySelectorAll('.course input[type="checkbox"]:checked').forEach(inp => {
+      const label = inp.closest('.course');
+      if (label) label.classList.add('selected');
+    });
+
+    document.querySelectorAll('.course input[type="checkbox"]').forEach(inp => {
+      inp.addEventListener('change', () => {
+        const label = inp.closest('.course');
+        if (label) label.classList.toggle('selected', inp.checked);
+        updateNextState();
+      });
+    });
 
     // Expand panel on click focus
     if (panel) {
@@ -224,6 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
     topic && topic.addEventListener('change', applyFilters);
     sort && sort.addEventListener('change', applyFilters);
     applyFilters();
+    updateNextState();
   }
 
   // PAGE 4: Colors & Theme
