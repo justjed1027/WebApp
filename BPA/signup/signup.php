@@ -2,6 +2,7 @@
 session_start();
 require_once '../database/User.php';
 require_once '../database/DatabaseConnection.php';
+require_once '../database/Notification.php';
 
 // Single source of truth for the admin account email
 // Update this value to the exact email for Admin1
@@ -57,7 +58,22 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $result = $newUser->insert();
 
         if($result['success']){
-            //Success - redirect to login or dashboard
+            //Success - create welcome notification for new user
+            $db = new DatabaseConnection();
+            $notif = new Notification($db->connection);
+            
+            $notif->createNotification(
+                $newUser->user_id,           // user_id - the new user
+                'welcome',                    // type
+                null,                         // actor_user_id (no actor for welcome message)
+                'Welcome to SkillSwap! 🎉',  // title
+                'We\'re excited to have you join our community! Start by completing your profile, connecting with peers, and exploring study sessions.',  // description
+                null,                         // reference_id
+                null                          // reference_type
+            );
+            $db->closeConnection();
+            
+            //Set session and redirect
             $_SESSION['user_id'] = $newUser->user_id;
             if ($newUser->user_is_admin === 1) {
                 $_SESSION['is_admin'] = 1;
