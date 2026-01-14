@@ -96,15 +96,13 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     <!-- Top Section: Logo & Profile -->
     <div class="sidebar-top">
       <div class="sidebar-logo">
-        <div class="logo-placeholder"></div>
+        <div class="logo-placeholder"><img src="../images/skillswaplogotrans.png" style="width:40px;"></div>
         <span class="logo-text">SkillSwap</span>
       </div>
 
       <div class="sidebar-profile">
         <div class="profile-avatar">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
-          </svg>
+          <?php require_once '../components/sidecontent.php'; echo renderProfileAvatar(); ?>
         </div>
         <div class="profile-info">
           <a href="..//profile/profile.php" class="view-profile-link">View Profile - <?php if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === 1){
@@ -236,7 +234,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
               <div class="connection-card">
                 <a href="../profile/profile.php?user_id=<?php echo intval($req['requester_id']); ?>" style="text-decoration:none;color:inherit;display:block;">
                   <div class="connection-header" style="cursor:pointer;">
-                    <div class="user-avatar" style="transition:background 0.2s;" onmouseover="this.style.background='#d9dcdf'" onmouseout="this.style.background=''"></div>
+                    <div class="user-avatar" style="transition:background 0.2s;" onmouseover="this.style.background='#d9dcdf'" onmouseout="this.style.background=''">
+                      <?php require_once '../components/sidecontent.php'; echo renderSideContentAvatar($req['requester_id']); ?>
+                    </div>
                     <div class="user-info">
                       <h4 class="user-name" style="transition:color 0.2s;" onmouseover="this.style.color='#551A8B'" onmouseout="this.style.color=''"><?php echo htmlspecialchars($req['user_username']); ?></h4>
                       <?php $mutual = getMutualConnectionsCount($con, (int)$_SESSION['user_id'], (int)$req['requester_id']); ?>
@@ -294,7 +294,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 </form>
                 <a href="../profile/profile.php?user_id=<?php echo intval($row['user_id']); ?>" style="text-decoration:none;color:inherit;display:block;">
                   <div class="connection-header" style="cursor:pointer;">
-                    <div class="user-avatar" style="transition:background 0.2s;" onmouseover="this.style.background='#d9dcdf'" onmouseout="this.style.background=''"></div>
+                    <div class="user-avatar" style="transition:background 0.2s;" onmouseover="this.style.background='#d9dcdf'" onmouseout="this.style.background=''">
+                      <?php require_once '../components/sidecontent.php'; echo renderSideContentAvatar($row['user_id']); ?>
+                    </div>
                     <div class="user-info">
                       <h4 class="user-name" style="transition:color 0.2s;" onmouseover="this.style.color='#551A8B'" onmouseout="this.style.color=''"><?php echo htmlspecialchars($row['user_username']); ?></h4>
                       <p class="user-details">Connected Student</p>
@@ -338,7 +340,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
               <?php $mutual = getMutualConnectionsCount($con, (int)$userId, (int)$row['user_id']); ?>
               <div class="recommendation-card">
                 <a href="../profile/profile.php?user_id=<?php echo intval($row['user_id']); ?>" style="text-decoration:none;color:inherit;display:block;flex-grow:1;">
-                  <div class="user-avatar" style="cursor:pointer;transition:background 0.2s;margin:0 auto;" onmouseover="this.style.background='#d9dcdf'" onmouseout="this.style.background=''"></div>
+                  <div class="user-avatar" style="cursor:pointer;transition:background 0.2s;margin:0 auto;">
+                    <?php require_once '../components/sidecontent.php'; echo renderSideContentAvatar($row['user_id']); ?>
+                  </div>
                   <div class="user-info">
                     <h4 class="user-name" style="cursor:pointer;transition:color 0.2s;" onmouseover="this.style.color='#551A8B'" onmouseout="this.style.color=''"><?php echo htmlspecialchars($row['user_username']); ?></h4>
                     <p class="user-details"><?php echo (int)$mutual; ?> mutual connections</p>
@@ -386,5 +390,39 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
   
   <script src="../components/sidecontent.js"></script>
   <script src="connections.js"></script>
+  <script>
+    // Hide placeholder icons when images are loaded
+    document.querySelectorAll('.user-avatar').forEach(avatar => {
+      if (avatar.querySelector('img')) {
+        avatar.classList.add('has-image');
+      }
+      if (avatar.querySelector('span')) {
+        avatar.classList.add('has-initials');
+      }
+    });
+    
+    // Watch for dynamically added avatars
+    const observer = new MutationObserver(mutations => {
+      mutations.forEach(mutation => {
+        mutation.addedNodes.forEach(node => {
+          if (node.nodeType === 1 && node.classList) {
+            if (node.classList.contains('user-avatar')) {
+              if (node.querySelector('img')) {
+                node.classList.add('has-image');
+              }
+              if (node.querySelector('span')) {
+                node.classList.add('has-initials');
+              }
+            }
+          }
+        });
+      });
+    });
+    
+    observer.observe(document.body, { 
+      childList: true, 
+      subtree: true 
+    });
+  </script>
 </body>
 </html>

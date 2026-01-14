@@ -67,7 +67,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Load session requests on initialization
     loadSessionRequests();
     
-    // Refresh requests periodically
+    // Refresh requests periodically (every 30 seconds)
+    // Also check for expired requests and remove them
+    setInterval(() => {
+        loadSessionRequests();
+        checkExpiredRequests();
+    }, 30000);
+    
+    // Check for expired requests every 5 seconds
+    setInterval(checkExpiredRequests, 5000);
     setInterval(loadSessionRequests, 30000);
     
     // Modal controls for session request
@@ -634,6 +642,84 @@ function renderSessionRequests(requests) {
     });
     
     requestsList.innerHTML = html;
+}
+
+// Check for expired session requests and remove them from the DOM
+function checkExpiredRequests() {
+    const requestsList = document.getElementById('requestsList');
+    if (!requestsList) return;
+    
+    const requestItems = requestsList.querySelectorAll('.dm-request-item');
+    let hasValidRequests = false;
+    
+    requestItems.forEach(item => {
+        // Try to get the created_at from data attribute or calculate from time text
+        const timeText = item.querySelector('.dm-request-time')?.textContent;
+        
+        // Parse the time string and check if it's expired (24+ hours)
+        if (timeText) {
+            const isExpired = isRequestExpired(timeText);
+            
+            if (isExpired) {
+                // Fade out and remove the expired request
+                item.style.opacity = '0';
+                item.style.transition = 'opacity 0.3s ease';
+                setTimeout(() => {
+                    item.remove();
+                    // Check if there are any requests left
+                    const remainingRequests = requestsList.querySelectorAll('.dm-request-item');
+                    if (remainingRequests.length === 0) {
+                        requestsList.innerHTML = '<div class="dm-empty-state">No pending requests</div>';
+                        // Hide the badge
+                        const badge = document.getElementById('requestBadge');
+                        if (badge) {
+                            badge.style.display = 'none';
+                        }
+                    }
+                }, 300);
+            } else {
+                hasValidRequests = true;
+            }
+        } else {
+            hasValidRequests = true;
+        }
+    });
+    
+    // Update badge if all requests are gone
+    if (!hasValidRequests && requestItems.length > 0) {
+        const badge = document.getElementById('requestBadge');
+        if (badge) {
+            badge.style.display = 'none';
+        }
+    }
+}
+
+// Helper function to check if a request has expired (24+ hours old)
+function isRequestExpired(timeText) {
+    // Parse the time text like "2h ago", "30m ago", "1d ago", "23h ago"
+    const match = timeText.match(/(\d+)([mhd])\s+ago/i);
+    
+    if (!match) return false;
+    
+    const value = parseInt(match[1]);
+    const unit = match[2].toLowerCase();
+    
+    // Convert to hours for comparison
+    let hours = 0;
+    switch(unit) {
+        case 'm':
+            hours = value / 60;
+            break;
+        case 'h':
+            hours = value;
+            break;
+        case 'd':
+            hours = value * 24;
+            break;
+    }
+    
+    // If 24 or more hours have passed, it's expired
+    return hours >= 24;
 }
 
 // Respond to session request

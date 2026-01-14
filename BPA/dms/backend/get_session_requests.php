@@ -25,6 +25,7 @@ try {
     $userId = $_SESSION['user_id'];
     
     // Get all requests (pending and accepted) for this user (either as requester or recipient)
+    // Exclude expired pending requests (older than 24 hours)
     $sql = "
     SELECT 
         sr.request_id,
@@ -53,7 +54,10 @@ try {
     JOIN user u1 ON sr.requester_id = u1.user_id
     JOIN user u2 ON sr.recipient_id = u2.user_id
     WHERE (sr.recipient_id = ? OR sr.requester_id = ?) 
-        AND (sr.status = 'pending' OR sr.status = 'accepted')
+        AND (
+            (sr.status = 'pending' AND sr.created_at > DATE_SUB(NOW(), INTERVAL 24 HOUR))
+            OR sr.status = 'accepted'
+        )
     ORDER BY sr.created_at DESC
     ";
     

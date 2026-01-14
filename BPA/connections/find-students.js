@@ -204,7 +204,7 @@ function initializeSearch() {
             }
             
             html += `
-                <div class="student-card" data-name="${escapeHtml(dataName)}">
+                <div class="student-card" data-name="${escapeHtml(dataName)}" data-user-id="${student.user_id}">
                     <a href="../profile/profile.php?user_id=${student.user_id}" style="text-decoration:none;color:inherit;display:block;">
                         <div class="connection-header" style="cursor:pointer;">
                             <div class="user-avatar" style="transition:background 0.2s;" onmouseover="this.style.background='#d9dcdf'" onmouseout="this.style.background=''"></div>
@@ -222,6 +222,22 @@ function initializeSearch() {
         });
         
         studentsGrid.innerHTML = html;
+        
+        // Load profile pictures for avatars
+        document.querySelectorAll('.student-card[data-user-id]').forEach(card => {
+            const userId = card.getAttribute('data-user-id');
+            const avatarDiv = card.querySelector('.user-avatar');
+            if (avatarDiv) {
+                fetch('/WebApp/BPA/components/get_user_avatar.php?user_id=' + userId)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            avatarDiv.innerHTML = data.html;
+                        }
+                    })
+                    .catch(error => console.error('Error loading avatar:', error));
+            }
+        });
         
         // Re-initialize connect buttons
         initializeConnectButtons();

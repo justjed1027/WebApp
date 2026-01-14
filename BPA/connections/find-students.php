@@ -357,7 +357,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                             <div class="student-card" data-name="<?php echo strtolower(htmlspecialchars($row['user_username'] . ' ' . $fullName)); ?>">
                                 <a href="../profile/profile.php?user_id=<?php echo intval($userId); ?>" style="text-decoration:none;color:inherit;display:block;">
                                     <div class="connection-header" style="cursor:pointer;">
-                                        <div class="user-avatar" style="transition:background 0.2s;" onmouseover="this.style.background='#d9dcdf'" onmouseout="this.style.background=''"></div>
+                                        <div class="user-avatar" style="transition:background 0.2s;" onmouseover="this.style.background='#d9dcdf'" onmouseout="this.style.background=''">
+                                            <?php require_once '../components/sidecontent.php'; echo renderSideContentAvatar($userId); ?>
+                                        </div>
                                         <div class="user-info">
                                             <h4 class="user-name" style="transition:color 0.2s;" onmouseover="this.style.color='#551A8B'" onmouseout="this.style.color=''"><?php echo htmlspecialchars($row['user_username']); ?></h4>
                                             <p class="user-details"><?php echo htmlspecialchars($displayName); ?></p>
@@ -400,5 +402,39 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
     <script src="../components/sidecontent.js"></script>
     <script src="find-students.js"></script>
+    <script>
+      // Hide placeholder icons when images are loaded
+      document.querySelectorAll('.user-avatar').forEach(avatar => {
+        if (avatar.querySelector('img')) {
+          avatar.classList.add('has-image');
+        }
+        if (avatar.querySelector('span')) {
+          avatar.classList.add('has-initials');
+        }
+      });
+      
+      // Watch for dynamically added avatars
+      const observer = new MutationObserver(mutations => {
+        mutations.forEach(mutation => {
+          mutation.addedNodes.forEach(node => {
+            if (node.nodeType === 1 && node.classList) {
+              if (node.classList.contains('user-avatar')) {
+                if (node.querySelector('img')) {
+                  node.classList.add('has-image');
+                }
+                if (node.querySelector('span')) {
+                  node.classList.add('has-initials');
+                }
+              }
+            }
+          });
+        });
+      });
+      
+      observer.observe(document.body, { 
+        childList: true, 
+        subtree: true 
+      });
+    </script>
 </body>
 </html>
