@@ -334,6 +334,7 @@ profile svg
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SkillSwap — Posts</title>
+  <link rel="icon" type="image/png" href="../images/skillswaplogotrans.png">
   <link rel="stylesheet" href="style.css?v=nav-20251022">
   <link rel="stylesheet" href="../calendar/calendar.css">
   <link rel="stylesheet" href="../components/sidecontent.css">

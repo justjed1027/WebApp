@@ -37,6 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SkillSwap — Creating your Account (4/4)</title>
+  <link rel="icon" type="image/png" href="../images/skillswaplogotrans.png" />
   <link rel="stylesheet" href="style.css?v=<?php echo filemtime(__DIR__ . '/style.css'); ?>" />
   <style>
     /* Construction Modal Styles */

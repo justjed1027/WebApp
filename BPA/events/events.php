@@ -54,6 +54,7 @@ if ($subRes && $subRes->num_rows > 0) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Events | SkillSwap</title>
+  <link rel="icon" type="image/png" href="../images/skillswaplogotrans.png">
   <link rel="stylesheet" href="../calendar/calendar.css">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="../components/sidecontent.css">
