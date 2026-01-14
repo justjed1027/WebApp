@@ -273,7 +273,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			endTime: document.getElementById('eventEndTime').value,
 			location: document.getElementById('eventLocation').value,
 			capacity: document.getElementById('eventCapacity').value,
-			organizer: document.getElementById('eventOrganizer').value,
 			tags: Array.from(document.querySelectorAll('#eventTags input[type="checkbox"]:checked')).map(i => i.value),
 			visibility: document.querySelector('input[name="eventVisibility"]:checked').value,
 			requireApproval: document.getElementById('eventRequireApproval').checked,
@@ -299,9 +298,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 		if (!formData.location || formData.location.trim() === '') {
 			errors.push('Venue/location is required.');
-		}
-		if (!formData.organizer || formData.organizer.trim() === '') {
-			errors.push('Organizer name is required.');
 		}
 
 		// Date must be today or later

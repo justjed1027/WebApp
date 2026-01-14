@@ -271,10 +271,6 @@ if ($subRes && $subRes->num_rows > 0) {
               <span class="modal-detail-value" id="modalCategory"></span>
             </div>
             <div class="modal-detail-row">
-              <span class="modal-detail-label">Organizer</span>
-              <span class="modal-detail-value" id="modalOrganizer"></span>
-            </div>
-            <div class="modal-detail-row">
               <span class="modal-detail-label">Capacity</span>
               <span class="modal-detail-value" id="modalCapacity"></span>
             </div>
@@ -426,11 +422,6 @@ if ($subRes && $subRes->num_rows > 0) {
             <label class="form-label" for="eventCapacity">Maximum Capacity</label>
             <input type="number" id="eventCapacity" class="form-input" placeholder="e.g., 100" min="1">
             <span class="form-hint">Leave empty for unlimited</span>
-          </div>
-          
-          <div class="form-group">
-            <label class="form-label" for="eventOrganizer">Organizer Name <span class="required">*</span></label>
-            <input type="text" id="eventOrganizer" class="form-input" placeholder="Your name or organization" required>
           </div>
           
           <div class="form-group">

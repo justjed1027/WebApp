@@ -483,8 +483,31 @@ document.addEventListener('DOMContentLoaded', async () => {
 			modalRegistration.textContent = `Open until ${formatDate(event.deadline)}`;
 		}
 
+		// Update Event Host section with actual user profile
+		const modalCreatorAvatar = document.getElementById('modalCreatorAvatar');
 		const modalCreator = document.getElementById('modalCreator');
-		if (modalCreator) modalCreator.textContent = event.organization || 'Event Organizer';
+		const modalCreatorRole = document.getElementById('modalCreatorRole');
+		
+		if (modalCreator) {
+			// Build display name from first and last name, fallback to username
+			const hostName = (event.hostFirstName || event.hostLastName) 
+				? `${event.hostFirstName || ''} ${event.hostLastName || ''}`.trim()
+				: event.hostUsername || 'Event Host';
+			
+			modalCreator.textContent = hostName;
+			// Make the creator name clickable to navigate to their profile
+			modalCreator.href = `../profile/profile.php?user_id=${event.hostUserId}`;
+			modalCreator.style.cursor = 'pointer';
+			modalCreator.style.color = '#10b981';
+		}
+		
+		if (modalCreatorAvatar && event.hostProfilePicture) {
+			modalCreatorAvatar.src = event.hostProfilePicture;
+		}
+		
+		if (modalCreatorRole) {
+			modalCreatorRole.textContent = event.hostUsername || 'Host';
+		}
 
 		// Setup modal register button: replace hard-coded button inside modal
 		const modalRegisterBtn = document.querySelector('.btn-modal-register');

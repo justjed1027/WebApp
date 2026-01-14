@@ -31,6 +31,10 @@ SELECT
     e.events_end,
     e.events_create_date,
     e.host_user_id,
+    u.user_username,
+    p.user_firstname,
+    p.user_lastname,
+    p.profile_filepath,
     -- is the current user registered for this event? (0/1)
     (EXISTS(SELECT 1 FROM event_participants ep WHERE ep.ep_event_id = e.events_id AND ep.ep_user_id = ?)) AS is_registered,
     -- count total number of participants registered for this event
@@ -40,6 +44,8 @@ SELECT
     GROUP_CONCAT(DISTINCT t.tag_name SEPARATOR ', ') as tags,
     GROUP_CONCAT(DISTINCT t.tag_id SEPARATOR ',') as tag_ids
 FROM events e
+LEFT JOIN user u ON e.host_user_id = u.user_id
+LEFT JOIN profile p ON e.host_user_id = p.user_id
 LEFT JOIN event_subjects es ON e.events_id = es.es_event_id
 LEFT JOIN subjects s ON es.es_subject_id = s.subject_id
 LEFT JOIN events_tags et ON e.events_id = et.et_events_id
@@ -182,12 +188,16 @@ while ($row = $result->fetch_assoc()) {
         'organization' => $row['events_organization'],
         'contactEmail' => $row['events_contact_email'],
         'visibility' => $row['events_visibility'],
-            'deadline' => $row['events_deadline'],
+        'deadline' => $row['events_deadline'],
         'startTime' => $row['events_start'],
         'endTime' => $row['events_end'],
         'createdDate' => $row['events_create_date'],
         'hostUserId' => (int)$row['host_user_id'],
-            'isRegistered' => !empty($row['is_registered']) && $row['is_registered'] ? true : false,
+        'hostUsername' => $row['user_username'],
+        'hostFirstName' => $row['user_firstname'],
+        'hostLastName' => $row['user_lastname'],
+        'hostProfilePicture' => $row['profile_filepath'],
+        'isRegistered' => !empty($row['is_registered']) && $row['is_registered'] ? true : false,
         'registrationCount' => (int)($row['registration_count'] ?? 0),
         'subjects' => $row['subjects'] ? array_map('trim', explode(',', $row['subjects'])) : [],
         'subjectIds' => $row['subject_ids'] ? array_map('intval', explode(',', $row['subject_ids'])) : [],

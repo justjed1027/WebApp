@@ -238,16 +238,24 @@ require_once '../components/sidecontent.php';
               <span class="modal-detail-value" id="modalCategory"></span>
             </div>
             <div class="modal-detail-row">
-              <span class="modal-detail-label">Organizer</span>
-              <span class="modal-detail-value" id="modalOrganizer"></span>
-            </div>
-            <div class="modal-detail-row">
               <span class="modal-detail-label">Capacity</span>
               <span class="modal-detail-value" id="modalCapacity"></span>
             </div>
             <div class="modal-detail-row">
               <span class="modal-detail-label">Registration</span>
               <span class="modal-detail-value" id="modalRegistration"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Host Info -->
+        <div class="modal-section">
+          <h3 class="modal-section-title">Event Host</h3>
+          <div class="modal-creator">
+            <img class="creator-avatar" id="modalCreatorAvatar" src="" alt="Host profile" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover;">
+            <div class="creator-info">
+              <a href="#" class="creator-name" id="modalCreator" style="text-decoration: none; color: inherit;"></a>
+              <div class="creator-role" id="modalCreatorRole"></div>
             </div>
           </div>
         </div>
