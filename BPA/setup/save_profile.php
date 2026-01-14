@@ -37,8 +37,10 @@ if (isset($_FILES['avatar']) && isset($_FILES['avatar']['error']) && $_FILES['av
             $newName = time() . '_' . bin2hex(random_bytes(6)) . ($ext ? ('.' . $ext) : '');
             $target = $uploadDir . $newName;
             if (move_uploaded_file($f['tmp_name'], $target)) {
-                // Store DB path using the same prefix posts use
+                // Store DB path as relative from BPA directory (portable across servers)
                 $profileFilepath = 'BPA/post/uploads/' . $newName;
+                // Also set proper permissions for uploaded file
+                @chmod($target, 0644);
             }
         }
     }

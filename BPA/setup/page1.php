@@ -34,7 +34,9 @@ if (!empty($_SESSION['user_id'])) {
       $profileData['phone'] = $row['phone'] ?? '';
       $profileData['bio'] = $row['profile_summary'] ?? '';
       if (!empty($row['profile_filepath'])) {
-        $profileData['avatarUrl'] = '../' . ltrim($row['profile_filepath'], '/');
+        // Convert BPA/post/uploads/file.jpg to ../post/uploads/file.jpg
+        $path = $row['profile_filepath'];
+        $profileData['avatarUrl'] = (strpos($path, 'BPA/') === 0) ? '../' . substr($path, 4) : $path;
       }
     }
     $profileStmt->close();

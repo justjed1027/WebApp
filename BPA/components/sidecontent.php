@@ -472,7 +472,7 @@ function renderSideContent($currentPage = '', $options = []) {
                     // Load profile pictures for avatars
                     container.querySelectorAll('.side-collab-avatar').forEach(avatar => {
                         const userId = avatar.getAttribute('data-user-id');
-                        fetch('/WebApp/BPA/components/get_user_avatar.php?user_id=' + userId)
+                        fetch('../components/get_user_avatar.php?user_id=' + userId)
                             .then(response => response.json())
                             .then(data => {
                                 if (data.success) {
@@ -487,7 +487,7 @@ function renderSideContent($currentPage = '', $options = []) {
                         const userId = btn.getAttribute('data-user-id');
                         
                         // Check connection status
-                        fetch('/WebApp/BPA/components/check_connection_status.php?user_id=' + userId)
+                        fetch('../components/check_connection_status.php?user_id=' + userId)
                             .then(response => response.json())
                             .then(data => {
                                 if (data.status === 'connected') {
@@ -520,7 +520,7 @@ function renderSideContent($currentPage = '', $options = []) {
             
             function sendConnectionRequest(userId, button) {
                 // First check if already connected
-                fetch('/WebApp/BPA/components/check_connection_status.php?user_id=' + userId)
+                fetch('../components/check_connection_status.php?user_id=' + userId)
                     .then(response => response.json())
                     .then(data => {
                         console.log('Connection status:', data);
@@ -540,7 +540,7 @@ function renderSideContent($currentPage = '', $options = []) {
                         
                         // Not connected, send request
                         console.log('Sending connection request to user', userId);
-                        fetch('/WebApp/BPA/connections/send_request.php', {
+                        fetch('../connections/send_request.php', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -652,8 +652,9 @@ function renderSideContentAvatar($userId) {
     $initials = strtoupper(substr($username, 0, 1));
     
     if ($profilePicture) {
-        // Display actual profile picture
-        return '<img src="/WebApp/' . htmlspecialchars($profilePicture) . '" alt="' . htmlspecialchars($username) . '" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;" />';
+        // Convert BPA/post/uploads/file.jpg to ../post/uploads/file.jpg
+        $imgSrc = (strpos($profilePicture, 'BPA/') === 0) ? '../' . substr($profilePicture, 4) : $profilePicture;
+        return '<img src="' . htmlspecialchars($imgSrc) . '" alt="' . htmlspecialchars($username) . '" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;" />';
     } else {
         // Display initials fallback
         return '<span style="display:flex; align-items:center; justify-content:center; width:100%; height:100%; font-weight:600; font-size:0.8rem; color:white;">' . htmlspecialchars($initials) . '</span>';
@@ -706,8 +707,9 @@ function renderProfileAvatar($userId = null) {
     $html = '';
     
     if ($profilePicture) {
-        // Display actual profile picture
-        $html = '<img src="/WebApp/' . htmlspecialchars($profilePicture) . '" alt="Profile" class="profile-avatar-img" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;" />';
+        // Convert BPA/post/uploads/file.jpg to ../post/uploads/file.jpg
+        $imgSrc = (strpos($profilePicture, 'BPA/') === 0) ? '../' . substr($profilePicture, 4) : $profilePicture;
+        $html = '<img src="' . htmlspecialchars($imgSrc) . '" alt="Profile" class="profile-avatar-img" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;" />';
     } else {
         // Display initials fallback
         $html = '<span style="display:flex; align-items:center; justify-content:center; width:100%; height:100%; font-weight:600; font-size:0.9rem;">' . htmlspecialchars($initials) . '</span>';

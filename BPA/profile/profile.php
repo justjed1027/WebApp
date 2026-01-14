@@ -99,7 +99,11 @@ $db->closeConnection();
         <div class="profile-card">
             <div class="profile-header">
                 <?php if ($profilePicture): ?>
-                    <img src="/WebApp/<?php echo htmlspecialchars($profilePicture); ?>" alt="Profile Picture" class="profile-avatar-large" />
+                    <?php 
+                        // Support both relative paths and full paths
+                        $imgSrc = (strpos($profilePicture, 'BPA/') === 0) ? '../' . substr($profilePicture, 4) : $profilePicture;
+                    ?>
+                    <img src="<?php echo htmlspecialchars($imgSrc); ?>" alt="Profile Picture" class="profile-avatar-large" />
                 <?php else: ?>
                     <div class="profile-avatar-large">
                         <?php echo htmlspecialchars(mb_strtoupper(mb_substr($user->user_username, 0, 1))); ?>
