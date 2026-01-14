@@ -3,7 +3,6 @@ session_start();
 require_once '../database/User.php';
 require_once '../database/DatabaseConnection.php';
 require_once '../database/Notification.php';
-require_once '../components/sidecontent.php';
 
 // Function to convert timestamp to "time ago" format
 function timeAgo($timestamp)
@@ -194,6 +193,9 @@ if (!empty($_SESSION['user_id'])) {
 } else {
   header('location: ../landing/landing.php');
 }
+
+// Now safe to require sidecontent after all header operations
+require_once '../components/sidecontent.php';
 
 // Get unread DM count for badge
 $unreadDmCount = 0;
