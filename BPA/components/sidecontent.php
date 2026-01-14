@@ -417,7 +417,7 @@ function renderSideContent($currentPage = '', $options = []) {
             const limit = <?php echo $limitSuggestedCollaborators ?? 1; ?>;
             
             // Fetch suggested collaborators from backend
-            fetch('/WebApp/BPA/components/get_suggested_collaborators.php?limit=' + limit)
+            fetch('../components/get_suggested_collaborators.php?limit=' + limit)
                 .then(response => {
                     console.log('Response status:', response.status);
                     return response.text();
