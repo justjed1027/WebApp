@@ -278,10 +278,7 @@ if ($subRes && $subRes->num_rows > 0) {
               <span class="modal-detail-label">Registration Deadline</span>
               <span class="modal-detail-value" id="modalRegistration"></span>
             </div>
-            <div class="modal-detail-row">
-              <span class="modal-detail-label">Attending</span>
-              <span class="modal-detail-value" id="modalAttending"></span>
-            </div>
+            
           </div>
         </div>
         
