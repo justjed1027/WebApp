@@ -67,7 +67,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Load session requests on initialization
     loadSessionRequests();
     
-    // Refresh requests periodically
+    // Refresh requests periodically (every 30 seconds)
+    // Also check for expired requests and remove them
+    setInterval(() => {
+        loadSessionRequests();
+        checkExpiredRequests();
+    }, 30000);
+    
+    // Check for expired requests every 5 seconds
+    setInterval(checkExpiredRequests, 5000);
     setInterval(loadSessionRequests, 30000);
     
     // Modal controls for session request
@@ -606,7 +614,7 @@ function renderSessionRequests(requests) {
         // Check if request is accepted
         const isAccepted = req.status === 'accepted';
         const actionButtons = isAccepted 
-            ? `<button class="btn-request btn-session" onclick="openSessionFromRequest({request_id: ${req.request_id}, requester_id: ${req.requester_id}, recipient_id: ${req.recipient_id}, user_username: '${escapeHtml(req.user_username)}', area_of_help: '${escapeHtml(req.area_of_help)}', session_date: '${req.session_date}', session_start_time: '${req.session_start_time}', session_end_time: '${req.session_end_time}'})">Enter Session</button>`
+            ? `<button class="btn-request btn-session" onclick="openSessionFromRequest({request_id: ${req.request_id}, requester_id: ${req.requester_id}, recipient_id: ${req.recipient_id}, requester_name: '${escapeHtml(req.requester_name)}', recipient_name: '${escapeHtml(req.recipient_name)}', area_of_help: '${escapeHtml(req.area_of_help)}', session_date: '${req.session_date}', session_start_time: '${req.session_start_time}', session_end_time: '${req.session_end_time}'})">Enter Session</button>`
             : `<button class="btn-request btn-accept" onclick="respondSessionRequest(${req.request_id}, 'accept')">Accept</button>
                <button class="btn-request btn-reject" onclick="respondSessionRequest(${req.request_id}, 'reject')">Reject</button>`;
         
@@ -634,6 +642,84 @@ function renderSessionRequests(requests) {
     });
     
     requestsList.innerHTML = html;
+}
+
+// Check for expired session requests and remove them from the DOM
+function checkExpiredRequests() {
+    const requestsList = document.getElementById('requestsList');
+    if (!requestsList) return;
+    
+    const requestItems = requestsList.querySelectorAll('.dm-request-item');
+    let hasValidRequests = false;
+    
+    requestItems.forEach(item => {
+        // Try to get the created_at from data attribute or calculate from time text
+        const timeText = item.querySelector('.dm-request-time')?.textContent;
+        
+        // Parse the time string and check if it's expired (24+ hours)
+        if (timeText) {
+            const isExpired = isRequestExpired(timeText);
+            
+            if (isExpired) {
+                // Fade out and remove the expired request
+                item.style.opacity = '0';
+                item.style.transition = 'opacity 0.3s ease';
+                setTimeout(() => {
+                    item.remove();
+                    // Check if there are any requests left
+                    const remainingRequests = requestsList.querySelectorAll('.dm-request-item');
+                    if (remainingRequests.length === 0) {
+                        requestsList.innerHTML = '<div class="dm-empty-state">No pending requests</div>';
+                        // Hide the badge
+                        const badge = document.getElementById('requestBadge');
+                        if (badge) {
+                            badge.style.display = 'none';
+                        }
+                    }
+                }, 300);
+            } else {
+                hasValidRequests = true;
+            }
+        } else {
+            hasValidRequests = true;
+        }
+    });
+    
+    // Update badge if all requests are gone
+    if (!hasValidRequests && requestItems.length > 0) {
+        const badge = document.getElementById('requestBadge');
+        if (badge) {
+            badge.style.display = 'none';
+        }
+    }
+}
+
+// Helper function to check if a request has expired (24+ hours old)
+function isRequestExpired(timeText) {
+    // Parse the time text like "2h ago", "30m ago", "1d ago", "23h ago"
+    const match = timeText.match(/(\d+)([mhd])\s+ago/i);
+    
+    if (!match) return false;
+    
+    const value = parseInt(match[1]);
+    const unit = match[2].toLowerCase();
+    
+    // Convert to hours for comparison
+    let hours = 0;
+    switch(unit) {
+        case 'm':
+            hours = value / 60;
+            break;
+        case 'h':
+            hours = value;
+            break;
+        case 'd':
+            hours = value * 24;
+            break;
+    }
+    
+    // If 24 or more hours have passed, it's expired
+    return hours >= 24;
 }
 
 // Respond to session request
@@ -805,6 +891,7 @@ let currentSessionId = null;
 let sessionMessageRefreshInterval = null;
 let sessionReadyCheckInterval = null;
 let currentSessionData = null;
+let lastRenderedMessageIds = new Set();
 
 // Open session from request button
 async function openSessionFromRequest(session) {
@@ -957,6 +1044,7 @@ function renderActiveSessions(sessions) {
 
 async function openSessionRoom(session) {
     currentSessionId = session.request_id;
+    lastRenderedMessageIds.clear();
     
     const otherUser = session.requester_id !== parseInt(document.body.dataset.userId) 
         ? session.requester_name 
@@ -967,6 +1055,9 @@ async function openSessionRoom(session) {
     
     const modal = document.getElementById('sessionRoomModal');
     modal.style.display = 'flex';
+    
+    // Clear messages container
+    document.getElementById('sessionMessagesContainer').innerHTML = '';
     
     // Load messages
     await loadSessionMessages();
@@ -1003,26 +1094,35 @@ async function loadSessionMessages() {
 
 function renderSessionMessages(messages) {
     const container = document.getElementById('sessionMessagesContainer');
-    container.innerHTML = '';
+    const currentUserId = parseInt(document.body.dataset.userId);
+    let shouldScroll = false;
     
     messages.forEach(msg => {
-        const messageDiv = document.createElement('div');
-        const isOwn = msg.user_id === parseInt(document.body.dataset.userId);
-        messageDiv.className = `session-message ${isOwn ? 'sent' : 'received'}`;
-        
-        const time = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        
-        messageDiv.innerHTML = `
-            ${!isOwn ? `<div class="session-message-username">${msg.username}</div>` : ''}
-            <div class="session-message-bubble">${escapeHtml(msg.message)}</div>
-            <div style="font-size: 11px; color: var(--text-secondary); margin-top: 3px;">${time}</div>
-        `;
-        
-        container.appendChild(messageDiv);
+        // Only render messages we haven't seen before
+        if (!lastRenderedMessageIds.has(msg.message_id)) {
+            lastRenderedMessageIds.add(msg.message_id);
+            shouldScroll = true;
+            
+            const messageDiv = document.createElement('div');
+            const isOwn = msg.user_id === currentUserId;
+            messageDiv.className = `session-message ${isOwn ? 'sent' : 'received'}`;
+            
+            const time = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            messageDiv.innerHTML = `
+                ${!isOwn ? `<div class="session-message-username">${msg.username}</div>` : ''}
+                <div class="session-message-bubble">${escapeHtml(msg.message)}</div>
+                <div style="font-size: 11px; color: var(--text-secondary); margin-top: 3px;">${time}</div>
+            `;
+            
+            container.appendChild(messageDiv);
+        }
     });
     
-    // Scroll to bottom
-    container.scrollTop = container.scrollHeight;
+    // Only scroll if new messages were added
+    if (shouldScroll) {
+        container.scrollTop = container.scrollHeight;
+    }
 }
 
 async function sendSessionMessage() {

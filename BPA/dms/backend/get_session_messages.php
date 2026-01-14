@@ -51,7 +51,7 @@ try {
     $verifyStmt->close();
     
     // Get messages
-    $getSql = "SELECT sm.message_id, sm.session_id, sm.user_id, sm.message, sm.created_at, u.username 
+    $getSql = "SELECT sm.message_id, sm.session_id, sm.user_id, sm.message, sm.created_at, u.user_username as username
                FROM session_messages sm
                JOIN user u ON sm.user_id = u.user_id
                WHERE sm.session_id = ?

@@ -22,9 +22,10 @@ if (!isset($_SESSION['user_id'])) {
 try {
     $db = DB::getInstance();
     $conn = $db->getConnection();
-    $recipientId = $_SESSION['user_id'];
+    $userId = $_SESSION['user_id'];
     
-    // Get all requests (pending and accepted) for this user
+    // Get all requests (pending and accepted) for this user (either as requester or recipient)
+    // Exclude expired pending requests (older than 24 hours)
     $sql = "
     SELECT 
         sr.request_id,
@@ -39,11 +40,24 @@ try {
         sr.session_start_time,
         sr.session_end_time,
         sr.created_at,
-        u.user_username,
-        u.user_email
+        u1.user_username as requester_name,
+        u2.user_username as recipient_name,
+        CASE 
+            WHEN sr.requester_id = ? THEN u2.user_username 
+            ELSE u1.user_username 
+        END as user_username,
+        CASE 
+            WHEN sr.requester_id = ? THEN u2.user_email 
+            ELSE u1.user_email 
+        END as user_email
     FROM session_requests sr
-    JOIN user u ON sr.requester_id = u.user_id
-    WHERE sr.recipient_id = ? AND (sr.status = 'pending' OR sr.status = 'accepted')
+    JOIN user u1 ON sr.requester_id = u1.user_id
+    JOIN user u2 ON sr.recipient_id = u2.user_id
+    WHERE (sr.recipient_id = ? OR sr.requester_id = ?) 
+        AND (
+            (sr.status = 'pending' AND sr.created_at > DATE_SUB(NOW(), INTERVAL 24 HOUR))
+            OR sr.status = 'accepted'
+        )
     ORDER BY sr.created_at DESC
     ";
     
@@ -52,7 +66,7 @@ try {
         throw new Exception('Prepare failed: ' . $conn->error);
     }
     
-    $stmt->bind_param('i', $recipientId);
+    $stmt->bind_param('iiii', $userId, $userId, $userId, $userId);
     $stmt->execute();
     $result = $stmt->get_result();
     

@@ -179,7 +179,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_notification']
       </div>
       <div class="sidebar-profile">
         <div class="profile-avatar">
-          <?php echo renderProfileAvatar(); ?>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
+          </svg>
         </div>
         <div class="profile-info">
           <a href="../profile/profile.php" class="view-profile-link">View Profile - <?php echo isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === 1 ? 'Admin' : 'Student'; ?></a>
@@ -231,12 +233,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_notification']
 
     <div class="sidebar-bottom">
       <div class="nav-divider"></div>
-
-      <a href="../settings/settings.php" class="nav-link" data-tooltip="Edit User">
+      <a href="../settings/settings.php" class="nav-link">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
           <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z" />
         </svg>
-        <span>Edit User</span>
+        <span>Settings</span>
       </a>
       <a href="notifications.php?action=logout" class="nav-link">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
@@ -263,105 +264,103 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_notification']
   </aside>
 
   <main class="main-content">
-    <div class="page-content">
-      <div class="calendar-container">
-        <div class="calendar-main">
-          <!-- Header -->
-          <div class="calendar-card">
-            <div class="page-header-content">
-              <h1 class="page-main-title">Notifications</h1>
-              <p class="page-subtitle">Stay updated on activity from your connections and interactions</p>
-            </div>
-          </div>
-
-          <!-- Notifications List -->
-          <div class="calendar-card">
-            <?php if (!empty($notifications)): ?>
-              <?php foreach ($notifications as $notif): ?>
-                <div class="notification-item <?php echo ($notif['is_read'] == 0) ? 'unread' : ''; ?>">
-                  <div class="notification-icon <?php echo str_replace('_', '-', $notif['type']); ?>">
-                    <?php
-                    $iconSvg = '';
-                    switch ($notif['type']) {
-                      case 'friend_request':
-                        $iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zM11 3a1 1 0 1 1 2 0v5h5v2h-5v5h-2v-5h-5v-2h5V3z"/></svg>';
-                        break;
-                      case 'friend_accepted':
-                        $iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm9.854-3.146a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L8.5 11.793l6.646-6.647a.5.5 0 0 1 .708 0z"/></svg>';
-                        break;
-                      case 'event_created':
-                        $iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z"/><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/></svg>';
-                        break;
-                      case 'welcome':
-                        $iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.646.327.646.3 0 .595-.249.873-.836l.89-1.893c.178-.336.276-.707.276-1.086 0-.646-.363-1.107-.948-1.107-.62 0-1.078.39-1.078.897 0 .34.135.664.353.997z"/></svg>';
-                        break;
-                      default:
-                        $iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.646.327.646.3 0 .595-.249.873-.836l.89-1.893c.178-.336.276-.707.276-1.086 0-.646-.363-1.107-.948-1.107-.62 0-1.078.39-1.078.897 0 .34.135.664.353.997z"/></svg>';
-                    }
-                    echo $iconSvg;
-                    ?>
-                  </div>
-                  <div class="notification-content">
-                    <h4 class="notification-title"><?php echo htmlspecialchars($notif['title']); ?></h4>
-                    <?php if (!empty($notif['description'])): ?>
-                      <p class="notification-description"><?php echo htmlspecialchars($notif['description']); ?></p>
-                    <?php endif; ?>
-                    <p class="notification-meta">
-                      <span><?php 
-                        $datetime = new DateTime($notif['created_at']);
-                        $now = new DateTime();
-                        $interval = $now->diff($datetime);
-                        
-                        if ($interval->y > 0) {
-                          echo $interval->y . " year" . ($interval->y > 1 ? "s" : "") . " ago";
-                        } elseif ($interval->m > 0) {
-                          echo $interval->m . " month" . ($interval->m > 1 ? "s" : "") . " ago";
-                        } elseif ($interval->d > 0) {
-                          echo $interval->d . " day" . ($interval->d > 1 ? "s" : "") . " ago";
-                        } elseif ($interval->h > 0) {
-                          echo $interval->h . " hour" . ($interval->h > 1 ? "s" : "") . " ago";
-                        } elseif ($interval->i > 0) {
-                          echo $interval->i . " minute" . ($interval->i > 1 ? "s" : "") . " ago";
-                        } else {
-                          echo "just now";
-                        }
-                      ?></span>
-                      <?php if (!empty($notif['user_username'])): ?>
-                        <span>•</span>
-                        <span><?php echo htmlspecialchars($notif['user_username']); ?></span>
-                      <?php endif; ?>
-                    </p>
-                  </div>
-                  <form method="POST" style="display: inline;">
-                    <input type="hidden" name="notification_id" value="<?php echo $notif['notification_id']; ?>">
-                    <button type="submit" name="delete_notification" class="notification-delete" title="Delete">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                        <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 1a.5.5 0 0 0-.5.5v1h11v-1a.5.5 0 0 0-.5-.5h-3V1a.5.5 0 0 0-.5-.5h-2a.5.5 0 0 0-.5.5v.5H2.5z"/>
-                      </svg>
-                    </button>
-                  </form>
-                </div>
-              <?php endforeach; ?>
-            <?php else: ?>
-              <div class="empty-notifications">
-                <div class="empty-notifications-icon">🔔</div>
-                <h3 class="empty-notifications-title">You're all caught up!</h3>
-                <p>No notifications at the moment</p>
-              </div>
-            <?php endif; ?>
+    <div class="calendar-container">
+      <div class="calendar-main">
+        <!-- Header -->
+        <div class="calendar-card">
+          <div class="page-header-content">
+            <h1 class="page-main-title">Notifications</h1>
+            <p class="page-subtitle">Stay updated on activity from your connections and interactions</p>
           </div>
         </div>
-      </div>
 
-      <!-- Side Content -->
-      <?php 
-        renderSideContent('notifications', [
-          'hide' => ['notifications'],
-          'limit' => ['recent_dms' => 3, 'upcoming_events' => 3, 'suggested_collaborators' => 3]
-        ]); 
-      ?>
+        <!-- Notifications List -->
+        <div class="calendar-card">
+          <?php if (!empty($notifications)): ?>
+            <?php foreach ($notifications as $notif): ?>
+              <div class="notification-item <?php echo ($notif['is_read'] == 0) ? 'unread' : ''; ?>">
+                <div class="notification-icon <?php echo str_replace('_', '-', $notif['type']); ?>">
+                  <?php
+                  $iconSvg = '';
+                  switch ($notif['type']) {
+                    case 'friend_request':
+                      $iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zM11 3a1 1 0 1 1 2 0v5h5v2h-5v5h-2v-5h-5v-2h5V3z"/></svg>';
+                      break;
+                    case 'friend_accepted':
+                      $iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm9.854-3.146a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L8.5 11.793l6.646-6.647a.5.5 0 0 1 .708 0z"/></svg>';
+                      break;
+                    case 'event_created':
+                      $iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z"/><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/></svg>';
+                      break;
+                    case 'welcome':
+                      $iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.646.327.646.3 0 .595-.249.873-.836l.89-1.893c.178-.336.276-.707.276-1.086 0-.646-.363-1.107-.948-1.107-.62 0-1.078.39-1.078.897 0 .34.135.664.353.997z"/></svg>';
+                      break;
+                    default:
+                      $iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.646.327.646.3 0 .595-.249.873-.836l.89-1.893c.178-.336.276-.707.276-1.086 0-.646-.363-1.107-.948-1.107-.62 0-1.078.39-1.078.897 0 .34.135.664.353.997z"/></svg>';
+                  }
+                  echo $iconSvg;
+                  ?>
+                </div>
+                <div class="notification-content">
+                  <h4 class="notification-title"><?php echo htmlspecialchars($notif['title']); ?></h4>
+                  <?php if (!empty($notif['description'])): ?>
+                    <p class="notification-description"><?php echo htmlspecialchars($notif['description']); ?></p>
+                  <?php endif; ?>
+                  <p class="notification-meta">
+                    <span><?php 
+                      $datetime = new DateTime($notif['created_at']);
+                      $now = new DateTime();
+                      $interval = $now->diff($datetime);
+                      
+                      if ($interval->y > 0) {
+                        echo $interval->y . " year" . ($interval->y > 1 ? "s" : "") . " ago";
+                      } elseif ($interval->m > 0) {
+                        echo $interval->m . " month" . ($interval->m > 1 ? "s" : "") . " ago";
+                      } elseif ($interval->d > 0) {
+                        echo $interval->d . " day" . ($interval->d > 1 ? "s" : "") . " ago";
+                      } elseif ($interval->h > 0) {
+                        echo $interval->h . " hour" . ($interval->h > 1 ? "s" : "") . " ago";
+                      } elseif ($interval->i > 0) {
+                        echo $interval->i . " minute" . ($interval->i > 1 ? "s" : "") . " ago";
+                      } else {
+                        echo "just now";
+                      }
+                    ?></span>
+                    <?php if (!empty($notif['user_username'])): ?>
+                      <span>•</span>
+                      <span><?php echo htmlspecialchars($notif['user_username']); ?></span>
+                    <?php endif; ?>
+                  </p>
+                </div>
+                <form method="POST" style="display: inline;">
+                  <input type="hidden" name="notification_id" value="<?php echo $notif['notification_id']; ?>">
+                  <button type="submit" name="delete_notification" class="notification-delete" title="Delete">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                      <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 1a.5.5 0 0 0-.5.5v1h11v-1a.5.5 0 0 0-.5-.5h-3V1a.5.5 0 0 0-.5-.5h-2a.5.5 0 0 0-.5.5v.5H2.5z"/>
+                    </svg>
+                  </button>
+                </form>
+              </div>
+            <?php endforeach; ?>
+          <?php else: ?>
+            <div class="empty-notifications">
+              <div class="empty-notifications-icon">🔔</div>
+              <h3 class="empty-notifications-title">You're all caught up!</h3>
+              <p>No notifications at the moment</p>
+            </div>
+          <?php endif; ?>
+        </div>
+      </div>
     </div>
+
+    <!-- Side Content -->
+    <?php 
+      renderSideContent('notifications', [
+        'hide' => ['notifications'],
+        'limit' => ['recent_dms' => 3, 'upcoming_events' => 3, 'suggested_collaborators' => 3]
+      ]); 
+    ?>
   </main>
 
   <script src="../post/script.js?v=20251103"></script>

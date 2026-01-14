@@ -352,6 +352,7 @@ function renderSideContent($currentPage = '', $options = []) {
                                 'name' => $row['other_username'],
                                 'message' => $messagePreview,
                                 'time' => $timeAgo,
+                                'user_id' => $row['other_user_id'],
                                 'avatar' => 'avatar-' . (($row['other_user_id'] % 6) + 1),
                                 'unread' => (int)$row['unread_count'] > 0,
                                 'badge' => (int)$row['unread_count']
@@ -375,7 +376,11 @@ function renderSideContent($currentPage = '', $options = []) {
                     $conversationId = $msg['conversation_id'] ?? '';
                 ?>
                 <a href="<?php echo $conversationId ? '../dms/dms.php?conversation_id=' . $conversationId : '#'; ?>" class="side-dm-item<?php echo $unreadClass; ?>" <?php echo $clickable; ?>>
-                    <div class="side-dm-avatar <?php echo $msg['avatar']; ?>"></div>
+                    <div class="side-dm-avatar <?php echo $msg['avatar']; ?>">
+                        <?php if (isset($msg['user_id']) && $msg['user_id']): ?>
+                            <?php echo renderSideContentAvatar($msg['user_id']); ?>
+                        <?php endif; ?>
+                    </div>
                     <div class="side-dm-content">
                         <h4 class="side-dm-name"><?php echo htmlspecialchars($msg['name']); ?></h4>
                         <p class="side-dm-message"><?php echo htmlspecialchars($msg['message']); ?></p>
@@ -449,7 +454,7 @@ function renderSideContent($currentPage = '', $options = []) {
                         const displaySkills = skillsArray.slice(0, 4).join(', ') + (skillsArray.length > 4 ? ', ...' : '');
                         html += `
                             <div class="side-collab-item">
-                                <div class="side-collab-avatar ${avatarClass}"></div>
+                                <div class="side-collab-avatar ${avatarClass}" data-user-id="${collab.user_id}"></div>
                                 <div class="side-collab-info">
                                     <h4 class="side-collab-name">${collab.firstname} ${collab.lastname}</h4>
                                     <p class="side-collab-field" title="All skills: ${collab.field}">${displaySkills}</p>
@@ -460,6 +465,19 @@ function renderSideContent($currentPage = '', $options = []) {
                     });
                     
                     container.innerHTML = html;
+                    
+                    // Load profile pictures for avatars
+                    container.querySelectorAll('.side-collab-avatar').forEach(avatar => {
+                        const userId = avatar.getAttribute('data-user-id');
+                        fetch('/WebApp/BPA/components/get_user_avatar.php?user_id=' + userId)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    avatar.innerHTML = data.html;
+                                }
+                            })
+                            .catch(error => console.error('Error loading avatar:', error));
+                    });
                     
                     // Check connection status for each user and update button
                     container.querySelectorAll('.side-collab-btn').forEach(btn => {
@@ -590,4 +608,109 @@ function renderSideContent($currentPage = '', $options = []) {
     
     <?php
 }
+
+/**
+ * Render Profile Avatar for Side Content
+ * Displays user profile picture or initials fallback
+ * Used in DMs, suggested collaborators, notifications, etc.
+ * 
+ * @param int $userId - User ID
+ * @return string - HTML for profile avatar
+ */
+function renderSideContentAvatar($userId) {
+    if (!$userId) {
+        return '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
+        </svg>';
+    }
+    
+    // Get database connection
+    require_once __DIR__ . '/../database/DatabaseConnection.php';
+    $db = new DatabaseConnection();
+    $conn = $db->connection;
+    
+    // Fetch profile picture and username
+    $sql = "SELECT p.profile_filepath, u.user_username 
+            FROM profile p 
+            RIGHT JOIN user u ON p.user_id = u.user_id 
+            WHERE u.user_id = ? 
+            LIMIT 1";
+    
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('i', $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $stmt->close();
+    $db->closeConnection();
+    
+    $profilePicture = $row['profile_filepath'] ?? null;
+    $username = $row['user_username'] ?? 'User';
+    $initials = strtoupper(substr($username, 0, 1));
+    
+    if ($profilePicture) {
+        // Display actual profile picture
+        return '<img src="/WebApp/' . htmlspecialchars($profilePicture) . '" alt="' . htmlspecialchars($username) . '" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;" />';
+    } else {
+        // Display initials fallback
+        return '<span style="display:flex; align-items:center; justify-content:center; width:100%; height:100%; font-weight:600; font-size:0.8rem; color:white;">' . htmlspecialchars($initials) . '</span>';
+    }
+}
+
+/**
+ * Render Profile Avatar
+ * Displays user profile picture or initials fallback
+ * 
+ * @param int $userId - User ID (optional, uses $_SESSION['user_id'] if not provided)
+ * @return string - HTML for profile avatar
+ */
+function renderProfileAvatar($userId = null) {
+    if ($userId === null) {
+        $userId = $_SESSION['user_id'] ?? null;
+    }
+    
+    if (!$userId) {
+        // Fallback: generic user icon
+        return '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
+        </svg>';
+    }
+    
+    // Get database connection
+    require_once __DIR__ . '/../database/DatabaseConnection.php';
+    $db = new DatabaseConnection();
+    $conn = $db->connection;
+    
+    // Fetch profile picture and username
+    $sql = "SELECT p.profile_filepath, u.user_username 
+            FROM profile p 
+            RIGHT JOIN user u ON p.user_id = u.user_id 
+            WHERE u.user_id = ? 
+            LIMIT 1";
+    
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('i', $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $stmt->close();
+    $db->closeConnection();
+    
+    $profilePicture = $row['profile_filepath'] ?? null;
+    $username = $row['user_username'] ?? 'User';
+    $initials = strtoupper(substr($username, 0, 1));
+    
+    $html = '';
+    
+    if ($profilePicture) {
+        // Display actual profile picture
+        $html = '<img src="/WebApp/' . htmlspecialchars($profilePicture) . '" alt="Profile" class="profile-avatar-img" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;" />';
+    } else {
+        // Display initials fallback
+        $html = '<span style="display:flex; align-items:center; justify-content:center; width:100%; height:100%; font-weight:600; font-size:0.9rem;">' . htmlspecialchars($initials) . '</span>';
+    }
+    
+    return $html;
+}
 ?>
+

@@ -38,6 +38,8 @@ $sessionId = intval($data['session_id']);
 $userId = intval($_SESSION['user_id']);
 
 try {
+    $db = DB::getInstance();
+    $conn = $db->getConnection();
     
     // Verify user is part of this session
     $verifySql = "SELECT request_id, requester_id, recipient_id, status FROM session_requests WHERE request_id = ?";

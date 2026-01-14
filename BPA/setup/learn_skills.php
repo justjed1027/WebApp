@@ -8,29 +8,37 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 $selected_subjects = $_POST['subjects'] ?? []; // Get selected subject IDs
+$nav = $_POST['nav'] ?? 'next';
 
-if (empty($selected_subjects)) {
-    header("Location: page4.php"); // Nothing selected, move on
+// Enforce at least one interest when moving forward
+if ($nav === 'next' && empty($selected_subjects)) {
+    header("Location: page3.php?error=interests_required");
     exit;
 }
 
 $db = new DatabaseConnection();
 $conn = $db->connection;
 
-// Optional: clear previous skills (if user revisits this page)
+// Clear previous interests (if user revisits this page)
 $conn->query("DELETE FROM user_interests WHERE ui_user_id = $user_id");
 
-// Insert new ones
-$stmt = $conn->prepare("INSERT INTO user_interests (ui_user_id, ui_subject_id) VALUES (?, ?)");
-foreach ($selected_subjects as $subject_id) {
-    $stmt->bind_param("ii", $user_id, $subject_id);
-    $stmt->execute();
+// Insert new ones (if any)
+if (!empty($selected_subjects)) {
+    $stmt = $conn->prepare("INSERT INTO user_interests (ui_user_id, ui_subject_id) VALUES (?, ?)");
+    foreach ($selected_subjects as $subject_id) {
+        $stmt->bind_param("ii", $user_id, $subject_id);
+        $stmt->execute();
+    }
+    $stmt->close();
 }
 
-$stmt->close();
 $conn->close();
 
-// Redirect to next page
-header("Location: page4.php");
+// Redirect based on nav intent
+if ($nav === 'back') {
+    header("Location: page2.php");
+} else {
+    header("Location: page4.php");
+}
 exit;
 ?>

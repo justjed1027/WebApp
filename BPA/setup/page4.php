@@ -42,7 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 <body data-step="4">
   <div class="setup-shell">
     <div class="header"><div class="logo">SkillSwap</div></div>
-    <h1 class="step-title">Creating your Account</h1>
+    <h1 class="step-title">Creating your Account/Editing Account</h1>
     <p class="subtitle">Choose your Colors</p>
 
     <div class="form-stack">
