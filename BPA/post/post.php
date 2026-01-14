@@ -866,6 +866,7 @@ profile svg
   </main>
 </body>
 
+    <script src="../components/sidecontent.js"></script>
     <script src="script.js?v=20251103"></script>
     <script>
       // Helper function to escape HTML

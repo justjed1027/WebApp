@@ -480,6 +480,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     console.log('URL parameter user_id:', window.startUserId);
     console.log('Current user ID:', window.currentUserId);
   </script>
+  <script src="../components/sidecontent.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
