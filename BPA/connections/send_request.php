@@ -39,6 +39,17 @@ $result = $connObj->sendConnectionRequest($requesterId, $receiverId);
 
 // Create notification if request was successful
 if ($result === 'success') {
+	// Add receiver to excluded list in session so they don't show in recommendations
+	if (!isset($_SESSION['recommendations_excluded'])) {
+		$_SESSION['recommendations_excluded'] = [];
+	}
+	if (!isset($_SESSION['recommendations_excluded'][$requesterId])) {
+		$_SESSION['recommendations_excluded'][$requesterId] = [];
+	}
+	if (!in_array($receiverId, $_SESSION['recommendations_excluded'][$requesterId])) {
+		$_SESSION['recommendations_excluded'][$requesterId][] = $receiverId;
+	}
+	
 	$notif = new Notification($db->connection);
 	
 	// Get the requester's username
