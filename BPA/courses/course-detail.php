@@ -70,18 +70,25 @@ $stmt->close();
 
 // Fetch events for this subject (excluding events user is registered for)
 $eventsQuery = "
-  SELECT e.events_id, e.events_title, e.events_date, e.events_start, e.events_end, 
-         e.events_location, e.events_description, e.events_img, e.events_capacity,
-         e.events_organization, e.events_deadline,
-         GROUP_CONCAT(DISTINCT s.subject_name SEPARATOR ', ') as subjects,
-         (SELECT COUNT(*) FROM event_participants ep WHERE ep.ep_event_id = e.events_id) as registration_count,
-         (EXISTS(SELECT 1 FROM event_participants ep2 WHERE ep2.ep_event_id = e.events_id AND ep2.ep_user_id = ?)) AS is_registered
+  SELECT 
+    e.events_id, e.events_title, e.events_date, e.events_start, e.events_end,
+    e.events_location, e.events_description, e.events_img, e.events_capacity,
+    e.events_deadline, e.host_user_id,
+    u.user_username, p.user_firstname, p.user_lastname, p.profile_filepath,
+    GROUP_CONCAT(DISTINCT s.subject_name SEPARATOR ', ') AS subjects,
+    (SELECT COUNT(*) FROM event_participants ep WHERE ep.ep_event_id = e.events_id) AS registration_count,
+    (EXISTS(SELECT 1 FROM event_participants ep2 WHERE ep2.ep_event_id = e.events_id AND ep2.ep_user_id = ?)) AS is_registered
   FROM events e
   JOIN event_subjects es ON e.events_id = es.es_event_id
   LEFT JOIN event_subjects es2 ON e.events_id = es2.es_event_id
   LEFT JOIN subjects s ON es2.es_subject_id = s.subject_id
-  WHERE es.es_subject_id = ? 
-    AND e.events_date >= CURDATE()
+  LEFT JOIN user u ON e.host_user_id = u.user_id
+  LEFT JOIN profile p ON e.host_user_id = p.user_id
+  WHERE es.es_subject_id = ?
+    AND (TIMESTAMP(e.events_date, COALESCE(e.events_start, '23:59:59')) > NOW())
+    AND (e.events_deadline IS NULL OR TIMESTAMP(e.events_deadline, '23:59:59') > NOW())
+    AND (e.events_visibility = 'public' OR e.events_visibility IS NULL)
+    AND (e.events_capacity IS NULL OR (SELECT COUNT(*) FROM event_participants ep3c WHERE ep3c.ep_event_id = e.events_id) < e.events_capacity)
     AND NOT EXISTS(SELECT 1 FROM event_participants ep3 WHERE ep3.ep_event_id = e.events_id AND ep3.ep_user_id = ?)
   GROUP BY e.events_id
   ORDER BY e.events_date ASC
@@ -489,16 +496,24 @@ $course = [
               <span class="modal-detail-value" id="modalCategory"></span>
             </div>
             <div class="modal-detail-row">
-              <span class="modal-detail-label">Organizer</span>
-              <span class="modal-detail-value" id="modalOrganizer"></span>
-            </div>
-            <div class="modal-detail-row">
               <span class="modal-detail-label">Capacity</span>
               <span class="modal-detail-value" id="modalCapacity"></span>
             </div>
             <div class="modal-detail-row">
               <span class="modal-detail-label">Registration</span>
               <span class="modal-detail-value" id="modalRegistration"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Host Info -->
+        <div class="modal-section">
+          <h3 class="modal-section-title">Event Host</h3>
+          <div class="modal-creator">
+            <img class="creator-avatar" id="modalCreatorAvatar" src="" alt="Host profile" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover;">
+            <div class="creator-info">
+              <a href="#" class="creator-name" id="modalCreator" style="text-decoration: none; color: inherit;"></a>
+              <div class="creator-role" id="modalCreatorRole"></div>
             </div>
           </div>
         </div>

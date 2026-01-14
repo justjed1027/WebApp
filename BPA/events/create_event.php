@@ -21,7 +21,7 @@ if (!is_array($data)) {
 }
 
 // Validate required fields
-$required = ['title', 'category', 'description', 'date', 'startTime', 'location', 'organizer'];
+$required = ['title', 'category', 'description', 'date', 'startTime', 'location'];
 foreach ($required as $r) {
     if (empty($data[$r])) {
         http_response_code(400);
@@ -44,7 +44,6 @@ $img = trim($data['image'] ?? '');
 if (empty($img)) $img = null;
 $location = trim($data['location'] ?? '');
 $capacity = !empty($data['capacity']) && is_numeric($data['capacity']) ? (int)$data['capacity'] : null;
-$organizer = trim($data['organizer'] ?? '');
 
 // tags may be sent as an array of tag IDs (preferred) or as a legacy string
 $tagIds = [];

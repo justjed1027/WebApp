@@ -26,7 +26,6 @@ SELECT
     e.events_img,
     e.events_location,
     e.events_capacity,
-    e.events_organization,
     e.events_contact_email,
     e.events_visibility,
     e.events_deadline,
@@ -34,6 +33,10 @@ SELECT
     e.events_end,
     e.events_create_date,
     e.host_user_id,
+    u.user_username,
+    p.user_firstname,
+    p.user_lastname,
+    p.profile_filepath,
     (SELECT COUNT(*) FROM event_participants ep WHERE ep.ep_event_id = e.events_id) AS registration_count,
     GROUP_CONCAT(DISTINCT s.subject_name SEPARATOR ', ') as subjects,
     GROUP_CONCAT(DISTINCT es.es_subject_id SEPARATOR ',') as subject_ids,
@@ -45,6 +48,8 @@ LEFT JOIN event_subjects es ON e.events_id = es.es_event_id
 LEFT JOIN subjects s ON es.es_subject_id = s.subject_id
 LEFT JOIN events_tags et ON e.events_id = et.et_events_id
 LEFT JOIN tags t ON et.et_tags_id = t.tag_id
+ LEFT JOIN user u ON e.host_user_id = u.user_id
+ LEFT JOIN profile p ON e.host_user_id = p.user_id
 WHERE 
     ep.ep_user_id = ?
     AND TIMESTAMP(e.events_date, COALESCE(e.events_start, '23:59:59')) > NOW()
@@ -57,14 +62,17 @@ GROUP BY
     e.events_img,
     e.events_location,
     e.events_capacity,
-    e.events_organization,
     e.events_contact_email,
     e.events_visibility,
     e.events_deadline,
     e.events_start,
     e.events_end,
     e.events_create_date,
-    e.host_user_id
+    e.host_user_id,
+    u.user_username,
+    p.user_firstname,
+    p.user_lastname,
+    p.profile_filepath
 ORDER BY e.events_date ASC, e.events_start ASC
 LIMIT 10
 ";

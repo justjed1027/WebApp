@@ -2314,6 +2314,50 @@ body.light-mode .calendar-event-tag {
   font-size: 0.938rem;
 }
 
+/* Host card styles (match events page) */
+.modal-creator {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 20px;
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s;
+}
+
+.modal-creator:hover {
+  border-color: var(--primary-color);
+  box-shadow: 0 4px 12px rgba(0, 217, 126, 0.15);
+  transform: translateY(-2px);
+}
+
+.creator-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-color) 0%, #00f593 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 217, 126, 0.25);
+}
+
+.creator-info { display: flex; flex-direction: column; }
+.creator-name { font-weight: 700; color: #111827; font-size: 1.063rem; margin-bottom: 4px; }
+.creator-role { color: #6b7280; font-size: 0.875rem; font-weight: 500; }
+
+/* Dark mode variants */
+body:not(.light-mode) .modal-creator {
+  background: linear-gradient(135deg, #0b0b0b 0%, #1a1a1a 100%);
+  border-color: #2a2a2a;
+}
+body:not(.light-mode) .modal-creator:hover {
+  background: linear-gradient(135deg, #1a1a1a 0%, #0b0b0b 100%);
+}
+body:not(.light-mode) .creator-role { color: #d1d5db; }
+
 /* Modal Footer */
 .modal-footer {
   padding: 28px 40px;

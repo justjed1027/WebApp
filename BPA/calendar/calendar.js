@@ -575,7 +575,26 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Category - use first subject
     document.getElementById('modalCategory').textContent = subjects[0] || 'General';
-    document.getElementById('modalOrganizer').textContent = event.events_organization || 'N/A';
+
+    // Host profile (actual event creator)
+    const modalCreatorAvatar = document.getElementById('modalCreatorAvatar');
+    const modalCreator = document.getElementById('modalCreator');
+    const modalCreatorRole = document.getElementById('modalCreatorRole');
+
+    if (modalCreator) {
+      const hostName = (event.user_firstname || event.user_lastname)
+        ? `${event.user_firstname || ''} ${event.user_lastname || ''}`.trim()
+        : (event.user_username || 'Event Host');
+      modalCreator.textContent = hostName;
+      modalCreator.href = `../profile/profile.php?user_id=${event.host_user_id}`;
+      modalCreator.style.cursor = 'pointer';
+    }
+    if (modalCreatorAvatar && event.profile_filepath) {
+      modalCreatorAvatar.src = event.profile_filepath;
+    }
+    if (modalCreatorRole) {
+      modalCreatorRole.textContent = event.user_username || '';
+    }
     
     // Capacity in format "500 spots"
     const capacityText = event.events_capacity ? `${event.events_capacity} spots` : 'Unlimited';
