@@ -36,7 +36,7 @@ function getMutualConnectionsCount(mysqli $con, int $userA, int $userB): int {
 }
 
 // Pagination for connection requests
-$requestsPerPage = 9;
+$requestsPerPage = 5;
 $requestsPage = isset($_GET['requests_page']) && is_numeric($_GET['requests_page']) && $_GET['requests_page'] > 0 ? (int)$_GET['requests_page'] : 1;
 $requestsOffset = ($requestsPage - 1) * $requestsPerPage;
 
@@ -249,7 +249,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             <?php endif; ?>
           </h3>
           
-          <?php if ($pendingCount >= 6): ?>
+          <?php if ($pendingCount >= 5): ?>
           <div class="pagination-controls">
             <a href="?requests_page=<?php echo max(1, $requestsPage - 1); ?>" class="pagination-btn" <?php echo $requestsPage <= 1 ? 'style="opacity:0.5;pointer-events:none;"' : ''; ?>>
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -312,7 +312,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         $userId = $_SESSION['user_id'];
         
         // Pagination for connections
-        $connectionsPerPage = 9;
+        $connectionsPerPage = 5;
         $connectionsPage = isset($_GET['connections_page']) && is_numeric($_GET['connections_page']) && $_GET['connections_page'] > 0 ? (int)$_GET['connections_page'] : 1;
         $connectionsOffset = ($connectionsPage - 1) * $connectionsPerPage;
         
@@ -351,7 +351,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             <?php endif; ?>
           </h3>
           
-          <?php if ($connectionsCount >= 6): ?>
+          <?php if ($connectionsCount >= 5): ?>
           <div class="pagination-controls">
             <a href="?connections_page=<?php echo max(1, $connectionsPage - 1); ?>" class="pagination-btn" <?php echo $connectionsPage <= 1 ? 'style="opacity:0.5;pointer-events:none;"' : ''; ?>>
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -463,13 +463,18 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                     FROM connections 
                     WHERE (requester_id = ? OR receiver_id = ?)
                 )
+                AND u.user_id NOT IN (
+                    SELECT receiver_id
+                    FROM connections
+                    WHERE requester_id = ? AND status = 'pending'
+                )
                 GROUP BY u.user_id, u.user_username
                 ORDER BY matching_skills_count DESC, u.user_username ASC
                 LIMIT 12
             ";
             
             $recStmt = $con->prepare($recommendedSql);
-            $recStmt->bind_param("iiiii", $userId, $userId, $userId, $userId, $userId);
+            $recStmt->bind_param("iiiiii", $userId, $userId, $userId, $userId, $userId, $userId);
             $recStmt->execute();
             $recommended = $recStmt->get_result();
             
@@ -488,9 +493,42 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             $excludedUsers = [];
         }
         
+        // Always check for current pending outgoing requests to exclude from cached results
+        $pendingOutgoingSql = "SELECT receiver_id FROM connections WHERE requester_id = ? AND status = 'pending'";
+        $pendingStmt = $con->prepare($pendingOutgoingSql);
+        $pendingStmt->bind_param("i", $userId);
+        $pendingStmt->execute();
+        $pendingResult = $pendingStmt->get_result();
+        $currentPendingUsers = [];
+        while ($row = $pendingResult->fetch_assoc()) {
+            $currentPendingUsers[] = $row['receiver_id'];
+        }
+        $pendingStmt->close();
+        
+        // Also check for already connected users
+        $connectedUsersSql = "SELECT CASE 
+                                WHEN requester_id = ? THEN receiver_id 
+                                ELSE requester_id 
+                              END as connected_user_id
+                              FROM connections 
+                              WHERE (requester_id = ? OR receiver_id = ?) 
+                              AND status = 'accepted'";
+        $connectedStmt = $con->prepare($connectedUsersSql);
+        $connectedStmt->bind_param("iii", $userId, $userId, $userId);
+        $connectedStmt->execute();
+        $connectedResult = $connectedStmt->get_result();
+        $currentConnectedUsers = [];
+        while ($row = $connectedResult->fetch_assoc()) {
+            $currentConnectedUsers[] = $row['connected_user_id'];
+        }
+        $connectedStmt->close();
+        
+        // Merge session excluded users with current pending requests and connected users
+        $allExcludedUsers = array_unique(array_merge($excludedUsers, $currentPendingUsers, $currentConnectedUsers));
+        
         // Filter cached recommendations to exclude users we've sent requests to
-        $filteredRecommendations = array_filter($cachedRecommendations, function($user) use ($excludedUsers) {
-            return !in_array($user['user_id'], $excludedUsers);
+        $filteredRecommendations = array_filter($cachedRecommendations, function($user) use ($allExcludedUsers) {
+            return !in_array($user['user_id'], $allExcludedUsers);
         });
         ?>
         <h3>Recommended Students <span style="font-size: 0.85em; font-weight: normal; opacity: 0.7;">(Based on your interests)</span></h3>
