@@ -4,6 +4,7 @@
   grid-template-columns: 1fr 360px;
   gap: 24px;
   align-items: start;
+  position: relative;
 }
 
 @media (max-width: 1440px) {
@@ -23,13 +24,16 @@
 }
 
 .side-content {
-  position: static;
+  position: -webkit-sticky !important;
+  position: sticky !important;
+  top: 24px !important;
   height: auto;
-  max-height: 100%;
+  max-height: calc(100vh - 48px);
   background: transparent;
   border-left: none;
   overflow: visible;
   padding: 0;
+  align-self: start;
 }
 
 /* Side Card Styling */

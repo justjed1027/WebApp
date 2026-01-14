@@ -155,7 +155,7 @@ $db->closeConnection();
             <!-- Admin Panel (only visible to admins viewing other users) -->
             <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === 1 && $viewingUserId !== $_SESSION['user_id']): ?>
                 <div class="admin-panel">
-                    <h2 style="color: #22c55e; border-bottom: 2px solid #22c55e; padding-bottom: 12px;">Admin Controls</h2>
+                    <h2 style="color: #1fff93; border-bottom: 2px solid #1fff93; padding-bottom: 12px;">Admin Controls</h2>
                     
                     <div class="admin-actions">
                         <button class="admin-btn admin-btn-primary" onclick="banUser(<?php echo intval($viewingUserId); ?>)" title="Ban this user from the platform">
@@ -173,15 +173,15 @@ $db->closeConnection();
 
                     <div class="admin-status">
                         <p><strong>User Status:</strong></p>
-                        <p id="userStatusDisplay" style="color: #10b981; font-size: 0.95rem;">Active</p>
+                        <p id="userStatusDisplay" style="color: #1fff93; font-size: 0.95rem;">Active</p>
                     </div>
                 </div>
 
                 <style>
                     .admin-panel {
-                        background: #1a1a1a;
-                        border: 2px solid #22c55e;
-                        border-radius: 12px;
+                        background: #1e1e1e;
+                        border: 2px solid #1fff93;
+                        border-radius: 14px;
                         padding: 20px;
                         margin-top: 24px;
                     }
@@ -205,14 +205,14 @@ $db->closeConnection();
                     }
 
                     .admin-btn-primary {
-                        background: #22c55e;
-                        color: #0b0b0b;
+                        background: #1fff93;
+                        color: #0a0a0a;
                     }
 
                     .admin-btn-primary:hover {
-                        background: #16a34a;
+                        background: #19cc75;
                         transform: translateY(-2px);
-                        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+                        box-shadow: 0 4px 12px rgba(31, 255, 147, 0.3);
                     }
 
                     .admin-btn-secondary {
@@ -239,9 +239,9 @@ $db->closeConnection();
 
                     .admin-status {
                         padding: 12px;
-                        background: rgba(34, 197, 94, 0.1);
-                        border-left: 4px solid #22c55e;
-                        border-radius: 6px;
+                        background: rgba(31, 255, 147, 0.1);
+                        border-left: 4px solid #1fff93;
+                        border-radius: 8px;
                     }
 
                     .admin-status p {
@@ -249,7 +249,7 @@ $db->closeConnection();
                     }
 
                     .status-active {
-                        color: #10b981 !important;
+                        color: #1fff93 !important;
                     }
 
                     .status-banned {
@@ -299,9 +299,9 @@ $db->closeConnection();
                     }
 
                     .admin-modal-content {
-                        background: #1a1a1a;
-                        border: 2px solid #22c55e;
-                        border-radius: 12px;
+                        background: #1e1e1e;
+                        border: 2px solid #1fff93;
+                        border-radius: 14px;
                         width: 90%;
                         max-width: 500px;
                         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
@@ -312,12 +312,12 @@ $db->closeConnection();
                         justify-content: space-between;
                         align-items: center;
                         padding: 20px;
-                        border-bottom: 1px solid rgba(34, 197, 94, 0.3);
+                        border-bottom: 1px solid rgba(31, 255, 147, 0.3);
                     }
 
                     .admin-modal-header h3 {
                         margin: 0;
-                        color: #22c55e;
+                        color: #1fff93;
                         font-size: 1.3rem;
                     }
 
@@ -356,7 +356,7 @@ $db->closeConnection();
                         display: flex;
                         gap: 12px;
                         padding: 20px;
-                        border-top: 1px solid rgba(34, 197, 94, 0.3);
+                        border-top: 1px solid rgba(31, 255, 147, 0.3);
                         justify-content: flex-end;
                     }
 
@@ -371,21 +371,21 @@ $db->closeConnection();
                     }
 
                     .admin-modal-btn-cancel {
-                        background: #444;
+                        background: #2a2a2a;
                         color: #e0e0e0;
                     }
 
                     .admin-modal-btn-cancel:hover {
-                        background: #555;
+                        background: #3a3a3a;
                     }
 
                     .admin-modal-btn-confirm {
-                        background: #22c55e;
-                        color: #0b0b0b;
+                        background: #1fff93;
+                        color: #0a0a0a;
                     }
 
                     .admin-modal-btn-confirm:hover {
-                        background: #16a34a;
+                        background: #19cc75;
                     }
 
                     .admin-modal-btn-confirm.danger {

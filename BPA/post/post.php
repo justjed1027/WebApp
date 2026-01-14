@@ -373,7 +373,7 @@ profile svg
     }
 
     .create-post-submit-btn {
-      background: linear-gradient(135deg, var(--primary-color) 0%, #00d9ff 100%);
+      background: var(--primary-color);
       border: none;
       border-radius: 50%;
       width: 48px;

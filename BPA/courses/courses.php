@@ -14,15 +14,15 @@ $conn = $db->connection;
 
 // Category icon and color mapping
 $categoryStyles = [
-  'Mathematics' => ['icon' => '📐', 'color' => '#3b82f6'],
-  'Computer Science' => ['icon' => '💻', 'color' => '#8b5cf6'],
-  'Science' => ['icon' => '🔬', 'color' => '#10b981'],
-  'English' => ['icon' => '📚', 'color' => '#f59e0b'],
-  'History' => ['icon' => '🏛️', 'color' => '#ef4444'],
-  'Art & Design' => ['icon' => '🎨', 'color' => '#ec4899'],
-  'Business & Economics' => ['icon' => '💼', 'color' => '#06b6d4'],
-  'Music' => ['icon' => '🎵', 'color' => '#a855f7'],
-  'Languages' => ['icon' => '🌐', 'color' => '#14b8a6']
+  'Mathematics' => ['icon' => '', 'color' => '#3b82f6'],
+  'Computer Science' => ['icon' => '', 'color' => '#8b5cf6'],
+  'Science' => ['icon' => '', 'color' => '#10b981'],
+  'English' => ['icon' => '', 'color' => '#f59e0b'],
+  'History' => ['icon' => '', 'color' => '#ef4444'],
+  'Art & Design' => ['icon' => '', 'color' => '#ec4899'],
+  'Business & Economics' => ['icon' => '', 'color' => '#06b6d4'],
+  'Music' => ['icon' => '', 'color' => '#a855f7'],
+  'Languages' => ['icon' => '', 'color' => '#14b8a6']
 ];
 
 // Fetch user's skills (subjects they know)
@@ -90,7 +90,7 @@ while ($cat = $categoriesResult->fetch_assoc()) {
     'id' => $catId,
     'name' => $catName,
     'description' => $cat['category_description'] ?? '',
-    'icon' => $categoryStyles[$catName]['icon'] ?? '📖',
+    'icon' => $categoryStyles[$catName]['icon'] ?? '',
     'color' => $categoryStyles[$catName]['color'] ?? '#6b7280',
     'resourceCount' => $cat['resource_count']
   ];
@@ -249,7 +249,7 @@ $conn->close();
         <?php if (!empty($wantToLearn)): ?>
         <section class="course-section">
           <div class="section-header">
-            <h3 class="section-title">📚 Want to Learn</h3>
+            <h3 class="section-title">Want to Learn</h3>
             <p class="section-description">Subjects you're interested in exploring</p>
           </div>
           <div class="course-groups">
@@ -277,7 +277,7 @@ $conn->close();
         <?php if (!empty($buildingSkills)): ?>
         <section class="course-section">
           <div class="section-header">
-            <h3 class="section-title">🚀 Building Skills</h3>
+            <h3 class="section-title">Building Skills</h3>
             <p class="section-description">Areas where you're expanding your expertise</p>
           </div>
           <div class="course-groups">
@@ -305,7 +305,7 @@ $conn->close();
         <?php if (!empty($myExpertise)): ?>
         <section class="course-section">
           <div class="section-header">
-            <h3 class="section-title">⭐ My Expertise</h3>
+            <h3 class="section-title">My Expertise</h3>
             <p class="section-description">Subjects you have skills in</p>
           </div>
           <div class="course-groups">
@@ -333,7 +333,7 @@ $conn->close();
         <?php if (!empty($otherCourses)): ?>
         <section class="course-section">
           <div class="section-header">
-            <h3 class="section-title">🌟 Other Courses</h3>
+            <h3 class="section-title">Other Courses</h3>
             <p class="section-description">Explore more subjects and discover new interests</p>
           </div>
           <div class="course-groups">

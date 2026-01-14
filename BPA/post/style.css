@@ -18,7 +18,7 @@
   --text-muted: #707070;
   
   /* Border & Divider */
-  --border-color: #2a2a2a;
+  --border-color: rgba(0, 217, 126, 0.24);
   --divider-color: #333333;
   
   /* Status Colors */
@@ -64,7 +64,7 @@ body.light-mode {
   --text-muted: #8a8a8a;
   
   /* Border & Divider */
-  --border-color: #e0e0e0;
+  --border-color: rgba(0, 217, 126, 0.24);
   --divider-color: #d0d0d0;
   
   /* Shadows */
@@ -196,7 +196,7 @@ body {
 .logo-text {
   font-size: 23px;
   font-weight: 800;
-  background: linear-gradient(135deg, var(--primary-color) 0%, #00d9ff 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -711,7 +711,7 @@ body.light-mode .toggle-slider {
   font-weight: 800;
   color: var(--text-primary);
   letter-spacing: -0.8px;
-  background: linear-gradient(135deg, var(--primary-color) 0%, #00d9ff 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -726,7 +726,7 @@ body.light-mode .toggle-slider {
   left: 0;
   width: 100%;
   height: 3px;
-  background: linear-gradient(90deg, var(--primary-color), #00d9ff);
+  background: linear-gradient(90deg, var(--primary-color), var(--primary-hover));
   border-radius: 2px;
   opacity: 0.5;
 }
@@ -985,10 +985,17 @@ body.light-mode .post {
   width: 100%;
 }
 
+.input-with-submit {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
 .user-avatar-small {
   width: 48px;
   height: 48px;
-  background: linear-gradient(135deg, var(--primary-color) 0%, #00d9ff 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1004,9 +1011,38 @@ body.light-mode .post {
   height: 24px;
 }
 
+.create-post-submit-btn {
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+  box-shadow: 0 4px 12px rgba(31, 255, 147, 0.3);
+}
+
+.create-post-submit-btn:hover {
+  background: var(--primary-color);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 20px rgba(31, 255, 147, 0.4);
+}
+
+.create-post-submit-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.create-post-submit-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
 .create-post-input {
   width: 100%;
-  max-width: 500px;
+  flex: 1;
   background: transparent;
   border: 2px solid var(--border-color);
   border-radius: 16px;
@@ -1076,7 +1112,7 @@ body.light-mode .post {
 
 /* Create Post Button - Redesigned */
 .create-post-btn {
-  background: linear-gradient(135deg, var(--primary-color) 0%, #00d9ff 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
   border: none;
   border-radius: 12px;
   padding: 12px 32px;
@@ -1297,7 +1333,7 @@ body.light-mode .post {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary-color) 0%, #00d9ff 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
   color: var(--background-main);
   display: flex;
   align-items: center;

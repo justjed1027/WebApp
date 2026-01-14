@@ -4,8 +4,8 @@
 /* Grid Layout for Side Content */
 .has-side-content .main-content {
   display: grid;
-  grid-template-columns: 1fr 320px;
-  gap: 20px;
+  grid-template-columns: 1fr 360px;
+  gap: 24px;
   align-items: start;
 }
 
@@ -16,7 +16,7 @@
 
 .dm-container {
   display: flex;
-  height: calc(100vh - var(--topbar-height) - 40px);
+  height: calc(100vh - var(--topbar-height));
   background: transparent;
   border-radius: var(--border-radius);
   overflow: hidden;
@@ -496,7 +496,6 @@
 }
 
 .dm-message-bubble::before {
-  content: '';
   position: absolute;
   bottom: 0;
   left: -6px;
@@ -580,6 +579,7 @@
   flex-shrink: 0;
   box-shadow: 0 4px 12px rgba(31, 255, 147, 0.4);
   position: relative;
+  z-index: 1;
 }
 
 .dm-send-btn::before {
@@ -590,6 +590,7 @@
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
   opacity: 0;
   transition: opacity var(--transition-fast);
+  z-index: -1;
 }
 
 .dm-send-btn:hover {

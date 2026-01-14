@@ -17,15 +17,15 @@ $categoryId = isset($_GET['category']) ? intval($_GET['category']) : 0;
 
 // Category icon and color mapping
 $categoryStyles = [
-  'Mathematics' => ['icon' => '📐', 'color' => '#3b82f6'],
-  'Computer Science' => ['icon' => '💻', 'color' => '#8b5cf6'],
-  'Science' => ['icon' => '🔬', 'color' => '#10b981'],
-  'English' => ['icon' => '📚', 'color' => '#f59e0b'],
-  'History' => ['icon' => '🏛️', 'color' => '#ef4444'],
-  'Art & Design' => ['icon' => '🎨', 'color' => '#ec4899'],
-  'Business & Economics' => ['icon' => '💼', 'color' => '#06b6d4'],
-  'Music' => ['icon' => '🎵', 'color' => '#a855f7'],
-  'Languages' => ['icon' => '🌐', 'color' => '#14b8a6']
+  'Mathematics' => ['icon' => '', 'color' => '#3b82f6'],
+  'Computer Science' => ['icon' => '', 'color' => '#8b5cf6'],
+  'Science' => ['icon' => '', 'color' => '#10b981'],
+  'English' => ['icon' => '', 'color' => '#f59e0b'],
+  'History' => ['icon' => '', 'color' => '#ef4444'],
+  'Art & Design' => ['icon' => '', 'color' => '#ec4899'],
+  'Business & Economics' => ['icon' => '', 'color' => '#06b6d4'],
+  'Music' => ['icon' => '', 'color' => '#a855f7'],
+  'Languages' => ['icon' => '', 'color' => '#14b8a6']
 ];
 
 // Fetch category information
@@ -45,7 +45,7 @@ if (!$categoryInfo) {
 $categoryName = $categoryInfo['category_name'];
 $group = [
   'name' => $categoryName,
-  'icon' => $categoryStyles[$categoryName]['icon'] ?? '📖',
+  'icon' => $categoryStyles[$categoryName]['icon'] ?? '',
   'color' => $categoryStyles[$categoryName]['color'] ?? '#6b7280'
 ];
 
@@ -272,7 +272,7 @@ $totalSubjects = count($interestedIn) + count($skillsIn) + count($otherSubjects)
         <?php if (!empty($interestedIn)): ?>
         <div class="subject-section">
           <div class="subject-section-header">
-            <h3 class="subject-section-title">📚 Want to Learn</h3>
+            <h3 class="subject-section-title">Want to Learn</h3>
             <p class="subject-section-description">Subjects you're interested in exploring</p>
           </div>
           <div class="courses-list-grid">

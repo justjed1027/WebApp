@@ -3,8 +3,8 @@
 
 /* Main Content Grid Layout for Side Content */
 .main-content {
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: 1fr 360px;
   gap: 24px;
   align-items: start;
 }

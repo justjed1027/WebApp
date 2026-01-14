@@ -8,12 +8,12 @@
  */
 
 function renderSideContent($currentPage = '', $options = []) {
-    // Defaults by page
-    $showNotifications = !in_array($currentPage, ['notifications']);
-    $showUpcomingEvents = !in_array($currentPage, ['calendar', 'events']);
-    $showRecentDMs = true; // Always show Recent Messages
-    $showSuggestedCollaborators = !in_array($currentPage, ['connections']);
-    $showTrendingTopics = false; // Replaced by Recent Messages
+    // Show only 3 sections on all pages: Notifications, Events, Suggested Collaborators
+    $showNotifications = true;
+    $showUpcomingEvents = true;
+    $showRecentDMs = false;
+    $showSuggestedCollaborators = true;
+    $showTrendingTopics = false;
 
     // Optional overrides per page via $options['hide']
     // Example: renderSideContent('courses', ['hide' => ['notifications', 'recentDMs']])
@@ -76,7 +76,7 @@ function renderSideContent($currentPage = '', $options = []) {
                     $notificationObj = new Notification($db);
                     
                     // Fetch recent notifications
-                    $maxNotifications = $limitNotifications ?? 3;
+                    $maxNotifications = $limitNotifications ?? 1;
                     $result = $notificationObj->getRecentNotifications($currentUserId, $maxNotifications);
                     
                     while ($row = $result->fetch_assoc()) {
@@ -197,7 +197,7 @@ function renderSideContent($currentPage = '', $options = []) {
                         AND e.events_visibility = 'public'
                     GROUP BY e.events_id
                     ORDER BY e.events_date ASC
-                    LIMIT " . ($limitUpcomingEvents ?? 3);
+                    LIMIT " . ($limitUpcomingEvents ?? 1);
                     
                     $stmt = $db->prepare($sql);
                     if ($stmt) {
@@ -312,7 +312,7 @@ function renderSideContent($currentPage = '', $options = []) {
                         )
                     )
                     ORDER BY last_message_time DESC
-                    LIMIT " . ($limitRecentDMs ?? 3);
+                    LIMIT " . ($limitRecentDMs ?? 1);
                     
                     $stmt = $db->prepare($sql);
                     if ($stmt) {
@@ -406,7 +406,7 @@ function renderSideContent($currentPage = '', $options = []) {
         
         <script>
         (function() {
-            const limit = <?php echo $limitSuggestedCollaborators ?? 5; ?>;
+            const limit = <?php echo $limitSuggestedCollaborators ?? 1; ?>;
             
             // Fetch suggested collaborators from backend
             fetch('/WebApp/BPA/components/get_suggested_collaborators.php?limit=' + limit)
