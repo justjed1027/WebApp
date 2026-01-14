@@ -672,9 +672,24 @@ function initializeEventModal() {
             modalCreator.href = `../profile/profile.php?user_id=${event.host_user_id}`;
             modalCreator.style.cursor = 'pointer';
         }
-        if (modalCreatorAvatar && event.profile_filepath) {
-            modalCreatorAvatar.src = event.profile_filepath;
+        
+        // Handle avatar: show profile picture if available, otherwise show initials
+        if (modalCreatorAvatar) {
+            if (event.profile_filepath) {
+                // Show profile picture
+                modalCreatorAvatar.src = event.profile_filepath;
+                modalCreatorAvatar.style.display = 'block';
+            } else {
+                // Show initials fallback
+                const initial = (event.user_username || 'U').charAt(0).toUpperCase();
+                const avatarDiv = document.createElement('div');
+                avatarDiv.style.cssText = 'width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 1.5rem; color: white; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);';
+                avatarDiv.textContent = initial;
+                modalCreatorAvatar.style.display = 'none';
+                modalCreatorAvatar.parentNode.insertBefore(avatarDiv, modalCreatorAvatar);
+            }
         }
+        
         if (modalCreatorRole) {
             modalCreatorRole.textContent = event.user_username || '';
         }

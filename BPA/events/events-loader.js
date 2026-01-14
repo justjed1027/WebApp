@@ -501,8 +501,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 			modalCreator.style.color = '#10b981';
 		}
 		
-		if (modalCreatorAvatar && event.hostProfilePicture) {
-			modalCreatorAvatar.src = event.hostProfilePicture;
+		// Handle avatar: show profile picture if available, otherwise show initials
+		if (modalCreatorAvatar) {
+			if (event.hostProfilePicture) {
+				// Show profile picture
+				modalCreatorAvatar.src = event.hostProfilePicture;
+				modalCreatorAvatar.style.display = 'block';
+			} else {
+				// Show initials fallback
+				const initial = (event.hostUsername || 'U').charAt(0).toUpperCase();
+				const avatarDiv = document.createElement('div');
+				avatarDiv.style.cssText = 'width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 1.5rem; color: white; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);';
+				avatarDiv.textContent = initial;
+				modalCreatorAvatar.style.display = 'none';
+				modalCreatorAvatar.parentNode.insertBefore(avatarDiv, modalCreatorAvatar);
+			}
 		}
 		
 		if (modalCreatorRole) {
