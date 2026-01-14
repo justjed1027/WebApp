@@ -4,14 +4,27 @@ require_once "../database/DatabaseConnection.php";
 require_once "../database/Connection.php";
 require_once "../database/Notification.php";
 
+// Check if this is an AJAX request
+$isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+
 // Ensure user is logged in
 if (!isset($_SESSION['user_id'])) {
+	if ($isAjax) {
+		header('Content-Type: application/json');
+		echo json_encode(['success' => false, 'message' => 'not_logged_in']);
+		exit;
+	}
 	header("Location: connections.php?msg=" . urlencode('not_logged_in'));
 	exit;
 }
 
 // Validate POST
 if (!isset($_POST['receiver_id']) || !is_numeric($_POST['receiver_id'])) {
+	if ($isAjax) {
+		header('Content-Type: application/json');
+		echo json_encode(['success' => false, 'message' => 'invalid_request']);
+		exit;
+	}
 	header("Location: connections.php?msg=" . urlencode('invalid_request'));
 	exit;
 }
@@ -48,5 +61,13 @@ if ($result === 'success') {
 	);
 }
 
+// Return JSON for AJAX requests
+if ($isAjax) {
+	header('Content-Type: application/json');
+	echo json_encode(['success' => ($result === 'success'), 'message' => $result]);
+	exit;
+}
+
+// Regular redirect for form submissions
 header("Location: connections.php?msg=" . urlencode($result));
 exit;

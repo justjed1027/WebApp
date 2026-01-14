@@ -44,31 +44,53 @@ function initializeThemeToggle() {
     }
 }
 
-// Ensure connect buttons still submit after showing loading state
+// Handle connect buttons with AJAX to avoid page reload
 function initializeConnectButtons() {
     const connectButtons = document.querySelectorAll('.btn-connect');
     connectButtons.forEach(button => {
         button.addEventListener('click', function(e) {
-            const originalText = this.innerHTML;
+            e.preventDefault();
+            
             const form = this.closest('form');
-
+            if (!form) return;
+            
+            const receiverId = form.querySelector('input[name="receiver_id"]').value;
+            const connectionActions = this.closest('.connection-actions');
+            
+            // Show loading state
             this.innerHTML = '...';
             this.disabled = true;
-
-            if (form) {
-                e.preventDefault();
-                if (typeof form.requestSubmit === 'function') {
-                    form.requestSubmit(this);
+            
+            // Send AJAX request
+            fetch('send_request.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: `receiver_id=${encodeURIComponent(receiverId)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update UI to show request sent
+                    connectionActions.innerHTML = '<span class="status-badge pending">Request Sent</span>';
                 } else {
-                    form.submit();
+                    // Handle error
+                    this.innerHTML = 'Connect';
+                    this.disabled = false;
+                    const errorMsg = data.message === 'already_connected' ? 'Already connected with this user.' :
+                                   data.message === 'pending_request' ? 'Request already pending.' :
+                                   'Failed to send connection request.';
+                    alert(errorMsg);
                 }
-            }
-
-            // Fallback restore in case navigation doesn't occur
-            setTimeout(() => {
-                this.innerHTML = originalText;
+            })
+            .catch(error => {
+                console.error('Connection request failed:', error);
+                this.innerHTML = 'Connect';
                 this.disabled = false;
-            }, 4000);
+                alert('Failed to send connection request. Please try again.');
+            });
         });
     });
 }
