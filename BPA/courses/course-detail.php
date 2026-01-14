@@ -99,6 +99,12 @@ $stmt->execute();
 $eventsResult = $stmt->get_result();
 $events = [];
 while ($row = $eventsResult->fetch_assoc()) {
+  // Format profile picture path
+  if (!empty($row['profile_filepath'])) {
+    $row['profile_filepath'] = (strpos($row['profile_filepath'], 'BPA/') === 0) 
+      ? '../' . substr($row['profile_filepath'], 4) 
+      : $row['profile_filepath'];
+  }
   $events[] = $row;
 }
 $stmt->close();

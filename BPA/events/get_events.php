@@ -196,7 +196,9 @@ while ($row = $result->fetch_assoc()) {
         'hostUsername' => $row['user_username'],
         'hostFirstName' => $row['user_firstname'],
         'hostLastName' => $row['user_lastname'],
-        'hostProfilePicture' => $row['profile_filepath'],
+        'hostProfilePicture' => !empty($row['profile_filepath']) 
+            ? (strpos($row['profile_filepath'], 'BPA/') === 0 ? '../' . substr($row['profile_filepath'], 4) : $row['profile_filepath'])
+            : null,
         'isRegistered' => !empty($row['is_registered']) && $row['is_registered'] ? true : false,
         'registrationCount' => (int)($row['registration_count'] ?? 0),
         'subjects' => $row['subjects'] ? array_map('trim', explode(',', $row['subjects'])) : [],

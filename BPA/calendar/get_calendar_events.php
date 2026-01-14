@@ -92,6 +92,12 @@ while ($row = $result->fetch_assoc()) {
     // Determine if user is the host
     $row['is_host'] = ($row['host_user_id'] == $user_id);
     $row['is_registered'] = true; // Always true since we're filtering by registration
+    // Format profile picture path
+    if (!empty($row['profile_filepath'])) {
+        $row['profile_filepath'] = (strpos($row['profile_filepath'], 'BPA/') === 0) 
+            ? '../' . substr($row['profile_filepath'], 4) 
+            : $row['profile_filepath'];
+    }
     $events[] = $row;
 }
 

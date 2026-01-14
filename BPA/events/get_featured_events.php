@@ -70,6 +70,10 @@ try {
         e.events_end,
         e.events_create_date,
         e.host_user_id,
+        u.user_username,
+        p.user_firstname,
+        p.user_lastname,
+        p.profile_filepath,
         (SELECT COUNT(*) FROM event_participants ep WHERE ep.ep_event_id = e.events_id) AS registration_count,
         GROUP_CONCAT(DISTINCT s.subject_name SEPARATOR ', ') as subjects,
         GROUP_CONCAT(DISTINCT t.tag_name SEPARATOR ', ') as tags
@@ -79,6 +83,8 @@ try {
     LEFT JOIN subjects s ON es.es_subject_id = s.subject_id
     LEFT JOIN events_tags et ON e.events_id = et.et_events_id
     LEFT JOIN tags t ON et.et_tags_id = t.tag_id
+    LEFT JOIN user u ON e.host_user_id = u.user_id
+    LEFT JOIN profile p ON e.host_user_id = p.user_id
     WHERE 
         -- Only upcoming events (start time is in future)
         TIMESTAMP(e.events_date, COALESCE(e.events_start, '23:59:59')) > NOW()
@@ -132,6 +138,12 @@ try {
             'endTime' => $row['events_end'],
             'createdDate' => $row['events_create_date'],
             'hostUserId' => (int)$row['host_user_id'],
+            'hostUsername' => $row['user_username'],
+            'hostFirstName' => $row['user_firstname'],
+            'hostLastName' => $row['user_lastname'],
+            'hostProfilePicture' => !empty($row['profile_filepath']) 
+                ? (strpos($row['profile_filepath'], 'BPA/') === 0 ? '../' . substr($row['profile_filepath'], 4) : $row['profile_filepath'])
+                : null,
             'registrationCount' => (int)($row['registration_count'] ?? 0),
             'subjects' => $row['subjects'] ? array_map('trim', explode(',', $row['subjects'])) : [],
             'tags' => $row['tags'] ? array_map('trim', explode(',', $row['tags'])) : [],
