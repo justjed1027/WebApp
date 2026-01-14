@@ -31,7 +31,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     
     $user_password = sanitize_input($_POST['password']);
     $user_email = sanitize_input($_POST['email']);
-    $user_is_admin = 0; //Default to non-admin for now
+    // Admin opt-in from the signup form (revamp)
+    $user_is_admin = !empty($_POST['is_admin']) ? 1 : 0;
 
 
     if(empty($user_password)){
@@ -47,8 +48,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $newUser->user_username = $user_username;
         $newUser->user_password = $user_password;
         $newUser->user_email = $user_email;
-        // If the signup email matches the Admin account, grant admin
-        if (strtolower($user_email) === strtolower(ADMIN_EMAIL)) {
+        // Grant admin if user opted-in OR matches the legacy admin email
+        if ($user_is_admin === 1 || strtolower($user_email) === strtolower(ADMIN_EMAIL)) {
             $newUser->user_is_admin = 1;
         } else {
             $newUser->user_is_admin = 0;
@@ -146,6 +147,23 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         </svg>
                     </button>
                 </div>
+
+                <div class="admin-optin">
+                    <div class="admin-optin-header">
+                        <span class="admin-title">Admin access</span>
+                        <span class="admin-badge">Experimental</span>
+                    </div>
+                    <div class="admin-optin-row">
+                        <label class="toggle" for="is_admin">
+                            <input type="checkbox" id="is_admin" name="is_admin" value="1" <?php echo !empty($_POST['is_admin']) ? 'checked' : ''; ?>>
+                            <span class="slider" aria-hidden="true"></span>
+                        </label>
+                        <div class="admin-desc">
+                            Grant administrator privileges to this account. Use only if authorized.
+                        </div>
+                    </div>
+                </div>
+
                 <div id="password-requirements" class="password-requirements">
                     <p class="requirements-title">Password must include:</p>
                     <ul>

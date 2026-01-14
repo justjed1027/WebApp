@@ -47,11 +47,11 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.85);
+      background: rgba(0, 0, 0, 0.7);
       align-items: center;
       justify-content: center;
       z-index: 10000;
-      animation: fadeIn 0.3s ease-in;
+      animation: fadeIn 0.2s ease-in;
     }
 
     @keyframes fadeIn {
@@ -60,20 +60,20 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     }
 
     .construction-modal {
-      background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
-      border-radius: 15px;
+      background: #ffffff;
+      border-radius: 8px;
       max-width: 500px;
       width: 90%;
       padding: 0;
-      box-shadow: 0 20px 60px rgba(31, 255, 147, 0.3);
-      border: 2px solid rgba(31, 255, 147, 0.3);
-      animation: slideUp 0.4s ease-out;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      border: 1px solid #e0e0e0;
+      animation: slideUp 0.3s ease-out;
     }
 
     @keyframes slideUp {
       from {
         opacity: 0;
-        transform: translateY(50px);
+        transform: translateY(30px);
       }
       to {
         opacity: 1;
@@ -82,54 +82,54 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     }
 
     .construction-modal-header {
-      padding: 25px 30px;
-      border-bottom: 1px solid rgba(31, 255, 147, 0.2);
+      padding: 24px 28px;
+      border-bottom: 1px solid #e0e0e0;
     }
 
     .construction-modal-header h2 {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: #1fff93;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #1f2937;
       margin: 0;
     }
 
     .construction-modal-body {
-      padding: 30px;
+      padding: 28px;
     }
 
     .construction-modal-body p {
-      font-size: 1.1rem;
-      line-height: 1.6;
-      color: #cccccc;
-      margin-bottom: 15px;
+      font-size: 1rem;
+      line-height: 1.5;
+      color: #4b5563;
+      margin-bottom: 12px;
     }
 
     .construction-modal-body p:last-child {
       margin-bottom: 0;
-      color: #999999;
-      font-size: 1rem;
+      color: #6b7280;
+      font-size: 0.95rem;
     }
 
     .construction-modal-footer {
-      padding: 20px 30px 25px;
+      padding: 18px 28px 24px;
       text-align: center;
     }
 
     .construction-modal-button {
-      padding: 12px 40px;
-      background: linear-gradient(135deg, #1fff93 0%, #00d4ff 100%);
-      color: #0a0a0a;
+      padding: 10px 32px;
+      background: #1f2937;
+      color: #ffffff;
       border: none;
-      border-radius: 8px;
-      font-size: 1.1rem;
-      font-weight: 600;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 500;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
     }
 
     .construction-modal-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 25px rgba(31, 255, 147, 0.4);
+      background: #374151;
+      transform: translateY(-1px);
     }
 
     @media (max-width: 480px) {

@@ -343,6 +343,14 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
           <h3 id="sessionTitle">Session Room</h3>
           <p id="sessionDetails"></p>
         </div>
+        
+        <button class="place-review-btn" id="placeReviewBtn" title="Place a review" aria-haspopup="dialog" aria-controls="reviewModal">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-right:8px;">
+            <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.523-3.356c.33-.314.158-.888-.283-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.93 0L5.69 4.12l-4.898.696c-.441.062-.613.636-.283.95l3.523 3.356-.83 4.73Z"/>
+          </svg>
+          Place Review
+          <span class="review-experimental-badge" aria-label="Experimental feature">Experimental</span>
+        </button>
         <button class="close-btn" onclick="closeSessionRoom()">&times;</button>
       </div>
       <div class="session-messages" id="sessionMessagesContainer"></div>
@@ -353,6 +361,115 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     </div>
   </div>
 
+  <!-- Experimental Review Modal -->
+  <div id="reviewModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Place a Review</h2>
+        <button class="modal-close" id="closeReviewModal" aria-label="Close">&times;</button>
+      </div>
+      <form id="reviewForm">
+        <div class="experimental-banner">
+          <strong>Experimental:</strong> This review system is in testing and may not persist.
+        </div>
+        <div class="form-group">
+          <label for="reviewRating">Rating</label>
+          <div id="reviewRating" class="star-rating" role="radiogroup" aria-label="Star rating">
+            <button type="button" class="star" data-value="1" aria-label="1 star">★</button>
+            <button type="button" class="star" data-value="2" aria-label="2 stars">★</button>
+            <button type="button" class="star" data-value="3" aria-label="3 stars">★</button>
+            <button type="button" class="star" data-value="4" aria-label="4 stars">★</button>
+            <button type="button" class="star" data-value="5" aria-label="5 stars">★</button>
+            <input type="hidden" name="rating" id="ratingValue" value="0" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="reviewTitle">Title (optional)</label>
+          <input type="text" id="reviewTitle" name="title" placeholder="e.g., Great session on calculus" style="padding:12px 14px;border:1px solid var(--border-color);border-radius:8px;background:var(--background-card);color:var(--text-primary);font-family:inherit;font-size:0.95rem;" />
+        </div>
+        <div class="form-group">
+          <label for="reviewText">Your Review *</label>
+          <textarea id="reviewText" name="text" required rows="4" placeholder="Share your experience..." style="resize:vertical;"></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" id="cancelReview">Cancel</button>
+          <button type="submit" class="btn-submit">Submit Review</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Review modal handlers (experimental)
+    (function() {
+      const openBtn = document.getElementById('placeReviewBtn');
+      const modal = document.getElementById('reviewModal');
+      const closeBtn = document.getElementById('closeReviewModal');
+      const cancelBtn = document.getElementById('cancelReview');
+      const form = document.getElementById('reviewForm');
+      const stars = Array.from(document.querySelectorAll('#reviewRating .star'));
+      const ratingValue = document.getElementById('ratingValue');
+
+      function openModal() { modal.style.display = 'flex'; }
+      function closeModal() { modal.style.display = 'none'; }
+
+      openBtn.addEventListener('click', openModal);
+      closeBtn.addEventListener('click', closeModal);
+      cancelBtn.addEventListener('click', closeModal);
+      window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+      modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+      // Star rating interactions
+      stars.forEach((star, idx) => {
+        star.addEventListener('mouseenter', () => highlight(idx + 1));
+        star.addEventListener('mouseleave', () => highlight(parseInt(ratingValue.value || '0', 10)));
+        star.addEventListener('click', () => { ratingValue.value = String(idx + 1); highlight(idx + 1); });
+      });
+
+      function highlight(count) {
+        stars.forEach((s, i) => {
+          s.classList.toggle('active', i < count);
+        });
+      }
+
+      // Submit (experimental: no backend persistence)
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const rating = parseInt(ratingValue.value || '0', 10);
+        const title = (document.getElementById('reviewTitle').value || '').trim();
+        const text = (document.getElementById('reviewText').value || '').trim();
+
+        if (!text) { showToast('Please write a review', 'warning'); return; }
+
+        // Simulate success
+        closeModal();
+        form.reset();
+        ratingValue.value = '0';
+        highlight(0);
+        showToast('Review submitted (experimental)', 'info');
+      });
+
+      // Minimal toast helper using existing container
+      function showToast(message, type) {
+        const container = document.getElementById('notificationContainer');
+        if (!container) return alert(message);
+        const toast = document.createElement('div');
+        toast.className = `toast ${type || 'info'}`;
+        toast.innerHTML = `
+          <div class="toast-icon">💬</div>
+          <div class="toast-content">
+            <div class="toast-title">Review</div>
+            <div class="toast-message">${message}</div>
+          </div>
+          <button class="toast-close" aria-label="Close">&times;</button>
+        `;
+        const close = () => { toast.classList.add('removing'); setTimeout(() => toast.remove(), 300); };
+        toast.querySelector('.toast-close').addEventListener('click', close);
+        setTimeout(close, 3500);
+        container.appendChild(toast);
+      }
+    })();
+  </script>
   <script>
     // Set current user ID from PHP session
     window.currentUserId = <?php echo $_SESSION['user_id']; ?>;
