@@ -1,9 +1,9 @@
 <?php
+session_start();
+
 require_once '../database/DatabaseConnection.php';
 require_once '../database/User.php';
 require_once '../components/sidecontent.php';
-
-session_start();
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../landing/landing.php");
