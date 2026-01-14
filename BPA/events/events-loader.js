@@ -50,24 +50,25 @@ document.addEventListener('DOMContentLoaded', async () => {
 		return formatTime(startTime || endTime);
 	};
 
-	// Fetch events from backend (supports optional search query, category and status)
-	const fetchEvents = async (filter = 'all', q = '', category = '', status = '') => {
+	// Fetch events from backend (supports optional search query, category, status, and page)
+	const fetchEvents = async (filter = 'all', q = '', category = '', status = '', page = 1) => {
 		try {
 			let url = `get_events.php?filter=${encodeURIComponent(filter)}`;
 			if (q) url += `&q=${encodeURIComponent(q)}`;
 			if (category) url += `&category=${encodeURIComponent(category)}`;
 			if (status) url += `&status=${encodeURIComponent(status)}`;
+			if (page) url += `&page=${encodeURIComponent(page)}`;
 			const response = await fetch(url);
 			const data = await response.json();
 			if (data.success) {
-				return data.events;
+				return data;
 			} else {
 				console.error('Failed to fetch events:', data.message);
-				return [];
+				return { events: [], total: 0, totalPages: 0, currentPage: 1 };
 			}
 		} catch (error) {
 			console.error('Error fetching events:', error);
-			return [];
+			return { events: [], total: 0, totalPages: 0, currentPage: 1 };
 		}
 	};
 
@@ -182,24 +183,117 @@ document.addEventListener('DOMContentLoaded', async () => {
 	const categorySelect = document.querySelector('.events-category');
 
 	const pastGrid = document.querySelector('.past-events-grid');
+	
+	// State for current page
+	let currentUpcomingPage = 1;
+	let currentPastPage = 1;
 
-	const applyFilters = async () => {
+	const applyFilters = async (upcomingPage = 1, pastPage = 1) => {
 		const q = searchInput ? searchInput.value.trim() : '';
 		const cat = (categorySelect && categorySelect.value && categorySelect.value !== 'All Categories') ? categorySelect.value : '';
+		
+		console.log('Fetching upcoming events, page:', upcomingPage);
 		// Upcoming events (status=upcoming)
-		const upcomingEvents = await fetchEvents('all', q, cat, 'upcoming');
-		renderEvents(upcomingGrid, upcomingEvents, 6);
+		const upcomingData = await fetchEvents('all', q, cat, 'upcoming', upcomingPage);
+		console.log('Upcoming data:', upcomingData);
+		renderEvents(upcomingGrid, upcomingData.events, 6);
+		renderPagination('upcoming', upcomingData.totalPages, upcomingData.currentPage, upcomingData.total);
+		
+		console.log('Fetching past events, page:', pastPage);
 		// Past events (status=past)
-		const pastEvents = await fetchEvents('all', q, cat, 'past');
-		renderEvents(pastGrid, pastEvents, 6);
+		const pastData = await fetchEvents('all', q, cat, 'past', pastPage);
+		console.log('Past data:', pastData);
+		renderEvents(pastGrid, pastData.events, 6);
+		renderPagination('past', pastData.totalPages, pastData.currentPage, pastData.total);
+		
+		currentUpcomingPage = upcomingPage;
+		currentPastPage = pastPage;
+	};
+	
+	// Render pagination controls
+	const renderPagination = (type, totalPages, currentPage, totalCount) => {
+		const gridContainer = type === 'upcoming' ? upcomingGrid : pastGrid;
+		if (!gridContainer) return;
+		
+		// Find or create pagination container
+		let paginationContainer = gridContainer.parentElement.querySelector(`.pagination-controls-${type}`);
+		
+		// Only show pagination if there are 6 or more total items
+		if (totalCount < 6) {
+			if (paginationContainer) {
+				paginationContainer.remove();
+			}
+			return;
+		}
+		
+		if (!paginationContainer) {
+			paginationContainer = document.createElement('div');
+			paginationContainer.className = `pagination-controls pagination-controls-${type}`;
+			paginationContainer.style.display = 'flex';
+			paginationContainer.style.alignItems = 'center';
+			paginationContainer.style.justifyContent = 'center';
+			paginationContainer.style.gap = '8px';
+			paginationContainer.style.marginTop = '20px';
+			gridContainer.parentElement.appendChild(paginationContainer);
+		}
+		
+		if (totalPages <= 1) {
+			paginationContainer.style.display = 'none';
+			return;
+		}
+		
+		paginationContainer.style.display = 'flex';
+		
+		// Build pagination HTML
+		let html = `
+			<button class="pagination-btn" data-type="${type}" data-page="${Math.max(1, currentPage - 1)}" ${currentPage <= 1 ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : ''}>
+				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+					<path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
+				</svg>
+			</button>
+			<span class="page-info" style="padding:0 12px;color:var(--text-secondary);font-size:0.9rem;">Page ${currentPage} of ${totalPages}</span>
+			<button class="pagination-btn" data-type="${type}" data-page="${Math.min(totalPages, currentPage + 1)}" ${currentPage >= totalPages ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : ''}>
+				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+					<path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+				</svg>
+			</button>
+		`;
+		
+		paginationContainer.innerHTML = html;
+		
+		// Add click handlers to pagination buttons
+		paginationContainer.querySelectorAll('.pagination-btn').forEach(btn => {
+			btn.addEventListener('click', () => {
+				if (btn.disabled) return;
+				const pageType = btn.getAttribute('data-type');
+				const page = parseInt(btn.getAttribute('data-page'));
+				
+				if (pageType === 'upcoming') {
+					applyFilters(page, currentPastPage);
+				} else {
+					applyFilters(currentUpcomingPage, page);
+				}
+				
+				// Scroll to top of grid
+				gridContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+			});
+		});
 	};
 
 	if (searchInput) {
-		searchInput.addEventListener('input', debounce(() => applyFilters(), 300));
+		searchInput.addEventListener('input', debounce(() => {
+			currentUpcomingPage = 1;
+			currentPastPage = 1;
+			applyFilters(1, 1);
+		}, 300));
 	}
 
 	if (categorySelect) {
-		categorySelect.addEventListener('change', () => applyFilters());
+		categorySelect.addEventListener('change', () => {
+			currentUpcomingPage = 1;
+			currentPastPage = 1;
+			applyFilters(1, 1);
+		});
 	}
 
 	// Create event card HTML
@@ -663,12 +757,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 					const q = searchInput ? searchInput.value.trim() : '';
 					const cat = (categorySelect && categorySelect.value && categorySelect.value !== 'All Categories') ? categorySelect.value : '';
 					// Try upcoming first
-					let events = await fetchEvents('all', q, cat, 'upcoming');
-					let found = events.find(e => e.id === parseInt(id));
+					let data = await fetchEvents('all', q, cat, 'upcoming', 1);
+					let found = data.events.find(e => e.id === parseInt(id));
 					if (found) return found;
 					// Then try past
-					events = await fetchEvents('all', q, cat, 'past');
-					return events.find(e => e.id === parseInt(id));
+					data = await fetchEvents('all', q, cat, 'past', 1);
+					return data.events.find(e => e.id === parseInt(id));
 				};
 				findEventById(eventId).then(event => {
 					if (event) openEventModal(event);
@@ -685,5 +779,5 @@ document.addEventListener('DOMContentLoaded', async () => {
 	});
 
 	// Initial load using any active filters (search/category)
-	await applyFilters();
+	await applyFilters(1, 1);
 });

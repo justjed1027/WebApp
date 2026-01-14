@@ -2222,3 +2222,58 @@ body:not(.light-mode) .tag-checkbox-label span::after {
   background: #ffffff;
 }
 
+/* Pagination Controls */
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.pagination-btn {
+  padding: 8px 12px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  border-color: #00d97e;
+  background: rgba(0, 217, 126, 0.05);
+  color: #00d97e;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.page-info {
+  padding: 0 12px;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+/* Dark mode pagination */
+body:not(.light-mode) .pagination-btn {
+  background: #1a1a1a;
+  border-color: #333;
+  color: #e5e7eb;
+}
+
+body:not(.light-mode) .pagination-btn:hover:not(:disabled) {
+  border-color: #00d97e;
+  background: rgba(0, 217, 126, 0.05);
+  color: #00d97e;
+}
+
+body:not(.light-mode) .page-info {
+  color: #9ca3af;
+}
