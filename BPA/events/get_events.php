@@ -61,6 +61,11 @@ $search = isset($_GET['q']) ? trim($_GET['q']) : '';
 $category = isset($_GET['category']) ? trim($_GET['category']) : '';
 $status = isset($_GET['status']) ? trim($_GET['status']) : 'upcoming';
 
+// Pagination parameters
+$page = isset($_GET['page']) && is_numeric($_GET['page']) && $_GET['page'] > 0 ? (int)$_GET['page'] : 1;
+$perPage = 6;
+$offset = ($page - 1) * $perPage;
+
 // Build dynamic WHERE clauses and bind parameters safely
 $whereClauses = [];
 $bindTypes = '';
@@ -138,8 +143,49 @@ if ($search !== '') {
     $bindValues[] = $like;
 }
 
-// Prepare final SQL with WHERE clauses
-$finalSql = $baseSql . ' WHERE ' . implode(' AND ', $whereClauses) . ' GROUP BY e.events_id ORDER BY e.events_date ASC';
+// Get total count before adding LIMIT
+$countSql = "SELECT COUNT(DISTINCT e.events_id) as total
+FROM events e
+LEFT JOIN event_subjects es ON e.events_id = es.es_event_id
+LEFT JOIN subjects s ON es.es_subject_id = s.subject_id
+LEFT JOIN events_tags et ON e.events_id = et.et_events_id
+LEFT JOIN tags t ON et.et_tags_id = t.tag_id
+WHERE " . implode(' AND ', $whereClauses);
+
+$countStmt = $conn->prepare($countSql);
+if ($countStmt) {
+    // Bind parameters for count query - only $bindValues (NO uid_param, NO limit/offset)
+    if (!empty($bindValues)) {
+        $refs = [];
+        $refs[] = &$bindTypes;
+        foreach ($bindValues as $k => $v) {
+            $refs[] = &$bindValues[$k];
+        }
+        call_user_func_array([$countStmt, 'bind_param'], $refs);
+    }
+    
+    $countStmt->execute();
+    $countResult = $countStmt->get_result();
+    $totalCount = 0;
+    if ($countRow = $countResult->fetch_assoc()) {
+        $totalCount = (int)$countRow['total'];
+    }
+    $countStmt->close();
+} else {
+    $totalCount = 0;
+}
+
+$totalPages = ceil($totalCount / $perPage);
+
+// DEBUG: Log the query
+error_log("Events Query Debug:");
+error_log("Status: $status");
+error_log("WHERE clauses: " . implode(' AND ', $whereClauses));
+error_log("Bind types: " . 'i' . $bindTypes . 'ii');
+error_log("Total count: $totalCount");
+
+// Prepare final SQL with WHERE clauses and LIMIT
+$finalSql = $baseSql . ' WHERE ' . implode(' AND ', $whereClauses) . ' GROUP BY e.events_id ORDER BY e.events_date ASC LIMIT ? OFFSET ?';
 $stmt = $conn->prepare($finalSql);
 if ($stmt === false) {
     http_response_code(500);
@@ -147,9 +193,9 @@ if ($stmt === false) {
     exit;
 }
 
-// Bind parameters: first the uid used in is_registered subquery, then dynamic ones
-$allTypes = 'i' . $bindTypes; // first param is uid for is_registered
-$allValues = array_merge([$uid_param], $bindValues);
+// Bind parameters: first the uid used in is_registered subquery, then dynamic ones, then limit and offset
+$allTypes = 'i' . $bindTypes . 'ii'; // first param is uid for is_registered, last two are limit and offset
+$allValues = array_merge([$uid_param], $bindValues, [$perPage, $offset]);
 if ($allValues) {
     // mysqli_stmt::bind_param requires references
     $refs = [];
@@ -200,6 +246,14 @@ while ($row = $result->fetch_assoc()) {
 $stmt->close();
 $db->closeConnection();
 
-echo json_encode(['success' => true, 'events' => $events, 'count' => count($events)]);
+echo json_encode([
+    'success' => true, 
+    'events' => $events, 
+    'count' => count($events),
+    'total' => $totalCount,
+    'totalPages' => $totalPages,
+    'currentPage' => $page,
+    'perPage' => $perPage
+]);
 exit;
 ?>

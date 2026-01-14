@@ -69,13 +69,15 @@ $connectionStatuses = [];
 if (!empty($userIds)) {
     $placeholders = implode(',', array_fill(0, count($userIds), '?'));
     
-    // Get connected users
+    // Get all connections - determine the correct status based on direction
     $connSql = "SELECT 
                     CASE 
                         WHEN requester_id = ? THEN receiver_id 
                         ELSE requester_id 
                     END as user_id,
-                    status
+                    status,
+                    requester_id,
+                    receiver_id
                 FROM connections 
                 WHERE (requester_id = ? OR receiver_id = ?) 
                 AND (requester_id IN ($placeholders) OR receiver_id IN ($placeholders))";
@@ -89,40 +91,20 @@ if (!empty($userIds)) {
     $connResult = $connStmt->get_result();
     
     while ($row = $connResult->fetch_assoc()) {
-        $connectionStatuses[$row['user_id']] = $row['status'];
+        $otherUserId = ($row['requester_id'] == $currentUserId) ? $row['receiver_id'] : $row['requester_id'];
+        
+        if ($row['status'] == 'accepted') {
+            $connectionStatuses[$otherUserId] = 'accepted';
+        } elseif ($row['status'] == 'pending') {
+            // Determine if we sent or received the request
+            if ($row['requester_id'] == $currentUserId) {
+                $connectionStatuses[$otherUserId] = 'pending_sent';
+            } else {
+                $connectionStatuses[$otherUserId] = 'pending_received';
+            }
+        }
     }
     $connStmt->close();
-    
-    // Get pending sent requests
-    $pendingSql = "SELECT receiver_id FROM connections WHERE requester_id = ? AND status = 'pending' AND receiver_id IN ($placeholders)";
-    $types = 'i' . str_repeat('i', count($userIds));
-    $params = array_merge([$currentUserId], $userIds);
-    
-    $pendingStmt = $con->prepare($pendingSql);
-    $pendingStmt->bind_param($types, ...$params);
-    $pendingStmt->execute();
-    $pendingResult = $pendingStmt->get_result();
-    
-    while ($row = $pendingResult->fetch_assoc()) {
-        if (!isset($connectionStatuses[$row['receiver_id']])) {
-            $connectionStatuses[$row['receiver_id']] = 'pending_sent';
-        }
-    }
-    $pendingStmt->close();
-    
-    // Get pending received requests
-    $pendingRecSql = "SELECT requester_id FROM connections WHERE receiver_id = ? AND status = 'pending' AND requester_id IN ($placeholders)";
-    $pendingRecStmt = $con->prepare($pendingRecSql);
-    $pendingRecStmt->bind_param($types, ...$params);
-    $pendingRecStmt->execute();
-    $pendingRecResult = $pendingRecStmt->get_result();
-    
-    while ($row = $pendingRecResult->fetch_assoc()) {
-        if (!isset($connectionStatuses[$row['requester_id']])) {
-            $connectionStatuses[$row['requester_id']] = 'pending_received';
-        }
-    }
-    $pendingRecStmt->close();
 }
 
 // Add connection status to each student

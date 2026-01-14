@@ -172,7 +172,7 @@ if (!$stmt) {
 // s = string, i = int
 // Order: title(s), description(s), date(s), img(s), location(s), capacity(i), organization(s), contact_email(s), visibility(s), deadline(s), start(s), end(s), host_user_id(i)
 $stmt->bind_param(
-    'ssssisssssssi',
+    'ssssssisssssi',
     $title,
     $desc,
     $events_date,

@@ -35,18 +35,36 @@ function getMutualConnectionsCount(mysqli $con, int $userA, int $userB): int {
   return $count;
 }
 
+// Pagination for connection requests
+$requestsPerPage = 5;
+$requestsPage = isset($_GET['requests_page']) && is_numeric($_GET['requests_page']) && $_GET['requests_page'] > 0 ? (int)$_GET['requests_page'] : 1;
+$requestsOffset = ($requestsPage - 1) * $requestsPerPage;
+
+// Get total count of pending requests
+$countPendingSql = "SELECT COUNT(*) as total FROM connections WHERE receiver_id = ? AND status = 'pending'";
+$countStmt = $con->prepare($countPendingSql);
+$countStmt->bind_param("i", $_SESSION['user_id']);
+$countStmt->execute();
+$countResult = $countStmt->get_result();
+$pendingCount = $countResult->fetch_assoc()['total'];
+$countStmt->close();
+
+$totalRequestsPages = ceil($pendingCount / $requestsPerPage);
+
+// Get paginated pending requests
 $pendingSql = "
   SELECT c.connection_id, c.requester_id, u.user_username 
   FROM connections c
   JOIN user u ON u.user_id = c.requester_id
   WHERE c.receiver_id = ? AND c.status = 'pending'
+  LIMIT ? OFFSET ?
 ";
 
 $stmt = $con->prepare($pendingSql);
-$stmt->bind_param("i", $_SESSION['user_id']);
+$stmt->bind_param("iii", $_SESSION['user_id'], $requestsPerPage, $requestsOffset);
 $stmt->execute();
 $pending = $stmt->get_result();
-$pendingCount = ($pending) ? $pending->num_rows : 0;
+$stmt->close();
 
 
 
@@ -222,11 +240,29 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
         <!-- Connection Requests Card -->
         <div class="connections-content-card">
-        <h3>Connection Requests 
-          <?php if ($pendingCount > 0): ?>
-            <span class="count-badge"><?php echo (int)$pendingCount; ?></span>
+        <div class="students-header-row">
+          <h3>Connection Requests 
+            <?php if ($pendingCount > 0): ?>
+              <span class="count-badge"><?php echo (int)$pendingCount; ?></span>
+            <?php endif; ?>
+          </h3>
+          
+          <?php if ($pendingCount >= 5): ?>
+          <div class="pagination-controls">
+            <a href="?requests_page=<?php echo max(1, $requestsPage - 1); ?>" class="pagination-btn" <?php echo $requestsPage <= 1 ? 'style="opacity:0.5;pointer-events:none;"' : ''; ?>>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
+              </svg>
+            </a>
+            <span class="page-info">Page <?php echo $requestsPage; ?> of <?php echo $totalRequestsPages; ?></span>
+            <a href="?requests_page=<?php echo min($totalRequestsPages, $requestsPage + 1); ?>" class="pagination-btn" <?php echo $requestsPage >= $totalRequestsPages ? 'style="opacity:0.5;pointer-events:none;"' : ''; ?>>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+              </svg>
+            </a>
+          </div>
           <?php endif; ?>
-        </h3>
+        </div>
         
         <?php if ($pending && $pending->num_rows > 0): ?>
           <div class="connections-grid">
@@ -274,15 +310,63 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         <div class="connections-content-card">
         <?php
         $userId = $_SESSION['user_id'];
-        $connObj = new Connection($db->connection);
-        $connections = $connObj->getConnections($userId);
-        $connectionsCount = ($connections) ? $connections->num_rows : 0;
+        
+        // Pagination for connections
+        $connectionsPerPage = 5;
+        $connectionsPage = isset($_GET['connections_page']) && is_numeric($_GET['connections_page']) && $_GET['connections_page'] > 0 ? (int)$_GET['connections_page'] : 1;
+        $connectionsOffset = ($connectionsPage - 1) * $connectionsPerPage;
+        
+        // Get total count of connections
+        $countConnSql = "SELECT COUNT(*) as total FROM connections 
+                         WHERE (requester_id = ? OR receiver_id = ?) AND status = 'accepted'";
+        $countConnStmt = $con->prepare($countConnSql);
+        $countConnStmt->bind_param("ii", $userId, $userId);
+        $countConnStmt->execute();
+        $countConnResult = $countConnStmt->get_result();
+        $connectionsCount = $countConnResult->fetch_assoc()['total'];
+        $countConnStmt->close();
+        
+        $totalConnectionsPages = ceil($connectionsCount / $connectionsPerPage);
+        
+        // Get paginated connections
+        $connectionsSql = "
+            SELECT c.connection_id, u.user_id, u.user_username, c.status
+            FROM connections c
+            JOIN user u ON (u.user_id = c.requester_id OR u.user_id = c.receiver_id)
+            WHERE (c.requester_id = ? OR c.receiver_id = ?)
+              AND u.user_id != ?
+              AND c.status = 'accepted'
+            LIMIT ? OFFSET ?
+        ";
+        $connStmt = $con->prepare($connectionsSql);
+        $connStmt->bind_param("iiiii", $userId, $userId, $userId, $connectionsPerPage, $connectionsOffset);
+        $connStmt->execute();
+        $connections = $connStmt->get_result();
+        $connStmt->close();
         ?>
-        <h3>My Connections 
-          <?php if ($connectionsCount > 0): ?>
-            <span class="count-badge"><?php echo (int)$connectionsCount; ?></span>
+        <div class="students-header-row">
+          <h3>My Connections 
+            <?php if ($connectionsCount > 0): ?>
+              <span class="count-badge"><?php echo (int)$connectionsCount; ?></span>
+            <?php endif; ?>
+          </h3>
+          
+          <?php if ($connectionsCount >= 5): ?>
+          <div class="pagination-controls">
+            <a href="?connections_page=<?php echo max(1, $connectionsPage - 1); ?>" class="pagination-btn" <?php echo $connectionsPage <= 1 ? 'style="opacity:0.5;pointer-events:none;"' : ''; ?>>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
+              </svg>
+            </a>
+            <span class="page-info">Page <?php echo $connectionsPage; ?> of <?php echo $totalConnectionsPages; ?></span>
+            <a href="?connections_page=<?php echo min($totalConnectionsPages, $connectionsPage + 1); ?>" class="pagination-btn" <?php echo $connectionsPage >= $totalConnectionsPages ? 'style="opacity:0.5;pointer-events:none;"' : ''; ?>>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+              </svg>
+            </a>
+          </div>
           <?php endif; ?>
-        </h3>
+        </div>
 
         <?php if ($connections && $connections->num_rows > 0): ?>
           <div class="connections-grid">
@@ -329,23 +413,144 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         <div class="connections-content-card">
         <?php
         $userId = $_SESSION['user_id'];
-        $connObj = new Connection($db->connection);
-        $recommended = $connObj->getRecommendedUsers($userId);
-        ?>
-        <h3>Recommended Students</h3>
         
-        <?php if ($recommended && $recommended->num_rows > 0): ?>
+        // Check if we need to refresh recommendations (every 2 hours = 7200 seconds)
+        $refreshInterval = 7200;
+        $needsRefresh = true;
+        $recommended = null;
+        
+        // Initialize session arrays if they don't exist
+        if (!isset($_SESSION['recommendations_cache'])) {
+            $_SESSION['recommendations_cache'] = [];
+        }
+        if (!isset($_SESSION['recommendations_timestamp'])) {
+            $_SESSION['recommendations_timestamp'] = [];
+        }
+        if (!isset($_SESSION['recommendations_excluded'])) {
+            $_SESSION['recommendations_excluded'] = [];
+        }
+        
+        // Check if we have cached recommendations and they're still valid
+        if (isset($_SESSION['recommendations_cache'][$userId]) && 
+            isset($_SESSION['recommendations_timestamp'][$userId]) &&
+            (time() - $_SESSION['recommendations_timestamp'][$userId]) < $refreshInterval) {
+            $needsRefresh = false;
+            $cachedRecommendations = $_SESSION['recommendations_cache'][$userId];
+            
+            // Filter out excluded users (those we've sent requests to)
+            $excludedUsers = isset($_SESSION['recommendations_excluded'][$userId]) ? $_SESSION['recommendations_excluded'][$userId] : [];
+        }
+        
+        // If we need to refresh or don't have cache, query the database
+        if ($needsRefresh) {
+            // Get recommended users based on matching skills with current user's interests
+            $recommendedSql = "
+                SELECT DISTINCT 
+                    u.user_id, 
+                    u.user_username,
+                    COUNT(DISTINCT us.us_subject_id) as matching_skills_count,
+                    GROUP_CONCAT(DISTINCT s.subject_name ORDER BY s.subject_name SEPARATOR ', ') as matching_subjects
+                FROM user u
+                INNER JOIN user_skills us ON u.user_id = us.us_user_id
+                INNER JOIN subjects s ON us.us_subject_id = s.subject_id
+                WHERE us.us_subject_id IN (
+                    SELECT ui_subject_id FROM user_interests WHERE ui_user_id = ?
+                )
+                AND u.user_id != ?
+                AND u.user_id NOT IN (
+                    SELECT CASE 
+                        WHEN requester_id = ? THEN receiver_id 
+                        ELSE requester_id 
+                    END
+                    FROM connections 
+                    WHERE (requester_id = ? OR receiver_id = ?)
+                )
+                AND u.user_id NOT IN (
+                    SELECT receiver_id
+                    FROM connections
+                    WHERE requester_id = ? AND status = 'pending'
+                )
+                GROUP BY u.user_id, u.user_username
+                ORDER BY matching_skills_count DESC, u.user_username ASC
+                LIMIT 12
+            ";
+            
+            $recStmt = $con->prepare($recommendedSql);
+            $recStmt->bind_param("iiiiii", $userId, $userId, $userId, $userId, $userId, $userId);
+            $recStmt->execute();
+            $recommended = $recStmt->get_result();
+            
+            // Store results in session cache
+            $cachedRecommendations = [];
+            while ($row = $recommended->fetch_assoc()) {
+                $cachedRecommendations[] = $row;
+            }
+            $recStmt->close();
+            
+            // Update cache and timestamp
+            $_SESSION['recommendations_cache'][$userId] = $cachedRecommendations;
+            $_SESSION['recommendations_timestamp'][$userId] = time();
+            // Reset excluded list on refresh
+            $_SESSION['recommendations_excluded'][$userId] = [];
+            $excludedUsers = [];
+        }
+        
+        // Always check for current pending outgoing requests to exclude from cached results
+        $pendingOutgoingSql = "SELECT receiver_id FROM connections WHERE requester_id = ? AND status = 'pending'";
+        $pendingStmt = $con->prepare($pendingOutgoingSql);
+        $pendingStmt->bind_param("i", $userId);
+        $pendingStmt->execute();
+        $pendingResult = $pendingStmt->get_result();
+        $currentPendingUsers = [];
+        while ($row = $pendingResult->fetch_assoc()) {
+            $currentPendingUsers[] = $row['receiver_id'];
+        }
+        $pendingStmt->close();
+        
+        // Also check for already connected users
+        $connectedUsersSql = "SELECT CASE 
+                                WHEN requester_id = ? THEN receiver_id 
+                                ELSE requester_id 
+                              END as connected_user_id
+                              FROM connections 
+                              WHERE (requester_id = ? OR receiver_id = ?) 
+                              AND status = 'accepted'";
+        $connectedStmt = $con->prepare($connectedUsersSql);
+        $connectedStmt->bind_param("iii", $userId, $userId, $userId);
+        $connectedStmt->execute();
+        $connectedResult = $connectedStmt->get_result();
+        $currentConnectedUsers = [];
+        while ($row = $connectedResult->fetch_assoc()) {
+            $currentConnectedUsers[] = $row['connected_user_id'];
+        }
+        $connectedStmt->close();
+        
+        // Merge session excluded users with current pending requests and connected users
+        $allExcludedUsers = array_unique(array_merge($excludedUsers, $currentPendingUsers, $currentConnectedUsers));
+        
+        // Filter cached recommendations to exclude users we've sent requests to
+        $filteredRecommendations = array_filter($cachedRecommendations, function($user) use ($allExcludedUsers) {
+            return !in_array($user['user_id'], $allExcludedUsers);
+        });
+        ?>
+        <h3>Recommended Students <span style="font-size: 0.85em; font-weight: normal; opacity: 0.7;">(Based on your interests)</span></h3>
+        
+        <?php if (!empty($filteredRecommendations)): ?>
           <div class="recommendations-grid">
-            <?php while ($row = $recommended->fetch_assoc()): ?>
-              <?php $mutual = getMutualConnectionsCount($con, (int)$userId, (int)$row['user_id']); ?>
+            <?php 
+            $rank = 1;
+            foreach ($filteredRecommendations as $row): 
+              $mutual = getMutualConnectionsCount($con, (int)$userId, (int)$row['user_id']); 
+            ?>
               <div class="recommendation-card">
+                <div class="recommendation-rank">#<?php echo $rank; ?></div>
                 <a href="../profile/profile.php?user_id=<?php echo intval($row['user_id']); ?>" style="text-decoration:none;color:inherit;display:block;flex-grow:1;">
                   <div class="user-avatar" style="cursor:pointer;transition:background 0.2s;margin:0 auto;">
                     <?php require_once '../components/sidecontent.php'; echo renderSideContentAvatar($row['user_id']); ?>
                   </div>
                   <div class="user-info">
                     <h4 class="user-name" style="cursor:pointer;transition:color 0.2s;" onmouseover="this.style.color='#551A8B'" onmouseout="this.style.color=''"><?php echo htmlspecialchars($row['user_username']); ?></h4>
-                    <p class="user-details"><?php echo (int)$mutual; ?> mutual connections</p>
+                    <p class="user-details" title="<?php echo htmlspecialchars($row['matching_subjects']); ?>"><?php echo (int)$row['matching_skills_count']; ?> matching skill<?php echo $row['matching_skills_count'] != 1 ? 's' : ''; ?> · <?php echo (int)$mutual; ?> mutual</p>
                   </div>
                 </a>
                 <form action="send_request.php" method="POST">
@@ -353,7 +558,10 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                   <button type="submit" class="btn-connect">Connect</button>
                 </form>
               </div>
-            <?php endwhile; ?>
+            <?php 
+              $rank++;
+            endforeach; 
+            ?>
           </div>
         <?php else: ?>
           <div class="empty-state">
