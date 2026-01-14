@@ -30,7 +30,7 @@
               </div>
               <div class="hero-buttons">
                   <a href="..//signup/signup.php" class="btn btn-primary">Get Started</a>
-                  <a href="#features" class="btn btn-secondary">Learn More</a>
+                  <a href="../about/learn-more.php" class="btn btn-secondary">Learn More</a>
               </div>
             </div>
         </main>
@@ -202,67 +202,44 @@
               });
           });
     </script>
-      <section class="reviews-section sticky-section">
-        <div class="reviews-title">
-          <h1 class="reviews-title-main">Latest Reviews From Our <b>Own Users!</b></h1>
-          <h3>Some of our own clients reviewing our site.</h3>
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Explore</h4>
+                <ul>
+                    <li><a href="../courses/courses.php">Courses</a></li>
+                    <li><a href="../events/events.php">Events</a></li>
+                    <li><a href="../post/post.php">Posts</a></li>
+                    <li><a href="../calendar/calendar.php">Calendar</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Connect</h4>
+                <ul>
+                    <li><a href="../connections/connections.php">Connections</a></li>
+                    <li><a href="../dms/dms.php">Direct Messages</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Get Started</h4>
+                <ul>
+                    <li><a href="../signup/signup.php">Sign Up</a></li>
+                    <li><a href="../login/login.php">Login</a></li>
+                    <li><a href="../about/learn-more.php">Learn More</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Support & Legal</h4>
+                <ul>
+                    <li><a href="../about/coming-soon.php">Contact Us</a></li>
+                    <li><a href="../about/coming-soon.php">Privacy Policy</a></li>
+                    <li><a href="../about/coming-soon.php">Terms of Service</a></li>
+                </ul>
+            </div>
         </div>
-        <div class="review-holder">
-          <div class="review"> <!-- All Placeholders right now --->
-            <h1>★ ★ ★ ★ ★</h1> <!--  ★ Stars ☆(Can remove if you all want) --->
-            <h2>Easily Digestable</h2> <!-- Review title --->
-            <h3>Name</h3> <!-- Reviewer's name --->
-            <p>This site has been a game-changer for me! The community is so supportive, and I've learned so much from my peers. Highly recommend to anyone looking to improve their skills.</p> <!-- Review --->
-          </div>
-          <div class="review">
-            <h1>★ ★ ★</h1>
-            <h2>Visually appealing</h2>
-            <h3>Name</h3>
-            <p>Colors remind me of a clothing company though, so it tricked me for a second. Turns out that it's still really good.</p>
-          </div>
-          <div class="review">
-            <h1>★ ★ ★ ★ </h1>
-            <h2>Got really good Tips</h2>
-            <h3>Name</h3>
-            <p>Communicating with others who are smarter than me is incredibly easy, and they're really nice too!</p>
-          </div>
-          <div class="review">
-            <h1>★ ★ ★ ★</h1>
-            <h2>Math is cool.</h2>
-            <h3>Name</h3>
-            <p>I found some new friends, and I now know more about algebra! They walked me through the site and wished me good luck! Man, people on the internet are so kind!</p>
-          </div>
-          <div class="review">
-            <h1>★ ★ ★ ★ </h1>
-            <h2>Aquired greater knowledge</h2>
-            <h3>Name</h3>
-            <p>I was struggling with some concepts, but after using this site, I feel much more confident in my understanding. The community is supportive and the resources are top-notch!</p>
-          </div>
-          <div class="review">
-            <h1>★ ★ ★</h1>
-            <h2>Very helpful study sessions</h2>
-            <h3>Name</h3>
-            <p>The study groups I joined here have been a game-changer. It's great to connect with peers who are as motivated as I am. We've been able to tackle tough subjects together!</p>
-          </div>
-          <div class="review">
-            <h1>★ ★ ★</h1>
-            <h2>More useful than I first though</h2>
-            <h3>Name</h3>
-            <p>At first, I was skeptical about joining another online platform, but SkillSwap has exceeded my expectations. The features are user-friendly, and I've learned so much from the community.</p>
-          </div>
-          <div class="review">
-            <h1>★ ★ ★ ★</h1>
-            <h2>Useful assistance</h2>
-            <h3>Name</h3>
-            <p>The direct messaging feature has been incredibly useful for getting quick help from classmates. It's like having a study buddy available 24/7!</p>
-          </div>
-          <div class="review">
-            <h1>★ ★ ★ ★ ★</h1>
-            <h2>Incredibly easy to use</h2>
-            <h3>Name</h3>
-            <p>I love how intuitive the platform is. Navigating through courses, forums, and resources is a breeze. It makes studying so much more enjoyable!</p>
-          </div>
-      </div>
-    </section>
+        <div class="footer-bottom">
+            <p>&copy; 2026 SkillSwap. All rights reserved.</p>
+        </div>
+    </footer>
 </body>
 </html>
