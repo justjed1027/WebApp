@@ -1253,6 +1253,79 @@ nav a:hover {
   background: var(--background-secondary);
 }
 
+/* ===== REVIEW BUTTON & MODAL (Experimental) ===== */
+.place-review-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+  color: var(--background-main);
+  border: none;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(31, 255, 147, 0.3);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
+}
+.place-review-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(31, 255, 147, 0.45);
+  filter: brightness(1.05);
+}
+.place-review-btn:active {
+  transform: translateY(0);
+}
+.review-experimental-badge {
+  margin-left: 10px;
+  background: var(--warning);
+  color: #111;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.experimental-banner {
+  margin: 16px 24px 0 24px;
+  padding: 10px 12px;
+  background: var(--warning);
+  color: #111;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.08);
+  font-size: 0.9rem;
+}
+
+.star-rating {
+  display: inline-flex;
+  gap: 6px;
+}
+.star-rating .star {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-size: 18px;
+}
+.star-rating .star:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  transform: translateY(-2px);
+}
+.star-rating .star.active {
+  background: var(--primary-light);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
 .session-info h3 {
   margin: 0 0 5px 0;
   color: var(--text-primary);
