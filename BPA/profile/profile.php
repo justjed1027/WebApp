@@ -86,6 +86,13 @@ $db->closeConnection();
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <script>
+        // Apply theme immediately from localStorage
+        const theme = localStorage.getItem('theme');
+        if (theme === 'light') {
+            document.body.classList.add('light-mode');
+        }
+    </script>
     <div class="profile-container">
         <a href="#" onclick="history.back(); return false;" class="back-link">← Back</a>
         
