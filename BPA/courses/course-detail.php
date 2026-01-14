@@ -143,7 +143,7 @@ $course = [
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-top">
       <div class="sidebar-logo">
-        <div class="logo-placeholder"><img src="../images/skillswaplogotrans.png" style="width:40px;"></div>
+        <img src="../images/skillswaplogotrans.png" style="width:40px;">
         <span class="logo-text">SkillSwap</span>
       </div>
 

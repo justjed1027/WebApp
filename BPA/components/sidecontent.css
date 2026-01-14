@@ -486,7 +486,6 @@
 
 .settings-modal-actions .btn-secondary:hover {
   background: #242424;
-}
   background: var(--primary-color, #00d97e);
   color: var(--background-main, #0a0a0a);
   font-size: 0.6875rem;

@@ -65,7 +65,7 @@ if ($subRes && $subRes->num_rows > 0) {
     <!-- Top Section: Logo & Profile -->
     <div class="sidebar-top">
       <div class="sidebar-logo">
-        <div class="logo-placeholder"><img src="../images/skillswaplogotrans.png" style="width:40px;"></div>
+        <img src="../images/skillswaplogotrans.png" style="width:40px;">
         <span class="logo-text">SkillSwap</span>
       </div>
 
@@ -231,63 +231,72 @@ if ($subRes && $subRes->num_rows > 0) {
         </svg>
       </button>
       
+      <!-- Event Image -->
       <div class="modal-header">
         <img class="modal-event-image" id="modalImage" src="" alt="Event">
-        <div class="modal-header-content">
+      </div>
+
+      <div class="modal-body">
+        <!-- Title & Key Info -->
+        <div class="modal-section">
           <h2 class="modal-event-title" id="modalTitle"></h2>
+          <div class="modal-event-tags" id="modalTags"></div>
+        </div>
+
+        <!-- Quick Details Grid -->
+        <div class="modal-section">
           <div class="modal-event-meta">
             <div class="modal-meta-item" id="modalDate"></div>
             <div class="modal-meta-item" id="modalTime"></div>
             <div class="modal-meta-item" id="modalLocation"></div>
             <div class="modal-meta-item" id="modalParticipants"></div>
-            <div class="modal-meta-item" id="modalAttending"></div>
           </div>
-          <div class="modal-event-tags" id="modalTags"></div>
         </div>
-      </div>
-      
-      <div class="modal-body">
+        
+        <!-- Description -->
         <div class="modal-section">
-          <h3 class="modal-section-title">About This Event</h3>
+          <h3 class="modal-section-title">About</h3>
           <div class="modal-description">
             <p class="modal-description-text" id="modalDescription"></p>
             <button class="btn-expand-description" id="btnExpandDescription">Read more</button>
           </div>
         </div>
         
+        <!-- Details Table -->
         <div class="modal-section">
-          <h3 class="modal-section-title">Event Details</h3>
+          <h3 class="modal-section-title">Details</h3>
           <div class="modal-details-grid">
             <div class="modal-detail-row">
               <span class="modal-detail-label">Category</span>
-              <span class="modal-detail-value" id="modalCategory">Workshop</span>
+              <span class="modal-detail-value" id="modalCategory"></span>
             </div>
             <div class="modal-detail-row">
               <span class="modal-detail-label">Organizer</span>
-              <span class="modal-detail-value" id="modalOrganizer">Student Technology Association</span>
+              <span class="modal-detail-value" id="modalOrganizer"></span>
             </div>
             <div class="modal-detail-row">
               <span class="modal-detail-label">Capacity</span>
-              <span class="modal-detail-value" id="modalCapacity">500 spots</span>
+              <span class="modal-detail-value" id="modalCapacity"></span>
             </div>
             <div class="modal-detail-row">
-              <span class="modal-detail-label">Registration</span>
-              <span class="modal-detail-value" id="modalRegistration">Open until Oct 14</span>
+              <span class="modal-detail-label">Registration Deadline</span>
+              <span class="modal-detail-value" id="modalRegistration"></span>
+            </div>
+            <div class="modal-detail-row">
+              <span class="modal-detail-label">Attending</span>
+              <span class="modal-detail-value" id="modalAttending"></span>
             </div>
           </div>
         </div>
         
+        <!-- Host Info -->
         <div class="modal-section">
-          <h3 class="modal-section-title">Created By</h3>
+          <h3 class="modal-section-title">Event Host</h3>
           <div class="modal-creator">
-            <div class="creator-avatar">
-              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
-              </svg>
-            </div>
+            <img class="creator-avatar" id="modalCreatorAvatar" src="" alt="Host profile" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover;">
             <div class="creator-info">
-              <div class="creator-name" id="modalCreator">John Smith</div>
-              <div class="creator-role" id="modalCreatorRole">Event Coordinator</div>
+              <a href="#" class="creator-name" id="modalCreator" style="text-decoration: none; color: inherit;"></a>
+              <div class="creator-role" id="modalCreatorRole"></div>
             </div>
           </div>
         </div>

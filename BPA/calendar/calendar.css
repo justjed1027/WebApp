@@ -140,6 +140,13 @@ body {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.sidebar-logo img {
+  width: 40px;
+  height: auto;
+  object-fit: contain;
+  filter: none !important;
+}
+
 .sidebar:hover .sidebar-logo {
   gap: 14px;
   justify-content: flex-start;
@@ -157,6 +164,7 @@ body {
   height: 32px;
   border-radius: 6px;
   flex-shrink: 0;
+  background: var(--primary-color);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 2px 8px rgba(31, 255, 147, 0.2);
 }
