@@ -721,7 +721,7 @@ body:not(.light-mode) .ended-badge {
 
 .btn-view-details {
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
-  color: #ffffff;
+  color: var(--background-main);
   border-radius: 12px;
   padding: 14px 20px;
   font-size: 0.938rem;
