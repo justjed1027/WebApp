@@ -38,8 +38,137 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SkillSwap — Creating your Account (4/4)</title>
   <link rel="stylesheet" href="style.css?v=<?php echo filemtime(__DIR__ . '/style.css'); ?>" />
+  <style>
+    /* Construction Modal Styles */
+    .construction-modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      animation: fadeIn 0.3s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .construction-modal {
+      background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+      border-radius: 15px;
+      max-width: 500px;
+      width: 90%;
+      padding: 0;
+      box-shadow: 0 20px 60px rgba(31, 255, 147, 0.3);
+      border: 2px solid rgba(31, 255, 147, 0.3);
+      animation: slideUp 0.4s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .construction-modal-header {
+      padding: 25px 30px;
+      border-bottom: 1px solid rgba(31, 255, 147, 0.2);
+    }
+
+    .construction-modal-header h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #1fff93;
+      margin: 0;
+    }
+
+    .construction-modal-body {
+      padding: 30px;
+    }
+
+    .construction-modal-body p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: #cccccc;
+      margin-bottom: 15px;
+    }
+
+    .construction-modal-body p:last-child {
+      margin-bottom: 0;
+      color: #999999;
+      font-size: 1rem;
+    }
+
+    .construction-modal-footer {
+      padding: 20px 30px 25px;
+      text-align: center;
+    }
+
+    .construction-modal-button {
+      padding: 12px 40px;
+      background: linear-gradient(135deg, #1fff93 0%, #00d4ff 100%);
+      color: #0a0a0a;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .construction-modal-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(31, 255, 147, 0.4);
+    }
+
+    @media (max-width: 480px) {
+      .construction-modal {
+        width: 95%;
+      }
+      
+      .construction-modal-header h2 {
+        font-size: 1.5rem;
+      }
+      
+      .construction-modal-body p {
+        font-size: 1rem;
+      }
+      
+      .construction-modal-button {
+        padding: 10px 30px;
+        font-size: 1rem;
+      }
+    }
+  </style>
 </head>
 <body data-step="4">
+  <!-- Construction Warning Modal -->
+  <div class="construction-modal-overlay" id="constructionModal">
+    <div class="construction-modal">
+      <div class="construction-modal-header">
+        <h2>⚠️ Under Construction</h2>
+      </div>
+      <div class="construction-modal-body">
+        <p>This page is still under construction and the features you see have yet to be complete.</p>
+        <p>We're actively working on bringing you the best experience possible!</p>
+      </div>
+      <div class="construction-modal-footer">
+        <button class="construction-modal-button" onclick="closeConstructionModal()">Got it!</button>
+      </div>
+    </div>
+  </div>
+
   <div class="setup-shell">
     <div class="header"><div class="logo">SkillSwap</div></div>
     <h1 class="step-title">Creating your Account/Editing Account</h1>
@@ -87,5 +216,23 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     </div>
   </div>
   <script src="script.js?v=<?php echo filemtime(__DIR__ . '/script.js'); ?>"></script>
+  <script>
+    // Show construction modal on page load
+    window.addEventListener('load', function() {
+      document.getElementById('constructionModal').style.display = 'flex';
+    });
+
+    // Close construction modal function
+    function closeConstructionModal() {
+      document.getElementById('constructionModal').style.display = 'none';
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('constructionModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeConstructionModal();
+      }
+    });
+  </script>
 </body>
 </html>

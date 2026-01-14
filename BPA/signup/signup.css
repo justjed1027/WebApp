@@ -1,8 +1,8 @@
 
 /* signup.css styled to match login */
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
-body{margin:0;min-height:100vh;background:#f5f5f5;overflow-x:hidden}
-.split-container{display:flex;width:100vw;height:100vh;box-shadow:0 0 50px rgba(0,0,0,.2);align-items:stretch;position:relative;overflow:hidden}
+body{margin:0;min-height:100vh;background:#f5f5f5;overflow-x:hidden;overflow-y:auto}
+.split-container{display:flex;width:100vw;min-height:100vh;box-shadow:0 0 50px rgba(0,0,0,.2);align-items:stretch;position:relative}
 .split-container::before{content:'';position:absolute;top:0;bottom:0;left:50%;width:1px;transform:translateX(-.5px);background:linear-gradient(180deg, rgba(255,255,255,.18) 0%, rgba(255,255,255,.12) 20%, rgba(255,255,255,.06) 50%, rgba(255,255,255,.12) 80%, rgba(255,255,255,.18) 100%);opacity:.25;pointer-events:none}
 .left-panel{flex:1;background:#121425;display:flex;align-items:center;justify-content:center;padding:3rem;position:relative;overflow:hidden}
 .left-panel::before{content:'';position:absolute;inset:0;opacity:.08;z-index:1;background-image:radial-gradient(circle at 25% 25%, rgba(255,255,255,.15) 0%, transparent 50%),radial-gradient(circle at 75% 75%, rgba(255,255,255,.1) 0%, transparent 50%),repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,.02) 10px, rgba(255,255,255,.02) 20px)}
@@ -28,7 +28,7 @@ body{margin:0;min-height:100vh;background:#f5f5f5;overflow-x:hidden}
 .create-account a{color:#fff;text-decoration:underline;font-weight:500;transition:color .3s ease}
 .create-account a:hover{color:rgba(255,255,255,.8)}
 .error{color:#fca5a5;font-size:.9rem;margin-top:4px;margin-bottom:8px;text-align:left}
-.right-panel{flex:1;background:url('../login/images/login.png') right center/cover no-repeat;background-color:#0a0a0a;position:relative}
+.right-panel{flex:1;background:url('../login/images/login.png') right center/cover no-repeat;background-color:#0a0a0a;position:sticky;top:0;min-height:100vh;height:100vh;align-self:flex-start}
 .right-panel::before{content:'';position:absolute;inset:0;backdrop-filter:blur(3px);pointer-events:none}
 .hidden{display:none}
 
@@ -42,3 +42,56 @@ body{margin:0;min-height:100vh;background:#f5f5f5;overflow-x:hidden}
 .password-requirements .valid::before{content:'✓';color:#86efac}
 .password-requirements .invalid{color:#fca5a5}
 .password-requirements .invalid::before{content:'✗';color:#fca5a5}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .split-container {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+  }
+  
+  /* Hide right panel (image) on mobile */
+  .right-panel {
+    display: none;
+  }
+  
+  .left-panel {
+    min-height: 100vh;
+    padding: 2rem 1.5rem;
+  }
+  
+  .welcome-content {
+    padding: 2rem 1.5rem;
+  }
+  
+  .left-panel h1 {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .left-panel {
+    padding: 1.5rem 1rem;
+  }
+  
+  .welcome-content {
+    padding: 1.5rem 1rem;
+  }
+  
+  .left-panel h1 {
+    font-size: 1.75rem;
+  }
+  
+  .subtitle {
+    font-size: 1rem;
+  }
+  
+  .email-form input,
+  .email-form select,
+  .google-btn,
+  .signin-btn {
+    padding: 0.9rem 1rem;
+    font-size: 0.95rem;
+  }
+}

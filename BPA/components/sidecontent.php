@@ -197,7 +197,10 @@ function renderSideContent($currentPage = '', $options = []) {
                         AND e.events_visibility = 'public'
                     GROUP BY e.events_id
                     ORDER BY e.events_date ASC
-                    LIMIT " . ($limitUpcomingEvents ?? 1);
+                    LIMIT " . ($limitUpcomingEvents ?? 2);
+                    
+                    // Debug: Verify limit is 2
+                    // echo "<!-- Event Limit: " . ($limitUpcomingEvents ?? 2) . " -->";
                     
                     $stmt = $db->prepare($sql);
                     if ($stmt) {
