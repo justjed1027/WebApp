@@ -142,8 +142,6 @@
 
 .featured-track {
   display: flex;
-  justify-content: center;
-  gap: 24px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
@@ -158,6 +156,7 @@
 
 .featured-track .featured-event-card {
   flex: 0 0 100%;
+  min-width: 100%;
   scroll-snap-align: start;
   transform: scale(0.985);
   opacity: 0.96;
