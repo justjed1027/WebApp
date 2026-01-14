@@ -1,1 +1,0 @@
-// Science Forum JS placeholder

@@ -1,1 +1,0 @@
-// Resources page JS placeholder

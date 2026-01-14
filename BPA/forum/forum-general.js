@@ -1,1 +1,0 @@
-// General Discussion Forum JS placeholder

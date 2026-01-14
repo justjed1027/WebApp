@@ -598,13 +598,20 @@ function renderSideContent($currentPage = '', $options = []) {
 
         <!-- Footer (always show) -->
         <div class="side-footer">
-            <div class="side-footer-links">
-                <a href="../about/index.html">About</a>
-                <a href="#">Help</a>
-                <a href="#">Privacy</a>
-                <a href="#">Terms</a>
+            <p class="side-footer-chapter">DACC</p>
+            <p class="side-footer-location">Delaware, Ohio</p>
+            <div class="side-footer-info">
+                <p style="margin: 0; font-size: 0.75rem; color: var(--text-secondary, #9ca3af);">Delaware Area Career Center</p>
             </div>
-            <p class="side-footer-copy">© 2023 SkillSwap Student Platform</p>
+            <div class="side-footer-team">
+                <strong>Team Members: </strong>
+                <span>Caleb Dardinger</span>
+                <span>Stephen Manwaring</span>
+                <span>Jedidiah Odonkor</span>
+                <span>Andrew Thompson</span>
+            </div>
+            <p class="side-footer-theme">🎓 Student Talent Exchange Platform</p>
+            <p class="side-footer-copy">© 2026 SkillSwap</p>
         </div>
 
     </aside>

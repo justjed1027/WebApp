@@ -1,1 +1,0 @@
-// Notes page JS placeholder
