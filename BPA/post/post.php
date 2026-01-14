@@ -684,10 +684,8 @@ profile svg
           <div class="create-post-header">
                 <form id="inline-post-form" action="post.php" method="POST" enctype="multipart/form-data">
                   <div class="input-with-submit">
-                    <div class="user-avatar-small">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
-                      </svg>
+                    <div class="user-avatar-small" style="width:40px;height:40px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:0.9rem;background:var(--background-hover);">
+                      <?php require_once '../components/sidecontent.php'; echo renderProfileAvatar($_SESSION['user_id']); ?>
                     </div>
                     <textarea name="content" class="create-post-input" placeholder="Ask a question or share something helpful..." rows="3"></textarea>
                     <button type="submit" class="create-post-submit-btn" title="Submit post">
@@ -722,16 +720,8 @@ profile svg
                     <?php $displayName = !empty($post['user_username']) ? $post['user_username'] : ('User #' . intval($post['user_id'])); ?>
                     <div style="display:flex;align-items:center;gap:12px;flex:1;">
                       <a href="../profile/profile.php?user_id=<?php echo intval($post['user_id']); ?>" style="text-decoration:none;cursor:pointer;">
-                        <div class="post-author-avatar" style="width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:1rem;">
-                          <?php
-                            $initial = '';
-                            if (!empty($post['user_username'])) {
-                              $initial = mb_strtoupper(mb_substr($post['user_username'], 0, 1));
-                            } else {
-                              $initial = 'U';
-                            }
-                            echo htmlspecialchars($initial);
-                          ?>
+                        <div class="post-author-avatar" style="width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:1rem;overflow:hidden;">
+                          <?php require_once '../components/sidecontent.php'; echo renderSideContentAvatar($post['user_id']); ?>
                         </div>
                       </a>
                       <div style="display:flex;flex-direction:column;">
@@ -1208,10 +1198,16 @@ profile svg
                 let html = '';
                 data.comments.forEach(comment => {
                   const initial = comment.username ? comment.username.charAt(0).toUpperCase() : 'U';
+                  let avatarHtml = '';
+                  if (comment.profile_filepath) {
+                    avatarHtml = `<img src="/WebApp/${escapeHtml(comment.profile_filepath)}" alt="${escapeHtml(comment.username)}" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;" />`;
+                  } else {
+                    avatarHtml = `<span style="display:flex; align-items:center; justify-content:center; width:100%; height:100%; font-weight:600; font-size:0.85rem; color:inherit;">${escapeHtml(initial)}</span>`;
+                  }
                   html += `
                     <div class="comment-item" style="display:flex;gap:10px;margin-bottom:14px;padding:10px;background:var(--background-hover);border-radius:6px;">
-                      <div class="comment-avatar" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:0.85rem;flex-shrink:0;cursor:pointer;" onclick="window.location.href='../profile/profile.php?user_id=${comment.user_id}';" title="View profile">
-                        ${escapeHtml(initial)}
+                      <div class="comment-avatar" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:0.85rem;flex-shrink:0;cursor:pointer;overflow:hidden;background:var(--background-hover);" onclick="window.location.href='../profile/profile.php?user_id=${comment.user_id}';" title="View profile">
+                        ${avatarHtml}
                       </div>
                       <div style="flex:1;">
                         <div style="display:flex;justify-content:space-between;margin-bottom:4px;">

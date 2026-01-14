@@ -58,9 +58,11 @@ try {
             pc.comment_text,
             pc.created_at,
             u.user_id,
-            u.user_username
+            u.user_username,
+            p.profile_filepath
         FROM post_comments pc
         LEFT JOIN user u ON pc.user_id = u.user_id
+        LEFT JOIN profile p ON u.user_id = p.user_id
         WHERE pc.post_id = ?
         ORDER BY pc.created_at ASC
     ");
@@ -76,6 +78,7 @@ try {
             'comment_text' => $row['comment_text'],
             'user_id' => $row['user_id'],
             'username' => $row['user_username'] ?? 'User #' . $row['user_id'],
+            'profile_filepath' => $row['profile_filepath'] ?? null,
             'time_ago' => timeAgoShort($row['created_at']),
             'created_at' => $row['created_at']
         ];
