@@ -14,6 +14,16 @@ if (empty($_SESSION['user_id'])) {
     exit();
 }
 
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+  if (!empty($_GET['action']) && $_GET['action'] == 'logout') {
+    $_SESSION = [];
+    session_destroy();
+    setcookie("PHPSESSID", "", time() - 3600, "/");
+    header('location: ../landing/landing.php');
+    exit();
+  }
+}
+
 $currentUserId = $_SESSION['user_id'];
 $user = new User();
 $user->populate($currentUserId);
