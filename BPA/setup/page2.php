@@ -1,5 +1,17 @@
 <?php
 session_start();
+
+// Handle logout FIRST, before any includes or output
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+  if (!empty($_GET['action']) && $_GET['action'] == 'logout') {
+    $_SESSION = [];
+    session_destroy();
+    setcookie("PHPSESSID", "", time() - 3600, "/");
+    header('location: ../landing/landing.php');
+    exit();
+  }
+}
+
 require_once '../database/DatabaseConnection.php';
 require_once '../database/User.php';
 
@@ -57,17 +69,6 @@ if (!empty($_SESSION['user_id'])) {
   $user->populate($_SESSION['user_id']);
 } else {
   header('location: ../landing/landing.php');
-}
-
-if ($_SERVER["REQUEST_METHOD"] == "GET") {
-
-  if (!empty($_GET['action']) && $_GET['action'] == 'logout') {
-
-    $_SESSION = [];
-    session_destroy();
-    setcookie("PHPSESSID", "", time() - 3600, "/");
-    header('location: ../landing/landing.php');
-  }
 }
 ?>
 <!DOCTYPE html>
