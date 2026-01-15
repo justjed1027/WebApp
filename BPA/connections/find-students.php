@@ -1,5 +1,17 @@
 <?php 
 session_start();
+
+// Handle logout FIRST, before any includes or output
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+  if (!empty($_GET['action']) && $_GET['action'] == 'logout') {
+    $_SESSION = [];
+    session_destroy();
+    setcookie("PHPSESSID", "", time() - 3600, "/");
+    header('location: ../landing/landing.php');
+    exit();
+  }
+}
+
 require_once '../database/DatabaseConnection.php';
 require_once '../database/User.php';
 require_once '../database/Connection.php';
@@ -12,16 +24,6 @@ $con = $db->connection;
 if (empty($_SESSION['user_id'])) {
     header('location: ../landing/landing.php');
     exit();
-}
-
-if ($_SERVER["REQUEST_METHOD"] == "GET") {
-  if (!empty($_GET['action']) && $_GET['action'] == 'logout') {
-    $_SESSION = [];
-    session_destroy();
-    setcookie("PHPSESSID", "", time() - 3600, "/");
-    header('location: ../landing/landing.php');
-    exit();
-  }
 }
 
 $currentUserId = $_SESSION['user_id'];
