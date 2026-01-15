@@ -4,6 +4,17 @@ require_once '../database/User.php';
 require_once '../database/DatabaseConnection.php';
 require_once '../database/Notification.php';
 
+// Handle logout FIRST, before any output
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+  if (!empty($_GET['action']) && $_GET['action'] == 'logout') {
+    $_SESSION = [];
+    session_destroy();
+    setcookie("PHPSESSID", "", time() - 3600, "/");
+    header('location: ../landing/landing.php');
+    exit();
+  }
+}
+
 // Function to convert timestamp to "time ago" format
 function timeAgo($timestamp)
 {
@@ -227,17 +238,6 @@ if (!empty($_SESSION['user_id'])) {
   $notif = new Notification($conn);
   $notificationCountDisplay = $notif->getCountDisplay($_SESSION['user_id']);
   $notificationCount = $notif->getUnreadCount($_SESSION['user_id']);
-}
-
-if ($_SERVER["REQUEST_METHOD"] == "GET") {
-
-  if (!empty($_GET['action']) && $_GET['action'] == 'logout') {
-
-    $_SESSION = [];
-    session_destroy();
-    setcookie("PHPSESSID", "", time() - 3600, "/");
-    header('location: ../landing/landing.php');
-  }
 }
 /*
 side bar svgs

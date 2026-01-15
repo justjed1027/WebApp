@@ -610,7 +610,7 @@ function renderSideContent($currentPage = '', $options = []) {
                 <span>Jedidiah Odonkor</span>
                 <span>Andrew Thompson</span>
             </div>
-            <p class="side-footer-theme">🎓 Student Talent Exchange Platform</p>
+            <p class="side-footer-theme"> Student Talent Exchange Platform</p>
             <p class="side-footer-copy">© 2026 SkillSwap</p>
         </div>
 

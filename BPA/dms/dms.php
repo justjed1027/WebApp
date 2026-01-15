@@ -3,13 +3,8 @@ session_start();
 
 require_once '../database/DatabaseConnection.php';
 require_once '../database/User.php';
-require_once '../components/sidecontent.php';
 
-if (!isset($_SESSION['user_id'])) {
-    header("Location: ../landing/landing.php");
-    exit;
-}
-
+// Handle logout FIRST, before any includes
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
   if (!empty($_GET['action']) && $_GET['action'] == 'logout') {
     $_SESSION = [];
@@ -18,6 +13,13 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     header('location: ../landing/landing.php');
     exit();
   }
+}
+
+require_once '../components/sidecontent.php';
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../landing/landing.php");
+    exit;
 }
 
 ?>
