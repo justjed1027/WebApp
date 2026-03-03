@@ -14,6 +14,9 @@ if (themeToggle) {
 let currentConversationId = null;
 let currentOtherUserId = null;
 let currentUserId = null;
+let messageRefreshInterval = null;
+let currentConversationLastMessageId = null;
+let currentConversationLastMessageCount = 0;
 
 // DOM Elements
 const conversationList = document.getElementById('conversationList');
@@ -148,6 +151,44 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 });
 
+function startMessageAutoRefresh() {
+    if (messageRefreshInterval) {
+        clearInterval(messageRefreshInterval);
+    }
+    messageRefreshInterval = setInterval(async () => {
+        if (!currentConversationId) return;
+        await refreshActiveConversation();
+    }, 3000);
+}
+
+function isUserNearBottom() {
+    if (!messagesContainer) return true;
+    const threshold = 80;
+    const distance = messagesContainer.scrollHeight - (messagesContainer.scrollTop + messagesContainer.clientHeight);
+    return distance <= threshold;
+}
+
+function updateLastRenderedState(messages) {
+    currentConversationLastMessageId = messages.length ? messages[messages.length - 1].message_id : null;
+    currentConversationLastMessageCount = messages.length;
+}
+
+async function refreshActiveConversation() {
+    const messages = await fetchMessages(currentConversationId);
+    if (!messages) return;
+
+    const lastId = messages.length ? messages[messages.length - 1].message_id : null;
+    const count = messages.length;
+    const hasChanges = lastId !== currentConversationLastMessageId || count !== currentConversationLastMessageCount;
+
+    if (hasChanges) {
+        const shouldAutoScroll = isUserNearBottom();
+        renderMessages(messages, { preserveScroll: !shouldAutoScroll });
+        updateLastRenderedState(messages);
+        await markAsRead(currentConversationId);
+    }
+}
+
 // Load all conversations
 async function loadConversations() {
     try {
@@ -253,30 +294,49 @@ async function selectConversation(conversationId, otherUserId, otherUsername, is
     
     // Load messages
     await loadMessages(conversationId);
+    startMessageAutoRefresh();
     
     // Mark as read
     await markAsRead(conversationId);
 }
 
 // Load messages for a conversation
-async function loadMessages(conversationId) {
+async function fetchMessages(conversationId) {
     try {
-        const response = await fetch(`backend/load_messages.php?conversation_id=${conversationId}`);
+        const response = await fetch(`backend/load_messages.php?conversation_id=${conversationId}&_=${Date.now()}`, {
+            cache: 'no-store'
+        });
         const data = await response.json();
         
         if (data.success) {
-            renderMessages(data.messages);
-        } else {
-            messagesContainer.innerHTML = '<div class="dm-empty-state">Error loading messages</div>';
+            return data.messages || [];
         }
+        messagesContainer.innerHTML = '<div class="dm-empty-state">Error loading messages</div>';
+        return null;
     } catch (error) {
         console.error('Error loading messages:', error);
         messagesContainer.innerHTML = '<div class="dm-empty-state">Error loading messages</div>';
+        return null;
     }
 }
 
+async function loadMessages(conversationId) {
+    const messages = await fetchMessages(conversationId);
+    if (!messages) return;
+    renderMessages(messages);
+    updateLastRenderedState(messages);
+}
+
 // Render messages in chat area
-function renderMessages(messages) {
+function renderMessages(messages, options = {}) {
+    const { preserveScroll = false } = options;
+    let prevScrollTop = 0;
+    let prevScrollHeight = 0;
+    if (preserveScroll && messagesContainer) {
+        prevScrollTop = messagesContainer.scrollTop;
+        prevScrollHeight = messagesContainer.scrollHeight;
+    }
+
     if (messages.length === 0) {
         messagesContainer.innerHTML = '<div class="dm-empty-state">No messages yet. Start the conversation!</div>';
         return;
@@ -297,8 +357,12 @@ function renderMessages(messages) {
         messagesContainer.appendChild(messageDiv);
     });
     
-    // Scroll to bottom
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    if (preserveScroll && messagesContainer) {
+        const newHeight = messagesContainer.scrollHeight;
+        messagesContainer.scrollTop = prevScrollTop + (newHeight - prevScrollHeight);
+    } else {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
 }
 
 // Send a message
@@ -608,6 +672,7 @@ function renderSessionRequests(requests) {
     let html = '';
     
     requests.forEach(req => {
+        const isRecipient = parseInt(currentUserId, 10) === parseInt(req.recipient_id, 10);
         const createdDate = new Date(req.created_at);
         const timeAgo = getTimeAgo(createdDate);
         
@@ -615,8 +680,10 @@ function renderSessionRequests(requests) {
         const isAccepted = req.status === 'accepted';
         const actionButtons = isAccepted 
             ? `<button class="btn-request btn-session" onclick="openSessionFromRequest({request_id: ${req.request_id}, requester_id: ${req.requester_id}, recipient_id: ${req.recipient_id}, requester_name: '${escapeHtml(req.requester_name)}', recipient_name: '${escapeHtml(req.recipient_name)}', area_of_help: '${escapeHtml(req.area_of_help)}', session_date: '${req.session_date}', session_start_time: '${req.session_start_time}', session_end_time: '${req.session_end_time}'})">Enter Session</button>`
-            : `<button class="btn-request btn-accept" onclick="respondSessionRequest(${req.request_id}, 'accept')">Accept</button>
-               <button class="btn-request btn-reject" onclick="respondSessionRequest(${req.request_id}, 'reject')">Reject</button>`;
+            : (isRecipient
+                ? `<button class="btn-request btn-accept" onclick="respondSessionRequest(${req.request_id}, 'accept')">Accept</button>
+                   <button class="btn-request btn-reject" onclick="respondSessionRequest(${req.request_id}, 'reject')">Reject</button>`
+                : `<span class="dm-request-pending">Pending</span>`);
         
         html += `
             <div class="dm-request-item ${isAccepted ? 'accepted' : ''}">
@@ -656,7 +723,7 @@ function checkExpiredRequests() {
         // Try to get the created_at from data attribute or calculate from time text
         const timeText = item.querySelector('.dm-request-time')?.textContent;
         
-        // Parse the time string and check if it's expired (24+ hours)
+        // Parse the time string and check if it's expired (10+ minutes)
         if (timeText) {
             const isExpired = isRequestExpired(timeText);
             
@@ -694,7 +761,7 @@ function checkExpiredRequests() {
     }
 }
 
-// Helper function to check if a request has expired (24+ hours old)
+// Helper function to check if a request has expired (10+ minutes old)
 function isRequestExpired(timeText) {
     // Parse the time text like "2h ago", "30m ago", "1d ago", "23h ago"
     const match = timeText.match(/(\d+)([mhd])\s+ago/i);
@@ -704,22 +771,22 @@ function isRequestExpired(timeText) {
     const value = parseInt(match[1]);
     const unit = match[2].toLowerCase();
     
-    // Convert to hours for comparison
-    let hours = 0;
+    // Convert to minutes for comparison
+    let minutes = 0;
     switch(unit) {
         case 'm':
-            hours = value / 60;
+            minutes = value;
             break;
         case 'h':
-            hours = value;
+            minutes = value * 60;
             break;
         case 'd':
-            hours = value * 24;
+            minutes = value * 1440;
             break;
     }
     
-    // If 24 or more hours have passed, it's expired
-    return hours >= 24;
+    // If 10 or more minutes have passed, it's expired
+    return minutes >= 10;
 }
 
 // Respond to session request
@@ -892,6 +959,8 @@ let sessionMessageRefreshInterval = null;
 let sessionReadyCheckInterval = null;
 let currentSessionData = null;
 let lastRenderedMessageIds = new Set();
+let sessionEndCheckInterval = null;
+let sessionEndModalVisible = false;
 
 // Open session from request button
 async function openSessionFromRequest(session) {
@@ -925,7 +994,12 @@ async function openSessionFromRequest(session) {
                 showWaitingRoom(session);
             }
         } else {
-            showToast('Error', 'error', data.error || 'Failed to join session');
+            if (data.error === 'Session ended') {
+                showToast('Session ended', 'info', 'This session has already ended');
+                loadSessionRequests();
+            } else {
+                showToast('Error', 'error', data.error || 'Failed to join session');
+            }
         }
     } catch (error) {
         showToast('Error', 'error', 'Failed to join session');
@@ -954,6 +1028,11 @@ function showWaitingRoom(session) {
                 clearInterval(sessionReadyCheckInterval);
                 document.getElementById('waitingRoomModal').style.display = 'none';
                 openSessionRoom(session);
+            } else if (!data.success && data.error === 'Session ended') {
+                clearInterval(sessionReadyCheckInterval);
+                document.getElementById('waitingRoomModal').style.display = 'none';
+                showToast('Session ended', 'info', 'This session has already ended');
+                loadSessionRequests();
             }
         } catch (error) {
             console.error('Error checking session ready:', error);
@@ -1045,6 +1124,8 @@ function renderActiveSessions(sessions) {
 async function openSessionRoom(session) {
     currentSessionId = session.request_id;
     lastRenderedMessageIds.clear();
+    window.currentSessionId = currentSessionId;
+    window.currentSessionData = session;
     
     const otherUser = session.requester_id !== parseInt(document.body.dataset.userId) 
         ? session.requester_name 
@@ -1055,6 +1136,20 @@ async function openSessionRoom(session) {
     
     const modal = document.getElementById('sessionRoomModal');
     modal.style.display = 'flex';
+
+    // Configure end/review controls
+    const endBtn = document.getElementById('endSessionBtn');
+    const reviewBtn = document.getElementById('placeReviewBtn');
+    const isHost = parseInt(session.requester_id, 10) === parseInt(document.body.dataset.userId, 10);
+    if (endBtn) {
+        endBtn.style.display = isHost ? 'inline-flex' : 'none';
+        endBtn.disabled = false;
+        endBtn.onclick = () => requestEndSession();
+    }
+    if (reviewBtn) {
+        reviewBtn.disabled = true;
+        reviewBtn.title = 'Available after the session ends';
+    }
     
     // Clear messages container
     document.getElementById('sessionMessagesContainer').innerHTML = '';
@@ -1065,6 +1160,10 @@ async function openSessionRoom(session) {
     // Start auto-refresh
     if (sessionMessageRefreshInterval) clearInterval(sessionMessageRefreshInterval);
     sessionMessageRefreshInterval = setInterval(loadSessionMessages, 3000);
+
+    // Start end-session status polling
+    if (sessionEndCheckInterval) clearInterval(sessionEndCheckInterval);
+    sessionEndCheckInterval = setInterval(checkEndSessionStatus, 3000);
 }
 
 function closeSessionRoom() {
@@ -1072,6 +1171,9 @@ function closeSessionRoom() {
     currentSessionId = null;
     if (sessionMessageRefreshInterval) {
         clearInterval(sessionMessageRefreshInterval);
+    }
+    if (sessionEndCheckInterval) {
+        clearInterval(sessionEndCheckInterval);
     }
 }
 
@@ -1086,9 +1188,114 @@ async function loadSessionMessages() {
         
         if (data.success) {
             renderSessionMessages(data.messages);
+        } else if (data.error === 'Session ended') {
+            showToast('Session ended', 'info', 'This session has already ended');
+            closeSessionRoom();
+            loadSessionRequests();
         }
     } catch (error) {
         console.error('Error loading messages:', error);
+    }
+}
+
+async function requestEndSession() {
+    if (!currentSessionId) return;
+
+    try {
+        const response = await fetch('./backend/request_end_session.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ session_id: currentSessionId })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            showToast('End request sent', 'info', 'Waiting for confirmation');
+        } else {
+            showToast('Failed to end session', 'error', data.error || 'Please try again');
+        }
+    } catch (error) {
+        showToast('Failed to end session', 'error', 'Please try again');
+    }
+}
+
+function openEndSessionModal() {
+    const modal = document.getElementById('endSessionModal');
+    if (!modal || sessionEndModalVisible) return;
+    sessionEndModalVisible = true;
+    modal.style.display = 'flex';
+
+    const closeBtn = document.getElementById('closeEndSessionModal');
+    const acceptBtn = document.getElementById('acceptEndSession');
+    const declineBtn = document.getElementById('declineEndSession');
+
+    const close = () => {
+        modal.style.display = 'none';
+        sessionEndModalVisible = false;
+    };
+
+    if (closeBtn) closeBtn.onclick = close;
+    if (declineBtn) declineBtn.onclick = async () => {
+        await respondEndSession('reject');
+        close();
+    };
+    if (acceptBtn) acceptBtn.onclick = async () => {
+        await respondEndSession('accept');
+        close();
+    };
+}
+
+async function respondEndSession(action) {
+    if (!currentSessionId) return;
+
+    try {
+        const response = await fetch('./backend/respond_end_session.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ session_id: currentSessionId, action })
+        });
+
+        const data = await response.json();
+        if (!data.success) {
+            showToast('Failed to respond', 'error', data.error || 'Please try again');
+        } else if (action === 'reject') {
+            showToast('Session continues', 'info', 'End request declined');
+        }
+    } catch (error) {
+        showToast('Failed to respond', 'error', 'Please try again');
+    }
+}
+
+async function checkEndSessionStatus() {
+    if (!currentSessionId) return;
+
+    try {
+        const response = await fetch(`./backend/get_end_session_status.php?session_id=${currentSessionId}`, {
+            credentials: 'include'
+        });
+        const data = await response.json();
+
+        if (!data.success) return;
+
+        if (data.is_ended) {
+            closeSessionRoom();
+            loadSessionRequests();
+            const reviewBtn = document.getElementById('placeReviewBtn');
+            if (reviewBtn) reviewBtn.disabled = false;
+            if (window.openReviewModal) window.openReviewModal();
+            return;
+        }
+
+        if (data.status === 'pending' && data.requested_by !== null) {
+            const currentUserId = parseInt(document.body.dataset.userId, 10);
+            if (currentUserId !== parseInt(data.requested_by, 10)) {
+                openEndSessionModal();
+            }
+        }
+    } catch (error) {
+        console.error('Error checking end session status:', error);
     }
 }
 
@@ -1148,7 +1355,13 @@ async function sendSessionMessage() {
             input.value = '';
             await loadSessionMessages();
         } else {
-            showToast('Error', 'error', data.error || 'Failed to send message');
+            if (data.error === 'Session ended') {
+                showToast('Session ended', 'info', 'This session has already ended');
+                closeSessionRoom();
+                loadSessionRequests();
+            } else {
+                showToast('Error', 'error', data.error || 'Failed to send message');
+            }
         }
     } catch (error) {
         console.error('Error sending message:', error);

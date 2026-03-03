@@ -24,8 +24,23 @@ try {
     $conn = $db->getConnection();
     $userId = $_SESSION['user_id'];
     
+        // Expire pending requests older than 10 minutes
+        $expireSQL = "UPDATE session_requests 
+                                    SET status = 'cancelled', responded_at = NOW(), response_message = 'Expired'
+                                    WHERE status = 'pending' AND created_at <= DATE_SUB(NOW(), INTERVAL 10 MINUTE)";
+        $conn->query($expireSQL);
+
+        // Expire accepted sessions that have ended (with grace to avoid timezone mismatch)
+        $expireAcceptedSQL = "UPDATE session_requests 
+                                                    SET status = 'cancelled', responded_at = NOW(), response_message = 'Session ended'
+                                                    WHERE status = 'accepted'
+                                                        AND session_date IS NOT NULL
+                                                        AND session_end_time IS NOT NULL
+                                                        AND TIMESTAMP(session_date, session_end_time) <= DATE_SUB(NOW(), INTERVAL 12 HOUR)";
+        $conn->query($expireAcceptedSQL);
+
     // Get all requests (pending and accepted) for this user (either as requester or recipient)
-    // Exclude expired pending requests (older than 24 hours)
+    // Exclude expired pending requests (older than 10 minutes)
     $sql = "
     SELECT 
         sr.request_id,
@@ -55,7 +70,7 @@ try {
     JOIN user u2 ON sr.recipient_id = u2.user_id
     WHERE (sr.recipient_id = ? OR sr.requester_id = ?) 
         AND (
-            (sr.status = 'pending' AND sr.created_at > DATE_SUB(NOW(), INTERVAL 24 HOUR))
+            (sr.status = 'pending' AND sr.created_at > DATE_SUB(NOW(), INTERVAL 10 MINUTE))
             OR sr.status = 'accepted'
         )
     ORDER BY sr.created_at DESC

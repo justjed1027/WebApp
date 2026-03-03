@@ -23,6 +23,15 @@ $userId = intval($_SESSION['user_id']);
 try {
     $db = DB::getInstance();
     $conn = $db->getConnection();
+
+        // Expire accepted sessions that have ended (with grace to avoid timezone mismatch)
+        $expireSql = "UPDATE session_requests 
+                                    SET status = 'cancelled', responded_at = NOW(), response_message = 'Session ended'
+                                    WHERE status = 'accepted'
+                                        AND session_date IS NOT NULL
+                                        AND session_end_time IS NOT NULL
+                                        AND TIMESTAMP(session_date, session_end_time) <= DATE_SUB(NOW(), INTERVAL 12 HOUR)";
+        $conn->query($expireSql);
     
     // Get all accepted sessions for this user (either as requester or recipient)
     $sql = "SELECT sr.request_id, sr.requester_id, sr.recipient_id, sr.session_type, sr.area_of_help, 

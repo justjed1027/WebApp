@@ -346,15 +346,10 @@ if (!isset($_SESSION['user_id'])) {
           <h3 id="sessionTitle">Session Room</h3>
           <p id="sessionDetails"></p>
         </div>
-        
-        <button class="place-review-btn" id="placeReviewBtn" title="Place a review" aria-haspopup="dialog" aria-controls="reviewModal">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-right:8px;">
-            <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.523-3.356c.33-.314.158-.888-.283-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.93 0L5.69 4.12l-4.898.696c-.441.062-.613.636-.283.95l3.523 3.356-.83 4.73Z"/>
-          </svg>
-          Place Review
-          <span class="review-experimental-badge" aria-label="Experimental feature">Experimental</span>
-        </button>
-        <button class="close-btn" onclick="closeSessionRoom()">&times;</button>
+        <div class="session-room-actions">
+          <button class="end-session-btn" id="endSessionBtn" title="End session">End Session</button>
+          <button class="close-btn" onclick="closeSessionRoom()">&times;</button>
+        </div>
       </div>
       <div class="session-messages" id="sessionMessagesContainer"></div>
       <div class="session-input-area">
@@ -372,9 +367,6 @@ if (!isset($_SESSION['user_id'])) {
         <button class="modal-close" id="closeReviewModal" aria-label="Close">&times;</button>
       </div>
       <form id="reviewForm">
-        <div class="experimental-banner">
-          <strong>Experimental:</strong> This review system is in testing and may not persist.
-        </div>
         <div class="form-group">
           <label for="reviewRating">Rating</label>
           <div id="reviewRating" class="star-rating" role="radiogroup" aria-label="Star rating">
@@ -402,8 +394,25 @@ if (!isset($_SESSION['user_id'])) {
     </div>
   </div>
 
+  <!-- End Session Confirmation Modal (Recipient) -->
+  <div id="endSessionModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>End Session?</h2>
+        <button class="modal-close" id="closeEndSessionModal" aria-label="Close">&times;</button>
+      </div>
+      <div style="padding: 0 24px 10px 24px; color: var(--text-secondary);">
+        The host requested to end this session. Do you agree to end it now?
+      </div>
+      <div class="form-actions" style="padding: 0 24px 24px 24px;">
+        <button type="button" class="btn-cancel" id="declineEndSession">Keep Session</button>
+        <button type="button" class="btn-submit" id="acceptEndSession">End Session</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // Review modal handlers (experimental)
+    // Review modal handlers
     (function() {
       const openBtn = document.getElementById('placeReviewBtn');
       const modal = document.getElementById('reviewModal');
@@ -435,42 +444,57 @@ if (!isset($_SESSION['user_id'])) {
         });
       }
 
-      // Submit (experimental: no backend persistence)
-      form.addEventListener('submit', (e) => {
+      // Submit review
+      form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const rating = parseInt(ratingValue.value || '0', 10);
         const title = (document.getElementById('reviewTitle').value || '').trim();
         const text = (document.getElementById('reviewText').value || '').trim();
 
-        if (!text) { showToast('Please write a review', 'warning'); return; }
+        if (!rating || rating < 1 || rating > 5) { window.showToast?.('Please select a rating', 'warning'); return; }
+        if (!text) { window.showToast?.('Please write a review', 'warning'); return; }
+        if (!window.currentSessionId || !window.currentSessionData) {
+          window.showToast?.('Session not ready for review', 'error');
+          return;
+        }
 
-        // Simulate success
-        closeModal();
-        form.reset();
-        ratingValue.value = '0';
-        highlight(0);
-        showToast('Review submitted (experimental)', 'info');
+        const session = window.currentSessionData;
+        const currentUserId = window.currentUserId;
+        const revieweeId = parseInt(session.requester_id, 10) === parseInt(currentUserId, 10)
+          ? session.recipient_id
+          : session.requester_id;
+
+        try {
+          const response = await fetch('./backend/create_session_review.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+              session_id: window.currentSessionId,
+              reviewee_id: revieweeId,
+              rating,
+              title,
+              text
+            })
+          });
+
+          const data = await response.json();
+          if (data.success) {
+            closeModal();
+            form.reset();
+            ratingValue.value = '0';
+            highlight(0);
+            window.showToast?.('Review submitted', 'success');
+          } else {
+            window.showToast?.(data.error || 'Failed to submit review', 'error');
+          }
+        } catch (err) {
+          window.showToast?.('Failed to submit review', 'error');
+        }
       });
 
-      // Minimal toast helper using existing container
-      function showToast(message, type) {
-        const container = document.getElementById('notificationContainer');
-        if (!container) return alert(message);
-        const toast = document.createElement('div');
-        toast.className = `toast ${type || 'info'}`;
-        toast.innerHTML = `
-          <div class="toast-icon">💬</div>
-          <div class="toast-content">
-            <div class="toast-title">Review</div>
-            <div class="toast-message">${message}</div>
-          </div>
-          <button class="toast-close" aria-label="Close">&times;</button>
-        `;
-        const close = () => { toast.classList.add('removing'); setTimeout(() => toast.remove(), 300); };
-        toast.querySelector('.toast-close').addEventListener('click', close);
-        setTimeout(close, 3500);
-        container.appendChild(toast);
-      }
+      window.openReviewModal = openModal;
+      window.closeReviewModal = closeModal;
     })();
   </script>
   <script>

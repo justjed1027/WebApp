@@ -29,8 +29,8 @@ try {
     $db = DB::getInstance();
     $conn = $db->getConnection();
     
-    // Get session request info
-    $sql = "SELECT request_id, requester_id, recipient_id FROM session_requests WHERE request_id = ? AND status = 'accepted'";
+    // Get session request info and check end time
+    $sql = "SELECT request_id, requester_id, recipient_id, session_date, session_end_time FROM session_requests WHERE request_id = ? AND status = 'accepted'";
     $stmt = $conn->prepare($sql);
     
     if (!$stmt) {
@@ -49,6 +49,33 @@ try {
     
     $row = $result->fetch_assoc();
     $stmt->close();
+
+    if (!empty($row['session_date']) && !empty($row['session_end_time'])) {
+        $expireCheckSql = "SELECT request_id FROM session_requests 
+                           WHERE request_id = ? AND status = 'accepted'
+                             AND session_date IS NOT NULL AND session_end_time IS NOT NULL
+                             AND TIMESTAMP(session_date, session_end_time) <= DATE_SUB(NOW(), INTERVAL 12 HOUR)";
+        $expireCheckStmt = $conn->prepare($expireCheckSql);
+        if ($expireCheckStmt) {
+            $expireCheckStmt->bind_param('i', $sessionId);
+            $expireCheckStmt->execute();
+            $expireCheckResult = $expireCheckStmt->get_result();
+            $shouldExpire = ($expireCheckResult->num_rows > 0);
+            $expireCheckStmt->close();
+
+            if ($shouldExpire) {
+                $expireSql = "UPDATE session_requests SET status = 'cancelled', responded_at = NOW(), response_message = 'Session ended' WHERE request_id = ?";
+                $expireStmt = $conn->prepare($expireSql);
+                if ($expireStmt) {
+                    $expireStmt->bind_param('i', $sessionId);
+                    $expireStmt->execute();
+                    $expireStmt->close();
+                }
+                http_response_code(410);
+                exit(json_encode(['success' => false, 'error' => 'Session ended']));
+            }
+        }
+    }
     
     $requesterUserId = intval($row['requester_id']);
     $recipientUserId = intval($row['recipient_id']);

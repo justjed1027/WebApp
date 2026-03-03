@@ -905,6 +905,13 @@ nav a:hover {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+.dm-request-pending {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: var(--background-hover);
+}
   margin-bottom: 8px;
 }
 
@@ -1251,6 +1258,38 @@ nav a:hover {
   padding: 20px;
   border-bottom: 1px solid var(--border-color);
   background: var(--background-secondary);
+}
+
+.session-room-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.end-session-btn {
+  background: rgba(255, 71, 87, 0.15);
+  color: #ff4757;
+  border: 1px solid rgba(255, 71, 87, 0.4);
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
+}
+
+.end-session-btn:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 8px 20px rgba(255, 71, 87, 0.25);
+  transform: translateY(-1px);
+}
+
+.end-session-btn:disabled,
+.place-review-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  filter: none;
+  box-shadow: none;
+  transform: none;
 }
 
 /* ===== REVIEW BUTTON & MODAL (Experimental) ===== */

@@ -49,7 +49,7 @@ try {
     $db = DB::getInstance();
     $conn = $db->getConnection();
     
-    $verifySQL = "SELECT request_id, recipient_id FROM session_requests WHERE request_id = ? LIMIT 1";
+    $verifySQL = "SELECT request_id, recipient_id, status FROM session_requests WHERE request_id = ? LIMIT 1";
     $verifyStmt = $conn->prepare($verifySQL);
     
     if (!$verifyStmt) {
@@ -72,6 +72,36 @@ try {
     if ($requestRow['recipient_id'] != $userId) {
         http_response_code(403);
         exit(json_encode(['success' => false, 'error' => 'Unauthorized']));
+    }
+
+    if ($requestRow['status'] !== 'pending') {
+        http_response_code(409);
+        exit(json_encode(['success' => false, 'error' => 'Request is not pending']));
+    }
+
+    $expiryCheckSql = "SELECT request_id FROM session_requests 
+                       WHERE request_id = ? AND status = 'pending' 
+                       AND created_at > DATE_SUB(NOW(), INTERVAL 10 MINUTE)";
+    $expiryStmt = $conn->prepare($expiryCheckSql);
+    if (!$expiryStmt) {
+        throw new Exception('Expiry check prepare failed: ' . $conn->error);
+    }
+    $expiryStmt->bind_param('i', $requestId);
+    $expiryStmt->execute();
+    $expiryResult = $expiryStmt->get_result();
+    $isExpired = ($expiryResult->num_rows === 0);
+    $expiryStmt->close();
+
+    if ($isExpired) {
+        $expireSQL = "UPDATE session_requests SET status = 'cancelled', responded_at = NOW(), response_message = 'Expired' WHERE request_id = ?";
+        $expireStmt = $conn->prepare($expireSQL);
+        if ($expireStmt) {
+            $expireStmt->bind_param('i', $requestId);
+            $expireStmt->execute();
+            $expireStmt->close();
+        }
+        http_response_code(410);
+        exit(json_encode(['success' => false, 'error' => 'Request expired']));
     }
     
     if ($action === 'accept' && !empty($sessionDate) && !empty($startTime) && !empty($endTime)) {

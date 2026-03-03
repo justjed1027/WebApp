@@ -44,8 +44,8 @@ try {
     $db = DB::getInstance();
     $conn = $db->getConnection();
     
-    // Verify user is part of this session
-    $verifySql = "SELECT request_id FROM session_requests WHERE request_id = ? AND (requester_id = ? OR recipient_id = ?) AND status = 'accepted'";
+    // Verify user is part of this session and check end time
+    $verifySql = "SELECT request_id, session_date, session_end_time FROM session_requests WHERE request_id = ? AND (requester_id = ? OR recipient_id = ?) AND status = 'accepted'";
     $verifyStmt = $conn->prepare($verifySql);
     
     if (!$verifyStmt) {
@@ -62,7 +62,35 @@ try {
         exit(json_encode(['success' => false, 'error' => 'Unauthorized']));
     }
     
+    $verifyRow = $verifyResult->fetch_assoc();
     $verifyStmt->close();
+
+    if (!empty($verifyRow['session_date']) && !empty($verifyRow['session_end_time'])) {
+        $expireCheckSql = "SELECT request_id FROM session_requests 
+                           WHERE request_id = ? AND status = 'accepted'
+                             AND session_date IS NOT NULL AND session_end_time IS NOT NULL
+                             AND TIMESTAMP(session_date, session_end_time) <= DATE_SUB(NOW(), INTERVAL 12 HOUR)";
+        $expireCheckStmt = $conn->prepare($expireCheckSql);
+        if ($expireCheckStmt) {
+            $expireCheckStmt->bind_param('i', $sessionId);
+            $expireCheckStmt->execute();
+            $expireCheckResult = $expireCheckStmt->get_result();
+            $shouldExpire = ($expireCheckResult->num_rows > 0);
+            $expireCheckStmt->close();
+
+            if ($shouldExpire) {
+                $expireSql = "UPDATE session_requests SET status = 'cancelled', responded_at = NOW(), response_message = 'Session ended' WHERE request_id = ?";
+                $expireStmt = $conn->prepare($expireSql);
+                if ($expireStmt) {
+                    $expireStmt->bind_param('i', $sessionId);
+                    $expireStmt->execute();
+                    $expireStmt->close();
+                }
+                http_response_code(410);
+                exit(json_encode(['success' => false, 'error' => 'Session ended']));
+            }
+        }
+    }
     
     // Insert message into session_messages table
     $insertSql = "INSERT INTO session_messages (session_id, user_id, message, created_at) VALUES (?, ?, ?, NOW())";

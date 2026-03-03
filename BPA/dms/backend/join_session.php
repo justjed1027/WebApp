@@ -41,8 +41,8 @@ try {
     $db = DB::getInstance();
     $conn = $db->getConnection();
     
-    // Verify user is part of this session
-    $verifySql = "SELECT request_id, requester_id, recipient_id, status FROM session_requests WHERE request_id = ?";
+    // Verify user is part of this session and check end time
+    $verifySql = "SELECT request_id, requester_id, recipient_id, status, session_date, session_end_time FROM session_requests WHERE request_id = ?";
     $verifyStmt = $conn->prepare($verifySql);
     
     if (!$verifyStmt) {
@@ -61,6 +61,34 @@ try {
     
     $sessionRow = $verifyResult->fetch_assoc();
     
+    if ($sessionRow['status'] === 'accepted' && !empty($sessionRow['session_date']) && !empty($sessionRow['session_end_time'])) {
+        $expireCheckSql = "SELECT request_id FROM session_requests 
+                           WHERE request_id = ? AND status = 'accepted'
+                             AND session_date IS NOT NULL AND session_end_time IS NOT NULL
+                             AND TIMESTAMP(session_date, session_end_time) <= DATE_SUB(NOW(), INTERVAL 12 HOUR)";
+        $expireCheckStmt = $conn->prepare($expireCheckSql);
+        if ($expireCheckStmt) {
+            $expireCheckStmt->bind_param('i', $sessionId);
+            $expireCheckStmt->execute();
+            $expireCheckResult = $expireCheckStmt->get_result();
+            $shouldExpire = ($expireCheckResult->num_rows > 0);
+            $expireCheckStmt->close();
+
+            if ($shouldExpire) {
+                $expireSql = "UPDATE session_requests SET status = 'cancelled', responded_at = NOW(), response_message = 'Session ended' WHERE request_id = ?";
+                $expireStmt = $conn->prepare($expireSql);
+                if ($expireStmt) {
+                    $expireStmt->bind_param('i', $sessionId);
+                    $expireStmt->execute();
+                    $expireStmt->close();
+                }
+                http_response_code(410);
+                $verifyStmt->close();
+                exit(json_encode(['success' => false, 'error' => 'Session ended']));
+            }
+        }
+    }
+
     if ($sessionRow['status'] !== 'accepted') {
         http_response_code(403);
         $verifyStmt->close();
