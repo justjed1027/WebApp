@@ -1888,3 +1888,17 @@ body.light-mode .post {
   }
 }
 
+/* Adjust box padding when sidebar is removed */
+@media (max-width: 800px) {
+  .box1,
+  .box2 {
+    padding: 24px 16px;
+    margin-bottom: 16px;
+    border-radius: 12px;
+  }
+  
+  .posts-section {
+    margin: 0;
+    padding: 0;
+  }
+}
