@@ -90,6 +90,13 @@ if ($status === 'past') {
     $whereClauses[] = $timeFilter;
     $whereClauses[] = "NOT (" . $deadlinePassedExpr . ")";
     
+    // Exclude events the user is already registered for
+    if ($user_id) {
+        $whereClauses[] = "NOT EXISTS(SELECT 1 FROM event_participants ep_exclude WHERE ep_exclude.ep_event_id = e.events_id AND ep_exclude.ep_user_id = ?)";
+        $bindTypes .= 'i';
+        $bindValues[] = (int)$user_id;
+    }
+    
     // Hide full capacity events from users who are NOT registered
     // Show event if: (capacity is null) OR (spots available) OR (user is registered)
     $capacityFilter = "(e.events_capacity IS NULL OR 
