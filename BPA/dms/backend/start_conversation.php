@@ -1,15 +1,4 @@
 <?php
-/**
- * Start a conversation with another user (simplified endpoint)
- * 
- * POST Input (JSON):
- * - other_user_id: int (the user to start conversation with)
- * 
- * Output (JSON):
- * - success: bool
- * - conversation_id: int
- * - created: bool (true if newly created, false if existing)
- */
 
 require_once __DIR__ . '/utils.php';
 require_once __DIR__ . '/../../database/DatabaseConnection.php';
