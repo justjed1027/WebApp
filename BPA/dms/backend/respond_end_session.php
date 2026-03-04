@@ -39,6 +39,22 @@ try {
     $db = DB::getInstance();
     $conn = $db->getConnection();
 
+    $createSql = "CREATE TABLE IF NOT EXISTS session_end_requests (
+        session_id INT PRIMARY KEY,
+        requester_id INT NOT NULL,
+        recipient_id INT NOT NULL,
+        status ENUM('pending','accepted','rejected') DEFAULT 'pending',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        responded_at TIMESTAMP NULL,
+        INDEX idx_recipient (recipient_id, status)
+    )";
+    $conn->query($createSql);
+
+    $alterSql = "ALTER TABLE session_end_requests ADD COLUMN confirmed_by INT NULL AFTER responded_at";
+    if (!$conn->query($alterSql) && intval($conn->errno) !== 1060) {
+        throw new Exception('Alter table failed: ' . $conn->error);
+    }
+
     $verifySql = "SELECT request_id, requester_id, recipient_id, status
                   FROM session_requests
                   WHERE request_id = ? AND status = 'accepted'
@@ -66,14 +82,24 @@ try {
         exit(json_encode(['success' => false, 'error' => 'Only the recipient can respond']));
     }
 
-    $updateSql = "UPDATE session_end_requests SET status = ?, responded_at = NOW() WHERE session_id = ?";
-    $updateStmt = $conn->prepare($updateSql);
-    if (!$updateStmt) {
-        throw new Exception('Update prepare failed: ' . $conn->error);
+    $status = $action === 'accept' ? 'accepted' : 'rejected';
+
+    if ($action === 'accept') {
+        $updateSql = "UPDATE session_end_requests SET status = ?, responded_at = NOW(), confirmed_by = ? WHERE session_id = ?";
+        $updateStmt = $conn->prepare($updateSql);
+        if (!$updateStmt) {
+            throw new Exception('Update prepare failed: ' . $conn->error);
+        }
+        $updateStmt->bind_param('sii', $status, $userId, $sessionId);
+    } else {
+        $updateSql = "UPDATE session_end_requests SET status = ?, responded_at = NOW(), confirmed_by = NULL WHERE session_id = ?";
+        $updateStmt = $conn->prepare($updateSql);
+        if (!$updateStmt) {
+            throw new Exception('Update prepare failed: ' . $conn->error);
+        }
+        $updateStmt->bind_param('si', $status, $sessionId);
     }
 
-    $status = $action === 'accept' ? 'accepted' : 'rejected';
-    $updateStmt->bind_param('si', $status, $sessionId);
     if (!$updateStmt->execute()) {
         throw new Exception('Update execute failed: ' . $updateStmt->error);
     }

@@ -41,6 +41,11 @@ try {
     )";
     $conn->query($createSql);
 
+    $alterSql = "ALTER TABLE session_end_requests ADD COLUMN confirmed_by INT NULL AFTER responded_at";
+    if (!$conn->query($alterSql) && intval($conn->errno) !== 1060) {
+        throw new Exception('Alter table failed: ' . $conn->error);
+    }
+
     $verifySql = "SELECT request_id, requester_id, recipient_id, status
                   FROM session_requests
                   WHERE request_id = ? AND (requester_id = ? OR recipient_id = ?)
@@ -67,8 +72,9 @@ try {
 
     $status = 'none';
     $requestedBy = null;
+    $confirmedBy = null;
 
-    $getSql = "SELECT requester_id, status FROM session_end_requests WHERE session_id = ? LIMIT 1";
+    $getSql = "SELECT requester_id, status, confirmed_by FROM session_end_requests WHERE session_id = ? LIMIT 1";
     $getStmt = $conn->prepare($getSql);
     if ($getStmt) {
         $getStmt->bind_param('i', $sessionId);
@@ -78,6 +84,7 @@ try {
             $row = $getResult->fetch_assoc();
             $status = $row['status'];
             $requestedBy = intval($row['requester_id']);
+            $confirmedBy = isset($row['confirmed_by']) ? intval($row['confirmed_by']) : null;
         }
         $getStmt->close();
     }
@@ -86,6 +93,7 @@ try {
         'success' => true,
         'status' => $status,
         'requested_by' => $requestedBy,
+        'confirmed_by' => $confirmedBy,
         'is_ended' => $isEnded
     ]));
 
