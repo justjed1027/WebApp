@@ -425,9 +425,9 @@ if (!isset($_SESSION['user_id'])) {
       function openModal() { modal.style.display = 'flex'; }
       function closeModal() { modal.style.display = 'none'; }
 
-      openBtn.addEventListener('click', openModal);
-      closeBtn.addEventListener('click', closeModal);
-      cancelBtn.addEventListener('click', closeModal);
+      if (openBtn) openBtn.addEventListener('click', openModal);
+      if (closeBtn) closeBtn.addEventListener('click', closeModal);
+      if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
       window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
       modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
 
