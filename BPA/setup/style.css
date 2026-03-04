@@ -907,12 +907,6 @@ body[data-step="4"] .progress{margin-top:10px}
 
 
 .courses-panel {
-  max-height: 70vh; /* Allow scrolling area */
+  max-height: 60vh; /* Allow scrolling area */
   overflow-y: auto;
-}
-
-.setup-shell {
-  overflow-y: auto;
-  height: auto; /* remove any fixed height */
-  min-height: 100vh;
 }
