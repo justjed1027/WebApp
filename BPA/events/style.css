@@ -26,6 +26,16 @@
   border: 1px solid rgba(229, 231, 235, 0.5);
 }
 
+.events-filter-tags {
+  margin-top: -24px;
+  margin-bottom: 32px;
+}
+
+.events-filter-tags .form-label {
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
 .search-wrapper {
   position: relative;
   flex: 1;
@@ -794,6 +804,38 @@ body:not(.light-mode) .ended-badge {
     justify-content: flex-start;
   }
 
+  .events-filter-tags {
+    margin-top: -12px;
+    margin-bottom: 24px;
+  }
+
+  .events-filter-tags .tag-checkbox-list {
+    gap: 8px;
+    padding: 10px;
+    min-height: 46px;
+  }
+
+  .events-filter-tags .tag-checkbox-label {
+    padding: 8px 10px;
+    border-radius: 10px;
+  }
+
+  .events-filter-tags .tag-checkbox-label span {
+    font-size: 0.84rem;
+    padding-left: 22px;
+  }
+
+  .events-filter-tags .tag-checkbox-label span::before {
+    width: 15px;
+    height: 15px;
+  }
+
+  .events-filter-tags .tag-checkbox-label span::after {
+    left: 4px;
+    width: 7px;
+    height: 7px;
+  }
+
   .search-wrapper {
     max-width: 100%;
     width: 100%;
@@ -836,6 +878,33 @@ body:not(.light-mode) .ended-badge {
   .btn-interested {
     width: 100%;
     justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .events-filter-tags .tag-checkbox-list {
+    gap: 6px;
+    padding: 8px;
+    min-height: 40px;
+  }
+
+  .events-filter-tags .tag-checkbox-label {
+    padding: 6px 8px;
+  }
+
+  .events-filter-tags .tag-checkbox-label span {
+    font-size: 0.78rem;
+    padding-left: 20px;
+  }
+
+  .events-filter-tags .tag-checkbox-label span::before {
+    width: 14px;
+    height: 14px;
+  }
+
+  .events-filter-tags .tag-checkbox-label span::after {
+    width: 6px;
+    height: 6px;
   }
 }
 

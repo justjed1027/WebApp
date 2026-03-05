@@ -204,6 +204,11 @@ if ($subRes && $subRes->num_rows > 0) {
             <?php endforeach; ?>
           </select>
         </div>
+        <div class="events-filter-tags">
+          <label class="form-label" for="eventFilterTags">Filter By Tags</label>
+          <div id="eventFilterTags" class="tag-checkbox-list" aria-live="polite"></div>
+          <span class="form-hint">Choose a category first, then click one or more tags to filter events</span>
+        </div>
 
         <!-- Upcoming Events Section -->
         <div class="section-label">Upcoming Events</div>

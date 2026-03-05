@@ -50,13 +50,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 		return formatTime(startTime || endTime);
 	};
 
-	// Fetch events from backend (supports optional search query, category, status, and page)
-	const fetchEvents = async (filter = 'all', q = '', category = '', status = '') => {
+	// Fetch events from backend (supports optional search query, category, status, and tag filters)
+	const fetchEvents = async (filter = 'all', q = '', category = '', status = '', tagIds = []) => {
 		try {
 			let url = `get_events.php?filter=${encodeURIComponent(filter)}`;
 			if (q) url += `&q=${encodeURIComponent(q)}`;
 			if (category) url += `&category=${encodeURIComponent(category)}`;
 			if (status) url += `&status=${encodeURIComponent(status)}`;
+			if (Array.isArray(tagIds) && tagIds.length > 0) url += `&tags=${encodeURIComponent(tagIds.join(','))}`;
 			const response = await fetch(url);
 			const data = await response.json();
 			if (data.success) {
@@ -181,15 +182,78 @@ document.addEventListener('DOMContentLoaded', async () => {
 	const searchInput = document.querySelector('.events-search');
 	const categorySelect = document.querySelector('.events-category');
 	const pastGrid = document.querySelector('.past-events-grid');
+	const filterTagsContainer = document.getElementById('eventFilterTags');
+	let selectedFilterTagIds = new Set();
+
+	const renderTagFilterNote = (message) => {
+		if (!filterTagsContainer) return;
+		filterTagsContainer.innerHTML = '';
+		const note = document.createElement('div');
+		note.className = 'tag-note';
+		note.textContent = message;
+		filterTagsContainer.appendChild(note);
+	};
+
+	const getSelectedFilterTagIds = () => Array.from(selectedFilterTagIds.values());
+
+	const loadCategoryTags = async (subjectId) => {
+		if (!filterTagsContainer) return;
+		selectedFilterTagIds = new Set();
+
+		if (!subjectId) {
+			renderTagFilterNote('Select a category to load related tags');
+			return;
+		}
+
+		renderTagFilterNote('Loading tags...');
+		try {
+			const res = await fetch(`get_subject_tags.php?subject_id=${encodeURIComponent(subjectId)}`);
+			const json = await res.json();
+			filterTagsContainer.innerHTML = '';
+
+			if (!json || !json.success || !Array.isArray(json.tags) || json.tags.length === 0) {
+				renderTagFilterNote('No tags available for this category');
+				return;
+			}
+
+			json.tags.forEach((tag) => {
+				const id = String(tag.id);
+				const wrapper = document.createElement('label');
+				wrapper.className = 'tag-checkbox-label';
+
+				const cb = document.createElement('input');
+				cb.type = 'checkbox';
+				cb.value = id;
+				cb.name = 'eventFilterTagCheckbox';
+
+				const span = document.createElement('span');
+				span.textContent = tag.name;
+
+				cb.addEventListener('change', async () => {
+					if (cb.checked) selectedFilterTagIds.add(id);
+					else selectedFilterTagIds.delete(id);
+					await applyFilters();
+				});
+
+				wrapper.appendChild(cb);
+				wrapper.appendChild(span);
+				filterTagsContainer.appendChild(wrapper);
+			});
+		} catch (error) {
+			console.error('Failed to load filter tags:', error);
+			renderTagFilterNote('Unable to load tags right now');
+		}
+	};
 
 	const applyFilters = async () => {
 		const q = searchInput ? searchInput.value.trim() : '';
 		const cat = (categorySelect && categorySelect.value && categorySelect.value !== 'All Categories') ? categorySelect.value : '';
+		const tagIds = getSelectedFilterTagIds();
 		// Upcoming events (status=upcoming)
-		const upcomingEvents = await fetchEvents('all', q, cat, 'upcoming');
+		const upcomingEvents = await fetchEvents('all', q, cat, 'upcoming', tagIds);
 		renderEvents(upcomingGrid, upcomingEvents, 6);
 		// Past events (status=past)
-		const pastEvents = await fetchEvents('all', q, cat, 'past');
+		const pastEvents = await fetchEvents('all', q, cat, 'past', tagIds);
 		renderEvents(pastGrid, pastEvents, 6);
 	};
 	
@@ -198,7 +262,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 	}
 
 	if (categorySelect) {
-		categorySelect.addEventListener('change', () => applyFilters());
+		categorySelect.addEventListener('change', async () => {
+			const cat = (categorySelect.value && categorySelect.value !== 'All Categories') ? categorySelect.value : '';
+			await loadCategoryTags(cat);
+			await applyFilters();
+		});
 	}
 
 	// Create event card HTML
@@ -697,12 +765,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 				const findEventById = async (id) => {
 					const q = searchInput ? searchInput.value.trim() : '';
 					const cat = (categorySelect && categorySelect.value && categorySelect.value !== 'All Categories') ? categorySelect.value : '';
+					const tagIds = getSelectedFilterTagIds();
 					// Try upcoming first
-					let events = await fetchEvents('all', q, cat, 'upcoming');
+					let events = await fetchEvents('all', q, cat, 'upcoming', tagIds);
 					let found = events.find(e => e.id === parseInt(id));
 					if (found) return found;
 					// Then try past
-					events = await fetchEvents('all', q, cat, 'past');
+					events = await fetchEvents('all', q, cat, 'past', tagIds);
 					return events.find(e => e.id === parseInt(id));
 				};
 				findEventById(eventId).then(event => {
@@ -720,5 +789,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 	});
 
 	// Initial load using any active filters (search/category)
+	const initialCategory = (categorySelect && categorySelect.value && categorySelect.value !== 'All Categories') ? categorySelect.value : '';
+	await loadCategoryTags(initialCategory);
 	await applyFilters();
 });
