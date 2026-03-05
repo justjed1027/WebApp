@@ -788,8 +788,61 @@ body:not(.light-mode) .ended-badge {
     height: 320px;
   }
 
-  .upcoming-events-grid {
+  .upcoming-events-grid,
+  .past-events-grid {
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+  }
+
+  .event-card {
+    border-radius: 14px;
+  }
+
+  .event-image-container {
+    height: 200px;
+  }
+
+  .event-info {
+    padding: 24px;
+  }
+
+  .event-title {
+    font-size: 1.15rem;
+  }
+
+  .btn-view-details {
+    padding: 12px 18px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Medium tablets */
+@media (max-width: 900px) {
+  .upcoming-events-grid,
+  .past-events-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 22px;
+  }
+
+  .event-image-container {
+    height: 190px;
+  }
+
+  .featured-event-title {
+    font-size: 1.5rem;
+  }
+
+  .featured-event-desc {
+    font-size: 0.938rem;
+  }
+
+  .featured-badge {
+    font-size: 0.75rem;
+    padding: 5px 12px;
+  }
+
+  .section-label {
+    font-size: 1.375rem;
   }
 }
 
@@ -866,8 +919,54 @@ body:not(.light-mode) .ended-badge {
     grid-template-columns: 1fr;
   }
 
-  .upcoming-events-grid {
+  .upcoming-events-grid,
+  .past-events-grid {
     grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .event-card {
+    border-radius: 12px;
+  }
+
+  .event-image-container {
+    height: 180px;
+  }
+
+  .event-info {
+    padding: 20px;
+    gap: 12px;
+  }
+
+  .event-title {
+    font-size: 1.1rem;
+    margin: 0 0 6px 0;
+  }
+
+  .event-detail-item {
+    font-size: 0.875rem;
+  }
+
+  .event-detail-item svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  .event-tags {
+    gap: 5px;
+  }
+
+  .event-tag {
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 6px;
+  }
+
+  .btn-view-details {
+    padding: 12px 16px;
+    font-size: 0.875rem;
+    border-radius: 10px;
+    margin-top: 8px;
   }
 
   .featured-event-actions {
@@ -906,6 +1005,62 @@ body:not(.light-mode) .ended-badge {
     width: 6px;
     height: 6px;
   }
+
+  .upcoming-events-grid,
+  .past-events-grid {
+    gap: 16px;
+  }
+
+  .event-card {
+    border-radius: 10px;
+  }
+
+  .event-image-container {
+    height: 160px;
+  }
+
+  .event-info {
+    padding: 16px;
+    gap: 10px;
+  }
+
+  .event-title {
+    font-size: 1rem;
+    margin: 0 0 4px 0;
+  }
+
+  .event-detail-item {
+    font-size: 0.813rem;
+  }
+
+  .event-detail-item svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .event-tags {
+    gap: 4px;
+    margin-top: 6px;
+  }
+
+  .event-tag {
+    font-size: 0.7rem;
+    padding: 3px 8px;
+    border-radius: 5px;
+  }
+
+  .btn-view-details {
+    padding: 10px 14px;
+    font-size: 0.813rem;
+    border-radius: 8px;
+    margin-top: 6px;
+  }
+
+  .section-label {
+    font-size: 1.25rem;
+    margin-bottom: 20px;
+    margin-top: 24px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -923,6 +1078,160 @@ body:not(.light-mode) .ended-badge {
 
   .event-info {
     padding: 20px;
+  }
+
+  /* Modal responsive styles for small mobile */
+  .modal-content {
+    max-height: 98vh;
+    border-radius: 16px;
+    margin: 0 8px;
+  }
+
+  .modal-event-image {
+    height: 180px;
+    border-radius: 16px 16px 0 0;
+  }
+
+  .modal-header-content {
+    padding: 20px;
+  }
+
+  .modal-body {
+    padding: 0 20px 20px 20px;
+  }
+
+  .modal-event-title {
+    font-size: 1.375rem;
+  }
+
+  .modal-section {
+    padding: 16px 0;
+  }
+
+  .modal-section-title {
+    font-size: 1rem;
+    margin-bottom: 12px;
+  }
+
+  .modal-meta-item {
+    font-size: 0.813rem;
+    padding: 8px;
+  }
+
+  .modal-meta-item svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .modal-description-text {
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .modal-detail-label,
+  .modal-detail-value {
+    font-size: 0.813rem;
+  }
+
+  .modal-footer {
+    padding: 16px 20px;
+  }
+
+  .btn-modal-register {
+    padding: 14px 24px;
+    font-size: 0.875rem;
+  }
+
+  .modal-close {
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+  }
+
+  .modal-close svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .creator-avatar {
+    width: 48px;
+    height: 48px;
+  }
+
+  .creator-name {
+    font-size: 0.938rem;
+  }
+
+  .creator-role {
+    font-size: 0.75rem;
+  }
+
+  /* Create Event Modal responsive */
+  .create-event-modal-content {
+    max-width: 100%;
+    max-height: 98vh;
+    margin: 0 8px;
+    border-radius: 16px;
+  }
+
+  .create-event-header {
+    padding: 24px 20px;
+  }
+
+  .create-event-title {
+    font-size: 1.5rem;
+  }
+
+  .create-event-subtitle {
+    font-size: 0.875rem;
+  }
+
+  .create-event-form {
+    padding: 24px 20px;
+  }
+
+  .form-section {
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+  }
+
+  .form-section-title {
+    font-size: 1rem;
+    margin-bottom: 16px;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .form-label {
+    font-size: 0.813rem;
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    padding: 10px 14px;
+    font-size: 0.875rem;
+    border-radius: 8px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn-form-submit,
+  .btn-form-cancel {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 0.875rem;
   }
 }
 
