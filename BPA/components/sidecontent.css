@@ -878,3 +878,115 @@ body.light-mode .side-content::-webkit-scrollbar-thumb {
     display: block !important;
   }
 }
+
+/* 305px height - Further compression */
+@media (max-height: 305px) {
+  .side-card {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+  
+  .side-card-title {
+    font-size: 0.95rem;
+  }
+}
+
+/* 230px height - Minimal layout */
+@media (max-height: 230px) {
+  .side-card {
+    padding: 8px;
+    margin-bottom: 8px;
+  }
+  
+  .notification-item,
+  .side-event-item,
+  .side-collab-item {
+    padding: 6px;
+  }
+}
+
+/* 155px height - Ultra compact */
+@media (max-height: 155px) {
+  .side-card-header {
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+  }
+  
+  .side-card-title {
+    font-size: 0.875rem;
+  }
+  
+  .side-card-link {
+    font-size: 0.75rem;
+  }
+}
+
+/*
+  Explicitly re-enable cards on taller screens.
+  This avoids stale hidden states after viewport height changes.
+*/
+@media (min-height: 381px) {
+  .side-content > .side-card {
+    display: block !important;
+  }
+}
+
+@media (min-height: 558px) {
+  .side-content > .side-card {
+    display: block !important;
+  }
+}
+
+@media (min-height: 762px) {
+  .side-content > .side-card {
+    display: block !important;
+  }
+}
+
+/*
+  Progressive item reveal by viewport height.
+  Keep only the first 2 items on short screens, then show more on taller screens.
+*/
+.side-card-body > .notification-item:nth-child(n + 3),
+.side-card-body > .side-event-item:nth-child(n + 3),
+.side-card-body > .side-dm-item:nth-child(n + 3),
+.side-card-body > .side-collab-item:nth-child(n + 3),
+.side-card-body > .side-topic-item:nth-child(n + 3) {
+  display: none;
+}
+
+@media (min-height: 558px) {
+  .side-card-body > .notification-item:nth-child(-n + 3),
+  .side-card-body > .side-event-item:nth-child(-n + 3),
+  .side-card-body > .side-dm-item:nth-child(-n + 3),
+  .side-card-body > .side-collab-item:nth-child(-n + 3),
+  .side-card-body > .side-topic-item:nth-child(-n + 3) {
+    display: flex;
+  }
+
+  .side-card-body > .side-topic-item:nth-child(-n + 3) {
+    display: flex;
+  }
+}
+
+@media (min-height: 762px) {
+  .side-card-body > .notification-item,
+  .side-card-body > .side-event-item,
+  .side-card-body > .side-dm-item,
+  .side-card-body > .side-collab-item,
+  .side-card-body > .side-topic-item {
+    display: flex;
+  }
+}
+
+/* Hide side content on narrower screens and use single-column content layout */
+@media (max-width: 1200px) {
+  .side-content {
+    display: none !important;
+  }
+
+  .page-content,
+  .main-content {
+    grid-template-columns: 1fr !important;
+  }
+}

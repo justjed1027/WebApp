@@ -76,7 +76,7 @@ function renderSideContent($currentPage = '', $options = []) {
                     $notificationObj = new Notification($db);
                     
                     // Fetch recent notifications
-                    $maxNotifications = $limitNotifications ?? 1;
+                    $maxNotifications = $limitNotifications ?? 5;
                     $result = $notificationObj->getRecentNotifications($currentUserId, $maxNotifications);
                     
                     while ($row = $result->fetch_assoc()) {
@@ -197,7 +197,7 @@ function renderSideContent($currentPage = '', $options = []) {
                         AND e.events_visibility = 'public'
                     GROUP BY e.events_id
                     ORDER BY e.events_date ASC
-                    LIMIT " . ($limitUpcomingEvents ?? 2);
+                    LIMIT " . ($limitUpcomingEvents ?? 5);
                     
                     // Debug: Verify limit is 2
                     // echo "<!-- Event Limit: " . ($limitUpcomingEvents ?? 2) . " -->";
@@ -315,7 +315,7 @@ function renderSideContent($currentPage = '', $options = []) {
                         )
                     )
                     ORDER BY last_message_time DESC
-                    LIMIT " . ($limitRecentDMs ?? 1);
+                    LIMIT " . ($limitRecentDMs ?? 5);
                     
                     $stmt = $db->prepare($sql);
                     if ($stmt) {
@@ -414,7 +414,7 @@ function renderSideContent($currentPage = '', $options = []) {
         
         <script>
         (function() {
-            const limit = <?php echo $limitSuggestedCollaborators ?? 1; ?>;
+            const limit = <?php echo $limitSuggestedCollaborators ?? 5; ?>;
             
             // Fetch suggested collaborators from backend
             fetch('../components/get_suggested_collaborators.php?limit=' + limit)
