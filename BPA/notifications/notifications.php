@@ -365,6 +365,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_notification']
     </div>
   </main>
 
+  <script src="../components/sidecontent.js"></script>
   <script src="../post/script.js?v=20251103"></script>
   <script>
     // Handle notification deletion with confirmation

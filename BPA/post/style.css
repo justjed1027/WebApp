@@ -1458,6 +1458,20 @@ body.light-mode .post {
   .main-content {
     margin-left: 0;
   }
+
+  /* Ensure no leftover sidebar spacing on phone/tablet widths */
+  body.has-side-content .main-content {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .page-content {
+    grid-template-columns: 1fr !important;
+    margin-right: 0 !important;
+    padding-right: 0 !important;
+  }
   
   /* Hide side content on smaller screens */
   body.has-side-content .main-content {

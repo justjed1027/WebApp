@@ -854,6 +854,7 @@ body[data-step="3"] .setup-shell{
 body[data-step="3"] .header{margin-bottom:8px}
 body[data-step="3"] .step-title{font-size:1.6rem;margin:6px 0 4px}
 body[data-step="3"] .subtitle{font-size:1rem;margin:0 0 14px}
+body[data-step="3"] form{display:flex;flex-direction:column;flex:1;min-height:0}
 
 /* Let the card with the panel expand and scroll internally */
 body[data-step="3"] .form-stack{display:flex;flex-direction:column;gap:14px;flex:1;min-height:0}
@@ -870,14 +871,14 @@ body[data-step="4"]{
   align-items:center;
   justify-content:center;
   min-height:100vh;
-  max-height:100vh;
-  overflow:hidden; /* no page scroll */
+  overflow-y:auto;
+  overflow-x:hidden;
 }
 body[data-step="4"] .setup-shell{
   width:min(96vw, 1600px);
   max-width:1600px;
   margin:0;
-  height:100%;
+  min-height:calc(100vh - 32px);
   display:flex;
   flex-direction:column;
   border-radius:20px;
@@ -895,8 +896,8 @@ body[data-step="4"] .setup-shell{
 body[data-step="4"] .header{margin-bottom:8px}
 body[data-step="4"] .step-title{font-size:1.6rem;margin:6px 0 4px}
 body[data-step="4"] .subtitle{font-size:1rem;margin:0 0 14px}
-body[data-step="4"] .form-stack{gap:20px;flex:1;display:flex;flex-direction:column;justify-content:center}
-body[data-step="4"] .input-card{padding:24px;display:flex;flex-direction:column;justify-content:center}
+body[data-step="4"] .form-stack{gap:20px;flex:1;display:flex;flex-direction:column;justify-content:center;min-height:0}
+body[data-step="4"] .input-card{padding:24px;display:flex;flex-direction:column;justify-content:center;min-height:fit-content}
 body[data-step="4"] .colors-row{margin-bottom:0;padding-inline:44px}
 body[data-step="4"] .swatch{width:64px;height:64px}
 body[data-step="4"] .theme-previews{gap:20px}
