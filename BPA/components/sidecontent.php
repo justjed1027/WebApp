@@ -450,17 +450,38 @@ function renderSideContent($currentPage = '', $options = []) {
                     
                     console.log('Found ' + data.collaborators.length + ' collaborators');
                     let html = '';
+                    const usedSkills = new Set();
+
+                    const parseSkills = (skillsText) => (skillsText || '')
+                        .split(',')
+                        .map(skill => skill.trim())
+                        .filter(Boolean);
+
                     data.collaborators.forEach((collab, index) => {
                         const avatarClass = 'avatar-' + ((index % 6) + 1);
-                        // Truncate skills to first 4, add ellipsis if more
-                        const skillsArray = collab.field.split(', ');
-                        const displaySkills = skillsArray.slice(0, 4).join(', ') + (skillsArray.length > 4 ? ', ...' : '');
+                        const sharedSkills = parseSkills(collab.shared_skills || collab.field);
+                        const candidateSkills = sharedSkills.filter(skill => !usedSkills.has(skill));
+                        const availableSharedSkills = candidateSkills.length > 0
+                            ? candidateSkills
+                            : sharedSkills;
+                        const randomSkillIndex = availableSharedSkills.length > 0
+                            ? Math.floor(Math.random() * availableSharedSkills.length)
+                            : -1;
+                        const displaySkill = randomSkillIndex >= 0
+                            ? availableSharedSkills[randomSkillIndex]
+                            : 'No skills listed';
+
+                        if (displaySkill !== 'No skills listed') {
+                            usedSkills.add(displaySkill);
+                        }
+
+                        const titleSkills = sharedSkills.join(', ');
                         html += `
                             <div class="side-collab-item">
                                 <div class="side-collab-avatar ${avatarClass}" data-user-id="${collab.user_id}"></div>
                                 <div class="side-collab-info">
                                     <h4 class="side-collab-name">${collab.firstname} ${collab.lastname}</h4>
-                                    <p class="side-collab-field" title="All skills: ${collab.field}">${displaySkills}</p>
+                                    <p class="side-collab-field" title="Skills: ${titleSkills || collab.field}">${displaySkill}</p>
                                 </div>
                                 <button class="side-collab-btn" data-user-id="${collab.user_id}">Follow</button>
                             </div>

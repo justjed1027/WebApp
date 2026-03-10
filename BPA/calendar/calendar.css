@@ -1066,12 +1066,18 @@ nav a:hover {
   gap: 18px;
   align-items: start;
 }
+
 .calendar-main {
   display: flex;
   flex-direction: column;
   gap: 20px;
   min-width: 0; /* allow to expand fully in grid */
 }
+
+.calendar-page .calendar-main {
+  min-height: calc(100vh + 120px);
+}
+
 .calendar-card {
   background: var(--background-card);
   border: 1px solid var(--border-color);

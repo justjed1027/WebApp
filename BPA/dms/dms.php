@@ -221,7 +221,7 @@ if (!isset($_SESSION['user_id'])) {
 
     <!-- Side Content -->
     <?php renderSideContent('dms', [
-        'limit' => ['notifications' => 1, 'upcoming_events' => 2, 'suggested_collaborators' => 1]
+      'limit' => ['notifications' => 1, 'upcoming_events' => 2, 'suggested_collaborators' => 3]
     ]); ?>
     
   </main><!-- Close main-content -->

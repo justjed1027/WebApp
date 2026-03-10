@@ -50,24 +50,52 @@ try {
     
     // Try to find users whose skills match current user's interests
     if ($interestRow['count'] > 0) {
-        $sql = "SELECT DISTINCT 
+        $sql = "SELECT
                     u.user_id,
                     COALESCE(p.user_firstname, u.user_username) as user_firstname,
                     COALESCE(p.user_lastname, '') as user_lastname,
-                    GROUP_CONCAT(DISTINCT s.subject_name SEPARATOR ', ') as skills,
-                    COUNT(DISTINCT us.us_subject_id) as matching_skills_count
+                    (
+                        SELECT GROUP_CONCAT(DISTINCT s_match.subject_name ORDER BY s_match.subject_name SEPARATOR ', ')
+                        FROM user_skills us_match
+                        INNER JOIN subjects s_match ON us_match.us_subject_id = s_match.subject_id
+                        WHERE us_match.us_user_id = u.user_id
+                        AND us_match.us_subject_id IN (
+                            SELECT ui.ui_subject_id
+                            FROM user_interests ui
+                            WHERE ui.ui_user_id = ?
+                        )
+                    ) as shared_skills,
+                    (
+                        SELECT GROUP_CONCAT(DISTINCT s_all.subject_name ORDER BY s_all.subject_name SEPARATOR ', ')
+                        FROM user_skills us_all
+                        INNER JOIN subjects s_all ON us_all.us_subject_id = s_all.subject_id
+                        WHERE us_all.us_user_id = u.user_id
+                    ) as all_skills,
+                    (
+                        SELECT COUNT(DISTINCT us_count.us_subject_id)
+                        FROM user_skills us_count
+                        WHERE us_count.us_user_id = u.user_id
+                        AND us_count.us_subject_id IN (
+                            SELECT ui.ui_subject_id
+                            FROM user_interests ui
+                            WHERE ui.ui_user_id = ?
+                        )
+                    ) as matching_skills_count
                 FROM user u
                 LEFT JOIN profile p ON u.user_id = p.user_id
-                INNER JOIN user_skills us ON u.user_id = us.us_user_id
-                INNER JOIN subjects s ON us.us_subject_id = s.subject_id
-                WHERE us.us_subject_id IN (
-                    SELECT ui.ui_subject_id 
-                    FROM user_interests ui 
-                    WHERE ui.ui_user_id = ?
+                WHERE u.user_id != ?
+                AND EXISTS (
+                    SELECT 1
+                    FROM user_skills us_exists
+                    WHERE us_exists.us_user_id = u.user_id
+                    AND us_exists.us_subject_id IN (
+                        SELECT ui.ui_subject_id
+                        FROM user_interests ui
+                        WHERE ui.ui_user_id = ?
+                    )
                 )
-                AND u.user_id != ?
                 AND u.user_id NOT IN (
-                    SELECT CASE 
+                    SELECT CASE
                         WHEN requester_id = ? THEN receiver_id
                         ELSE requester_id
                     END
@@ -75,7 +103,6 @@ try {
                     WHERE (requester_id = ? OR receiver_id = ?)
                     AND status = 'accepted'
                 )
-                GROUP BY u.user_id
                 ORDER BY matching_skills_count DESC, u.user_id ASC
                 LIMIT ?";
         
@@ -85,7 +112,7 @@ try {
             throw new Exception("Prepare failed: " . $conn->error);
         }
         
-        $stmt->bind_param('iiiiii', $currentUserId, $currentUserId, $currentUserId, $currentUserId, $currentUserId, $limit);
+        $stmt->bind_param('iiiiiiii', $currentUserId, $currentUserId, $currentUserId, $currentUserId, $currentUserId, $currentUserId, $currentUserId, $limit);
         
         if (!$stmt->execute()) {
             throw new Exception("Execute failed: " . $stmt->error);
@@ -98,7 +125,9 @@ try {
                 'user_id' => $row['user_id'],
                 'firstname' => htmlspecialchars($row['user_firstname'] ?? 'User'),
                 'lastname' => htmlspecialchars($row['user_lastname'] ?? ''),
-                'field' => htmlspecialchars($row['skills'] ?? 'Various Skills'),
+                'field' => htmlspecialchars($row['shared_skills'] ?? $row['all_skills'] ?? 'Various Skills'),
+                'shared_skills' => htmlspecialchars($row['shared_skills'] ?? ''),
+                'all_skills' => htmlspecialchars($row['all_skills'] ?? 'Various Skills'),
                 'matching_count' => $row['matching_skills_count']
             ];
         }
@@ -145,6 +174,8 @@ try {
                     'firstname' => htmlspecialchars($row['user_firstname'] ?? 'User'),
                     'lastname' => htmlspecialchars($row['user_lastname'] ?? ''),
                     'field' => htmlspecialchars($row['skills'] ?? 'Various Skills'),
+                    'shared_skills' => '',
+                    'all_skills' => htmlspecialchars($row['skills'] ?? 'Various Skills'),
                     'matching_count' => $row['skill_count']
                 ];
             }

@@ -28,7 +28,7 @@ require_once '../components/sidecontent.php';
   <link rel="stylesheet" href="calendar.css">
   <link rel="stylesheet" href="../components/sidecontent.css">
 </head>
-<body class="has-side-content">
+<body class="has-side-content calendar-page">
 
   <!-- Sidebar Navigation -->
   <aside class="sidebar" id="sidebar">
@@ -192,6 +192,7 @@ require_once '../components/sidecontent.php';
       </div>
     </div>
     <?php renderSideContent('calendar'); ?>
+  </div>
   </main>
 
   <!-- Event Detail Modal -->
