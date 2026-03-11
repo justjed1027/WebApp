@@ -82,12 +82,11 @@ body:not(.light-mode).dashboard2-page .dashboard2-main {
   will-change: transform;
 }
 
-.dashboard2-card.is-flipped .dashboard2-card-inner,
-.dashboard2-card:hover .dashboard2-card-inner {
+.dashboard2-card.is-flipped .dashboard2-card-inner {
   animation: d2-flip-to-back 0.55s ease-in-out forwards;
 }
 
-.dashboard2-card:not(.is-flipped):not(:hover) .dashboard2-card-inner {
+.dashboard2-card.is-flipping-back .dashboard2-card-inner {
   animation: d2-flip-to-front 0.55s ease-in-out forwards;
 }
 
@@ -105,12 +104,10 @@ body:not(.light-mode).dashboard2-page .dashboard2-main {
 }
 
 /* Pop in back content after the card crosses the 90° midpoint (~0.33s) */
-.dashboard2-card:hover .dashboard2-back-header,
 .dashboard2-card.is-flipped .dashboard2-back-header {
   animation: d2-pop-in 0.34s cubic-bezier(0.34, 1.56, 0.64, 1) 0.33s both;
 }
 
-.dashboard2-card:hover .dashboard2-back .dashboard2-subject-list,
 .dashboard2-card.is-flipped .dashboard2-back .dashboard2-subject-list {
   animation: d2-pop-in 0.34s cubic-bezier(0.34, 1.56, 0.64, 1) 0.42s both;
 }

@@ -1128,6 +1128,9 @@ body.light-mode .side-content::-webkit-scrollbar-thumb {
     transition: transform 0.24s ease !important;
     overflow-y: auto;
     overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
     padding-top: 12px;
   }
 

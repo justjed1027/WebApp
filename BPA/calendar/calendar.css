@@ -2630,3 +2630,163 @@ body.light-mode .btn-confirmation-cancel:hover {
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 480px) {
+  .main-content {
+    margin-left: 0 !important;
+    padding: 10px 8px !important;
+  }
+
+  .page-content,
+  .calendar-container,
+  .calendar-main {
+    min-width: 0;
+  }
+
+  .calendar-container {
+    padding: 0;
+    gap: 12px;
+  }
+
+  .calendar-card,
+  .events-card {
+    padding: 14px 10px;
+    border-radius: 12px;
+  }
+
+  .calendar-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    position: static;
+    padding-bottom: 0;
+    background: none;
+    backdrop-filter: none;
+  }
+
+  .calendar-title {
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .month-label {
+    font-size: 1.15rem;
+    line-height: 1.15;
+  }
+
+  .year-label {
+    font-size: 0.95rem;
+    padding: 8px 12px;
+  }
+
+  .calendar-controls {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) 44px;
+    gap: 8px;
+    align-items: stretch;
+  }
+
+  .calendar-btn,
+  .calendar-today {
+    padding: 10px 8px;
+    font-size: 0.95rem;
+    min-width: 0;
+  }
+
+  .calendar-grid-box {
+    padding: 12px 8px;
+    border-radius: 10px;
+  }
+
+  .calendar-table {
+    table-layout: fixed;
+    margin-top: 4px;
+  }
+
+  .calendar-table th {
+    font-size: 0.78rem;
+    letter-spacing: 0.2px;
+    padding-bottom: 8px;
+  }
+
+  .calendar-table td {
+    height: 48px;
+    font-size: 0.92rem;
+    padding: 2px 0;
+  }
+
+  .calendar-today-cell {
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    box-shadow: 0 0 0 3px var(--primary-light);
+  }
+
+  .year-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .year-month {
+    padding: 12px 10px;
+    border-radius: 12px;
+  }
+
+  .events-card h3 {
+    font-size: 1rem;
+    margin-bottom: 12px;
+  }
+}
+
+@media (max-width: 360px) {
+  .main-content {
+    padding: 8px 6px !important;
+  }
+
+  .calendar-card,
+  .events-card {
+    padding: 12px 8px;
+    border-radius: 10px;
+  }
+
+  .month-label {
+    font-size: 1rem;
+  }
+
+  .year-label {
+    font-size: 0.85rem;
+    padding: 7px 10px;
+  }
+
+  .calendar-controls {
+    grid-template-columns: 40px minmax(0, 1fr) 40px;
+    gap: 6px;
+  }
+
+  .calendar-btn,
+  .calendar-today {
+    font-size: 0.85rem;
+    padding: 9px 6px;
+    border-radius: 8px;
+  }
+
+  .calendar-grid-box {
+    padding: 10px 6px;
+  }
+
+  .calendar-table th {
+    font-size: 0.7rem;
+  }
+
+  .calendar-table td {
+    height: 42px;
+    font-size: 0.85rem;
+  }
+
+  .calendar-today-cell {
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
+  }
+}
