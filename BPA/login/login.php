@@ -86,9 +86,9 @@
 
                 // Redirect based on admin status
                 if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === 1) {
-                    header("Location: ../courses/courses.php?admin=1");
+                    header("Location: ../dashboard2/dashboard2.php?admin=1");
                 } else {
-                    header("Location: ../courses/courses.php");
+                    header("Location: ../dashboard2/dashboard2.php");
                 }
             }else{
                 $invalid_login = true;
