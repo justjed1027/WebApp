@@ -1916,3 +1916,205 @@ body.light-mode .post {
     padding: 0;
   }
 }
+
+/* ===== SMALL PHONE RESPONSIVE (≤ 480px) ===== */
+@media (max-width: 480px) {
+  /* Fully hide sidebar on small phones */
+  .sidebar,
+  .sidebar.collapsed {
+    transform: translateX(-100%) !important;
+    pointer-events: none !important;
+  }
+
+  body.has-side-content.mobile-sidebar-enabled .sidebar,
+  body.has-side-content.mobile-sidebar-enabled .sidebar.collapsed,
+  body.has-side-content.mobile-sidebar-enabled .sidebar.mobile-open {
+    pointer-events: auto !important;
+  }
+
+  /* Main content takes full width with minimal padding */
+  .main-content,
+  body.has-side-content .main-content {
+    margin-left: 0 !important;
+    padding: 10px 8px !important;
+  }
+
+  /* Tighter box padding */
+  .box1,
+  .box2 {
+    padding: 14px 10px !important;
+    border-radius: 10px;
+    margin-bottom: 12px;
+  }
+
+  /* Tighter create-post card */
+  .create-post-card {
+    padding: 14px !important;
+    border-radius: 12px;
+  }
+
+  /* Tighter post card */
+  .post {
+    padding: 14px !important;
+    border-radius: 12px;
+  }
+
+  /* Smaller create-post input */
+  .create-post-input {
+    font-size: 14px;
+    padding: 10px 12px;
+    min-height: 50px;
+  }
+
+  /* Tighter input row gap */
+  .input-with-submit {
+    gap: 8px;
+  }
+
+  /* Smaller submit button */
+  .create-post-submit-btn {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+  }
+
+  /* Avatar sizing override (inline styles use !important) */
+  .user-avatar-small {
+    width: 34px !important;
+    height: 34px !important;
+    font-size: 0.8rem !important;
+  }
+
+  /* File upload row wraps on small screens */
+  .file-row {
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+
+  /* Post action buttons wrap */
+  .post-actions {
+    flex-wrap: wrap;
+    gap: 6px !important;
+  }
+
+  /* Create post action buttons wrap */
+  .create-post-actions {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .action-btn {
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+
+  /* Post content smaller text */
+  .post-content {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  /* Post metadata smaller */
+  .post-user {
+    font-size: 14px;
+  }
+
+  .post-time {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+
+  .post-author-link {
+    font-size: 13px;
+  }
+
+  .post-timestamp {
+    font-size: 0.75rem;
+  }
+
+  /* Post author avatar smaller */
+  .post-author-avatar {
+    width: 34px !important;
+    height: 34px !important;
+    font-size: 13px !important;
+  }
+
+  /* Allow post header to wrap if needed */
+  .post-header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* Notification toast full-width on mobile */
+  .notification-toast {
+    left: 8px;
+    right: 8px;
+    max-width: none;
+    font-size: 13px;
+  }
+
+  /* Tighter comment section */
+  .comment-text {
+    font-size: 0.85rem;
+  }
+
+  .comment-author-link {
+    font-size: 0.85rem;
+  }
+}
+
+/* ===== VERY SMALL PHONES (≤ 360px) ===== */
+@media (max-width: 360px) {
+  .main-content,
+  body.has-side-content .main-content {
+    padding: 6px 6px !important;
+  }
+
+  .box1,
+  .box2 {
+    padding: 10px 8px !important;
+    border-radius: 8px;
+  }
+
+  .create-post-card {
+    padding: 10px !important;
+  }
+
+  .post {
+    padding: 10px !important;
+  }
+
+  .create-post-input {
+    font-size: 13px;
+    padding: 8px 10px;
+  }
+
+  .post-content {
+    font-size: 12px;
+  }
+
+  .post-user {
+    font-size: 13px;
+  }
+
+  .post-author-avatar {
+    width: 30px !important;
+    height: 30px !important;
+    font-size: 12px !important;
+  }
+
+  .user-avatar-small {
+    width: 30px !important;
+    height: 30px !important;
+  }
+
+  .create-post-submit-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  .action-btn {
+    font-size: 11px;
+    padding: 7px 10px;
+  }
+}
