@@ -282,7 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     finish && finish.addEventListener('click', () => {
       // Here you can POST to PHP later; for now we redirect
-      window.location.href = '../courses/courses.php';
+      window.location.href = '../dashboard2/dashboard2.php';
     });
   }
 });

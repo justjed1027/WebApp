@@ -174,7 +174,7 @@ if (isset($_GET['code'])) {
     $_SESSION['login_method'] = 'google';
     
     // Redirect to dashboard
-    header("Location: ../post/post.php");
+    header("Location: ../dashboard2/dashboard2.php");
     exit;
     
 } elseif (isset($_GET['error'])) {

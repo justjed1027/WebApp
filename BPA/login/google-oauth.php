@@ -158,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo json_encode([
         'success' => true,
         'message' => 'Login successful',
-        'redirect' => '../post/post.php'
+        'redirect' => '../dashboard2/dashboard2.php'
     ]);
     
 } else {
