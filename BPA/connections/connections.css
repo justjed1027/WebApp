@@ -4,9 +4,30 @@
 /* Main Content Grid Layout for Side Content */
 .main-content {
   display: grid;
-  grid-template-columns: 1fr 360px;
+  grid-template-columns: 1fr 400px;
   gap: 24px;
   align-items: start;
+}
+
+@media (max-width: 1600px) {
+  .main-content {
+    grid-template-columns: 1fr 380px;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 1440px) {
+  .main-content {
+    grid-template-columns: 1fr 360px;
+    gap: 18px;
+  }
+}
+
+@media (max-width: 1300px) {
+  .main-content {
+    grid-template-columns: 1fr 320px;
+    gap: 16px;
+  }
 }
 
 /* Calendar Container Integration */
