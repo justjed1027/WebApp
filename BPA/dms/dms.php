@@ -67,7 +67,7 @@ if (!isset($_SESSION['user_id'])) {
     <!-- Middle Section: Main Navigation -->
     <div class="sidebar-middle">
       <div class="nav-group">
-        <a href="../courses/courses.php" class="nav-link" data-tooltip="Dashboard">
+        <a href="../dashboard2/dashboard2.php" class="nav-link" data-tooltip="Dashboard">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
             <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5" />
           </svg>
@@ -221,7 +221,7 @@ if (!isset($_SESSION['user_id'])) {
 
     <!-- Side Content -->
     <?php renderSideContent('dms', [
-        'limit' => ['notifications' => 1, 'upcoming_events' => 2, 'suggested_collaborators' => 1]
+      'limit' => ['notifications' => 1, 'upcoming_events' => 2, 'suggested_collaborators' => 3]
     ]); ?>
     
   </main><!-- Close main-content -->
@@ -425,9 +425,9 @@ if (!isset($_SESSION['user_id'])) {
       function openModal() { modal.style.display = 'flex'; }
       function closeModal() { modal.style.display = 'none'; }
 
-      openBtn.addEventListener('click', openModal);
-      closeBtn.addEventListener('click', closeModal);
-      cancelBtn.addEventListener('click', closeModal);
+      if (openBtn) openBtn.addEventListener('click', openModal);
+      if (closeBtn) closeBtn.addEventListener('click', closeModal);
+      if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
       window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
       modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
 

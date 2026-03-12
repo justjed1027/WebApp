@@ -837,6 +837,55 @@ form input[type="submit"] {
     .acc-item .acc-inner { font-size: 1.08rem; padding-left: 12px; }
 }
 
+@media (max-width: 480px) {
+    /* Header */
+    .Header { padding: 12px 4%; }
+    .navbar { gap: 10px; }
+    .sign-up,
+    .login {
+        padding: 8px 14px;
+        font-size: 14px;
+        letter-spacing: 0;
+        white-space: nowrap;
+    }
+
+    /* Hero */
+    .hero-section {
+        padding-top: 100px;
+        min-height: 100svh;
+    }
+    .hero-text h1,
+    .hero-text h2,
+    .hero-text h3 {
+        font-size: clamp(2.2rem, 11vw, 3rem);
+        white-space: normal;
+        overflow-wrap: break-word;
+        margin-bottom: 6px;
+    }
+    .hero-content { padding: 0 14px; }
+    .tagline {
+        font-size: 13px;
+        letter-spacing: 1px;
+        margin-bottom: 28px;
+    }
+    .hero-buttons { gap: 12px; }
+    .btn {
+        padding: 13px 22px;
+        font-size: 16px;
+        min-width: 120px;
+    }
+}
+
+@media (max-width: 375px) {
+    .sign-up,
+    .login { padding: 7px 10px; font-size: 13px; }
+    .hero-text h1,
+    .hero-text h2,
+    .hero-text h3 { font-size: clamp(2rem, 12vw, 2.5rem); }
+    .tagline { font-size: 12px; letter-spacing: 0.5px; }
+    .btn { padding: 11px 18px; font-size: 15px; min-width: 110px; }
+}
+
 /* ===== CROSSFADE SLIDESHOW ANIMATIONS ===== */
 @keyframes slideshow1 {
     0%, 12% {

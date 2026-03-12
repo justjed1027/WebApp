@@ -28,7 +28,7 @@ require_once '../components/sidecontent.php';
   <link rel="stylesheet" href="calendar.css">
   <link rel="stylesheet" href="../components/sidecontent.css">
 </head>
-<body class="has-side-content">
+<body class="has-side-content calendar-page">
 
   <!-- Sidebar Navigation -->
   <aside class="sidebar" id="sidebar">
@@ -58,10 +58,7 @@ require_once '../components/sidecontent.php';
     <!-- Middle Section: Main Navigation -->
     <div class="sidebar-middle">
       <div class="nav-group">
-    <!-- Middle Section: Main Navigation -->
-    <div class="sidebar-middle">
-      <div class="nav-group">
-        <a href="../courses/courses.php" class="nav-link" data-tooltip="Dashboard">
+        <a href="../dashboard2/dashboard2.php" class="nav-link" data-tooltip="Dashboard">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
             <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5" />
           </svg>
@@ -195,6 +192,7 @@ require_once '../components/sidecontent.php';
       </div>
     </div>
     <?php renderSideContent('calendar'); ?>
+  </div>
   </main>
 
   <!-- Event Detail Modal -->

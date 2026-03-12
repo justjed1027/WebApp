@@ -96,18 +96,18 @@ if (!empty($_SESSION['user_id'])) {
     <div class="form-stack">
       <div class="input-card">
         <div class="panel-wrap">
-          <div class="courses-panel" id="knownCoursesPanel" tabindex="0">
+          <div class="courses-panel" id="coursesPanel" tabindex="0">
             <div class="search-row">
-              <input id="knownCourseSearch" type="text" placeholder="Search skills by name..." aria-label="Search skills" />
+              <input id="courseSearch" type="text" placeholder="Search skills by name..." aria-label="Search skills" />
               <div class="filters">
-                <select id="knownTopicFilter" aria-label="Filter by topic">
+                <select id="topicFilter" aria-label="Filter by topic">
                   <option value="all">All Topics</option>
                   <option value="STEM">STEM</option>
                   <option value="Arts">Arts</option>
                   <option value="Languages">Languages</option>
                   <option value="Business">Business</option>
                 </select>
-                <select id="knownSortBy" aria-label="Sort skills">
+                <select id="sortBy" aria-label="Sort skills">
                   <option value="popular">Most Popular</option>
                   <option value="alpha">Alphabetical</option>
                   <option value="new">Newest</option>
@@ -115,7 +115,7 @@ if (!empty($_SESSION['user_id'])) {
               </div>
             </div>
 
-            <div id="knownCategories" class="grid">
+            <div id="categories" class="grid">
               <?php
               while ($cat = $categories_result->fetch_assoc()):
                   $cat_id = $cat['category_id'];
@@ -159,6 +159,6 @@ if (!empty($_SESSION['user_id'])) {
     <span class="dot"></span><span class="dot"></span><span class="dot active"></span><span class="dot"></span>
   </div>
 </div>
-  
+  <script src="script.js?v=<?php echo filemtime(__DIR__ . '/script.js'); ?>"></script>
 </body>
 </html>

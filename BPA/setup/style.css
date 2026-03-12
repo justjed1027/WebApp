@@ -738,20 +738,18 @@ body[data-step="1"] .search-row input:focus{
 
 /* Page 1: make content box span most of the page with uniform padding */
 body[data-step="1"] { 
-  padding: 16px; 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  max-height: 100vh;
-  overflow: hidden; /* prevent page scroll */
+  padding: 12px;
+  min-height: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 body[data-step="1"] .setup-shell {
   /* Span most of the viewport, but cap for very large screens */
   width: min(96vw, 1600px);
   max-width: 1600px;
-  margin: 0;
-  height: 100%;
+  margin: 0 auto;
+  min-height: auto;
+  height: auto;
   display: flex;
   flex-direction: column;
   border-radius: 20px;
@@ -776,10 +774,70 @@ body[data-step="1"] .form-stack{gap:14px;flex:1;display:flex;flex-direction:colu
 body[data-step="1"] .input-card{padding:16px}
 body[data-step="1"] .two-cols{gap:14px}
 body[data-step="1"] .avatar{width:64px;height:64px}
-body[data-step="1"] textarea{min-height:138px;flex:1}
-body[data-step="1"] form{display:flex;flex-direction:column;flex:1;min-height:0}
-body[data-step="1"] .nav-bar{margin-top:auto;padding-top:20px}
+body[data-step="1"] textarea{min-height:138px}
+body[data-step="1"] form{display:flex;flex-direction:column}
+body[data-step="1"] .nav-bar{margin-top:20px;padding-top:0}
 body[data-step="1"] .progress{margin-top:10px}
+
+@media (max-width: 480px){
+  body[data-step="1"]{
+    display:block;
+    padding:0;
+    min-height:auto;
+    max-height:none;
+    overflow-y:auto;
+  }
+
+  body[data-step="1"] .setup-shell{
+    width:100%;
+    max-width:none;
+    min-height:auto;
+    height:auto;
+    border-radius:0;
+    margin:0;
+    padding:6px 8px 12px;
+    box-shadow:none;
+    border-left:none;
+    border-right:none;
+  }
+
+  body[data-step="1"] .header{margin-bottom:0}
+  body[data-step="1"] .step-title{font-size:1.3rem;margin:0 0 4px}
+  body[data-step="1"] .subtitle{font-size:.92rem;margin:0 0 10px}
+  body[data-step="1"] .form-stack{gap:10px}
+  body[data-step="1"] .two-cols{gap:10px}
+  body[data-step="1"] .input-card{padding:12px}
+  body[data-step="1"] .avatar-upload{gap:12px;align-items:flex-start}
+  body[data-step="1"] .avatar{width:56px;height:56px}
+  body[data-step="1"] input[type="text"],
+  body[data-step="1"] input[type="tel"],
+  body[data-step="1"] textarea,
+  body[data-step="1"] select{padding:12px 14px;font-size:.95rem}
+  body[data-step="1"] textarea{min-height:110px}
+  body[data-step="1"] form{display:block}
+  body[data-step="1"] .nav-bar{padding-top:0;margin-top:12px}
+  body[data-step="1"] .btn{width:100%;justify-content:center;padding:12px 20px}
+  body[data-step="1"] .progress{margin-top:8px}
+}
+
+@media (max-width: 360px){
+  body[data-step="1"]{padding:0}
+
+  body[data-step="1"] .setup-shell{
+    min-height:auto;
+    padding:4px 6px 10px;
+    border-radius:0;
+  }
+
+  body[data-step="1"] .step-title{font-size:1.15rem}
+  body[data-step="1"] .subtitle{font-size:.88rem}
+  body[data-step="1"] .input-card{padding:10px}
+  body[data-step="1"] .avatar{width:52px;height:52px}
+  body[data-step="1"] input[type="text"],
+  body[data-step="1"] input[type="tel"],
+  body[data-step="1"] textarea,
+  body[data-step="1"] select{padding:11px 12px;font-size:.92rem}
+}
 
 /* Page 2: fit to viewport with internal panel scroll */
 body[data-step="2"]{
@@ -854,6 +912,7 @@ body[data-step="3"] .setup-shell{
 body[data-step="3"] .header{margin-bottom:8px}
 body[data-step="3"] .step-title{font-size:1.6rem;margin:6px 0 4px}
 body[data-step="3"] .subtitle{font-size:1rem;margin:0 0 14px}
+body[data-step="3"] form{display:flex;flex-direction:column;flex:1;min-height:0}
 
 /* Let the card with the panel expand and scroll internally */
 body[data-step="3"] .form-stack{display:flex;flex-direction:column;gap:14px;flex:1;min-height:0}
@@ -870,14 +929,14 @@ body[data-step="4"]{
   align-items:center;
   justify-content:center;
   min-height:100vh;
-  max-height:100vh;
-  overflow:hidden; /* no page scroll */
+  overflow-y:auto;
+  overflow-x:hidden;
 }
 body[data-step="4"] .setup-shell{
   width:min(96vw, 1600px);
   max-width:1600px;
   margin:0;
-  height:100%;
+  min-height:calc(100vh - 32px);
   display:flex;
   flex-direction:column;
   border-radius:20px;
@@ -895,8 +954,8 @@ body[data-step="4"] .setup-shell{
 body[data-step="4"] .header{margin-bottom:8px}
 body[data-step="4"] .step-title{font-size:1.6rem;margin:6px 0 4px}
 body[data-step="4"] .subtitle{font-size:1rem;margin:0 0 14px}
-body[data-step="4"] .form-stack{gap:20px;flex:1;display:flex;flex-direction:column;justify-content:center}
-body[data-step="4"] .input-card{padding:24px;display:flex;flex-direction:column;justify-content:center}
+body[data-step="4"] .form-stack{gap:20px;flex:1;display:flex;flex-direction:column;justify-content:center;min-height:0}
+body[data-step="4"] .input-card{padding:24px;display:flex;flex-direction:column;justify-content:center;min-height:fit-content}
 body[data-step="4"] .colors-row{margin-bottom:0;padding-inline:44px}
 body[data-step="4"] .swatch{width:64px;height:64px}
 body[data-step="4"] .theme-previews{gap:20px}
@@ -907,12 +966,6 @@ body[data-step="4"] .progress{margin-top:10px}
 
 
 .courses-panel {
-  max-height: 70vh; /* Allow scrolling area */
+  max-height: 60vh; /* Allow scrolling area */
   overflow-y: auto;
-}
-
-.setup-shell {
-  overflow-y: auto;
-  height: auto; /* remove any fixed height */
-  min-height: 100vh;
 }

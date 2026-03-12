@@ -1282,9 +1282,20 @@ async function checkEndSessionStatus() {
         if (data.is_ended) {
             closeSessionRoom();
             loadSessionRequests();
-            const reviewBtn = document.getElementById('placeReviewBtn');
-            if (reviewBtn) reviewBtn.disabled = false;
-            if (window.openReviewModal) window.openReviewModal();
+            const currentUserId = parseInt(document.body.dataset.userId, 10);
+            const confirmedBy = data.confirmed_by !== null ? parseInt(data.confirmed_by, 10) : null;
+
+            if (confirmedBy !== null && currentUserId === confirmedBy) {
+                const reviewBtn = document.getElementById('placeReviewBtn');
+                if (reviewBtn) {
+                    reviewBtn.disabled = false;
+                }
+                if (window.openReviewModal) {
+                    window.openReviewModal();
+                }
+            } else {
+                showToast('Session ended', 'info', 'Your participant confirmed and ended the session');
+            }
             return;
         }
 

@@ -49,6 +49,12 @@ try {
     )";
     $conn->query($createSql);
 
+    // Ensure confirmed_by column exists for tracking who accepted ending the session
+    $alterSql = "ALTER TABLE session_end_requests ADD COLUMN confirmed_by INT NULL AFTER responded_at";
+    if (!$conn->query($alterSql) && intval($conn->errno) !== 1060) {
+        throw new Exception('Alter table failed: ' . $conn->error);
+    }
+
     $verifySql = "SELECT request_id, requester_id, recipient_id, status
                   FROM session_requests
                   WHERE request_id = ? AND status = 'accepted'
@@ -80,7 +86,7 @@ try {
 
     $upsertSql = "INSERT INTO session_end_requests (session_id, requester_id, recipient_id, status, created_at)
                   VALUES (?, ?, ?, 'pending', NOW())
-                  ON DUPLICATE KEY UPDATE status = 'pending', created_at = NOW(), responded_at = NULL";
+                  ON DUPLICATE KEY UPDATE status = 'pending', created_at = NOW(), responded_at = NULL, confirmed_by = NULL";
     $upsertStmt = $conn->prepare($upsertSql);
     if (!$upsertStmt) {
         throw new Exception('Upsert prepare failed: ' . $conn->error);

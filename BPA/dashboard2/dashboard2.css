@@ -1,0 +1,319 @@
+.dashboard2-page .main-content {
+  background:
+    radial-gradient(circle at top, var(--primary-light) 0%, transparent 28%),
+    linear-gradient(180deg, var(--background-main) 0%, var(--background-secondary) 100%);
+}
+
+body:not(.light-mode).dashboard2-page,
+body:not(.light-mode).dashboard2-page .main-content,
+body:not(.light-mode).dashboard2-page .page-content,
+body:not(.light-mode).dashboard2-page .dashboard2-main {
+  background: #000000;
+}
+
+.dashboard2-page .main-content::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 0);
+  background-size: 18px 18px;
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+.dashboard2-main {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-width: 0;
+}
+
+.dashboard2-face {
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-lg);
+}
+
+.dashboard2-main {
+  padding-top: 4px;
+}
+
+.dashboard2-front-kicker,
+.dashboard2-back-kicker {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.72rem;
+  color: var(--primary-color);
+}
+
+.dashboard2-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.dashboard2-card {
+  perspective: 1000px;
+  cursor: pointer;
+  will-change: transform;
+}
+
+.dashboard2-card[hidden] {
+  display: none;
+}
+
+@keyframes d2-flip-to-back {
+  0%   { transform: rotateY(0deg); }
+  50%  { transform: rotateY(90deg) translateZ(30px); }
+  100% { transform: rotateY(180deg); }
+}
+
+@keyframes d2-flip-to-front {
+  0%   { transform: rotateY(180deg); }
+  50%  { transform: rotateY(90deg) translateZ(30px); }
+  100% { transform: rotateY(0deg); }
+}
+
+.dashboard2-card-inner {
+  position: relative;
+  min-height: 340px;
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.dashboard2-card.is-flipped .dashboard2-card-inner {
+  animation: d2-flip-to-back 0.55s ease-in-out forwards;
+}
+
+.dashboard2-card.is-flipping-back .dashboard2-card-inner {
+  animation: d2-flip-to-front 0.55s ease-in-out forwards;
+}
+
+/* Content pop-in animation */
+@keyframes d2-pop-in {
+  0%   { opacity: 0; transform: translateY(18px) scale(0.86); }
+  60%  { transform: translateY(-3px) scale(1.04); }
+  100% { opacity: 1; transform: none; }
+}
+
+/* Back content: hidden until revealed */
+.dashboard2-back-header,
+.dashboard2-back .dashboard2-subject-list {
+  opacity: 0;
+}
+
+/* Pop in back content after the card crosses the 90° midpoint (~0.33s) */
+.dashboard2-card.is-flipped .dashboard2-back-header {
+  animation: d2-pop-in 0.34s cubic-bezier(0.34, 1.56, 0.64, 1) 0.33s both;
+}
+
+.dashboard2-card.is-flipped .dashboard2-back .dashboard2-subject-list {
+  animation: d2-pop-in 0.34s cubic-bezier(0.34, 1.56, 0.64, 1) 0.42s both;
+}
+
+/* JS adds .is-entering on front content after flip-back completes */
+.dashboard2-card-topline.is-entering,
+.dashboard2-front-copy.is-entering {
+  animation: d2-pop-in 0.34s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.dashboard2-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 26px;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  overflow: hidden;
+}
+
+.dashboard2-front {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-position: center;
+  background-size: cover;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.dashboard2-card-topline,
+.dashboard2-back-header,
+.dashboard2-back-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.dashboard2-card-topline {
+  justify-content: flex-start;
+}
+
+.dashboard2-front[data-flip-surface] {
+  cursor: pointer;
+}
+
+.dashboard2-front-copy h3,
+.dashboard2-back-header h3 {
+  margin: 10px 0 10px;
+  font-size: 1.7rem;
+  line-height: 1;
+  color: var(--text-primary);
+}
+
+.dashboard2-front-copy p:last-child {
+  max-width: 26ch;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1.5;
+}
+
+.dashboard2-back {
+  -webkit-transform: rotateY(180deg);
+  transform: rotateY(180deg);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--background-card) 92%, #ffffff 8%), color-mix(in srgb, var(--background-secondary) 96%, #000000 4%));
+  color: var(--text-primary);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.dashboard2-back-header h3,
+.dashboard2-back-header p,
+.dashboard2-subject-option {
+  color: var(--text-primary);
+}
+
+.dashboard2-back-kicker {
+  color: var(--text-secondary);
+}
+
+.dashboard2-subject-list {
+  display: grid;
+  gap: 10px;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.dashboard2-subject-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: var(--background-card);
+  border: 1px solid var(--border-color);
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.dashboard2-subject-option:hover {
+  background: var(--background-hover);
+  border-color: var(--primary-color);
+  transform: translateY(-1px);
+}
+
+.dashboard2-topic-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #0a0a0a;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+}
+
+.dashboard2-btn {
+  appearance: none;
+  border: 0;
+  border-radius: 999px;
+  padding: 11px 16px;
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.2s ease, opacity 0.2s ease, background 0.2s ease;
+}
+
+.dashboard2-btn:hover {
+  transform: translateY(-1px);
+}
+
+.dashboard2-btn-muted,
+.dashboard2-btn-dark {
+  color: var(--text-primary);
+  background: var(--background-card);
+  border: 1px solid var(--border-color);
+}
+
+.dashboard2-btn-accent {
+  color: #0a0a0a;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+}
+
+.dashboard2-back .dashboard2-btn-dark {
+  color: var(--text-primary);
+  background: var(--background-card);
+  border: 1px solid var(--border-color);
+}
+
+.dashboard2-btn-muted:hover,
+.dashboard2-btn-dark:hover {
+  background: var(--background-hover);
+  border-color: var(--primary-color);
+}
+
+body.light-mode .dashboard2-page .main-content::before {
+  background-image: radial-gradient(rgba(0, 0, 0, 0.06) 1px, transparent 0);
+  opacity: 0.06;
+}
+
+body:not(.light-mode).dashboard2-page .main-content::before {
+  opacity: 0.04;
+}
+
+body.light-mode .dashboard2-front-copy p:last-child {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+@media (min-width: 700px) {
+  .dashboard2-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard2-card-inner {
+    min-height: 360px;
+  }
+}
+
+@media (min-width: 1100px) {
+  .dashboard2-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .dashboard2-card-inner {
+    min-height: 380px;
+  }
+}
+
+@media (max-width: 699px) {
+  .dashboard2-back-header,
+  .dashboard2-back-actions {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard2-card-inner,
+  .dashboard2-btn,
+  .dashboard2-subject-option {
+    transition: none;
+  }
+}

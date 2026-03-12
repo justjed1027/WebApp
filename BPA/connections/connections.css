@@ -4,9 +4,30 @@
 /* Main Content Grid Layout for Side Content */
 .main-content {
   display: grid;
-  grid-template-columns: 1fr 360px;
+  grid-template-columns: 1fr 400px;
   gap: 24px;
   align-items: start;
+}
+
+@media (max-width: 1600px) {
+  .main-content {
+    grid-template-columns: 1fr 380px;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 1440px) {
+  .main-content {
+    grid-template-columns: 1fr 360px;
+    gap: 18px;
+  }
+}
+
+@media (max-width: 1300px) {
+  .main-content {
+    grid-template-columns: 1fr 320px;
+    gap: 16px;
+  }
 }
 
 /* Calendar Container Integration */
@@ -1463,5 +1484,134 @@ body.light-mode .search-input {
     margin-left: 0;
     padding-left: 0;
     border-left: none;
+  }
+}
+
+/* ===== CONNECTIONS PAGE RESPONSIVE TUNING ===== */
+@media (max-width: 1400px) {
+  .main-content {
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 18px;
+  }
+
+  .connections-grid,
+  .students-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
+@media (max-width: 1200px) {
+  .main-content {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .connections-header-card,
+  .connections-content-card {
+    padding: 20px;
+  }
+
+  .connections-header-card .page-header-content h1.page-main-title {
+    font-size: 1.95rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .connections-header-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .connections-header-card .page-header-actions {
+    width: 100%;
+  }
+
+  .find-students-btn.calendar-today {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .connections-grid,
+  .students-grid,
+  .recommendations-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .connection-card,
+  .student-card,
+  .recommendation-card {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .connections-header-card .page-header-content h1.page-main-title {
+    font-size: 1.6rem;
+    line-height: 1.25;
+  }
+
+  .connections-header-card .page-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .students-header-row {
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .pagination-controls {
+    justify-content: flex-start;
+  }
+
+  .connection-header {
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .user-name {
+    font-size: 1rem;
+  }
+
+  .connection-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-accept,
+  .btn-decline,
+  .btn-message,
+  .btn-connect {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .connections-header-card,
+  .connections-content-card {
+    padding: 14px;
+    border-radius: 10px;
+  }
+
+  .connections-content-card h3 {
+    font-size: 1.1rem;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .user-avatar,
+  .conn-avatar {
+    width: 42px;
+    height: 42px;
+  }
+
+  .page-info {
+    font-size: 0.8rem;
   }
 }
