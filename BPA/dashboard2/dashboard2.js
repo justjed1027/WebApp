@@ -30,12 +30,13 @@ function selectBucket(card, bucketName) {
     box.classList.toggle('is-active', box.dataset.bucket === bucketName);
   });
   renderSubjectList(card);
-  const kicker = card.querySelector('.dashboard2-front-kicker');
-  if (kicker) kicker.textContent = bucketName;
 }
 
-// Initialise all cards to "My Expertise" on load
-dashboard2Cards.forEach(card => selectBucket(card, 'My Expertise'));
+// Initialise all cards using each card's profile-based default bucket
+dashboard2Cards.forEach(card => {
+  const defaultBucket = card.dataset.defaultBucket || 'My Expertise';
+  selectBucket(card, defaultBucket);
+});
 
 function setCardFlipped(card, flipped) {
   if (flipped) {

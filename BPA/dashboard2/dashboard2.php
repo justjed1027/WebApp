@@ -294,7 +294,7 @@ $db->closeConnection();
                             $allSubjects = array_merge(...array_values($category['subjects']));
                             $subjectCount = count($allSubjects);
                         ?>
-                        <article class="dashboard2-card" data-card data-subjects="<?php echo htmlspecialchars(json_encode($category['subjects'], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP), ENT_QUOTES, 'UTF-8'); ?>" style="--accent-a: <?php echo htmlspecialchars($category['colors'][0], ENT_QUOTES, 'UTF-8'); ?>; --accent-b: <?php echo htmlspecialchars($category['colors'][1], ENT_QUOTES, 'UTF-8'); ?>">
+                        <article class="dashboard2-card" data-card data-default-bucket="<?php echo htmlspecialchars($category['bucket'], ENT_QUOTES, 'UTF-8'); ?>" data-subjects="<?php echo htmlspecialchars(json_encode($category['subjects'], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP), ENT_QUOTES, 'UTF-8'); ?>" style="--accent-a: <?php echo htmlspecialchars($category['colors'][0], ENT_QUOTES, 'UTF-8'); ?>; --accent-b: <?php echo htmlspecialchars($category['colors'][1], ENT_QUOTES, 'UTF-8'); ?>">
                             <div class="dashboard2-card-inner">
                                 <div class="dashboard2-face dashboard2-front" data-flip-surface style="background-image: linear-gradient(180deg, rgba(3, 7, 18, 0.12), rgba(3, 7, 18, 0.82)), url('<?php echo htmlspecialchars($category['image'], ENT_QUOTES, 'UTF-8'); ?>');">
                                     <div class="dashboard2-card-topline">
