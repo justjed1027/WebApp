@@ -75,8 +75,8 @@ function renderSideContent($currentPage = '', $options = []) {
                     $db = $dbConn->connection;
                     $notificationObj = new Notification($db);
                     
-                    // Fetch recent notifications
-                    $maxNotifications = $limitNotifications ?? 5;
+                    // Enforce a global cap of 1 notification across all pages using side content
+                    $maxNotifications = 1;
                     $result = $notificationObj->getRecentNotifications($currentUserId, $maxNotifications);
                     
                     while ($row = $result->fetch_assoc()) {
