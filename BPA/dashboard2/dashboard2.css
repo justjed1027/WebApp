@@ -112,6 +112,64 @@ body:not(.light-mode).dashboard2-page .dashboard2-main {
   animation: d2-pop-in 0.34s cubic-bezier(0.34, 1.56, 0.64, 1) 0.42s both;
 }
 
+/* 2×2 bucket selector grid */
+.dashboard2-back-header-inner {
+  width: 100%;
+  text-align: center;
+}
+
+.dashboard2-back-header-inner h3 {
+  margin: 6px 0 24px;
+}
+
+.d2-bucket-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+.d2-bucket-box {
+  appearance: none;
+  border: 1.5px solid var(--border-color);
+  border-radius: 12px;
+  padding: 12px 8px;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.25;
+  cursor: pointer;
+  background: var(--background-card);
+  color: var(--text-secondary);
+  text-align: center;
+  transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
+}
+
+.d2-bucket-box:hover {
+  border-color: var(--primary-color);
+  color: var(--text-primary);
+  background: var(--background-hover);
+}
+
+.d2-bucket-box.is-active {
+  border-color: var(--primary-color);
+  background: color-mix(in srgb, var(--primary-color) 18%, transparent);
+  color: var(--primary-color);
+}
+
+.d2-no-subjects {
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  text-align: center;
+  padding: 18px 0;
+  margin: 0;
+}
+
 /* JS adds .is-entering on front content after flip-back completes */
 .dashboard2-card-topline.is-entering,
 .dashboard2-front-copy.is-entering {
@@ -196,6 +254,7 @@ body:not(.light-mode).dashboard2-page .dashboard2-main {
   gap: 10px;
   overflow: auto;
   padding-right: 4px;
+  padding-top: 10px;
 }
 
 .dashboard2-subject-option {

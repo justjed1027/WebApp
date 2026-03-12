@@ -145,13 +145,18 @@ $cardsQuery = '
         sc.category_name,
         sc.category_description,
         s.subject_id,
-        s.subject_name
+        s.subject_name,
+        (SELECT COUNT(*) FROM user_skills   WHERE us_user_id = ? AND us_subject_id = s.subject_id) AS in_skills,
+        (SELECT COUNT(*) FROM user_interests WHERE ui_user_id = ? AND ui_subject_id = s.subject_id) AS in_interests
     FROM subjectcategories sc
     LEFT JOIN subjects s ON s.category_id = sc.category_id
     WHERE sc.category_id != 3
     ORDER BY sc.category_name ASC, s.subject_name ASC
 ';
-$cardsResult = $conn->query($cardsQuery);
+$stmt = $conn->prepare($cardsQuery);
+$stmt->bind_param('ii', $userId, $userId);
+$stmt->execute();
+$cardsResult = $stmt->get_result();
 
 $categories = [];
 $totalResources = 0;
@@ -168,13 +173,25 @@ while ($row = $cardsResult->fetch_assoc()) {
             'image' => $imageMap[$categoryName] ?? 'https://images.pexels.com/photos/159740/library-la-trobe-study-students-159740.jpeg?auto=compress&cs=tinysrgb&w=1200',
             'colors' => $colors,
             'bucket' => $bucketByCategory[$categoryId] ?? 'Other Courses',
-            'subjects' => []
+            'subjects' => [
+                'Want to Learn'   => [],
+                'Building Skills' => [],
+                'My Expertise'    => [],
+                'Other Courses'   => []
+            ]
         ];
     }
 
     if (!empty($row['subject_id'])) {
-        $categories[$categoryId]['subjects'][] = [
-            'id' => (int) $row['subject_id'],
+        $inS = (int) $row['in_skills'];
+        $inI = (int) $row['in_interests'];
+        if      ($inI && !$inS) $subjectBucket = 'Want to Learn';
+        elseif  ($inI && $inS)  $subjectBucket = 'Building Skills';
+        elseif  ($inS && !$inI) $subjectBucket = 'My Expertise';
+        else                    $subjectBucket = 'Other Courses';
+
+        $categories[$categoryId]['subjects'][$subjectBucket][] = [
+            'id'   => (int) $row['subject_id'],
             'name' => $row['subject_name']
         ];
         $totalResources++;
@@ -274,10 +291,10 @@ $db->closeConnection();
                 <section class="dashboard2-grid" id="dashboard2Grid">
                     <?php foreach ($categories as $category): ?>
                         <?php
-                            $subjectCount = count($category['subjects']);
+                            $allSubjects = array_merge(...array_values($category['subjects']));
+                            $subjectCount = count($allSubjects);
                         ?>
-                        <article class="dashboard2-card" data-card style="--accent-a: <?php echo htmlspecialchars($category['colors'][0], ENT_QUOTES, 'UTF-8'); ?>; --accent-b: <?php echo htmlspecialchars($category['colors'][1], ENT_QUOTES, 'UTF-8'); ?>;">
-                            <?php $firstSubjectId = $subjectCount > 0 ? $category['subjects'][0]['id'] : 0; ?>
+                        <article class="dashboard2-card" data-card data-subjects="<?php echo htmlspecialchars(json_encode($category['subjects'], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP), ENT_QUOTES, 'UTF-8'); ?>" style="--accent-a: <?php echo htmlspecialchars($category['colors'][0], ENT_QUOTES, 'UTF-8'); ?>; --accent-b: <?php echo htmlspecialchars($category['colors'][1], ENT_QUOTES, 'UTF-8'); ?>">
                             <div class="dashboard2-card-inner">
                                 <div class="dashboard2-face dashboard2-front" data-flip-surface style="background-image: linear-gradient(180deg, rgba(3, 7, 18, 0.12), rgba(3, 7, 18, 0.82)), url('<?php echo htmlspecialchars($category['image'], ENT_QUOTES, 'UTF-8'); ?>');">
                                     <div class="dashboard2-card-topline">
@@ -292,20 +309,16 @@ $db->closeConnection();
 
                                 <div class="dashboard2-face dashboard2-back">
                                     <div class="dashboard2-back-header">
-                                        <div>
-                                            <p class="dashboard2-back-kicker"><?php echo htmlspecialchars($category['bucket']); ?></p>
+                                        <div class="dashboard2-back-header-inner">
                                             <h3><?php echo htmlspecialchars($category['name']); ?></h3>
-                                        </div>
-                                    </div>
+                                            <div class="d2-bucket-grid">
+                                                <button class="d2-bucket-box" data-bucket="Want to Learn">Want to Learn</button>
+                                                <button class="d2-bucket-box" data-bucket="Building Skills">Building Skills</button>
+                                                <button class="d2-bucket-box" data-bucket="My Expertise">My Expertise</button>
+                                                <button class="d2-bucket-box" data-bucket="Other Courses">Other Courses</button>
+                                            </div>
 
-                                    <div class="dashboard2-subject-list">
-                                        <?php foreach ($category['subjects'] as $subject): ?>
-                                            <a class="dashboard2-subject-option" href="../courses/course-detail.php?id=<?php echo $subject['id']; ?>">
-                                                <span><?php echo htmlspecialchars($subject['name']); ?></span>
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8" /></svg>
-                                            </a>
-                                        <?php endforeach; ?>
-                                    </div>
+                                    <div class="dashboard2-subject-list" data-subject-list></div>
                                 </div>
                             </div>
                         </article>
