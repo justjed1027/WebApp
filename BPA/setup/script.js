@@ -256,6 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (step === '4') {
     const swatches = document.querySelectorAll('.swatch');
     const cards = document.querySelectorAll('.theme-card');
+    const navModeCards = document.querySelectorAll('.nav-mode-card');
     const finish = document.getElementById('finish');
 
     const savedColor = localStorage.getItem('setup_color');
@@ -275,14 +276,66 @@ document.addEventListener('DOMContentLoaded', () => {
     }));
 
     cards.forEach(card => card.addEventListener('click', () => {
-      cards.forEach(c => c.classList.remove('selected'));
+      if (card.classList.contains('nav-mode-card')) {
+        navModeCards.forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        localStorage.setItem('setup_navigation_mode', card.getAttribute('data-navigation'));
+        return;
+      }
+
+      cards.forEach(c => {
+        if (!c.classList.contains('nav-mode-card')) {
+          c.classList.remove('selected');
+        }
+      });
       card.classList.add('selected');
       localStorage.setItem('setup_theme', card.getAttribute('data-theme'));
     }));
 
-    finish && finish.addEventListener('click', () => {
-      // Here you can POST to PHP later; for now we redirect
-      window.location.href = '../dashboard2/dashboard2.php';
+    finish && finish.addEventListener('click', async () => {
+      const selectedSwatch = document.querySelector('.swatch.selected');
+      const selectedThemeCard = document.querySelector('.theme-card.selected');
+      const selectedNavCard = document.querySelector('.nav-mode-card.selected');
+      const primaryColor = selectedSwatch ? selectedSwatch.getAttribute('data-color') : '#00D97E';
+      const theme = selectedThemeCard && !selectedThemeCard.classList.contains('nav-mode-card')
+        ? selectedThemeCard.getAttribute('data-theme')
+        : 'mixed';
+      const navigationMode = selectedNavCard ? selectedNavCard.getAttribute('data-navigation') : 'sidebar';
+
+      finish.disabled = true;
+      finish.textContent = 'Saving...';
+
+      try {
+        const response = await fetch('save_preferences.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            theme,
+            primary_color: primaryColor,
+            navigation_mode: navigationMode
+          })
+        });
+
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+          throw new Error(data.message || 'Failed to save preferences.');
+        }
+
+        localStorage.setItem('theme', data.theme);
+        localStorage.setItem('primary_color', data.primary_color_hex || primaryColor);
+        localStorage.setItem('navigation_mode', data.navigation_mode || navigationMode);
+        localStorage.setItem('setup_theme', data.theme);
+        localStorage.setItem('setup_color', data.primary_color || primaryColor);
+        localStorage.setItem('setup_navigation_mode', data.navigation_mode || navigationMode);
+
+        window.location.href = '../dashboard2/dashboard2.php';
+      } catch (error) {
+        alert(error.message || 'Unable to save preferences right now. Please try again.');
+        finish.disabled = false;
+        finish.textContent = 'Finish';
+      }
     });
   }
 });

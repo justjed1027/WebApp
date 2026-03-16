@@ -963,6 +963,65 @@ body[data-step="4"] .theme-card{padding:24px}
 body[data-step="4"] .preview{height:180px;margin-bottom:16px}
 body[data-step="4"] .nav-bar{margin-top:auto;padding-top:10px}
 body[data-step="4"] .progress{margin-top:10px}
+body[data-step="4"] .nav-previews{grid-template-columns:repeat(2,minmax(0,1fr))}
+
+.nav-mode-card .preview{
+  border-radius:14px;
+  position:relative;
+  overflow:hidden;
+}
+
+.nav-mode-card .preview.nav-sidebar{
+  background:linear-gradient(155deg,#0e1319 0%,#1a2029 100%);
+}
+
+.nav-mode-card .preview.nav-sidebar::before{
+  content:'';
+  position:absolute;
+  left:8px;
+  top:8px;
+  bottom:8px;
+  width:26%;
+  border-radius:10px;
+  background:rgba(255,255,255,.1);
+}
+
+.nav-mode-card .preview.nav-sidebar::after{
+  content:'';
+  position:absolute;
+  left:38%;
+  right:8px;
+  top:12px;
+  bottom:12px;
+  border-radius:10px;
+  background:rgba(255,255,255,.06);
+}
+
+.nav-mode-card .preview.nav-top{
+  background:linear-gradient(155deg,#0e1319 0%,#1a2029 100%);
+}
+
+.nav-mode-card .preview.nav-top::before{
+  content:'';
+  position:absolute;
+  left:8px;
+  right:8px;
+  top:10px;
+  height:20%;
+  border-radius:999px;
+  background:rgba(255,255,255,.14);
+}
+
+.nav-mode-card .preview.nav-top::after{
+  content:'';
+  position:absolute;
+  left:8px;
+  right:8px;
+  top:35%;
+  bottom:8px;
+  border-radius:10px;
+  background:rgba(255,255,255,.06);
+}
 
 
 .courses-panel {

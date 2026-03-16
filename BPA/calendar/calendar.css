@@ -46,11 +46,6 @@
 
 /* Light Mode Variables */
 body.light-mode {
-  /* Primary Colors */
-  --primary-color: #00d97e;
-  --primary-hover: #00b86b;
-  --primary-light: rgba(0, 217, 126, 0.1);
-  
   /* Background Colors */
   --background-main: #f5f5f5;
   --background-secondary: #ffffff;
@@ -184,10 +179,7 @@ body {
 .logo-text {
   font-size: 23px;
   font-weight: 800;
-  background: linear-gradient(135deg, var(--primary-color) 0%, #00d9ff 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--primary-color);
   letter-spacing: -0.8px;
   white-space: nowrap;
   opacity: 0;
@@ -1155,10 +1147,7 @@ nav a:hover {
   font-size: 1rem;
   cursor: pointer;
   color: var(--text-primary);
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  transition: all var(--transition-normal);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  color: var(--primary-color);
 }
 .calendar-btn:hover, .calendar-today:hover {
   background: #0f0f0f;
