@@ -356,8 +356,9 @@ document.addEventListener('DOMContentLoaded', () => {
     brand.className = 'mobile-site-brand';
     brand.href = `${appBase}/courses/courses.php`;
     brand.setAttribute('aria-label', 'SkillSwap home');
+    const customLogo = document.body.dataset.logoPath || `${appBase}/images/skillswaplogotrans.png`;
     brand.innerHTML = `
-      <img src="${appBase}/images/skillswaplogotrans.png" alt="SkillSwap logo">
+      <img src="${customLogo}" alt="SkillSwap logo">
       <span>SkillSwap</span>`;
 
     document.body.appendChild(brand);

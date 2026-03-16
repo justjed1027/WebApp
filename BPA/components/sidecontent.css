@@ -1533,3 +1533,15 @@ body.light-mode .side-content::-webkit-scrollbar-thumb {
     grid-template-columns: 1fr;
   }
 }
+
+/* Remove sidebar glow effects only */
+body.has-side-content .sidebar .logo-placeholder img,
+body.has-side-content .sidebar .sidebar-logo img,
+body.has-side-content .sidebar .nav-link,
+body.has-side-content .sidebar .nav-link.active,
+body.has-side-content .sidebar .theme-toggle-btn,
+body.has-side-content .top-nav-link.active {
+  box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
