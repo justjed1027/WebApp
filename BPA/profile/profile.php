@@ -581,7 +581,7 @@ $db->closeConnection();
                                         statusDisplay.className = 'status-deleted';
                                         
                                         setTimeout(() => {
-                                            window.location.href = '../courses/courses.php';
+                                            window.location.href = '../dashboard2/dashboard2.php';
                                         }, 2000);
                                     } else {
                                         showErrorMessage('Error', '✗ ' + data.message);

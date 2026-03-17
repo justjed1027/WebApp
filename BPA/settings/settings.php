@@ -80,7 +80,7 @@ $timezones = timezone_identifiers_list();
             <?php if ($message): ?>
                 <div class="notice" style="display:flex;align-items:center;justify-content:space-between">
                     <span><?= h($message) ?></span>
-                    <a href="../post/post.php" class="btn btn-primary" style="text-decoration:none;font-size:13px;padding:8px 12px">← Back to Home</a>
+                    <a href="../dashboard2/dashboard2.php" class="btn btn-primary" style="text-decoration:none;font-size:13px;padding:8px 12px">← Back to Home</a>
                 </div>
             <?php endif; ?>
 
