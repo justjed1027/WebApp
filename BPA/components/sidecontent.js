@@ -4,6 +4,248 @@ document.addEventListener('DOMContentLoaded', () => {
   const mobileBreakpoint = window.matchMedia('(max-width: 1024px)');
   let lastScrollY = window.scrollY;
 
+  const clamp = (num, min, max) => Math.min(max, Math.max(min, num));
+
+  const toHexColor = (value) => {
+    const color = (value || '').trim();
+    if (!color) return null;
+    if (/^silver$/i.test(color)) return '#C0C0C0';
+    if (/^#[0-9a-fA-F]{6}$/.test(color)) return color.toUpperCase();
+    if (/^[0-9a-fA-F]{6}$/.test(color)) return `#${color.toUpperCase()}`;
+    return null;
+  };
+
+  const adjustHex = (hex, amount) => {
+    const safeHex = toHexColor(hex);
+    if (!safeHex) return null;
+
+    const r = parseInt(safeHex.slice(1, 3), 16);
+    const g = parseInt(safeHex.slice(3, 5), 16);
+    const b = parseInt(safeHex.slice(5, 7), 16);
+
+    const nr = clamp(r + amount, 0, 255);
+    const ng = clamp(g + amount, 0, 255);
+    const nb = clamp(b + amount, 0, 255);
+
+    return `#${nr.toString(16).padStart(2, '0')}${ng.toString(16).padStart(2, '0')}${nb.toString(16).padStart(2, '0')}`.toUpperCase();
+  };
+
+  const applyPrimaryColor = (value) => {
+    const hex = toHexColor(value);
+    if (!hex) return;
+
+    const hover = adjustHex(hex, -25) || hex;
+    document.documentElement.style.setProperty('--primary-color', hex);
+    document.documentElement.style.setProperty('--primary-hover', hover);
+    document.documentElement.style.setProperty('--primary-light', `color-mix(in srgb, ${hex} 15%, transparent)`);
+    // Also set on body so it overrides any body.light-mode { --primary-color } CSS declarations
+    document.body.style.setProperty('--primary-color', hex);
+    document.body.style.setProperty('--primary-hover', hover);
+    document.body.style.setProperty('--primary-light', `color-mix(in srgb, ${hex} 15%, transparent)`);
+  };
+
+  const applyThemePreference = (theme) => {
+    const mode = (theme || '').toLowerCase();
+    if (mode === 'light') {
+      document.body.classList.add('light-mode');
+      return;
+    }
+    document.body.classList.remove('light-mode');
+  };
+
+  const getAppBase = () => {
+    const path = window.location.pathname;
+    const marker = '/BPA/';
+    const idx = path.indexOf(marker);
+    return idx >= 0 ? path.substring(0, idx + marker.length - 1) : '';
+  };
+
+  const removeTopNav = () => {
+    const topNav = document.getElementById('topNavShell');
+    if (topNav) {
+      topNav.remove();
+    }
+  };
+
+  const getLinkLabel = (link) => {
+    const text = link.querySelector('span')?.textContent?.trim();
+    if (text) return text;
+    const tooltip = link.getAttribute('data-tooltip');
+    if (tooltip) return tooltip;
+    return 'Navigation';
+  };
+
+  const buildTopNav = () => {
+    if (!sidebar || document.getElementById('topNavShell')) {
+      return;
+    }
+
+    const appBase = getAppBase();
+    const navLinks = Array.from(sidebar.querySelectorAll('.sidebar-middle .nav-link'));
+    const bottomLinks = Array.from(sidebar.querySelectorAll('.sidebar-bottom .nav-link'));
+    const settingsLink = bottomLinks.find((link) => {
+      const tooltip = (link.getAttribute('data-tooltip') || '').toLowerCase();
+      const text = (link.textContent || '').toLowerCase();
+      return tooltip === 'settings' || tooltip === 'edit user' || text.includes('settings') || text.includes('edit user');
+    });
+    const logoutLink = bottomLinks.find((link) => (link.getAttribute('href') || '').includes('action=logout'));
+
+    const shell = document.createElement('div');
+    shell.id = 'topNavShell';
+    shell.className = 'top-nav-shell';
+
+    const left = document.createElement('div');
+    left.className = 'top-nav-left';
+    left.innerHTML = `
+      <a class="top-nav-brand" href="${appBase}/courses/courses.php" aria-label="SkillSwap home">
+        <img src="${appBase}/images/skillswaplogotrans.png" alt="SkillSwap logo">
+      </a>`;
+
+    const sidebarAvatar = sidebar.querySelector('.profile-avatar');
+    const userAvatarLink = document.createElement('a');
+    userAvatarLink.className = 'top-nav-user-avatar';
+    userAvatarLink.href = `${appBase}/profile/profile.php`;
+    userAvatarLink.setAttribute('title', 'View Profile');
+    if (sidebarAvatar) {
+      userAvatarLink.innerHTML = sidebarAvatar.innerHTML;
+    }
+    left.appendChild(userAvatarLink);
+
+    const brandDivider = document.createElement('span');
+    brandDivider.className = 'top-nav-divider';
+    brandDivider.setAttribute('aria-hidden', 'true');
+    left.appendChild(brandDivider);
+
+    navLinks.forEach((link) => {
+      const topLink = document.createElement('a');
+      topLink.className = `top-nav-link${link.classList.contains('active') ? ' active' : ''}`;
+      topLink.href = link.getAttribute('href') || '#';
+      topLink.textContent = getLinkLabel(link);
+      left.appendChild(topLink);
+    });
+
+    const center = document.createElement('div');
+    center.className = 'top-nav-center';
+
+    const right = document.createElement('div');
+    right.className = 'top-nav-right';
+
+    if (settingsLink) {
+      const settingsBtn = document.createElement('a');
+      settingsBtn.className = 'top-nav-control top-nav-settings';
+      settingsBtn.href = '#';
+      settingsBtn.setAttribute('title', 'Edit User');
+      settingsBtn.innerHTML = settingsLink.querySelector('svg')?.outerHTML || '<span>⚙</span>';
+      right.appendChild(settingsBtn);
+    }
+
+    if (logoutLink) {
+      const logoutBtn = document.createElement('a');
+      logoutBtn.className = 'top-nav-control';
+      logoutBtn.href = logoutLink.getAttribute('href') || '#';
+      logoutBtn.setAttribute('title', 'Log Out');
+      logoutBtn.innerHTML = logoutLink.querySelector('svg')?.outerHTML || '<span>↪</span>';
+      right.appendChild(logoutBtn);
+    }
+
+    const themeBtn = document.createElement('button');
+    themeBtn.type = 'button';
+    themeBtn.className = 'top-nav-control top-nav-theme';
+    themeBtn.setAttribute('title', 'Toggle Theme');
+    themeBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+        <path d="M6 .278a.77.77 0 0 1 .08.858 7.2 7.2 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277q.792-.001 1.533-.16a.79.79 0 0 1 .81.316.73.73 0 0 1-.031.893A8.35 8.35 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.75.75 0 0 1 6 .278"/>
+      </svg>`;
+    right.appendChild(themeBtn);
+
+    shell.appendChild(left);
+    shell.appendChild(center);
+    shell.appendChild(right);
+    document.body.appendChild(shell);
+
+    const settingsBtn = shell.querySelector('.top-nav-settings');
+    if (settingsBtn && settingsLink) {
+      settingsBtn.addEventListener('click', (event) => {
+        event.preventDefault();
+        settingsLink.click();
+      });
+    }
+
+    themeBtn.addEventListener('click', () => {
+      const nativeToggle = document.getElementById('themeToggle');
+      if (nativeToggle) {
+        nativeToggle.click();
+        return;
+      }
+
+      document.body.classList.toggle('light-mode');
+      const isLight = document.body.classList.contains('light-mode');
+      localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    });
+  };
+
+  const applyNavigationMode = (mode) => {
+    const navMode = (mode || '').toLowerCase() === 'top' ? 'top' : 'sidebar';
+    const isTopMode = navMode === 'top';
+    document.body.classList.toggle('top-nav-mode', isTopMode);
+
+    if (isTopMode) {
+      closeMobileSidebar();
+      buildTopNav();
+      return;
+    }
+
+    removeTopNav();
+  };
+
+  const applyLocalPreferences = () => {
+    const localTheme = localStorage.getItem('theme');
+    const localPrimary = localStorage.getItem('primary_color');
+    const localNavigation = localStorage.getItem('navigation_mode');
+    if (localTheme) {
+      applyThemePreference(localTheme);
+    }
+    if (localPrimary) {
+      applyPrimaryColor(localPrimary);
+    }
+    if (localNavigation) {
+      applyNavigationMode(localNavigation);
+    }
+  };
+
+  const loadPreferencesFromDatabase = async () => {
+    try {
+      const response = await fetch(`${getAppBase()}/components/get_user_preferences.php`, {
+        credentials: 'same-origin'
+      });
+
+      if (!response.ok) {
+        return;
+      }
+
+      const data = await response.json();
+      if (!data || !data.success) {
+        return;
+      }
+
+      applyThemePreference(data.theme);
+      applyPrimaryColor(data.primary_color_hex || data.primary_color);
+      applyNavigationMode(data.navigation_mode);
+
+      if (data.theme) {
+        localStorage.setItem('theme', data.theme);
+      }
+      if (data.primary_color_hex || data.primary_color) {
+        localStorage.setItem('primary_color', data.primary_color_hex || data.primary_color);
+      }
+      if (data.navigation_mode) {
+        localStorage.setItem('navigation_mode', data.navigation_mode);
+      }
+    } catch (error) {
+      // Keep existing local preferences if DB load fails.
+    }
+  };
+
   const closeMobileSidebar = () => {
     if (!sidebar) return;
 
@@ -18,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const ensureMobileSidebar = () => {
-    if (!sidebar || !document.body.classList.contains('has-side-content')) {
+    if (!sidebar || !document.body.classList.contains('has-side-content') || document.body.classList.contains('top-nav-mode')) {
       return;
     }
 
@@ -96,7 +338,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const ensureMobileBrand = () => {
-    if (!document.body.classList.contains('has-side-content')) {
+    if (!document.body.classList.contains('has-side-content') || document.body.classList.contains('top-nav-mode')) {
       return;
     }
 
@@ -139,7 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const updateMobileTopControls = () => {
-    if (!document.body.classList.contains('has-side-content')) {
+    if (!document.body.classList.contains('has-side-content') || document.body.classList.contains('top-nav-mode')) {
       return;
     }
 
@@ -230,6 +472,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   };
+
+  applyLocalPreferences();
+  loadPreferencesFromDatabase();
 
   bindModalEvents();
   wireSettingsLinks();

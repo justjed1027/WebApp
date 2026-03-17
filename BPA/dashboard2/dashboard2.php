@@ -21,17 +21,6 @@ $userId = (int) $_SESSION['user_id'];
 $db = new DatabaseConnection();
 $conn = $db->connection;
 
-$categoryStyles = [
-    'Mathematics' => ['icon' => 'Patterns', 'color' => '#3b82f6'],
-    'Computer Science' => ['icon' => 'Systems', 'color' => '#8b5cf6'],
-    'Science' => ['icon' => 'Labs', 'color' => '#10b981'],
-    'English' => ['icon' => 'Writing', 'color' => '#f59e0b'],
-    'History' => ['icon' => 'Context', 'color' => '#ef4444'],
-    'Art & Design' => ['icon' => 'Studio', 'color' => '#ec4899'],
-    'Business & Economics' => ['icon' => 'Strategy', 'color' => '#06b6d4'],
-    'Music' => ['icon' => 'Sound', 'color' => '#a855f7'],
-    'Languages' => ['icon' => 'Global', 'color' => '#14b8a6']
-];
 
 $imageMap = [
     'Art & Design' => 'https://images.pexels.com/photos/196644/pexels-photo-196644.jpeg?auto=compress&cs=tinysrgb&w=1200',
@@ -45,17 +34,6 @@ $imageMap = [
     'Science' => 'https://images.pexels.com/photos/2280571/pexels-photo-2280571.jpeg?auto=compress&cs=tinysrgb&w=1200'
 ];
 
-$accentMap = [
-    'Art & Design' => ['#ffc145', '#ff8f3d'],
-    'Business & Economics' => ['#c9f658', '#81c784'],
-    'Computer Science' => ['#92f0ff', '#49a4ff'],
-    'English' => ['#ffd6a5', '#ffadad'],
-    'History' => ['#f6bd60', '#b08968'],
-    'Languages' => ['#b8f2e6', '#66c7f4'],
-    'Mathematics' => ['#f9f871', '#d3ef62'],
-    'Music' => ['#f4bfff', '#c77dff'],
-    'Science' => ['#caffbf', '#52b788']
-];
 
 $userSkillCategories = [];
 $userSkillsQuery = '
