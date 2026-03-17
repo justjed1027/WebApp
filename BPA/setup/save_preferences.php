@@ -23,11 +23,12 @@ if (!is_array($data)) {
 $theme = $data['theme'] ?? 'mixed';
 $primaryColor = $data['primary_color'] ?? '#00D97E';
 $navigationMode = $data['navigation_mode'] ?? 'sidebar';
+$homePreference = $data['home_preference'] ?? 'dashboard2';
 
 $db = new DatabaseConnection();
 $conn = $db->connection;
 
-$result = UserPreferences::saveForUser($conn, (int) $_SESSION['user_id'], $theme, $primaryColor, $navigationMode);
+$result = UserPreferences::saveForUser($conn, (int) $_SESSION['user_id'], $theme, $primaryColor, $navigationMode, $homePreference);
 $db->closeConnection();
 
 if (!$result['success']) {

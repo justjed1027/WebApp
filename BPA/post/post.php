@@ -378,7 +378,6 @@ profile svg
 
     .input-with-submit .create-post-input:focus {
       border-color: var(--primary-color);
-      box-shadow: 0 0 0 4px var(--primary-light), 0 8px 24px rgba(31, 255, 147, 0.15);
       outline: none;
     }
 
@@ -396,13 +395,11 @@ profile svg
       color: var(--background-main);
       cursor: pointer;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(31, 255, 147, 0.3);
       flex-shrink: 0;
     }
 
     .create-post-submit-btn:hover {
       transform: scale(1.1);
-      box-shadow: 0 6px 20px rgba(31, 255, 147, 0.5);
     }
 
     .create-post-submit-btn:active {
@@ -490,7 +487,6 @@ profile svg
       max-width: 90%;
       max-height: 85%;
       overflow: auto;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
       position: relative;
     }
     .modal-box img, .modal-box video {
@@ -550,7 +546,6 @@ profile svg
       border-radius: 999px;
       font-size: 0.78rem;
       font-weight: 700;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.15);
     }
     /* Comment button hover effects */
     .view-comments-btn:hover,
@@ -745,7 +740,7 @@ profile svg
                       <button class="post-menu-btn" data-post-id="<?php echo intval($post['post_id']); ?>" title="Post options" style="background:none;border:none;cursor:pointer;color:#666;font-size:1.2rem;padding:4px 8px;margin-left:8px;">
                         ⋮
                       </button>
-                      <div class="post-menu-dropdown" style="position:absolute;right:0;background:#fff;border:1px solid #ddd;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);z-index:10;min-width:140px;display:none;white-space:nowrap;">
+                      <div class="post-menu-dropdown" style="position:absolute;right:0;background:#fff;border:1px solid #ddd;border-radius:6px;z-index:10;min-width:140px;display:none;white-space:nowrap;">
                         <?php if ($user->user_is_admin): ?>
                           <!-- Admin Options -->
                           <button class="post-menu-item delete-post-option" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#d32f2f;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">

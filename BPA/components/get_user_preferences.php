@@ -24,6 +24,7 @@ echo json_encode([
     'theme' => $prefs['theme'],
     'primary_color' => $prefs['primary_color'],
     'primary_color_hex' => $prefs['primary_color_hex'],
-    'navigation_mode' => $prefs['navigation_mode']
+    'navigation_mode' => $prefs['navigation_mode'],
+    'home_preference' => $prefs['home_preference']
 ]);
 exit;

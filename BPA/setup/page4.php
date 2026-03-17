@@ -40,6 +40,7 @@ $db->closeConnection();
 $selectedTheme = $prefs['theme'] ?? 'mixed';
 $selectedColor = $prefs['primary_color'] ?? '#00D97E';
 $selectedNavigationMode = $prefs['navigation_mode'] ?? 'sidebar';
+$selectedHomePreference = $prefs['home_preference'] ?? 'dashboard2';
 $allowedColors = UserPreferences::getAllowedColors();
 
 // Page 4 — Choose Colors and Preferences
@@ -104,7 +105,23 @@ $allowedColors = UserPreferences::getAllowedColors();
           <button class="theme-card nav-mode-card<?php echo $selectedNavigationMode === 'top' ? ' selected' : ''; ?>" data-navigation="top" type="button">
             <div class="preview nav-top"></div>
             <div>Top Navigation</div>
-            <small>Floating top bar like your mockup</small>
+            <small>Shows your main menu across the top for quicker access</small>
+          </button>
+        </div>
+      </div>
+
+      <div class="input-card">
+        <h3 style="margin:0 0 14px 0; font-size:1.05rem; color:var(--text-primary, #0f172a);">Home Dashboard</h3>
+        <div class="theme-previews home-previews">
+          <button class="theme-card home-mode-card<?php echo $selectedHomePreference === 'courses' ? ' selected' : ''; ?>" data-home="courses" type="button">
+            <div class="preview home-courses"></div>
+            <div>Original (Course Dashboard)</div>
+            <small>Computer only. This was our original dashboard.</small>
+          </button>
+          <button class="theme-card home-mode-card<?php echo $selectedHomePreference === 'dashboard2' ? ' selected' : ''; ?>" data-home="dashboard2" type="button">
+            <div class="preview home-universal"></div>
+            <div>Universal</div>
+            <small>Resizes best for phones.</small>
           </button>
         </div>
       </div>
