@@ -66,6 +66,7 @@ $timeFilter = "(TIMESTAMP(e.events_date, COALESCE(e.events_start, '23:59:59')) >
 $search = isset($_GET['q']) ? trim($_GET['q']) : '';
 $category = isset($_GET['category']) ? trim($_GET['category']) : '';
 $status = isset($_GET['status']) ? trim($_GET['status']) : 'upcoming';
+$tags = isset($_GET['tags']) ? trim($_GET['tags']) : '';
 
 // Build dynamic WHERE clauses and bind parameters safely
 $whereClauses = [];
@@ -89,6 +90,13 @@ if ($status === 'past') {
     // those will only appear in the 'past' (Coming) registered list.
     $whereClauses[] = $timeFilter;
     $whereClauses[] = "NOT (" . $deadlinePassedExpr . ")";
+    
+    // Exclude events the user is already registered for
+    if ($user_id) {
+        $whereClauses[] = "NOT EXISTS(SELECT 1 FROM event_participants ep_exclude WHERE ep_exclude.ep_event_id = e.events_id AND ep_exclude.ep_user_id = ?)";
+        $bindTypes .= 'i';
+        $bindValues[] = (int)$user_id;
+    }
     
     // Hide full capacity events from users who are NOT registered
     // Show event if: (capacity is null) OR (spots available) OR (user is registered)
@@ -120,6 +128,26 @@ if ($category !== '') {
         $whereClauses[] = 'es.es_subject_id = ?';
         $bindTypes .= 'i';
         $bindValues[] = (int)$category;
+    }
+}
+
+// Tag filter: requires event to include each selected tag id.
+// Example: tags=1,3 means event must have both tag 1 and tag 3.
+if ($tags !== '') {
+    $tagParts = explode(',', $tags);
+    $tagIds = [];
+    foreach ($tagParts as $tagPart) {
+        $tagPart = trim($tagPart);
+        if ($tagPart !== '' && ctype_digit($tagPart)) {
+            $tagIds[] = (int)$tagPart;
+        }
+    }
+
+    $tagIds = array_values(array_unique($tagIds));
+    foreach ($tagIds as $tagId) {
+        $whereClauses[] = 'EXISTS (SELECT 1 FROM events_tags et_filter WHERE et_filter.et_events_id = e.events_id AND et_filter.et_tags_id = ?)';
+        $bindTypes .= 'i';
+        $bindValues[] = $tagId;
     }
 }
 
