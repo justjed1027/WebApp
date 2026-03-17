@@ -748,6 +748,31 @@ profile svg
       margin-top: 6px;
     }
 
+    .post-tags-search-wrap {
+      margin-top: 8px;
+    }
+
+    .post-tags-search {
+      width: 100%;
+      background: var(--background-hover);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      color: var(--text-primary);
+      padding: 8px 10px;
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .post-tags-search:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px var(--primary-light);
+    }
+
+    .post-tags-search::placeholder {
+      color: var(--text-muted);
+    }
+
     .post-tags-list {
       display: flex;
       flex-wrap: wrap;
@@ -821,6 +846,13 @@ profile svg
     .post-tags-empty {
       color: var(--text-muted);
       font-size: 0.88rem;
+    }
+
+    .post-tags-no-results {
+      display: none;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-top: 8px;
     }
 
     .feed-post-tags {
@@ -1091,6 +1123,9 @@ profile svg
                         <span class="post-tags-label"><span class="post-tags-plus">+</span><span>Tags</span></span>
                       </summary>
                       <div class="post-tags-note">Posts without a tag are tagged as General.</div>
+                      <div class="post-tags-search-wrap">
+                        <input type="text" id="postTagsSearch" class="post-tags-search" placeholder="Search tags or subjects..." autocomplete="off">
+                      </div>
                       <div class="post-tags-subject-grid" id="postTagsList">
                         <?php if (!empty($postTagsBySubject)): ?>
                           <?php foreach ($postTagsBySubject as $subjectName => $subjectTags): ?>
@@ -1110,6 +1145,7 @@ profile svg
                           <span class="post-tags-empty">No tags available yet.</span>
                         <?php endif; ?>
                       </div>
+                      <div id="postTagsNoResults" class="post-tags-no-results">No matching tags found.</div>
                     </details>
                   </div>
                 </form>
@@ -1284,7 +1320,7 @@ profile svg
 </body>
 
     <script src="../components/sidecontent.js"></script>
-    <script src="script.js?v=20251103"></script>
+    <script src="script.js?v=20260317"></script>
     <script>
       // Helper function to escape HTML
       function escapeHtml(text) {

@@ -92,6 +92,54 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // Tags search/filter inside expanded tags dropdown
+    const tagsSearchInput = document.getElementById('postTagsSearch');
+    const tagsNoResults = document.getElementById('postTagsNoResults');
+    const tagsDropdown = document.querySelector('.post-tags-dropdown');
+
+    if (tagsSearchInput && tagsDropdown) {
+        const applyTagFilter = () => {
+            const query = tagsSearchInput.value.trim().toLowerCase();
+            const subjectBoxes = tagsDropdown.querySelectorAll('.post-tags-subject-box');
+            let visibleBoxCount = 0;
+
+            subjectBoxes.forEach(box => {
+                const subjectTitleEl = box.querySelector('.post-tags-subject-title');
+                const subjectTitle = subjectTitleEl ? subjectTitleEl.textContent.toLowerCase() : '';
+                const tagOptions = box.querySelectorAll('.post-tag-option');
+                let visibleTagCount = 0;
+
+                tagOptions.forEach(option => {
+                    const chip = option.querySelector('.post-tag-chip');
+                    const tagText = chip ? chip.textContent.toLowerCase() : '';
+                    const matches = query === '' || tagText.includes(query) || subjectTitle.includes(query);
+                    option.style.display = matches ? '' : 'none';
+                    if (matches) visibleTagCount++;
+                });
+
+                const showBox = visibleTagCount > 0;
+                box.style.display = showBox ? '' : 'none';
+                if (showBox) visibleBoxCount++;
+            });
+
+            if (tagsNoResults) {
+                tagsNoResults.style.display = visibleBoxCount === 0 ? 'block' : 'none';
+            }
+        };
+
+        tagsSearchInput.addEventListener('input', applyTagFilter);
+        tagsSearchInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+            }
+        });
+        tagsDropdown.addEventListener('toggle', () => {
+            if (tagsDropdown.open) {
+                applyTagFilter();
+            }
+        });
+    }
+
     // File label and preview modal logic
     const fileInput = document.getElementById('avatar');
     const fileLabel = document.getElementById('fileLabel');
