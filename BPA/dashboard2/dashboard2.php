@@ -35,16 +35,54 @@ if (empty($userColor) || $userColor === 'Silver' || $userColor === '#00D97E') {
 }
 
 $imageMap = [
-    'Art & Design' => 'https://images.pexels.com/photos/196644/pexels-photo-196644.jpeg?auto=compress&cs=tinysrgb&w=1200',
-    'Business & Economics' => 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=1200',
-    'Computer Science' => 'https://images.pexels.com/photos/1181263/pexels-photo-1181263.jpeg?auto=compress&cs=tinysrgb&w=1200',
-    'English' => 'https://images.pexels.com/photos/590493/pexels-photo-590493.jpeg?auto=compress&cs=tinysrgb&w=1200',
-    'History' => 'https://images.pexels.com/photos/159866/books-book-pages-read-literature-159866.jpeg?auto=compress&cs=tinysrgb&w=1200',
-    'Languages' => 'https://images.pexels.com/photos/267669/pexels-photo-267669.jpeg?auto=compress&cs=tinysrgb&w=1200',
-    'Mathematics' => 'https://images.pexels.com/photos/6238297/pexels-photo-6238297.jpeg?auto=compress&cs=tinysrgb&w=1200',
-    'Music' => 'https://images.pexels.com/photos/164938/pexels-photo-164938.jpeg?auto=compress&cs=tinysrgb&w=1200',
-    'Science' => 'https://images.pexels.com/photos/2280571/pexels-photo-2280571.jpeg?auto=compress&cs=tinysrgb&w=1200'
+    'Art & Design' => '../images/art.png',
+    'Art' => '../images/art.png',
+    'Business & Economics' => '../images/law.png',
+    'Business' => '../images/law.png',
+    'Economics' => '../images/law.png',
+    'Computer Science' => '../images/tech.png',
+    'Technology' => '../images/tech.png',
+    'English' => '../images/language.png',
+    'History' => '../images/law.png',
+    'Languages' => '../images/language.png',
+    'Language' => '../images/language.png',
+    'Mathematics' => '../images/math.png',
+    'Math' => '../images/math.png',
+    'Music' => '../images/design.png',
+    'Science' => '../images/science.png'
 ];
+
+$resolveCategoryImage = static function (string $categoryName) use ($imageMap): string {
+    if (isset($imageMap[$categoryName])) {
+        return $imageMap[$categoryName];
+    }
+
+    $name = strtolower(trim($categoryName));
+    if ($name === '') {
+        return '../images/tech.png';
+    }
+
+    if (strpos($name, 'math') !== false) {
+        return '../images/math.png';
+    }
+    if (strpos($name, 'art') !== false || strpos($name, 'design') !== false) {
+        return '../images/art.png';
+    }
+    if (strpos($name, 'science') !== false || strpos($name, 'computer') !== false || strpos($name, 'tech') !== false) {
+        return '../images/science.png';
+    }
+    if (strpos($name, 'english') !== false || strpos($name, 'language') !== false) {
+        return '../images/language.png';
+    }
+    if (strpos($name, 'business') !== false || strpos($name, 'econom') !== false || strpos($name, 'history') !== false || strpos($name, 'law') !== false) {
+        return '../images/law.png';
+    }
+    if (strpos($name, 'music') !== false) {
+        return '../images/design.png';
+    }
+
+    return '../images/tech.png';
+};
 
 
 $userSkillCategories = [];
@@ -160,7 +198,7 @@ while ($row = $cardsResult->fetch_assoc()) {
             'id' => $categoryId,
             'name' => $categoryName,
             'description' => trim((string) ($row['category_description'] ?? '')),
-            'image' => $imageMap[$categoryName] ?? 'https://images.pexels.com/photos/159740/library-la-trobe-study-students-159740.jpeg?auto=compress&cs=tinysrgb&w=1200',
+            'image' => $resolveCategoryImage($categoryName),
             'colors' => $colors,
             'bucket' => $bucketByCategory[$categoryId] ?? 'Other Courses',
             'subjects' => [
