@@ -72,6 +72,12 @@ if ($_SERVER["REQUEST_METHOD"] === 'POST') {
 
   $user_id = $_SESSION['user_id'];
   $content = isset($_POST['content']) ? trim($_POST['content']) : '';
+  $selectedPtagIds = [];
+  if (isset($_POST['ptags']) && is_array($_POST['ptags'])) {
+    $selectedPtagIds = array_values(array_unique(array_filter(array_map('intval', $_POST['ptags']), function ($id) {
+      return $id > 0;
+    })));
+  }
 
   if ($content !== '') {
     // Detect columns we can write to (created_at, file_path)
@@ -146,13 +152,134 @@ if ($_SERVER["REQUEST_METHOD"] === 'POST') {
       }
 
       if (isset($stmt) && $stmt) {
-        if ($stmt->execute()) {
+        try {
+          $conn->begin_transaction();
+
+          if (!$stmt->execute()) {
+            throw new Exception('Error saving post: ' . $stmt->error);
+          }
+
+          $newPostId = (int) $conn->insert_id;
           $stmt->close();
+
+          $tagIdsToLink = $selectedPtagIds;
+
+          $ptagsCheck = $conn->query("SHOW TABLES LIKE 'ptags'");
+          $canUsePtags = $ptagsCheck && $ptagsCheck->num_rows > 0;
+          if ($ptagsCheck) {
+            $ptagsCheck->free();
+          }
+
+          $junctionCheck = $conn->query("SHOW TABLES LIKE 'post_ptags'");
+          $canUsePostPtags = $junctionCheck && $junctionCheck->num_rows > 0;
+          if ($junctionCheck) {
+            $junctionCheck->free();
+          }
+
+          if (!$canUsePtags || !$canUsePostPtags) {
+            if (!empty($selectedPtagIds)) {
+              throw new Exception('Tag tables are not ready yet. Please create ptags and post_ptags.');
+            }
+          } else {
+            if (empty($tagIdsToLink)) {
+              $generalTagId = 0;
+
+              $findGeneralTagId = function () use ($conn) {
+                $foundId = 0;
+                $tagIdFound = null;
+                $stmt = $conn->prepare("SELECT tag_id FROM ptags WHERE LOWER(TRIM(tag_name)) = 'general' ORDER BY tag_id ASC LIMIT 1");
+                if ($stmt) {
+                  $stmt->execute();
+                  $stmt->bind_result($tagIdFound);
+                  if ($stmt->fetch()) {
+                    $foundId = (int) $tagIdFound;
+                  }
+                  $stmt->close();
+                }
+                return $foundId;
+              };
+
+              try {
+                $generalTagId = $findGeneralTagId();
+
+                if ($generalTagId <= 0) {
+                  $ptagColumns = [];
+                  $colsRes = $conn->query("SHOW COLUMNS FROM ptags");
+                  if ($colsRes) {
+                    while ($col = $colsRes->fetch_assoc()) {
+                      $ptagColumns[strtolower($col['Field'])] = true;
+                    }
+                    $colsRes->free();
+                  }
+
+                  $tagsTableExists = false;
+                  $tagsTableCheck = $conn->query("SHOW TABLES LIKE 'tags'");
+                  if ($tagsTableCheck && $tagsTableCheck->num_rows > 0) {
+                    $tagsTableExists = true;
+                  }
+                  if ($tagsTableCheck) {
+                    $tagsTableCheck->free();
+                  }
+
+                  if ($tagsTableExists && isset($ptagColumns['tag_subject_id']) && isset($ptagColumns['tag_category_id'])) {
+                    $conn->query("INSERT INTO ptags (tag_name, tag_subject_id, tag_category_id)
+                                  SELECT t.tag_name, t.tag_subject_id, t.tag_category_id
+                                  FROM tags t
+                                  WHERE LOWER(TRIM(t.tag_name)) = 'general'
+                                  LIMIT 1");
+                  }
+
+                  $generalTagId = $findGeneralTagId();
+
+                  if ($generalTagId <= 0) {
+                    if (isset($ptagColumns['tag_subject_id']) && isset($ptagColumns['tag_category_id'])) {
+                      $conn->query("INSERT INTO ptags (tag_name, tag_subject_id, tag_category_id) VALUES ('General', NULL, NULL)");
+                    } elseif (isset($ptagColumns['tag_subject_id'])) {
+                      $conn->query("INSERT INTO ptags (tag_name, tag_subject_id) VALUES ('General', NULL)");
+                    } elseif (isset($ptagColumns['tag_category_id'])) {
+                      $conn->query("INSERT INTO ptags (tag_name, tag_category_id) VALUES ('General', NULL)");
+                    } else {
+                      $conn->query("INSERT INTO ptags (tag_name) VALUES ('General')");
+                    }
+
+                    $generalTagId = $findGeneralTagId();
+                  }
+                }
+              } catch (Throwable $tagFallbackError) {
+                $generalTagId = 0;
+              }
+
+              if ($generalTagId > 0) {
+                $tagIdsToLink[] = $generalTagId;
+              }
+            }
+
+            $tagIdsToLink = array_values(array_unique(array_map('intval', $tagIdsToLink)));
+
+            if (!empty($tagIdsToLink)) {
+              $linkStmt = $conn->prepare("INSERT IGNORE INTO post_ptags (ppt_post_id, ppt_ptag_id) SELECT ?, tag_id FROM ptags WHERE tag_id = ?");
+              if (!$linkStmt) {
+                throw new Exception('Database error preparing tag link statement.');
+              }
+
+              foreach ($tagIdsToLink as $ptagId) {
+                $linkStmt->bind_param('ii', $newPostId, $ptagId);
+                if (!$linkStmt->execute()) {
+                  $linkStmt->close();
+                  throw new Exception('Error linking post tags: ' . $linkStmt->error);
+                }
+              }
+
+              $linkStmt->close();
+            }
+          }
+
+          $conn->commit();
           header('Location: post.php');
           exit;
-        } else {
-          $error = 'Error saving post: ' . htmlspecialchars($stmt->error);
-          $stmt->close();
+        } catch (Exception $ex) {
+          $conn->rollback();
+          $error = htmlspecialchars($ex->getMessage());
         }
       } else {
         $error = 'Database error preparing statement.';
@@ -163,10 +290,36 @@ if ($_SERVER["REQUEST_METHOD"] === 'POST') {
   }
 }
 
- $sql = "SELECT posts.post_id, posts.user_id, posts.content, posts.created_at, posts.file_path, COALESCE(user.user_username, '') AS user_username 
-  FROM posts 
-  LEFT JOIN user ON posts.user_id = user.user_id
-  ORDER BY posts.created_at DESC";
+$ptagsTableCheck = $conn->query("SHOW TABLES LIKE 'ptags'");
+$hasPtagsTable = $ptagsTableCheck && $ptagsTableCheck->num_rows > 0;
+if ($ptagsTableCheck) {
+  $ptagsTableCheck->free();
+}
+
+$postPtagsTableCheck = $conn->query("SHOW TABLES LIKE 'post_ptags'");
+$hasPostPtagsTable = $postPtagsTableCheck && $postPtagsTableCheck->num_rows > 0;
+if ($postPtagsTableCheck) {
+  $postPtagsTableCheck->free();
+}
+
+if ($hasPtagsTable && $hasPostPtagsTable) {
+  $sql = "SELECT posts.post_id, posts.user_id, posts.content, posts.created_at, posts.file_path,
+                 COALESCE(user.user_username, '') AS user_username,
+                 GROUP_CONCAT(DISTINCT pt.tag_name ORDER BY pt.tag_name ASC SEPARATOR '||') AS post_tag_names
+          FROM posts
+          LEFT JOIN user ON posts.user_id = user.user_id
+          LEFT JOIN post_ptags ppt ON posts.post_id = ppt.ppt_post_id
+          LEFT JOIN ptags pt ON ppt.ppt_ptag_id = pt.tag_id
+          GROUP BY posts.post_id, posts.user_id, posts.content, posts.created_at, posts.file_path, user.user_username
+          ORDER BY posts.created_at DESC";
+} else {
+  $sql = "SELECT posts.post_id, posts.user_id, posts.content, posts.created_at, posts.file_path,
+                 COALESCE(user.user_username, '') AS user_username,
+                 '' AS post_tag_names
+          FROM posts
+          LEFT JOIN user ON posts.user_id = user.user_id
+          ORDER BY posts.created_at DESC";
+}
 $result = $conn->query($sql);
 
 // Debug helper: append ?debug=1 to URL to see query status
@@ -189,7 +342,78 @@ if (isset($_GET['debug']) && $_GET['debug'] == '1') {
 $posts = [];
 if ($result && $result->num_rows > 0) {
   while ($row = $result->fetch_assoc()) {
+    $row['post_tags'] = [];
+    if (!empty($row['post_tag_names'])) {
+      $row['post_tags'] = array_values(array_filter(array_map('trim', explode('||', $row['post_tag_names']))));
+    }
     $posts[] = $row;
+  }
+}
+
+$postTagsBySubject = [];
+$tagSourceTable = '';
+
+if ($hasPtagsTable) {
+  $tagSourceTable = 'ptags';
+}
+
+if ($tagSourceTable === '') {
+  $tagsTableCheck = $conn->query("SHOW TABLES LIKE 'tags'");
+  if ($tagsTableCheck && $tagsTableCheck->num_rows > 0) {
+    $tagSourceTable = 'tags';
+  }
+  if ($tagsTableCheck) {
+    $tagsTableCheck->free();
+  }
+}
+
+if ($tagSourceTable !== '') {
+  $tagTableColumns = [];
+  $tagColumnsResult = $conn->query("SHOW COLUMNS FROM {$tagSourceTable}");
+  if ($tagColumnsResult) {
+    while ($col = $tagColumnsResult->fetch_assoc()) {
+      $tagTableColumns[strtolower($col['Field'])] = true;
+    }
+    $tagColumnsResult->free();
+  }
+
+  $subjectColumn = '';
+  if (isset($tagTableColumns['tag_subject_id'])) {
+    $subjectColumn = 'tag_subject_id';
+  } elseif (isset($tagTableColumns['subject_id'])) {
+    $subjectColumn = 'subject_id';
+  }
+
+  if ($subjectColumn !== '') {
+    $tagSql = "SELECT t.tag_id, t.tag_name, COALESCE(s.subject_name, 'Other') AS subject_name
+               FROM {$tagSourceTable} t
+               LEFT JOIN subjects s ON t.{$subjectColumn} = s.subject_id
+               WHERE t.tag_name IS NOT NULL
+               ORDER BY subject_name ASC, t.tag_name ASC";
+  } else {
+    $tagSql = "SELECT t.tag_id, t.tag_name, 'Other' AS subject_name
+               FROM {$tagSourceTable} t
+               WHERE t.tag_name IS NOT NULL
+               ORDER BY t.tag_name ASC";
+  }
+
+  $tagsResult = $conn->query($tagSql);
+  if ($tagsResult) {
+    while ($tagRow = $tagsResult->fetch_assoc()) {
+      $subjectName = trim((string) ($tagRow['subject_name'] ?? 'Other'));
+      if ($subjectName === '') {
+        $subjectName = 'Other';
+      }
+      if (!isset($postTagsBySubject[$subjectName])) {
+        $postTagsBySubject[$subjectName] = [];
+      }
+
+      $postTagsBySubject[$subjectName][] = [
+        'id' => (int) $tagRow['tag_id'],
+        'name' => (string) $tagRow['tag_name']
+      ];
+    }
+    $tagsResult->free();
   }
 }
 
@@ -462,6 +686,161 @@ profile svg
       color: var(--text-primary);
       transform: translateY(-2px);
     }
+
+    .post-tags-row {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .post-tags-dropdown {
+      width: 100%;
+    }
+
+    .post-tags-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 10px;
+      color: var(--text-secondary);
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      list-style: none;
+      user-select: none;
+    }
+
+    .post-tags-toggle::-webkit-details-marker {
+      display: none;
+    }
+
+    .post-tags-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-secondary);
+    }
+
+    .post-tags-plus {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      color: var(--text-muted);
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1;
+      transition: transform 0.2s ease;
+    }
+
+    .post-tags-dropdown[open] .post-tags-plus {
+      transform: rotate(45deg);
+    }
+
+    .post-tags-note {
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      font-weight: 500;
+      margin-top: 6px;
+    }
+
+    .post-tags-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .post-tags-subject-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+      max-height: 220px;
+      overflow-y: auto;
+      padding-right: 4px;
+      margin-top: 10px;
+    }
+
+    .post-tags-subject-box {
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 10px;
+      background: var(--background-secondary);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .post-tags-subject-title {
+      color: var(--text-primary);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .post-tag-option {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .post-tag-option input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .post-tag-chip {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      background: var(--background-hover);
+      padding: 6px 12px;
+      font-size: 0.85rem;
+      line-height: 1;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .post-tag-option input:checked + .post-tag-chip {
+      background: var(--primary-light);
+      border-color: var(--primary-color);
+      color: var(--text-primary);
+      box-shadow: 0 0 0 2px rgba(31, 255, 147, 0.2);
+    }
+
+    .post-tag-option:hover .post-tag-chip {
+      border-color: var(--primary-color);
+      color: var(--text-primary);
+    }
+
+    .post-tags-empty {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+    }
+
+    .feed-post-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .feed-post-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border-color);
+      background: var(--background-hover);
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      line-height: 1;
+    }
   </style>
   <style>
     /* Modal for file preview */
@@ -706,6 +1085,33 @@ profile svg
                     <button type="button" id="filePreviewBtn" class="file-action-btn">Preview</button>
                     <button type="button" id="fileRemoveBtn" class="file-action-btn">Remove</button>
                   </div>
+                  <div class="post-tags-row">
+                    <details class="post-tags-dropdown">
+                      <summary class="post-tags-toggle">
+                        <span class="post-tags-label"><span class="post-tags-plus">+</span><span>Tags</span></span>
+                      </summary>
+                      <div class="post-tags-note">Posts without a tag are tagged as General.</div>
+                      <div class="post-tags-subject-grid" id="postTagsList">
+                        <?php if (!empty($postTagsBySubject)): ?>
+                          <?php foreach ($postTagsBySubject as $subjectName => $subjectTags): ?>
+                            <div class="post-tags-subject-box">
+                              <div class="post-tags-subject-title"><?php echo htmlspecialchars($subjectName); ?></div>
+                              <div class="post-tags-list">
+                                <?php foreach ($subjectTags as $tag): ?>
+                                  <label class="post-tag-option">
+                                    <input type="checkbox" name="ptags[]" value="<?php echo intval($tag['id']); ?>">
+                                    <span class="post-tag-chip">#<?php echo htmlspecialchars($tag['name']); ?></span>
+                                  </label>
+                                <?php endforeach; ?>
+                              </div>
+                            </div>
+                          <?php endforeach; ?>
+                        <?php else: ?>
+                          <span class="post-tags-empty">No tags available yet.</span>
+                        <?php endif; ?>
+                      </div>
+                    </details>
+                  </div>
                 </form>
           </div>
         </div>
@@ -794,6 +1200,14 @@ profile svg
                         <?php else: ?>
                           <div style="margin-top:8px;color:#555;font-size:0.9rem;">Attachment: <a href="<?php echo htmlspecialchars($publicPath); ?>" target="_blank">Open</a></div>
                         <?php endif; ?>
+                      </div>
+                    <?php endif; ?>
+
+                    <?php if (!empty($post['post_tags'])): ?>
+                      <div class="feed-post-tags">
+                        <?php foreach ($post['post_tags'] as $postTag): ?>
+                          <span class="feed-post-tag">#<?php echo htmlspecialchars($postTag); ?></span>
+                        <?php endforeach; ?>
                       </div>
                     <?php endif; ?>
                   </div>
