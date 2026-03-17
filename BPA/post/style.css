@@ -98,7 +98,6 @@ body {
   z-index: 100;
   overflow-y: auto;
   overflow-x: hidden;
-  box-shadow: var(--shadow-md);
   max-width: var(--sidebar-collapsed-width);
 }
 
@@ -262,7 +261,6 @@ body {
   color: var(--background-main);
   flex-shrink: 0;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 8px rgba(31, 255, 147, 0.15);
 }
 
 .sidebar:hover .profile-avatar {
@@ -451,7 +449,6 @@ body {
 
 .sidebar.collapsed .nav-link:hover {
   transform: translateX(0) scale(1.05);
-  box-shadow: 0 4px 12px rgba(31, 255, 147, 0.2);
 }
 
 .nav-link.active {
@@ -472,7 +469,6 @@ body {
   border-radius: 0 4px 4px 0;
   opacity: 1;
   transition: opacity var(--transition-fast);
-  box-shadow: 0 0 8px rgba(31, 255, 147, 0.4);
 }
 
 .sidebar.collapsed .nav-link.active::before {
@@ -482,7 +478,6 @@ body {
 .sidebar.collapsed .nav-link.active {
   background: var(--primary-color);
   color: var(--background-main);
-  box-shadow: 0 4px 12px rgba(31, 255, 147, 0.3);
 }
 
 /* Tooltips for collapsed state */
@@ -507,7 +502,6 @@ body {
   pointer-events: none;
   transition: all var(--transition-fast);
   z-index: 1000;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
   border: 1px solid var(--border-color);
 }
 
@@ -638,7 +632,6 @@ body.light-mode .sidebar.collapsed .moon-icon {
   align-items: center;
   justify-content: center;
   transition: transform var(--transition-normal);
-  box-shadow: 0 2px 8px rgba(31, 255, 147, 0.3);
 }
 
 .toggle-slider svg {
@@ -684,7 +677,6 @@ body.light-mode .toggle-slider {
   justify-content: space-between;
   padding: 0 36px;
   z-index: 90;
-  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.3);
   transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -754,7 +746,6 @@ body.light-mode .toggle-slider {
 .search-container:focus-within {
   border-color: var(--primary-color);
   background: var(--background-card);
-  box-shadow: 0 0 0 4px var(--primary-light), 0 4px 20px rgba(31, 255, 147, 0.15);
   transform: translateY(-2px);
 }
 
@@ -811,7 +802,6 @@ body.light-mode .toggle-slider {
   border-color: var(--primary-color);
   color: var(--primary-color);
   transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 6px 20px rgba(31, 255, 147, 0.25);
 }
 
 .icon-btn .badge {
@@ -830,7 +820,6 @@ body.light-mode .toggle-slider {
   align-items: center;
   justify-content: center;
   border: 2px solid var(--background-main);
-  box-shadow: 0 2px 8px rgba(255, 0, 128, 0.4);
   animation: pulse 2s ease-in-out infinite;
 }
 
@@ -846,7 +835,6 @@ body.light-mode .toggle-slider {
   border-radius: 12px;
   min-width: 18px;
   text-align: center;
-  box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
   border: 2px solid var(--background-secondary);
 }
 
@@ -866,12 +854,10 @@ body.light-mode .toggle-slider {
   color: var(--primary-color);
   cursor: pointer;
   transition: all var(--transition-fast);
-  box-shadow: 0 2px 8px rgba(31, 255, 147, 0.2);
 }
 
 .profile-btn:hover {
   transform: scale(1.08);
-  box-shadow: 0 0 0 4px var(--primary-light), 0 4px 16px rgba(31, 255, 147, 0.3);
   border-color: var(--primary-hover);
 }
 
@@ -967,12 +953,11 @@ body.light-mode .post {
   border-radius: 20px;
   padding: 28px;
   margin-bottom: 0;
-  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  transition: transform 0.18s ease, border-color 0.18s ease;
 }
 
 .create-post-card:hover {
   border-color: var(--border-color);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
   transform: translateY(-2px);
 }
 
@@ -1001,7 +986,6 @@ body.light-mode .post {
   justify-content: center;
   color: var(--background-main);
   flex-shrink: 0;
-  box-shadow: 0 4px 16px rgba(31, 255, 147, 0.4);
   position: relative;
 }
 
@@ -1022,13 +1006,11 @@ body.light-mode .post {
   cursor: pointer;
   flex-shrink: 0;
   transition: all var(--transition-fast);
-  box-shadow: 0 4px 12px rgba(31, 255, 147, 0.3);
 }
 
 .create-post-submit-btn:hover {
   background: var(--primary-color);
   transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 6px 20px rgba(31, 255, 147, 0.4);
 }
 
 .create-post-submit-btn:active {
@@ -1065,7 +1047,6 @@ body.light-mode .post {
 .create-post-input:focus {
   border-color: var(--primary-color);
   background: var(--background-secondary);
-  box-shadow: 0 0 0 4px var(--primary-light), 0 8px 24px rgba(31, 255, 147, 0.15);
 }
 
 .create-post-input::placeholder {
@@ -1107,7 +1088,6 @@ body.light-mode .post {
   border-color: var(--border-color);
   color: var(--text-secondary);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
 }
 
 /* Create Post Button - Redesigned */
@@ -1121,7 +1101,6 @@ body.light-mode .post {
   font-weight: 700;
   cursor: pointer;
   transition: all var(--transition-fast);
-  box-shadow: 0 4px 16px rgba(31, 255, 147, 0.3);
   position: relative;
   overflow: hidden;
 }
@@ -1143,12 +1122,10 @@ body.light-mode .post {
 
 .create-post-btn:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 28px rgba(31, 255, 147, 0.45);
 }
 
 .create-post-btn:active {
   transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(31, 255, 147, 0.3);
 }
 
 /* Posts Feed - Redesigned */
@@ -1162,13 +1139,11 @@ body.light-mode .post {
   border: 1px solid var(--border-color);
   border-radius: 20px;
   padding: 28px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
-  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  transition: transform 0.18s ease, border-color 0.18s ease;
 }
 
 .post:hover {
   border-color: var(--border-color);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
   transform: translateY(-2px);
 }
 
@@ -1291,7 +1266,6 @@ body.light-mode .post {
   background: var(--background-card);
   border: 2px solid var(--border-color);
   border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   z-index: 10;
   min-width: 160px;
   display: none;
@@ -1340,7 +1314,6 @@ body.light-mode .post {
   justify-content: center;
   font-weight: 700;
   font-size: 18px;
-  box-shadow: 0 4px 16px rgba(31, 255, 147, 0.3);
   border: 3px solid var(--background-card);
   position: relative;
 }
@@ -1530,7 +1503,6 @@ body.light-mode .post {
   padding: 16px;
   max-width: 300px;
   width: 90%;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
   border: 1px solid var(--border-color);
   animation: slideUp 0.3s ease;
   z-index: 1000000;
@@ -1615,7 +1587,6 @@ body.light-mode .post {
   right: 20px;
   padding: 16px 20px;
   border-radius: var(--border-radius-sm);
-  box-shadow: var(--shadow-lg);
   z-index: 10000;
   animation: slideInRight 0.3s ease;
   max-width: 400px;
@@ -1680,7 +1651,6 @@ body.light-mode .post {
 .notification-modal-content {
   background: var(--background-card);
   border-radius: var(--border-radius);
-  box-shadow: var(--shadow-lg);
   width: 100%;
   max-width: 450px;
   max-height: 80vh;

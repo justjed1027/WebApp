@@ -2,6 +2,7 @@
 session_start();
 require_once '../database/User.php';
 require_once '../database/DatabaseConnection.php';
+require_once '../database/UserPreferences.php';
 
 // Check if user is logged in
 if (empty($_SESSION['user_id'])) {
@@ -18,6 +19,11 @@ $user->populate($viewingUserId);
 // Fetch profile data from database
 $db = new DatabaseConnection();
 $conn = $db->connection;
+
+$currentUserId = (int) $_SESSION['user_id'];
+$prefs = UserPreferences::getForUser($conn, $currentUserId);
+$preferredPrimaryColor = $prefs['primary_color_hex'] ?? $prefs['primary_color'] ?? null;
+$hasPreferredPrimaryColor = is_string($preferredPrimaryColor) && preg_match('/^#[0-9a-fA-F]{6}$/', $preferredPrimaryColor);
 
 $profileSql = "SELECT user_firstname, user_lastname, phone, profile_summary, profile_filepath FROM profile WHERE user_id = ? LIMIT 1";
 $profileStmt = $conn->prepare($profileSql);
@@ -78,7 +84,7 @@ $db->closeConnection();
 
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"<?php echo $hasPreferredPrimaryColor ? ' style="--primary-color:' . htmlspecialchars($preferredPrimaryColor, ENT_QUOTES, 'UTF-8') . ';"' : ''; ?>>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -115,10 +121,10 @@ $db->closeConnection();
                         echo htmlspecialchars($displayName ?: $user->user_username); 
                     ?></h1>
                     <?php if ($displayName): ?>
-                        <p style="color:#888; font-size:0.95rem;">Username:<?php echo htmlspecialchars($user->user_username); ?> </p>
+                        <p class="profile-meta-text" style="font-size:0.95rem;">Username:<?php echo htmlspecialchars($user->user_username); ?> </p>
                     <?php endif; ?>
                     <p><?php echo htmlspecialchars($user->user_email); ?></p>
-                    <p style="color:#999; font-size:0.9rem;">Member since: <?php echo htmlspecialchars($user->user_create_date ?? 'N/A'); ?></p>
+                    <p class="profile-meta-text" style="font-size:0.9rem;">Member since: <?php echo htmlspecialchars($user->user_create_date ?? 'N/A'); ?></p>
                 </div>
             </div>
 
@@ -130,7 +136,7 @@ $db->closeConnection();
                         <div class="value"><?php echo nl2br(htmlspecialchars($bio)); ?></div>
                     </div>
                 <?php else: ?>
-                    <p style="color:#999; font-size:0.95rem; font-style:italic;">No bio added yet. Complete your profile in the setup flow.</p>
+                    <p class="profile-empty-text" style="font-size:0.95rem;">No bio added yet. Complete your profile in the setup flow.</p>
                 <?php endif; ?>
                 
                 <?php if ($phone): ?>
@@ -166,7 +172,7 @@ $db->closeConnection();
             <!-- Admin Panel (only visible to admins viewing other users) -->
             <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === 1 && $viewingUserId !== $_SESSION['user_id']): ?>
                 <div class="admin-panel">
-                    <h2 style="color: #1fff93; border-bottom: 2px solid #1fff93; padding-bottom: 12px;">Admin Controls</h2>
+                    <h2 class="admin-panel-title">Admin Controls</h2>
                     
                     <div class="admin-actions">
                         <button class="admin-btn admin-btn-primary" onclick="banUser(<?php echo intval($viewingUserId); ?>)" title="Ban this user from the platform">
@@ -184,17 +190,23 @@ $db->closeConnection();
 
                     <div class="admin-status">
                         <p><strong>User Status:</strong></p>
-                        <p id="userStatusDisplay" style="color: #1fff93; font-size: 0.95rem;">Active</p>
+                        <p id="userStatusDisplay" class="status-active" style="font-size: 0.95rem;">Active</p>
                     </div>
                 </div>
 
                 <style>
                     .admin-panel {
-                        background: #1e1e1e;
-                        border: 2px solid #1fff93;
+                        background: var(--surface-bg);
+                        border: 2px solid var(--primary-color);
                         border-radius: 14px;
                         padding: 20px;
                         margin-top: 24px;
+                    }
+
+                    .admin-panel-title {
+                        color: var(--primary-color);
+                        border-bottom: 2px solid var(--primary-color);
+                        padding-bottom: 12px;
                     }
 
                     .admin-actions {
@@ -216,42 +228,42 @@ $db->closeConnection();
                     }
 
                     .admin-btn-primary {
-                        background: #1fff93;
-                        color: #0a0a0a;
+                        background: var(--primary-color);
+                        color: var(--text-inverse);
                     }
 
                     .admin-btn-primary:hover {
-                        background: #19cc75;
+                        background: var(--primary-hover);
                         transform: translateY(-2px);
-                        box-shadow: 0 4px 12px rgba(31, 255, 147, 0.3);
+                        box-shadow: 0 4px 12px color-mix(in srgb, var(--primary-color) 32%, transparent);
                     }
 
                     .admin-btn-secondary {
-                        background: #3b82f6;
-                        color: white;
+                        background: var(--color-info);
+                        color: var(--text-inverse);
                     }
 
                     .admin-btn-secondary:hover {
-                        background: #2563eb;
+                        background: var(--color-info-hover);
                         transform: translateY(-2px);
-                        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+                        box-shadow: 0 4px 12px color-mix(in srgb, var(--color-info) 32%, transparent);
                     }
 
                     .admin-btn-danger {
-                        background: #ef4444;
-                        color: white;
+                        background: var(--color-danger);
+                        color: var(--text-inverse);
                     }
 
                     .admin-btn-danger:hover {
-                        background: #dc2626;
+                        background: var(--color-danger-hover);
                         transform: translateY(-2px);
-                        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+                        box-shadow: 0 4px 12px color-mix(in srgb, var(--color-danger) 32%, transparent);
                     }
 
                     .admin-status {
                         padding: 12px;
-                        background: rgba(31, 255, 147, 0.1);
-                        border-left: 4px solid #1fff93;
+                        background: var(--accent-soft-bg);
+                        border-left: 4px solid var(--primary-color);
                         border-radius: 8px;
                     }
 
@@ -260,15 +272,15 @@ $db->closeConnection();
                     }
 
                     .status-active {
-                        color: #1fff93 !important;
+                        color: var(--primary-color) !important;
                     }
 
                     .status-banned {
-                        color: #ef4444 !important;
+                        color: var(--color-danger) !important;
                     }
 
                     .status-deleted {
-                        color: #888 !important;
+                        color: var(--text-muted) !important;
                     }
                 </style>
 
@@ -280,7 +292,7 @@ $db->closeConnection();
                         </div>
                         <div class="admin-modal-body">
                             <p id="modalMessage">Are you sure?</p>
-                            <div id="modalDetails" style="display: none; margin-top: 12px; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 6px; max-height: 300px; overflow-y: auto;">
+                            <div id="modalDetails" class="modal-details">
                                 <!-- Activity details will go here -->
                             </div>
                         </div>
@@ -299,7 +311,7 @@ $db->closeConnection();
                         left: 0;
                         width: 100%;
                         height: 100%;
-                        background: rgba(0, 0, 0, 0.7);
+                        background: var(--overlay-strong);
                         z-index: 1000;
                         justify-content: center;
                         align-items: center;
@@ -310,12 +322,34 @@ $db->closeConnection();
                     }
 
                     .admin-modal-content {
-                        background: #1e1e1e;
-                        border: 2px solid #1fff93;
+                        --modal-accent: var(--primary-color);
+                        --modal-accent-soft: color-mix(in srgb, var(--modal-accent) 32%, transparent);
+                        background: var(--surface-bg);
+                        border: 2px solid var(--modal-accent);
                         border-radius: 14px;
                         width: 90%;
                         max-width: 500px;
-                        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+                        box-shadow: var(--shadow-elevated);
+                    }
+
+                    .admin-modal-content.tone-danger {
+                        --modal-accent: var(--color-danger);
+                        --modal-accent-soft: color-mix(in srgb, var(--color-danger) 32%, transparent);
+                    }
+
+                    .admin-modal-content.tone-success {
+                        --modal-accent: var(--primary-color);
+                        --modal-accent-soft: color-mix(in srgb, var(--modal-accent) 32%, transparent);
+                    }
+
+                    .admin-modal-content.tone-info {
+                        --modal-accent: var(--primary-color);
+                        --modal-accent-soft: color-mix(in srgb, var(--modal-accent) 32%, transparent);
+                    }
+
+                    .admin-modal-content.tone-error {
+                        --modal-accent: var(--color-danger);
+                        --modal-accent-soft: color-mix(in srgb, var(--color-danger) 32%, transparent);
                     }
 
                     .admin-modal-header {
@@ -323,19 +357,19 @@ $db->closeConnection();
                         justify-content: space-between;
                         align-items: center;
                         padding: 20px;
-                        border-bottom: 1px solid rgba(31, 255, 147, 0.3);
+                        border-bottom: 1px solid var(--modal-accent-soft);
                     }
 
                     .admin-modal-header h3 {
                         margin: 0;
-                        color: #1fff93;
+                        color: var(--modal-accent);
                         font-size: 1.3rem;
                     }
 
                     .admin-modal-close {
                         background: none;
                         border: none;
-                        color: #888;
+                        color: var(--text-muted);
                         font-size: 28px;
                         cursor: pointer;
                         padding: 0;
@@ -349,13 +383,42 @@ $db->closeConnection();
                     }
 
                     .admin-modal-close:hover {
-                        background: rgba(255, 255, 255, 0.1);
-                        color: #fff;
+                        background: var(--overlay-soft);
+                        color: var(--text-primary);
                     }
 
                     .admin-modal-body {
                         padding: 20px;
-                        color: #e0e0e0;
+                        color: var(--text-primary);
+                    }
+
+                    .modal-details {
+                        display: none;
+                        margin-top: 12px;
+                        padding: 12px;
+                        background: var(--surface-faint);
+                        border-radius: 6px;
+                        max-height: 300px;
+                        overflow-y: auto;
+                    }
+
+                    .modal-activity-summary {
+                        color: var(--text-primary);
+                    }
+
+                    .modal-activity-title {
+                        margin-top: 12px;
+                        font-weight: 600;
+                        color: var(--primary-color);
+                    }
+
+                    .modal-activity-row {
+                        font-size: 0.9rem;
+                        margin: 6px 0;
+                    }
+
+                    .modal-activity-date {
+                        color: var(--text-muted);
                     }
 
                     .admin-modal-body p {
@@ -367,7 +430,7 @@ $db->closeConnection();
                         display: flex;
                         gap: 12px;
                         padding: 20px;
-                        border-top: 1px solid rgba(31, 255, 147, 0.3);
+                        border-top: 1px solid var(--modal-accent-soft);
                         justify-content: flex-end;
                     }
 
@@ -382,30 +445,30 @@ $db->closeConnection();
                     }
 
                     .admin-modal-btn-cancel {
-                        background: #2a2a2a;
-                        color: #e0e0e0;
+                        background: var(--surface-alt);
+                        color: var(--text-primary);
                     }
 
                     .admin-modal-btn-cancel:hover {
-                        background: #3a3a3a;
+                        background: color-mix(in srgb, var(--surface-alt) 88%, var(--text-primary));
                     }
 
                     .admin-modal-btn-confirm {
-                        background: #1fff93;
-                        color: #0a0a0a;
+                        background: var(--primary-color);
+                        color: var(--text-inverse);
                     }
 
                     .admin-modal-btn-confirm:hover {
-                        background: #19cc75;
+                        background: color-mix(in srgb, var(--primary-color) 84%, var(--page-bg));
                     }
 
                     .admin-modal-btn-confirm.danger {
-                        background: #ef4444;
-                        color: white;
+                        background: var(--color-danger);
+                        color: var(--text-inverse);
                     }
 
                     .admin-modal-btn-confirm.danger:hover {
-                        background: #dc2626;
+                        background: var(--color-danger-hover);
                     }
                 </style>
 
@@ -450,8 +513,10 @@ $db->closeConnection();
                         
                         if (isDanger) {
                             confirmBtn.classList.add('danger');
+                            setModalTone('danger');
                         } else {
                             confirmBtn.classList.remove('danger');
+                            setModalTone('default');
                         }
                         
                         document.getElementById('adminModal').classList.add('active');
@@ -459,8 +524,19 @@ $db->closeConnection();
 
                     function closeAdminModal() {
                         document.getElementById('adminModal').classList.remove('active');
+                        setModalTone('default');
                         currentAdminAction = null;
                         currentUserId = null;
+                    }
+
+                    function setModalTone(tone = 'default') {
+                        const modalContent = document.querySelector('.admin-modal-content');
+                        if (!modalContent) return;
+
+                        modalContent.classList.remove('tone-danger', 'tone-success', 'tone-info', 'tone-error');
+                        if (tone !== 'default') {
+                            modalContent.classList.add(`tone-${tone}`);
+                        }
                     }
 
                     function executeAdminAction() {
@@ -511,16 +587,16 @@ $db->closeConnection();
                                 document.getElementById('modalMessage').textContent = 'User Activity Summary';
                                 
                                 let detailsHTML = `
-                                    <div style="color: #e0e0e0;">
+                                    <div class="modal-activity-summary">
                                         <p><strong>Posts:</strong> ${data.posts_count}</p>
                                         <p><strong>Comments:</strong> ${data.comments_count}</p>
                                 `;
                                 
                                 if (data.posts.length > 0) {
-                                    detailsHTML += '<p style="margin-top: 12px; font-weight: 600; color: #22c55e;">Recent Posts:</p>';
+                                    detailsHTML += '<p class="modal-activity-title">Recent Posts:</p>';
                                     data.posts.slice(0, 5).forEach(post => {
                                         const shortContent = post.content.substring(0, 60) + (post.content.length > 60 ? '...' : '');
-                                        detailsHTML += `<p style="font-size: 0.9rem; margin: 6px 0;"><span style="color: #888;">${post.created_at}</span><br>${escapeHtml(shortContent)}</p>`;
+                                        detailsHTML += `<p class="modal-activity-row"><span class="modal-activity-date">${post.created_at}</span><br>${escapeHtml(shortContent)}</p>`;
                                     });
                                 }
                                 
@@ -531,6 +607,7 @@ $db->closeConnection();
                                 detailsDiv.style.display = 'block';
                                 
                                 document.getElementById('adminModal').classList.add('active');
+                                setModalTone('info');
                                 document.getElementById('modalConfirmBtn').style.display = 'none';
                                 document.getElementById('modalCancelBtn').textContent = 'Close';
                                 
@@ -605,6 +682,7 @@ $db->closeConnection();
                         document.getElementById('modalCancelBtn').textContent = 'Close';
                         
                         document.getElementById('adminModal').classList.add('active');
+                        setModalTone('success');
                         currentAdminAction = null;
                     }
 
@@ -618,6 +696,7 @@ $db->closeConnection();
                         document.getElementById('modalCancelBtn').textContent = 'Close';
                         
                         document.getElementById('adminModal').classList.add('active');
+                        setModalTone('error');
                         currentAdminAction = null;
                     }
 

@@ -2,6 +2,7 @@
 session_start();
 require_once '../database/User.php';
 require_once '../database/DatabaseConnection.php';
+require_once '../database/UserPreferences.php';
 require_once '../components/sidecontent.php';
 
 if (!isset($_SESSION['user_id'])) {
@@ -21,6 +22,17 @@ $userId = (int) $_SESSION['user_id'];
 $db = new DatabaseConnection();
 $conn = $db->connection;
 
+// Get user preferences and set logo based on color
+$userPreferences = UserPreferences::getForUser($conn, $userId);
+$userColor = $userPreferences['primary_color'] ?? '#00D97E';
+
+// Logo path based on user's color preference
+if (empty($userColor) || $userColor === 'Silver' || $userColor === '#00D97E') {
+    $logoPath = '../images/skillswaplogotrans.png';
+} else {
+    $cleanColor = strtolower(ltrim($userColor, '#'));
+    $logoPath = '../images/logo' . $cleanColor . '.png';
+}
 
 $imageMap = [
     'Art & Design' => 'https://images.pexels.com/photos/196644/pexels-photo-196644.jpeg?auto=compress&cs=tinysrgb&w=1200',
@@ -185,7 +197,7 @@ $db->closeConnection();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SkillSwap - Courses 2</title>
-    <link rel="icon" type="image/png" href="../images/skillswaplogotrans.png">
+    <link rel="icon" type="image/png" href="<?php echo $logoPath; ?>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
@@ -193,11 +205,11 @@ $db->closeConnection();
     <link rel="stylesheet" href="../components/sidecontent.css">
     <link rel="stylesheet" href="dashboard2.css?v=<?php echo filemtime(__DIR__ . '/dashboard2.css'); ?>">
 </head>
-<body class="has-side-content dashboard2-page">
+<body class="has-side-content dashboard2-page" data-logo-path="<?php echo htmlspecialchars($logoPath, ENT_QUOTES, 'UTF-8'); ?>">
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-top">
             <div class="sidebar-logo">
-                <img src="../images/skillswaplogotrans.png" alt="SkillSwap logo" style="width:40px;">
+                <img src="<?php echo $logoPath; ?>" alt="SkillSwap logo" style="width:40px;">
                 <span class="logo-text">SkillSwap</span>
             </div>
 

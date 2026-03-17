@@ -45,6 +45,24 @@ class UserPreferences {
         return $value;
     }
 
+    public static function normalizeHomePreference($home) {
+        $value = strtolower(trim((string) $home));
+
+        if ($value === 'course') {
+            return 'courses';
+        }
+
+        if ($value === 'courses' || $value === 'dashboard2') {
+            return $value;
+        }
+
+        if ($value === 'universal' || $value === 'mobile') {
+            return 'dashboard2';
+        }
+
+        return 'dashboard2';
+    }
+
     public static function normalizeColor($color) {
         $value = trim((string) $color);
         if ($value === '') {
@@ -84,7 +102,8 @@ class UserPreferences {
             'theme' => 'mixed',
             'primary_color' => '#00D97E',
             'primary_color_hex' => '#00D97E',
-            'navigation_mode' => 'sidebar'
+            'navigation_mode' => 'sidebar',
+            'home_preference' => 'dashboard2'
         ];
 
         $mapping = self::resolveMapping($conn);
@@ -97,9 +116,11 @@ class UserPreferences {
         $themeCol = $mapping['theme'];
         $colorCol = $mapping['color'];
         $navigationCol = $mapping['navigation'];
+        $homeCol = $mapping['home'];
         $navigationType = $mapping['navigationType'];
+        $homeType = $mapping['homeType'];
 
-        if (!$themeCol && !$colorCol && !$navigationCol) {
+        if (!$themeCol && !$colorCol && !$navigationCol && !$homeCol) {
             return $prefs;
         }
 
@@ -112,6 +133,9 @@ class UserPreferences {
         }
         if ($navigationCol) {
             $selectCols[] = "`$navigationCol`";
+        }
+        if ($homeCol) {
+            $selectCols[] = "`$homeCol`";
         }
 
         $sql = "SELECT " . implode(', ', $selectCols) . " FROM `$table` WHERE `$userCol` = ? LIMIT 1";
@@ -143,10 +167,14 @@ class UserPreferences {
             $prefs['navigation_mode'] = self::normalizeNavigationMode($row[$navigationCol]);
         }
 
+        if ($homeCol && isset($row[$homeCol])) {
+            $prefs['home_preference'] = self::normalizeHomePreference($row[$homeCol]);
+        }
+
         return $prefs;
     }
 
-    public static function saveForUser($conn, $userId, $theme, $primaryColor, $navigationMode = 'sidebar') {
+    public static function saveForUser($conn, $userId, $theme, $primaryColor, $navigationMode = 'sidebar', $homePreference = 'dashboard2') {
         $mapping = self::resolveMapping($conn);
         if (!$mapping) {
             return [
@@ -160,9 +188,11 @@ class UserPreferences {
         $themeCol = $mapping['theme'];
         $colorCol = $mapping['color'];
         $navigationCol = $mapping['navigation'];
+        $homeCol = $mapping['home'];
         $navigationType = $mapping['navigationType'];
+        $homeType = $mapping['homeType'];
 
-        if (!$themeCol && !$colorCol && !$navigationCol) {
+        if (!$themeCol && !$colorCol && !$navigationCol && !$homeCol) {
             return [
                 'success' => false,
                 'message' => 'Preferences columns not found.'
@@ -172,9 +202,13 @@ class UserPreferences {
         $theme = self::normalizeTheme($theme);
         $primaryColor = self::normalizeColor($primaryColor);
         $navigationMode = self::normalizeNavigationMode($navigationMode);
+        $homePreference = self::normalizeHomePreference($homePreference);
         $navigationValue = self::isNumericColumnType($navigationType)
             ? ($navigationMode === 'top' ? 1 : 0)
             : $navigationMode;
+        $homeValue = self::isNumericColumnType($homeType)
+            ? ($homePreference === 'courses' ? 1 : 0)
+            : $homePreference;
 
         $existsSql = "SELECT 1 FROM `$table` WHERE `$userCol` = ? LIMIT 1";
         $existsStmt = $conn->prepare($existsSql);
@@ -216,6 +250,17 @@ class UserPreferences {
                 } else {
                     $types .= 's';
                     $params[] = (string) $navigationValue;
+                }
+            }
+
+            if ($homeCol) {
+                $sets[] = "`$homeCol` = ?";
+                if (self::isNumericColumnType($homeType)) {
+                    $types .= 'i';
+                    $params[] = (int) $homeValue;
+                } else {
+                    $types .= 's';
+                    $params[] = (string) $homeValue;
                 }
             }
 
@@ -273,6 +318,18 @@ class UserPreferences {
                 }
             }
 
+            if ($homeCol) {
+                $cols[] = "`$homeCol`";
+                $holders[] = '?';
+                if (self::isNumericColumnType($homeType)) {
+                    $types .= 'i';
+                    $params[] = (int) $homeValue;
+                } else {
+                    $types .= 's';
+                    $params[] = (string) $homeValue;
+                }
+            }
+
             $sql = "INSERT INTO `$table` (" . implode(', ', $cols) . ") VALUES (" . implode(', ', $holders) . ")";
             $stmt = $conn->prepare($sql);
             if (!$stmt) {
@@ -299,7 +356,8 @@ class UserPreferences {
             'theme' => $theme,
             'primary_color' => $primaryColor,
             'primary_color_hex' => self::toHexColor($primaryColor),
-            'navigation_mode' => $navigationMode
+            'navigation_mode' => $navigationMode,
+            'home_preference' => $homePreference
         ];
     }
 
@@ -363,7 +421,9 @@ class UserPreferences {
         $themeCol = self::pickColumn($columns, ['theme_preference', 'theme', 'theme_mode', 'preferred_theme']);
         $colorCol = self::pickColumn($columns, ['primary_color', 'color_scheme', 'accent_color', 'main_color']);
         $navigationCol = self::pickColumn($columns, ['navigation', 'navigation_mode', 'navigation_preference', 'nav_mode', 'nav_preference', 'layout_preference']);
+        $homeCol = self::pickColumn($columns, ['home_preference', 'home', 'home_page', 'home_screen', 'default_home', 'default_page']);
         $navigationType = $navigationCol ? ($columnTypes[$navigationCol] ?? '') : '';
+        $homeType = $homeCol ? ($columnTypes[$homeCol] ?? '') : '';
 
         $cache = [
             'table' => $table,
@@ -371,7 +431,9 @@ class UserPreferences {
             'theme' => $themeCol,
             'color' => $colorCol,
             'navigation' => $navigationCol,
-            'navigationType' => $navigationType
+            'navigationType' => $navigationType,
+            'home' => $homeCol,
+            'homeType' => $homeType
         ];
 
         return $cache;

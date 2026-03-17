@@ -2,6 +2,7 @@
 session_start();
 require_once '../database/User.php';
 require_once '../database/DatabaseConnection.php';
+require_once '../database/UserPreferences.php';
 if (!isset($_SESSION['user_id'])) {
   header('Location: ../login/login.php');
   exit();
@@ -22,6 +23,14 @@ require_once '../components/sidecontent.php';
 $user_id = $_SESSION['user_id'];
 $db = new DatabaseConnection();
 $conn = $db->connection;
+
+$userPreferences = UserPreferences::getForUser($conn, (int)$user_id);
+$userColor = $userPreferences['primary_color'] ?? '#00D97E';
+if (empty($userColor) || $userColor === 'Silver' || $userColor === '#00D97E') {
+  $logoPath = '../images/skillswaplogotrans.png';
+} else {
+  $logoPath = '../images/logo' . strtolower(ltrim($userColor, '#')) . '.png';
+}
 
 // Category icon and color mapping
 $categoryStyles = [
@@ -128,18 +137,18 @@ $conn->close();
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SkillSwap — Courses</title>
-  <link rel="icon" type="image/png" href="../images/skillswaplogotrans.png">
+  <link rel="icon" type="image/png" href="<?php echo $logoPath; ?>">
   <link rel="stylesheet" href="courses.css">
   <link rel="stylesheet" href="../components/sidecontent.css">
 </head>
-<body class="has-side-content">
+<body class="has-side-content" data-logo-path="<?php echo htmlspecialchars($logoPath, ENT_QUOTES, 'UTF-8'); ?>">
 
   <!-- Sidebar Navigation -->
   <aside class="sidebar" id="sidebar">
     <!-- Top Section: Logo & Profile -->
     <div class="sidebar-top">
       <div class="sidebar-logo">
-        <img src="../images/skillswaplogotrans.png" style="width:40px;">
+        <img src="<?php echo $logoPath; ?>" style="width:40px;">
         <span class="logo-text">SkillSwap</span>
       </div>
 

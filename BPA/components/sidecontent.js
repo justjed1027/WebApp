@@ -2,7 +2,12 @@
 document.addEventListener('DOMContentLoaded', () => {
   const sidebar = document.getElementById('sidebar');
   const mobileBreakpoint = window.matchMedia('(max-width: 1024px)');
+  const topNavPhoneBreakpoint = window.matchMedia('(max-width: 810px)');
   let lastScrollY = window.scrollY;
+  let lastTopNavScrollY = window.scrollY;
+  let currentHomePreference = 'dashboard2';
+  let preferredNavigationMode = 'sidebar';
+  let currentPrimaryHex = null;
 
   const clamp = (num, min, max) => Math.min(max, Math.max(min, num));
 
@@ -30,10 +35,30 @@ document.addEventListener('DOMContentLoaded', () => {
     return `#${nr.toString(16).padStart(2, '0')}${ng.toString(16).padStart(2, '0')}${nb.toString(16).padStart(2, '0')}`.toUpperCase();
   };
 
+  const getLogoSrc = () => {
+    const appBase = getAppBase();
+    if (currentPrimaryHex) {
+      const colorKey = currentPrimaryHex.replace('#', '').toLowerCase();
+      return `${appBase}/images/logo${colorKey}.png`;
+    }
+    return `${appBase}/images/skillswaplogotrans.png`;
+  };
+
+  const updateLogoImages = () => {
+    const appBase = getAppBase();
+    const newSrc = getLogoSrc();
+    const fallbackSrc = `${appBase}/images/skillswaplogotrans.png`;
+    document.querySelectorAll('.top-nav-brand img, .mobile-site-brand img').forEach((img) => {
+      img.onerror = function () { this.src = fallbackSrc; this.onerror = null; };
+      img.src = newSrc;
+    });
+  };
+
   const applyPrimaryColor = (value) => {
     const hex = toHexColor(value);
     if (!hex) return;
 
+    currentPrimaryHex = hex;
     const hover = adjustHex(hex, -25) || hex;
     document.documentElement.style.setProperty('--primary-color', hex);
     document.documentElement.style.setProperty('--primary-hover', hover);
@@ -42,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.style.setProperty('--primary-color', hex);
     document.body.style.setProperty('--primary-hover', hover);
     document.body.style.setProperty('--primary-light', `color-mix(in srgb, ${hex} 15%, transparent)`);
+    updateLogoImages();
   };
 
   const applyThemePreference = (theme) => {
@@ -60,11 +86,75 @@ document.addEventListener('DOMContentLoaded', () => {
     return idx >= 0 ? path.substring(0, idx + marker.length - 1) : '';
   };
 
+  const normalizeHomePreference = (value) => {
+    const normalized = (value || '').toLowerCase().trim();
+    if (normalized === 'course') return 'courses';
+    if (normalized === 'courses') return 'courses';
+    return 'dashboard2';
+  };
+
+  const getHomeUrl = (homePreference = currentHomePreference) => {
+    const appBase = getAppBase();
+    const home = normalizeHomePreference(homePreference);
+    return `${appBase}/${home}/${home}.php`;
+  };
+
+  const applyHomePreference = (homePreference) => {
+    currentHomePreference = normalizeHomePreference(homePreference);
+    const homeUrl = getHomeUrl(currentHomePreference);
+
+    if (sidebar) {
+      const dashboardLinks = sidebar.querySelectorAll('.nav-link[data-tooltip="Dashboard"]');
+      dashboardLinks.forEach((link) => {
+        link.setAttribute('href', homeUrl);
+      });
+    }
+
+    const topBrand = document.querySelector('.top-nav-brand');
+    if (topBrand) {
+      topBrand.setAttribute('href', homeUrl);
+    }
+
+    const mobileBrand = document.querySelector('.mobile-site-brand');
+    if (mobileBrand) {
+      mobileBrand.setAttribute('href', homeUrl);
+    }
+  };
+
   const removeTopNav = () => {
     const topNav = document.getElementById('topNavShell');
     if (topNav) {
       topNav.remove();
     }
+
+    const restoreBtn = document.getElementById('topNavRestoreBtn');
+    if (restoreBtn) {
+      restoreBtn.remove();
+    }
+  };
+
+  const ensureTopNavRestoreButton = () => {
+    let restoreBtn = document.getElementById('topNavRestoreBtn');
+    if (restoreBtn) {
+      return restoreBtn;
+    }
+
+    restoreBtn = document.createElement('button');
+    restoreBtn.type = 'button';
+    restoreBtn.id = 'topNavRestoreBtn';
+    restoreBtn.className = 'top-nav-restore';
+    restoreBtn.setAttribute('aria-label', 'Show top navigation');
+    restoreBtn.setAttribute('title', 'Show top navigation');
+    restoreBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+        <path d="M8.53 4.47a.75.75 0 0 0-1.06 0L3.22 8.72a.75.75 0 0 0 1.06 1.06L8 6.06l3.72 3.72a.75.75 0 1 0 1.06-1.06z"/>
+      </svg>`;
+    restoreBtn.addEventListener('click', () => {
+      document.body.classList.remove('top-nav-scrolled-hidden');
+      lastTopNavScrollY = window.scrollY;
+    });
+    document.body.appendChild(restoreBtn);
+    return restoreBtn;
   };
 
   const getLinkLabel = (link) => {
@@ -96,9 +186,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const left = document.createElement('div');
     left.className = 'top-nav-left';
+    const topNavLogoSrc = getLogoSrc();
+    const topNavFallbackSrc = `${appBase}/images/skillswaplogotrans.png`;
     left.innerHTML = `
-      <a class="top-nav-brand" href="${appBase}/courses/courses.php" aria-label="SkillSwap home">
-        <img src="${appBase}/images/skillswaplogotrans.png" alt="SkillSwap logo">
+      <a class="top-nav-brand" href="${getHomeUrl()}" aria-label="SkillSwap home">
+        <img src="${topNavLogoSrc}" alt="SkillSwap logo" onerror="this.src='${topNavFallbackSrc}';this.onerror=null;">
       </a>`;
 
     const sidebarAvatar = sidebar.querySelector('.profile-avatar');
@@ -158,10 +250,22 @@ document.addEventListener('DOMContentLoaded', () => {
       </svg>`;
     right.appendChild(themeBtn);
 
+    const hideBtn = document.createElement('button');
+    hideBtn.type = 'button';
+    hideBtn.className = 'top-nav-control top-nav-hide';
+    hideBtn.setAttribute('title', 'Hide top navigation');
+    hideBtn.setAttribute('aria-label', 'Hide top navigation');
+    hideBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+        <path d="M3.22 10.78a.75.75 0 0 0 1.06 0L8 7.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L8.53 5.47a.75.75 0 0 0-1.06 0L3.22 9.72a.75.75 0 0 0 0 1.06"/>
+      </svg>`;
+    right.appendChild(hideBtn);
+
     shell.appendChild(left);
     shell.appendChild(center);
     shell.appendChild(right);
     document.body.appendChild(shell);
+    ensureTopNavRestoreButton();
 
     const settingsBtn = shell.querySelector('.top-nav-settings');
     if (settingsBtn && settingsLink) {
@@ -182,11 +286,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const isLight = document.body.classList.contains('light-mode');
       localStorage.setItem('theme', isLight ? 'light' : 'dark');
     });
+
+    hideBtn.addEventListener('click', () => {
+      document.body.classList.add('top-nav-scrolled-hidden');
+      lastTopNavScrollY = window.scrollY;
+    });
   };
 
   const applyNavigationMode = (mode) => {
     const navMode = (mode || '').toLowerCase() === 'top' ? 'top' : 'sidebar';
-    const isTopMode = navMode === 'top';
+    preferredNavigationMode = navMode;
+    const isTopMode = navMode === 'top' && !topNavPhoneBreakpoint.matches;
     document.body.classList.toggle('top-nav-mode', isTopMode);
 
     if (isTopMode) {
@@ -202,6 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const localTheme = localStorage.getItem('theme');
     const localPrimary = localStorage.getItem('primary_color');
     const localNavigation = localStorage.getItem('navigation_mode');
+    const localHomePreference = localStorage.getItem('home_preference');
     if (localTheme) {
       applyThemePreference(localTheme);
     }
@@ -210,6 +321,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (localNavigation) {
       applyNavigationMode(localNavigation);
+    }
+    if (localHomePreference) {
+      applyHomePreference(localHomePreference);
     }
   };
 
@@ -231,6 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
       applyThemePreference(data.theme);
       applyPrimaryColor(data.primary_color_hex || data.primary_color);
       applyNavigationMode(data.navigation_mode);
+      applyHomePreference(data.home_preference);
 
       if (data.theme) {
         localStorage.setItem('theme', data.theme);
@@ -240,6 +355,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       if (data.navigation_mode) {
         localStorage.setItem('navigation_mode', data.navigation_mode);
+      }
+      if (data.home_preference) {
+        localStorage.setItem('home_preference', normalizeHomePreference(data.home_preference));
       }
     } catch (error) {
       // Keep existing local preferences if DB load fails.
@@ -354,10 +472,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     brand = document.createElement('a');
     brand.className = 'mobile-site-brand';
-    brand.href = `${appBase}/courses/courses.php`;
+    brand.href = getHomeUrl();
     brand.setAttribute('aria-label', 'SkillSwap home');
+    const mobileFallbackSrc = `${appBase}/images/skillswaplogotrans.png`;
+    const mobileLogoSrc = getLogoSrc() || mobileFallbackSrc;
     brand.innerHTML = `
-      <img src="${appBase}/images/skillswaplogotrans.png" alt="SkillSwap logo">
+      <img src="${mobileLogoSrc}" alt="SkillSwap logo" onerror="this.src='${mobileFallbackSrc}';this.onerror=null;">
       <span>SkillSwap</span>`;
 
     document.body.appendChild(brand);
@@ -401,6 +521,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     lastScrollY = currentScrollY;
+  };
+
+  const updateTopNavScroll = () => {
+    if (!document.body.classList.contains('top-nav-mode')) {
+      document.body.classList.remove('top-nav-scrolled-hidden');
+      lastTopNavScrollY = window.scrollY;
+      return;
+    }
+
+    const currentScrollY = window.scrollY;
+    const delta = currentScrollY - lastTopNavScrollY;
+
+    if (currentScrollY <= 20 || delta < -4) {
+      document.body.classList.remove('top-nav-scrolled-hidden');
+    } else if (delta > 4 && currentScrollY > 60) {
+      document.body.classList.add('top-nav-scrolled-hidden');
+    }
+
+    lastTopNavScrollY = currentScrollY;
   };
 
   // Settings confirmation modal wiring (shared across pages with the sidebar)
@@ -490,10 +629,37 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   if (typeof mobileBreakpoint.addEventListener === 'function') {
-    mobileBreakpoint.addEventListener('change', syncMobileSidebarState);
+    mobileBreakpoint.addEventListener('change', () => {
+      applyNavigationMode(preferredNavigationMode);
+      ensureMobileSidebar();
+      ensureMobileBrand();
+      syncMobileSidebarState();
+    });
   } else if (typeof mobileBreakpoint.addListener === 'function') {
-    mobileBreakpoint.addListener(syncMobileSidebarState);
+    mobileBreakpoint.addListener(() => {
+      applyNavigationMode(preferredNavigationMode);
+      ensureMobileSidebar();
+      ensureMobileBrand();
+      syncMobileSidebarState();
+    });
+  }
+
+  if (typeof topNavPhoneBreakpoint.addEventListener === 'function') {
+    topNavPhoneBreakpoint.addEventListener('change', () => {
+      applyNavigationMode(preferredNavigationMode);
+      ensureMobileSidebar();
+      ensureMobileBrand();
+      syncMobileSidebarState();
+    });
+  } else if (typeof topNavPhoneBreakpoint.addListener === 'function') {
+    topNavPhoneBreakpoint.addListener(() => {
+      applyNavigationMode(preferredNavigationMode);
+      ensureMobileSidebar();
+      ensureMobileBrand();
+      syncMobileSidebarState();
+    });
   }
 
   window.addEventListener('scroll', updateMobileTopControls, { passive: true });
+  window.addEventListener('scroll', updateTopNavScroll, { passive: true });
 });

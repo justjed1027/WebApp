@@ -15,10 +15,19 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 require_once '../database/DatabaseConnection.php';
 require_once '../database/User.php';
 require_once '../database/Connection.php';
+require_once '../database/UserPreferences.php';
 require_once '../components/sidecontent.php';
 
 $db = new DatabaseConnection();
 $con = $db->connection;
+
+$userPreferences = UserPreferences::getForUser($con, (int)$_SESSION['user_id']);
+$userColor = $userPreferences['primary_color'] ?? '#00D97E';
+if (empty($userColor) || $userColor === 'Silver' || $userColor === '#00D97E') {
+  $logoPath = '../images/skillswaplogotrans.png';
+} else {
+  $logoPath = '../images/logo' . strtolower(ltrim($userColor, '#')) . '.png';
+}
 
 // Helper: compute mutual connections between two users
 function getMutualConnectionsCount(mysqli $con, int $userA, int $userB): int {
@@ -101,7 +110,7 @@ if (!empty($_SESSION['user_id'])) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Connections | SkillSwap</title>
-  <link rel="icon" type="image/png" href="../images/skillswaplogotrans.png">
+  <link rel="icon" type="image/png" href="<?php echo $logoPath; ?>">
   <!-- Shared styles for navbar and layout -->
   <link rel="stylesheet" href="../calendar/calendar.css">
   <link rel="stylesheet" href="../components/sidecontent.css">
@@ -109,14 +118,14 @@ if (!empty($_SESSION['user_id'])) {
   <link rel="stylesheet" href="connections.css">
   
 </head>
-<body class="has-side-content">
+<body class="has-side-content" data-logo-path="<?php echo htmlspecialchars($logoPath, ENT_QUOTES, 'UTF-8'); ?>">
 
   <!-- Sidebar Navigation (reused from existing pages) -->
   <aside class="sidebar" id="sidebar">
     <!-- Top Section: Logo & Profile -->
     <div class="sidebar-top">
       <div class="sidebar-logo">
-        <img src="../images/skillswaplogotrans.png" style="width:40px;">
+        <img src="<?php echo $logoPath; ?>" style="width:40px;">
         <span class="logo-text">SkillSwap</span>
       </div>
 

@@ -3,6 +3,7 @@ session_start();
 require_once '../database/User.php';
 require_once '../database/DatabaseConnection.php';
 require_once '../database/Notification.php';
+require_once '../database/UserPreferences.php';
 
 // Handle logout FIRST, before any output
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
@@ -63,7 +64,13 @@ function publicPath($dbPath)
 $db = new DatabaseConnection();
 $conn = $db->connection;
 
-// Handle inline post submission (text-only)
+$userPreferences = UserPreferences::getForUser($conn, (int)($_SESSION['user_id'] ?? 0));
+$userColor = $userPreferences['primary_color'] ?? '#00D97E';
+if (empty($userColor) || $userColor === 'Silver' || $userColor === '#00D97E') {
+  $logoPath = '../images/skillswaplogotrans.png';
+} else {
+  $logoPath = '../images/logo' . strtolower(ltrim($userColor, '#')) . '.png';
+}
 if ($_SERVER["REQUEST_METHOD"] === 'POST') {
   if (empty($_SESSION['user_id'])) {
     header('Location: ../landing/landing.php');
@@ -334,7 +341,7 @@ profile svg
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SkillSwap — Posts</title>
-  <link rel="icon" type="image/png" href="../images/skillswaplogotrans.png">
+  <link rel="icon" type="image/png" href="<?php echo $logoPath; ?>">
   <link rel="stylesheet" href="style.css?v=nav-20251022">
   <link rel="stylesheet" href="../calendar/calendar.css">
   <link rel="stylesheet" href="../components/sidecontent.css">
@@ -371,7 +378,6 @@ profile svg
 
     .input-with-submit .create-post-input:focus {
       border-color: var(--primary-color);
-      box-shadow: 0 0 0 4px var(--primary-light), 0 8px 24px rgba(31, 255, 147, 0.15);
       outline: none;
     }
 
@@ -389,13 +395,11 @@ profile svg
       color: var(--background-main);
       cursor: pointer;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(31, 255, 147, 0.3);
       flex-shrink: 0;
     }
 
     .create-post-submit-btn:hover {
       transform: scale(1.1);
-      box-shadow: 0 6px 20px rgba(31, 255, 147, 0.5);
     }
 
     .create-post-submit-btn:active {
@@ -483,7 +487,6 @@ profile svg
       max-width: 90%;
       max-height: 85%;
       overflow: auto;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
       position: relative;
     }
     .modal-box img, .modal-box video {
@@ -543,7 +546,6 @@ profile svg
       border-radius: 999px;
       font-size: 0.78rem;
       font-weight: 700;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.15);
     }
     /* Comment button hover effects */
     .view-comments-btn:hover,
@@ -559,14 +561,14 @@ profile svg
   </style>
 </head>
 
-<body class="has-side-content">
+<body class="has-side-content" data-logo-path="<?php echo htmlspecialchars($logoPath, ENT_QUOTES, 'UTF-8'); ?>">
 
   <!-- Sidebar Navigation (copied from courses page for working hover expand) -->
   <aside class="sidebar" id="sidebar">
     <!-- Top Section: Logo & Profile -->
     <div class="sidebar-top">
       <div class="sidebar-logo">
-        <img src="../images/skillswaplogotrans.png" style="width:40px;">
+        <img src="<?php echo $logoPath; ?>" style="width:40px;">
         <span class="logo-text">SkillSwap</span>
       </div>
 
@@ -738,7 +740,7 @@ profile svg
                       <button class="post-menu-btn" data-post-id="<?php echo intval($post['post_id']); ?>" title="Post options" style="background:none;border:none;cursor:pointer;color:#666;font-size:1.2rem;padding:4px 8px;margin-left:8px;">
                         ⋮
                       </button>
-                      <div class="post-menu-dropdown" style="position:absolute;right:0;background:#fff;border:1px solid #ddd;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);z-index:10;min-width:140px;display:none;white-space:nowrap;">
+                      <div class="post-menu-dropdown" style="position:absolute;right:0;background:#fff;border:1px solid #ddd;border-radius:6px;z-index:10;min-width:140px;display:none;white-space:nowrap;">
                         <?php if ($user->user_is_admin): ?>
                           <!-- Admin Options -->
                           <button class="post-menu-item delete-post-option" data-post-id="<?php echo intval($post['post_id']); ?>" style="width:100%;text-align:left;background:none;border:none;padding:10px 14px;cursor:pointer;color:#d32f2f;font-size:0.95rem;transition:background 0.2s;font-family:inherit;">

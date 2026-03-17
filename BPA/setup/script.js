@@ -255,14 +255,19 @@ document.addEventListener('DOMContentLoaded', () => {
   // PAGE 4: Colors & Theme
   if (step === '4') {
     const swatches = document.querySelectorAll('.swatch');
-    const cards = document.querySelectorAll('.theme-card');
+    const themeCards = document.querySelectorAll('.theme-card[data-theme]');
     const navModeCards = document.querySelectorAll('.nav-mode-card');
+    const homeModeCards = document.querySelectorAll('.home-mode-card');
     const finish = document.getElementById('finish');
 
     const savedColor = localStorage.getItem('setup_color');
     const savedTheme = localStorage.getItem('setup_theme') || 'mixed';
+    const savedNavigationMode = localStorage.getItem('setup_navigation_mode') || 'sidebar';
+    const savedHomePreference = localStorage.getItem('setup_home_preference') || 'dashboard2';
     if (savedColor) setAccent(savedColor);
-    cards.forEach(c => c.classList.toggle('selected', c.getAttribute('data-theme') === savedTheme));
+    themeCards.forEach(c => c.classList.toggle('selected', c.getAttribute('data-theme') === savedTheme));
+    navModeCards.forEach(c => c.classList.toggle('selected', c.getAttribute('data-navigation') === savedNavigationMode));
+    homeModeCards.forEach(c => c.classList.toggle('selected', c.getAttribute('data-home') === savedHomePreference));
     if (savedColor) {
       swatches.forEach(s => s.classList.toggle('selected', s.getAttribute('data-color') === savedColor));
     }
@@ -275,32 +280,35 @@ document.addEventListener('DOMContentLoaded', () => {
       setAccent(hex);
     }));
 
-    cards.forEach(card => card.addEventListener('click', () => {
-      if (card.classList.contains('nav-mode-card')) {
-        navModeCards.forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
-        localStorage.setItem('setup_navigation_mode', card.getAttribute('data-navigation'));
-        return;
-      }
-
-      cards.forEach(c => {
-        if (!c.classList.contains('nav-mode-card')) {
-          c.classList.remove('selected');
-        }
-      });
+    themeCards.forEach(card => card.addEventListener('click', () => {
+      themeCards.forEach(c => c.classList.remove('selected'));
       card.classList.add('selected');
       localStorage.setItem('setup_theme', card.getAttribute('data-theme'));
+    }));
+
+    navModeCards.forEach(card => card.addEventListener('click', () => {
+      navModeCards.forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      localStorage.setItem('setup_navigation_mode', card.getAttribute('data-navigation'));
+    }));
+
+    homeModeCards.forEach(card => card.addEventListener('click', () => {
+      homeModeCards.forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      localStorage.setItem('setup_home_preference', card.getAttribute('data-home'));
     }));
 
     finish && finish.addEventListener('click', async () => {
       const selectedSwatch = document.querySelector('.swatch.selected');
       const selectedThemeCard = document.querySelector('.theme-card.selected');
       const selectedNavCard = document.querySelector('.nav-mode-card.selected');
+      const selectedHomeCard = document.querySelector('.home-mode-card.selected');
       const primaryColor = selectedSwatch ? selectedSwatch.getAttribute('data-color') : '#00D97E';
       const theme = selectedThemeCard && !selectedThemeCard.classList.contains('nav-mode-card')
         ? selectedThemeCard.getAttribute('data-theme')
         : 'mixed';
       const navigationMode = selectedNavCard ? selectedNavCard.getAttribute('data-navigation') : 'sidebar';
+      const homePreference = selectedHomeCard ? selectedHomeCard.getAttribute('data-home') : 'dashboard2';
 
       finish.disabled = true;
       finish.textContent = 'Saving...';
@@ -314,7 +322,8 @@ document.addEventListener('DOMContentLoaded', () => {
           body: JSON.stringify({
             theme,
             primary_color: primaryColor,
-            navigation_mode: navigationMode
+            navigation_mode: navigationMode,
+            home_preference: homePreference
           })
         });
 
@@ -326,11 +335,16 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('theme', data.theme);
         localStorage.setItem('primary_color', data.primary_color_hex || primaryColor);
         localStorage.setItem('navigation_mode', data.navigation_mode || navigationMode);
+        localStorage.setItem('home_preference', data.home_preference || homePreference);
         localStorage.setItem('setup_theme', data.theme);
         localStorage.setItem('setup_color', data.primary_color || primaryColor);
         localStorage.setItem('setup_navigation_mode', data.navigation_mode || navigationMode);
+        localStorage.setItem('setup_home_preference', data.home_preference || homePreference);
 
-        window.location.href = '../dashboard2/dashboard2.php';
+        const destinationHome = (data.home_preference || homePreference || 'dashboard2').toLowerCase() === 'courses'
+          ? 'courses'
+          : 'dashboard2';
+        window.location.href = '../' + destinationHome + '/' + destinationHome + '.php';
       } catch (error) {
         alert(error.message || 'Unable to save preferences right now. Please try again.');
         finish.disabled = false;
