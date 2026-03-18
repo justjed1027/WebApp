@@ -39,7 +39,8 @@ unset($_calDb);
   <title>SkillSwap — Calendar</title>
   <link rel="stylesheet" href="calendar.css">
   <link rel="stylesheet" href="../components/sidecontent.css">
-
+</head>
+<body class="has-side-content" data-logo-path="<?php echo htmlspecialchars($logoPath, ENT_QUOTES, 'UTF-8'); ?>">
 
   <!-- Sidebar Navigation -->
   <aside class="sidebar" id="sidebar">
