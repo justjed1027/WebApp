@@ -479,7 +479,7 @@ body {
 .nav-link.active {
   background: var(--primary-color);
   color: var(--background-main);
-  box-shadow: 0 4px 12px rgba(31, 255, 147, 0.3);
+  box-shadow: none;
 }
 
 .sidebar:hover .nav-link.active {
@@ -491,7 +491,7 @@ body {
 .sidebar.collapsed .nav-link.active {
   background: var(--primary-color);
   color: var(--background-main);
-  box-shadow: 0 4px 12px rgba(31, 255, 147, 0.3);
+  box-shadow: none;
 }
 
 /* Tooltips for collapsed state */
