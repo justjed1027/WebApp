@@ -584,7 +584,7 @@ profile svg
 */
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="--primary-color: <?php echo htmlspecialchars(UserPreferences::toHexColor($userColor), ENT_QUOTES, 'UTF-8'); ?>;">
 
 <head>
   <meta charset="UTF-8">

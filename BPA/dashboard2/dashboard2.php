@@ -32,6 +32,7 @@ $logoPath = '../images/' . UserPreferences::getLogoFilename($userColor);
 $imageMap = [
     'Art & Design' => '../images/art.png',
     'Art' => '../images/art.png',
+    'Design' => '../images/design.png',
     'Business & Economics' => '../images/law.png',
     'Business' => '../images/business.png',
     'Economics' => '../images/law.png',
@@ -43,7 +44,7 @@ $imageMap = [
     'Language' => '../images/language.png',
     'Mathematics' => '../images/math.png',
     'Math' => '../images/math.png',
-    'Music' => '../images/design.png',
+    'Music' => '../images/art.png',
     'Science' => '../images/science.png'
 ];
 
@@ -60,7 +61,10 @@ $resolveCategoryImage = static function (string $categoryName) use ($imageMap): 
     if (strpos($name, 'math') !== false) {
         return '../images/math.png';
     }
-    if (strpos($name, 'art') !== false || strpos($name, 'design') !== false) {
+    if (strpos($name, 'design') !== false) {
+        return '../images/design.png';
+    }
+    if (strpos($name, 'art') !== false || strpos($name, 'music') !== false) {
         return '../images/art.png';
     }
     if (strpos($name, 'science') !== false || strpos($name, 'computer') !== false || strpos($name, 'tech') !== false) {
@@ -71,9 +75,6 @@ $resolveCategoryImage = static function (string $categoryName) use ($imageMap): 
     }
     if (strpos($name, 'business') !== false || strpos($name, 'econom') !== false || strpos($name, 'history') !== false || strpos($name, 'law') !== false) {
         return '../images/law.png';
-    }
-    if (strpos($name, 'music') !== false) {
-        return '../images/design.png';
     }
 
     return '../images/tech.png';
@@ -225,7 +226,7 @@ $db->closeConnection();
 
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="--primary-color: <?php echo htmlspecialchars(UserPreferences::toHexColor($userColor), ENT_QUOTES, 'UTF-8'); ?>;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

@@ -319,8 +319,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (localTheme) {
       applyThemePreference(localTheme);
     }
-    if (localPrimary) {
+    // Skip localStorage color if the server already set the correct color inline on <html>
+    const serverColor = document.documentElement.style.getPropertyValue('--primary-color').trim();
+    if (localPrimary && !serverColor) {
       applyPrimaryColor(localPrimary);
+    } else if (serverColor) {
+      applyPrimaryColor(serverColor);
     }
     if (localNavigation) {
       applyNavigationMode(localNavigation);
