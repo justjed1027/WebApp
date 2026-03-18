@@ -367,6 +367,35 @@ if ($tagSourceTable === '') {
   }
 }
 
+$postFeedFilterTags = [];
+if (!empty($postTagsBySubject)) {
+  foreach ($postTagsBySubject as $subjectTags) {
+    foreach ($subjectTags as $tagItem) {
+      $name = trim((string)($tagItem['name'] ?? ''));
+      if ($name !== '') {
+        $postFeedFilterTags[strtolower($name)] = $name;
+      }
+    }
+  }
+}
+
+if (!empty($posts)) {
+  foreach ($posts as $postItem) {
+    if (!empty($postItem['post_tags']) && is_array($postItem['post_tags'])) {
+      foreach ($postItem['post_tags'] as $tagName) {
+        $name = trim((string)$tagName);
+        if ($name !== '') {
+          $postFeedFilterTags[strtolower($name)] = $name;
+        }
+      }
+    }
+  }
+}
+
+if (!empty($postFeedFilterTags)) {
+  natcasesort($postFeedFilterTags);
+}
+
 if ($tagSourceTable !== '') {
   $tagTableColumns = [];
   $tagColumnsResult = $conn->query("SHOW COLUMNS FROM {$tagSourceTable}");
@@ -873,6 +902,48 @@ profile svg
       font-size: 0.8rem;
       line-height: 1;
     }
+
+    .post-feed-controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .post-feed-search,
+    .post-feed-tag-filter {
+      background: var(--background-hover);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      padding: 8px 10px;
+      outline: none;
+    }
+
+    .post-feed-search {
+      flex: 1;
+      min-width: 220px;
+    }
+
+    .post-feed-tag-filter {
+      min-width: 180px;
+      cursor: pointer;
+    }
+
+    .post-feed-search:focus,
+    .post-feed-tag-filter:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px var(--primary-light);
+    }
+
+    .post-feed-no-results {
+      display: none;
+      margin-bottom: 10px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
   </style>
   <style>
     /* Modal for file preview */
@@ -1155,14 +1226,30 @@ profile svg
 
       <!-- Posts Feed -->
       <div class="box2">
+        <div class="post-feed-controls">
+          <input type="search" id="postFeedSearch" class="post-feed-search" placeholder="Search posts or users..." autocomplete="off">
+          <select id="postFeedTagFilter" class="post-feed-tag-filter" aria-label="Filter posts by tag">
+            <option value="">All tags</option>
+            <?php foreach ($postFeedFilterTags as $tagOption): ?>
+              <option value="<?php echo htmlspecialchars($tagOption); ?>"><?php echo htmlspecialchars($tagOption); ?></option>
+            <?php endforeach; ?>
+          </select>
+        </div>
+        <div id="postFeedNoResults" class="post-feed-no-results">No posts match your current search/filter.</div>
         <div id="posts-container">
           <?php if (count($posts) === 0): ?>
               <div class="post" style="background:#fff3cd;border:1px solid #ffeebaff;padding:16px;margin-bottom:16px;color:black;">No posts yet.</div>
             <?php else: ?>
               <?php foreach ($posts as $post): ?>
-                <div class="post">
+                <?php
+                  $displayName = !empty($post['user_username']) ? $post['user_username'] : ('User #' . intval($post['user_id']));
+                  $postTagsForData = !empty($post['post_tags']) && is_array($post['post_tags']) ? implode('|', array_map('strval', $post['post_tags'])) : '';
+                ?>
+                <div class="post"
+                     data-post-content="<?php echo htmlspecialchars((string)($post['content'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>"
+                     data-post-user="<?php echo htmlspecialchars((string)$displayName, ENT_QUOTES, 'UTF-8'); ?>"
+                     data-post-tags="<?php echo htmlspecialchars($postTagsForData, ENT_QUOTES, 'UTF-8'); ?>">
                   <div class="post-header">
-                    <?php $displayName = !empty($post['user_username']) ? $post['user_username'] : ('User #' . intval($post['user_id'])); ?>
                     <div style="display:flex;align-items:center;gap:12px;flex:1;">
                       <a href="../profile/profile.php?user_id=<?php echo intval($post['user_id']); ?>" style="text-decoration:none;cursor:pointer;">
                         <div class="post-author-avatar" style="width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:1rem;overflow:hidden;">
@@ -1320,7 +1407,7 @@ profile svg
 </body>
 
     <script src="../components/sidecontent.js"></script>
-    <script src="script.js?v=20260317"></script>
+    <script src="script.js?v=20260318"></script>
     <script>
       // Helper function to escape HTML
       function escapeHtml(text) {

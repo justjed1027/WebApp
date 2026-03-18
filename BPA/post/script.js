@@ -140,6 +140,70 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // Feed search + persistent tag filter
+    const postFeedSearchInput = document.getElementById('postFeedSearch');
+    const postFeedTagFilter = document.getElementById('postFeedTagFilter');
+    const postFeedNoResults = document.getElementById('postFeedNoResults');
+    const postCards = Array.from(document.querySelectorAll('#posts-container > .post'));
+    const tagFilterStorageKey = 'postFeedTagFilter';
+
+    if ((postFeedSearchInput || postFeedTagFilter) && postCards.length > 0) {
+        if (postFeedTagFilter) {
+            const savedTagFilter = localStorage.getItem(tagFilterStorageKey);
+            if (savedTagFilter) {
+                const matchingOption = Array.from(postFeedTagFilter.options).find(opt => opt.value === savedTagFilter);
+                if (matchingOption) {
+                    postFeedTagFilter.value = savedTagFilter;
+                }
+            }
+        }
+
+        const applyPostFeedFilter = () => {
+            const searchQuery = postFeedSearchInput ? postFeedSearchInput.value.trim().toLowerCase() : '';
+            const selectedTag = postFeedTagFilter ? postFeedTagFilter.value.trim().toLowerCase() : '';
+            let visibleCount = 0;
+
+            postCards.forEach(card => {
+                const postContent = (card.getAttribute('data-post-content') || '').toLowerCase();
+                const postUser = (card.getAttribute('data-post-user') || '').toLowerCase();
+                const postTags = (card.getAttribute('data-post-tags') || '')
+                    .toLowerCase()
+                    .split('|')
+                    .map(tag => tag.trim())
+                    .filter(Boolean);
+
+                const matchesSearch = !searchQuery || postContent.includes(searchQuery) || postUser.includes(searchQuery);
+                const matchesTag = !selectedTag || postTags.includes(selectedTag);
+                const showCard = matchesSearch && matchesTag;
+
+                card.style.display = showCard ? '' : 'none';
+                if (showCard) visibleCount++;
+            });
+
+            if (postFeedNoResults) {
+                postFeedNoResults.style.display = visibleCount === 0 ? 'block' : 'none';
+            }
+        };
+
+        if (postFeedSearchInput) {
+            postFeedSearchInput.addEventListener('input', applyPostFeedFilter);
+            postFeedSearchInput.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                }
+            });
+        }
+
+        if (postFeedTagFilter) {
+            postFeedTagFilter.addEventListener('change', () => {
+                localStorage.setItem(tagFilterStorageKey, postFeedTagFilter.value);
+                applyPostFeedFilter();
+            });
+        }
+
+        applyPostFeedFilter();
+    }
+
     // File label and preview modal logic
     const fileInput = document.getElementById('avatar');
     const fileLabel = document.getElementById('fileLabel');
