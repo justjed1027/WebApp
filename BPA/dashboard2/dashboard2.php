@@ -229,7 +229,7 @@ $db->closeConnection();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SkillSwap - Courses 2</title>
+    <title>SkillSwap - Dashboard</title>
     <link rel="icon" type="image/png" href="<?php echo $logoPath; ?>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
