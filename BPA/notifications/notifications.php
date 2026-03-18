@@ -21,12 +21,7 @@ $notif = new Notification($conn);
 // Build dynamic logo path based on user color preference
 $userPreferences = UserPreferences::getForUser($conn, (int) $_SESSION['user_id']);
 $userColor = $userPreferences['primary_color'] ?? '#00D97E';
-if (empty($userColor) || $userColor === 'Silver' || $userColor === '#00D97E') {
-  $logoPath = '../images/skillswaplogotrans.png';
-} else {
-  $cleanColor = strtolower(ltrim($userColor, '#'));
-  $logoPath = '../images/logo' . $cleanColor . '.png';
-}
+$logoPath = '../images/' . UserPreferences::getLogoFilename($userColor);
 
 // Mark all as read when viewing this page
 $notif->markAllAsRead($_SESSION['user_id']);

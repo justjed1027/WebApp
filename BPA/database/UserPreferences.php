@@ -97,6 +97,21 @@ class UserPreferences {
         return strtoupper($value);
     }
 
+    public static function getLogoFilename($color) {
+        $value = self::normalizeColor($color);
+
+        if ($value === '#00D97E') {
+            return 'skillswaplogotrans.png';
+        }
+
+        if (strcasecmp($value, 'Silver') === 0) {
+            return 'LogoSilver.png';
+        }
+
+        $hex = self::toHexColor($value);
+        return 'logo' . strtolower(ltrim($hex, '#')) . '.png';
+    }
+
     public static function getForUser($conn, $userId) {
         $prefs = [
             'theme' => 'mixed',

@@ -27,12 +27,7 @@ $userPreferences = UserPreferences::getForUser($conn, $userId);
 $userColor = $userPreferences['primary_color'] ?? '#00D97E';
 
 // Logo path based on user's color preference
-if (empty($userColor) || $userColor === 'Silver' || $userColor === '#00D97E') {
-    $logoPath = '../images/skillswaplogotrans.png';
-} else {
-    $cleanColor = strtolower(ltrim($userColor, '#'));
-    $logoPath = '../images/logo' . $cleanColor . '.png';
-}
+$logoPath = '../images/' . UserPreferences::getLogoFilename($userColor);
 
 $imageMap = [
     'Art & Design' => '../images/art.png',

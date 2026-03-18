@@ -22,11 +22,7 @@ $con = $db->connection;
 
 $userPreferences = UserPreferences::getForUser($con, (int)($_SESSION['user_id'] ?? 0));
 $userColor = $userPreferences['primary_color'] ?? '#00D97E';
-if (empty($userColor) || $userColor === 'Silver' || $userColor === '#00D97E') {
-  $logoPath = '../images/skillswaplogotrans.png';
-} else {
-  $logoPath = '../images/logo' . strtolower(ltrim($userColor, '#')) . '.png';
-}
+$logoPath = '../images/' . UserPreferences::getLogoFilename($userColor);
 
 $user = new User();
 

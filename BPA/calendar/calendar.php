@@ -23,11 +23,7 @@ require_once '../components/sidecontent.php';
 $_calDb = new DatabaseConnection();
 $userPreferences = UserPreferences::getForUser($_calDb->connection, (int)$_SESSION['user_id']);
 $userColor = $userPreferences['primary_color'] ?? '#00D97E';
-if (empty($userColor) || $userColor === 'Silver' || $userColor === '#00D97E') {
-  $logoPath = '../images/skillswaplogotrans.png';
-} else {
-  $logoPath = '../images/logo' . strtolower(ltrim($userColor, '#')) . '.png';
-}
+$logoPath = '../images/' . UserPreferences::getLogoFilename($userColor);
 $_calDb->closeConnection();
 unset($_calDb);
 ?>

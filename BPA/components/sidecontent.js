@@ -38,6 +38,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const getLogoSrc = () => {
     const appBase = getAppBase();
     if (currentPrimaryHex) {
+      if (currentPrimaryHex.toUpperCase() === '#C0C0C0') {
+        return `${appBase}/images/LogoSilver.png`;
+      }
       const colorKey = currentPrimaryHex.replace('#', '').toLowerCase();
       return `${appBase}/images/logo${colorKey}.png`;
     }

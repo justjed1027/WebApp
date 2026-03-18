@@ -142,11 +142,7 @@ $stmt->close();
 
 $userPreferences = UserPreferences::getForUser($conn, (int)$user_id);
 $userColor = $userPreferences['primary_color'] ?? '#00D97E';
-if (empty($userColor) || $userColor === 'Silver' || $userColor === '#00D97E') {
-  $logoPath = '../images/skillswaplogotrans.png';
-} else {
-  $logoPath = '../images/logo' . strtolower(ltrim($userColor, '#')) . '.png';
-}
+$logoPath = '../images/' . UserPreferences::getLogoFilename($userColor);
 $conn->close();
 
 // Calculate total subject count
