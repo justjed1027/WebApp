@@ -367,6 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalClose = document.getElementById('modalClose');
   const btnExpandDescription = document.getElementById('btnExpandDescription');
   let currentEventId = null; // Track current event for unregister
+  const currentUserId = Number(window.CURRENT_USER_ID || 0) || null;
 
   if (!modal) {
     console.error('Event modal not found');
@@ -498,7 +499,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       } else {
         registeredEvents = [];
-        upcomingEventsContainer.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 20px;">No upcoming events. Register for events to see them here!</p>';
+        upcomingEventsContainer.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 20px;">No upcoming events yet.</p>';
       }
     } catch (error) {
       console.error('Error loading upcoming events:', error);
@@ -565,14 +566,17 @@ document.addEventListener('DOMContentLoaded', () => {
       <span>${participantText}</span>
     `;
     
-    // Tags - show subjects as hashtags
-    const subjects = event.subjects ? event.subjects.split(',').map(s => s.trim()) : [];
-    document.getElementById('modalTags').innerHTML = subjects.map(subject => 
-      `<span class="event-tag">#${subject.toLowerCase().replace(/\s+/g, '')}</span>`
-    ).join('');
-    
+    const subjects = event.subjects ? event.subjects.split(',').map(s => s.trim()).filter(Boolean) : [];
+
+    // Tags: prefer actual event tags, fall back to subjects if none assigned
+    const tags = event.tags ? event.tags.split(',').map(t => t.trim()).filter(Boolean) : [];
+    const displayTags = tags.length > 0 ? tags : subjects;
+    document.getElementById('modalTags').innerHTML = displayTags.length
+      ? displayTags.map(tag => `<span class="event-tag">#${tag.toLowerCase().replace(/\s+/g, '')}</span>`).join('')
+      : '';
+
     document.getElementById('modalDescription').textContent = event.events_description || 'No description available.';
-    
+
     // Category - use first subject
     document.getElementById('modalCategory').textContent = subjects[0] || 'General';
 
@@ -592,6 +596,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Handle avatar: show profile picture if available, otherwise show initials
     if (modalCreatorAvatar) {
+      const previousFallback = modalCreatorAvatar.parentNode.querySelector('.creator-avatar-fallback');
+      if (previousFallback) previousFallback.remove();
+
       if (event.profile_filepath) {
         // Show profile picture
         modalCreatorAvatar.src = event.profile_filepath;
@@ -600,6 +607,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Show initials fallback
         const initial = (event.user_username || 'U').charAt(0).toUpperCase();
         const avatarDiv = document.createElement('div');
+        avatarDiv.className = 'creator-avatar-fallback';
         avatarDiv.style.cssText = 'width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 1.5rem; color: white; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);';
         avatarDiv.textContent = initial;
         modalCreatorAvatar.style.display = 'none';
@@ -623,6 +631,22 @@ document.addEventListener('DOMContentLoaded', () => {
       deadlineStr = `Open until ${deadlineDateStr}`;
     }
     document.getElementById('modalRegistration').textContent = deadlineStr;
+
+    const isHost = Boolean(event.is_host) || (currentUserId && Number(event.host_user_id) === currentUserId);
+    const hostControls = document.getElementById('modalHostControls');
+    if (hostControls) {
+      hostControls.hidden = !isHost;
+    }
+
+    const btnUnregister = document.getElementById('btnUnregister');
+    if (btnUnregister) {
+      btnUnregister.style.display = isHost ? 'none' : '';
+      btnUnregister.disabled = !event.is_registered;
+    }
+
+    if (isHost) {
+      setupHostControls(event);
+    }
   };
 
   // Open modal with event details
@@ -636,8 +660,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
-      // First try to fetch from calendar events (the events the user is registered for)
-      console.log('Fetching from get_calendar_events.php');
       const calResponse = await fetch('get_calendar_events.php');
       const calData = await calResponse.json();
       console.log('Calendar events response:', calData);
@@ -652,25 +674,9 @@ document.addEventListener('DOMContentLoaded', () => {
           return;
         }
       }
-      
-      // If not found in calendar events, try all events
-      console.log('Event not in calendar, fetching from ../events/get_events.php');
-      const response = await fetch(`../events/get_events.php?filter=all`);
-      const data = await response.json();
-      console.log('All events response:', data);
-      
-      if (data.success && data.events) {
-        const event = data.events.find(e => e.events_id == eventId);
-        if (event) {
-          console.log('Found event in all events:', event);
-          populateModal(event);
-          modal.removeAttribute('hidden');
-          document.body.style.overflow = 'hidden';
-          return;
-        }
-      }
-      
-      console.error('Event not found in either source. Event ID:', eventId);
+
+      console.error('Event not found in calendar feed. Event ID:', eventId);
+      await showMessage('Event Not Found', 'This event is not available in your calendar feed right now.');
     } catch (error) {
       console.error('Error loading event details:', error);
     }
@@ -794,6 +800,283 @@ document.addEventListener('DOMContentLoaded', () => {
       btnConfirmOk.addEventListener('click', handleOk);
       confirmationOverlay.addEventListener('click', handleOk);
     });
+  };
+
+  const parseSubjectId = (event) => {
+    if (!event || !event.subject_ids) return null;
+    const first = String(event.subject_ids).split(',')[0];
+    const parsed = parseInt(first, 10);
+    return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
+  };
+
+  const parseTagIds = (event) => {
+    if (!event || !event.tag_ids) return [];
+    return String(event.tag_ids)
+      .split(',')
+      .map(id => parseInt(id, 10))
+      .filter(id => Number.isInteger(id) && id > 0);
+  };
+
+  const reloadEventDataInModal = async () => {
+    if (!currentEventId) return;
+    await loadUpcomingEvents();
+    await openEventModal(currentEventId);
+  };
+
+  // Open styled Edit Tags popup — returns array of selected tag IDs or null if cancelled
+  const openCalEditTagsPopup = (allTags, currentTagIds) => {
+    return new Promise((resolve) => {
+      const popupModal  = document.getElementById('calEditTagsModal');
+      const selector    = document.getElementById('calTagsSelector');
+      const form        = document.getElementById('calEditTagsForm');
+      const closeBtn    = document.getElementById('calEditTagsClose');
+      const cancelBtn   = document.getElementById('calEditTagsCancel');
+      const overlay     = document.getElementById('calEditTagsOverlay');
+
+      selector.innerHTML = '';
+      allTags.forEach(t => {
+        const id = String(t.id);
+        const label = document.createElement('label');
+        label.className = 'cal-tag-checkbox';
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.value = id;
+        cb.checked = currentTagIds.includes(parseInt(id, 10));
+        const span = document.createElement('span');
+        span.textContent = t.name;
+        label.appendChild(cb);
+        label.appendChild(span);
+        selector.appendChild(label);
+      });
+
+      popupModal.hidden = false;
+
+      const close = (result) => {
+        popupModal.hidden = true;
+        form.removeEventListener('submit', handleSubmit);
+        closeBtn.removeEventListener('click', handleClose);
+        cancelBtn.removeEventListener('click', handleClose);
+        overlay.removeEventListener('click', handleClose);
+        resolve(result);
+      };
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        const checked = selector.querySelectorAll('input[type="checkbox"]:checked');
+        const tagIds = Array.from(checked)
+          .map(cb => parseInt(cb.value, 10))
+          .filter(id => id > 0);
+        close(tagIds);
+      };
+
+      const handleClose = () => close(null);
+
+      form.addEventListener('submit', handleSubmit);
+      closeBtn.addEventListener('click', handleClose);
+      cancelBtn.addEventListener('click', handleClose);
+      overlay.addEventListener('click', handleClose);
+    });
+  };
+
+  // Open styled Edit Date popup — returns { date, startTime, endTime, deadline } or null if cancelled
+  const openCalEditDatePopup = (event) => {
+    return new Promise((resolve) => {
+      const popupModal  = document.getElementById('calEditDateModal');
+      const form        = document.getElementById('calEditDateForm');
+      const closeBtn    = document.getElementById('calEditDateClose');
+      const cancelBtn   = document.getElementById('calEditDateCancel');
+      const overlay     = document.getElementById('calEditDateOverlay');
+      const errorEl     = document.getElementById('calEditDateError');
+
+      document.getElementById('calEditDate').value       = event.events_date || '';
+      document.getElementById('calEditStartTime').value  = event.events_start  ? String(event.events_start).slice(0, 5)  : '';
+      document.getElementById('calEditEndTime').value    = event.events_end    ? String(event.events_end).slice(0, 5)    : '';
+      document.getElementById('calEditDeadline').value   = event.events_deadline || event.events_date || '';
+      errorEl.hidden = true;
+      errorEl.textContent = '';
+
+      popupModal.hidden = false;
+
+      const close = (result) => {
+        popupModal.hidden = true;
+        form.removeEventListener('submit', handleSubmit);
+        closeBtn.removeEventListener('click', handleClose);
+        cancelBtn.removeEventListener('click', handleClose);
+        overlay.removeEventListener('click', handleClose);
+        resolve(result);
+      };
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        const date      = document.getElementById('calEditDate').value;
+        const startTime = document.getElementById('calEditStartTime').value;
+        const endTime   = document.getElementById('calEditEndTime').value;
+        const deadline  = document.getElementById('calEditDeadline').value;
+
+        const errors = [];
+        if (!date)      errors.push('Event date is required.');
+        if (!startTime) errors.push('Start time is required.');
+        if (!endTime)   errors.push('End time is required.');
+        if (!deadline)  errors.push('Registration deadline is required.');
+        if (date && startTime && endTime) {
+          if (new Date(`${date}T${endTime}`) <= new Date(`${date}T${startTime}`)) {
+            errors.push('End time must be after start time.');
+          }
+        }
+
+        if (errors.length > 0) {
+          errorEl.textContent = errors.join(' ');
+          errorEl.hidden = false;
+          return;
+        }
+
+        errorEl.hidden = true;
+        close({ date, startTime, endTime, deadline });
+      };
+
+      const handleClose = () => close(null);
+
+      form.addEventListener('submit', handleSubmit);
+      closeBtn.addEventListener('click', handleClose);
+      cancelBtn.addEventListener('click', handleClose);
+      overlay.addEventListener('click', handleClose);
+    });
+  };
+
+  const setupHostControls = (event) => {
+    const btnEditTags = document.getElementById('btnEditTags');
+    const btnEditDate = document.getElementById('btnEditDate');
+    const btnCloseRegistration = document.getElementById('btnCloseRegistration');
+    const btnDeleteEvent = document.getElementById('btnDeleteEvent');
+
+    if (btnEditTags) {
+      btnEditTags.onclick = async () => {
+        const subjectId = parseSubjectId(event);
+        if (!subjectId) {
+          await showMessage('Unable to Edit Tags', 'This event has no category assigned yet.');
+          return;
+        }
+
+        try {
+          const res  = await fetch(`../events/get_subject_tags.php?subject_id=${encodeURIComponent(subjectId)}`);
+          const json = await res.json();
+          if (!json.success || !Array.isArray(json.tags) || json.tags.length === 0) {
+            await showMessage('No Tags Available', 'No tags are available for this category.');
+            return;
+          }
+
+          const currentTagIds  = parseTagIds(event);
+          const selectedTagIds = await openCalEditTagsPopup(json.tags, currentTagIds);
+          if (selectedTagIds === null) return;
+
+          const response = await fetch('../events/update_event.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ eventId: event.events_id, type: 'tags', tagIds: selectedTagIds })
+          });
+          const data = await response.json();
+
+          if (response.ok && data.success) {
+            await showMessage('Tags Updated', 'Event tags were updated successfully.');
+            await reloadEventDataInModal();
+          } else {
+            await showMessage('Update Failed', data.message || 'Unable to update tags.');
+          }
+        } catch (err) {
+          console.error('Error updating tags:', err);
+          await showMessage('Error', 'An error occurred while updating tags.');
+        }
+      };
+    }
+
+    if (btnEditDate) {
+      btnEditDate.onclick = async () => {
+        const result = await openCalEditDatePopup(event);
+        if (result === null) return;
+
+        const { date, startTime, endTime, deadline } = result;
+        try {
+          const response = await fetch('../events/update_event.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ eventId: event.events_id, type: 'date', date, startTime, endTime, deadline })
+          });
+          const data = await response.json();
+
+          if (response.ok && data.success) {
+            await showMessage('Event Updated', 'Event schedule was updated successfully.');
+            await reloadEventDataInModal();
+          } else {
+            await showMessage('Update Failed', data.message || 'Unable to update event schedule.');
+          }
+        } catch (err) {
+          console.error('Error updating event date:', err);
+          await showMessage('Error', 'An error occurred while updating event schedule.');
+        }
+      };
+    }
+
+    if (btnCloseRegistration) {
+      btnCloseRegistration.onclick = async () => {
+        const confirmed = await showConfirmation(
+          'Close Registration',
+          'Close registration for this event? This action cannot be undone.'
+        );
+        if (!confirmed) return;
+
+        try {
+          const response = await fetch('../events/update_event.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              eventId: event.events_id,
+              type: 'close_registration'
+            })
+          });
+          const data = await response.json();
+
+          if (response.ok && data.success) {
+            await showMessage('Registration Closed', 'Registration is now closed for this event.');
+            await reloadEventDataInModal();
+          } else {
+            await showMessage('Update Failed', data.message || 'Unable to close registration.');
+          }
+        } catch (err) {
+          console.error('Error closing registration:', err);
+          await showMessage('Error', 'An error occurred while closing registration.');
+        }
+      };
+    }
+
+    if (btnDeleteEvent) {
+      btnDeleteEvent.onclick = async () => {
+        const confirmed = await showConfirmation(
+          'Delete Event',
+          'Delete this event permanently? All registrations will be lost.'
+        );
+        if (!confirmed) return;
+
+        try {
+          const response = await fetch('../events/delete_event.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ eventId: event.events_id })
+          });
+          const data = await response.json();
+
+          if (response.ok && data.success) {
+            await showMessage('Event Deleted', 'The event was deleted successfully.');
+            closeModal();
+            await loadUpcomingEvents();
+          } else {
+            await showMessage('Delete Failed', data.message || 'Unable to delete event.');
+          }
+        } catch (err) {
+          console.error('Error deleting event:', err);
+          await showMessage('Error', 'An error occurred while deleting the event.');
+        }
+      };
+    }
   };
 
   if (btnUnregister) {
