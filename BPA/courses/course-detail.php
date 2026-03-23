@@ -27,6 +27,9 @@ $conn = $db->connection;
 $userPreferences = UserPreferences::getForUser($conn, (int)$user_id);
 $userColor = $userPreferences['primary_color'] ?? '#00D97E';
 $logoPath = '../images/' . UserPreferences::getLogoFilename($userColor);
+$dashboardBreadcrumbHref = (($userPreferences['home_preference'] ?? 'dashboard2') === 'courses')
+  ? '../courses/courses.php'
+  : '../dashboard2/dashboard2.php';
 
 // Get subject ID from URL parameter
 $subject_id = isset($_GET['id']) ? intval($_GET['id']) : null;
@@ -114,18 +117,104 @@ while ($row = $eventsResult->fetch_assoc()) {
 }
 $stmt->close();
 
-// Fetch posts/forum discussions for this subject
-// Note: The current posts table doesn't have subject_id, so we'll fetch recent posts
-// You may want to add a posts_subject_id column or use a different approach
-$postsQuery = "
-  SELECT p.post_id, p.content as posts_title, u.user_username as user_name, p.created_at as posts_timestamp,
-         (SELECT COUNT(*) FROM post_comments WHERE post_id = p.post_id) as comment_count
-  FROM posts p
-  JOIN user u ON p.user_id = u.user_id
-  ORDER BY p.created_at DESC
-  LIMIT 10
-";
-$stmt = $conn->prepare($postsQuery);
+// Fetch posts/forum discussions for this subject.
+// Prefer explicit subject-linked tags when available, then fall back to course-related text matches.
+$hasPtagsTable = false;
+$ptagsTableCheck = $conn->query("SHOW TABLES LIKE 'ptags'");
+if ($ptagsTableCheck && $ptagsTableCheck->num_rows > 0) {
+  $hasPtagsTable = true;
+}
+if ($ptagsTableCheck) {
+  $ptagsTableCheck->free();
+}
+
+$hasPostPtagsTable = false;
+$postPtagsTableCheck = $conn->query("SHOW TABLES LIKE 'post_ptags'");
+if ($postPtagsTableCheck && $postPtagsTableCheck->num_rows > 0) {
+  $hasPostPtagsTable = true;
+}
+if ($postPtagsTableCheck) {
+  $postPtagsTableCheck->free();
+}
+
+$subjectTagColumn = '';
+if ($hasPtagsTable) {
+  $ptagColumnsResult = $conn->query("SHOW COLUMNS FROM ptags");
+  if ($ptagColumnsResult) {
+    while ($column = $ptagColumnsResult->fetch_assoc()) {
+      $fieldName = strtolower((string) ($column['Field'] ?? ''));
+      if ($fieldName === 'tag_subject_id' || $fieldName === 'subject_id') {
+        $subjectTagColumn = $fieldName;
+        break;
+      }
+    }
+    $ptagColumnsResult->free();
+  }
+}
+
+$subjectName = trim((string) $subject['subject_name']);
+$categoryName = trim((string) $subject['category_name']);
+$subjectLike = '%' . strtolower($subjectName) . '%';
+$categoryLike = '%' . strtolower($categoryName) . '%';
+
+if ($hasPtagsTable && $hasPostPtagsTable && $subjectTagColumn !== '') {
+  $postsQuery = "
+    SELECT DISTINCT
+      p.post_id,
+      p.content AS posts_title,
+      u.user_username AS user_name,
+      p.created_at AS posts_timestamp,
+      (SELECT COUNT(*) FROM post_comments WHERE post_id = p.post_id) AS comment_count
+    FROM posts p
+    JOIN user u ON p.user_id = u.user_id
+    LEFT JOIN post_ptags ppt ON p.post_id = ppt.ppt_post_id
+    LEFT JOIN ptags pt ON ppt.ppt_ptag_id = pt.tag_id
+    WHERE pt.{$subjectTagColumn} = ?
+       OR LOWER(TRIM(COALESCE(pt.tag_name, ''))) = LOWER(?)
+       OR LOWER(TRIM(COALESCE(pt.tag_name, ''))) = LOWER(?)
+       OR LOWER(COALESCE(p.content, '')) LIKE ?
+       OR LOWER(COALESCE(p.content, '')) LIKE ?
+    ORDER BY p.created_at DESC
+    LIMIT 10
+  ";
+  $stmt = $conn->prepare($postsQuery);
+  $stmt->bind_param("issss", $subject_id, $subjectName, $categoryName, $subjectLike, $categoryLike);
+} elseif ($hasPtagsTable && $hasPostPtagsTable) {
+  $postsQuery = "
+    SELECT DISTINCT
+      p.post_id,
+      p.content AS posts_title,
+      u.user_username AS user_name,
+      p.created_at AS posts_timestamp,
+      (SELECT COUNT(*) FROM post_comments WHERE post_id = p.post_id) AS comment_count
+    FROM posts p
+    JOIN user u ON p.user_id = u.user_id
+    LEFT JOIN post_ptags ppt ON p.post_id = ppt.ppt_post_id
+    LEFT JOIN ptags pt ON ppt.ppt_ptag_id = pt.tag_id
+    WHERE LOWER(TRIM(COALESCE(pt.tag_name, ''))) = LOWER(?)
+       OR LOWER(TRIM(COALESCE(pt.tag_name, ''))) = LOWER(?)
+       OR LOWER(COALESCE(p.content, '')) LIKE ?
+       OR LOWER(COALESCE(p.content, '')) LIKE ?
+    ORDER BY p.created_at DESC
+    LIMIT 10
+  ";
+  $stmt = $conn->prepare($postsQuery);
+  $stmt->bind_param("ssss", $subjectName, $categoryName, $subjectLike, $categoryLike);
+} else {
+  $postsQuery = "
+    SELECT p.post_id, p.content AS posts_title, u.user_username AS user_name, p.created_at AS posts_timestamp,
+           (SELECT COUNT(*) FROM post_comments WHERE post_id = p.post_id) AS comment_count
+    FROM posts p
+    JOIN user u ON p.user_id = u.user_id
+    WHERE LOWER(COALESCE(p.content, '')) LIKE ?
+       OR LOWER(COALESCE(p.content, '')) LIKE ?
+    ORDER BY p.created_at DESC
+    LIMIT 10
+  ";
+  $stmt = $conn->prepare($postsQuery);
+  $stmt->bind_param("ss", $subjectLike, $categoryLike);
+}
+
 $stmt->execute();
 $postsResult = $stmt->get_result();
 $posts = [];
@@ -270,7 +359,7 @@ $course = [
       <div class="course-detail-content">
         <!-- Navigation Breadcrumb -->
         <div class="breadcrumb">
-          <a href="../courses/courses.php" class="breadcrumb-link">
+          <a href="<?php echo htmlspecialchars($dashboardBreadcrumbHref, ENT_QUOTES, 'UTF-8'); ?>" class="breadcrumb-link">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
               <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5"/>
             </svg>
@@ -423,14 +512,14 @@ $course = [
                       <h4><?php echo htmlspecialchars($post['posts_title']); ?></h4>
                       <p class="post-meta">by <?php echo htmlspecialchars($post['user_name']); ?> • <?php echo $post['comment_count']; ?> replies • <?php echo date('M d', strtotime($post['posts_timestamp'])); ?></p>
                     </div>
-                    <button class="btn-secondary btn-sm">View Thread</button>
+                    <a href="../post/post.php?subject_id=<?php echo intval($course['id']); ?>&post_id=<?php echo intval($post['post_id']); ?>&open_comments=1#post-<?php echo intval($post['post_id']); ?>" class="btn-secondary btn-sm">View Thread</a>
                   </div>
                 <?php endforeach; ?>
               <?php else: ?>
                 <p style="text-align: center; color: var(--text-secondary); padding: 20px;">No discussions yet. Start one!</p>
               <?php endif; ?>
             </div>
-            <button class="btn-primary" style="margin-top: 20px;">View All Discussions →</button>
+            <a href="../post/post.php?subject_id=<?php echo intval($course['id']); ?>" class="btn-primary" style="margin-top: 20px; display: inline-flex; align-items: center;">View All Discussions →</a>
           </div>
         </div>
       </div>

@@ -64,6 +64,27 @@ function publicPath($dbPath)
 $db = new DatabaseConnection();
 $conn = $db->connection;
 
+$requestedSubjectId = isset($_GET['subject_id']) ? intval($_GET['subject_id']) : 0;
+$focusedPostId = isset($_GET['post_id']) ? intval($_GET['post_id']) : 0;
+$openCommentsOnLoad = isset($_GET['open_comments']) && $_GET['open_comments'] === '1';
+$subjectFeedContext = null;
+
+if ($requestedSubjectId > 0) {
+  $subjectContextStmt = $conn->prepare("SELECT s.subject_id, s.subject_name, sc.category_name
+                                       FROM subjects s
+                                       LEFT JOIN subjectcategories sc ON s.category_id = sc.category_id
+                                       WHERE s.subject_id = ?");
+  if ($subjectContextStmt) {
+    $subjectContextStmt->bind_param('i', $requestedSubjectId);
+    $subjectContextStmt->execute();
+    $subjectContextResult = $subjectContextStmt->get_result();
+    if ($subjectContextResult) {
+      $subjectFeedContext = $subjectContextResult->fetch_assoc() ?: null;
+    }
+    $subjectContextStmt->close();
+  }
+}
+
 $userPreferences = UserPreferences::getForUser($conn, (int)($_SESSION['user_id'] ?? 0));
 $userColor = $userPreferences['primary_color'] ?? '#00D97E';
 $logoPath = '../images/' . UserPreferences::getLogoFilename($userColor);
@@ -305,7 +326,87 @@ if ($postPtagsTableCheck) {
   $postPtagsTableCheck->free();
 }
 
-if ($hasPtagsTable && $hasPostPtagsTable) {
+$subjectTagColumn = '';
+if ($hasPtagsTable) {
+  $ptagColumnsResult = $conn->query("SHOW COLUMNS FROM ptags");
+  if ($ptagColumnsResult) {
+    while ($column = $ptagColumnsResult->fetch_assoc()) {
+      $fieldName = strtolower((string) ($column['Field'] ?? ''));
+      if ($fieldName === 'tag_subject_id' || $fieldName === 'subject_id') {
+        $subjectTagColumn = $fieldName;
+        break;
+      }
+    }
+    $ptagColumnsResult->free();
+  }
+}
+
+$result = false;
+
+if ($subjectFeedContext) {
+  $subjectName = trim((string) ($subjectFeedContext['subject_name'] ?? ''));
+  $categoryName = trim((string) ($subjectFeedContext['category_name'] ?? ''));
+  $subjectLike = '%' . strtolower($subjectName) . '%';
+  $categoryLike = '%' . strtolower($categoryName) . '%';
+
+  if ($hasPtagsTable && $hasPostPtagsTable && $subjectTagColumn !== '') {
+    $sql = "SELECT posts.post_id, posts.user_id, posts.content, posts.created_at, posts.file_path,
+                   COALESCE(user.user_username, '') AS user_username,
+                   GROUP_CONCAT(DISTINCT pt.tag_name ORDER BY pt.tag_name ASC SEPARATOR '||') AS post_tag_names
+            FROM posts
+            LEFT JOIN user ON posts.user_id = user.user_id
+            LEFT JOIN post_ptags ppt ON posts.post_id = ppt.ppt_post_id
+            LEFT JOIN ptags pt ON ppt.ppt_ptag_id = pt.tag_id
+            WHERE pt.{$subjectTagColumn} = ?
+               OR LOWER(TRIM(COALESCE(pt.tag_name, ''))) = LOWER(?)
+               OR LOWER(TRIM(COALESCE(pt.tag_name, ''))) = LOWER(?)
+               OR LOWER(COALESCE(posts.content, '')) LIKE ?
+               OR LOWER(COALESCE(posts.content, '')) LIKE ?
+            GROUP BY posts.post_id, posts.user_id, posts.content, posts.created_at, posts.file_path, user.user_username
+            ORDER BY posts.created_at DESC";
+    $stmt = $conn->prepare($sql);
+    if ($stmt) {
+      $stmt->bind_param('issss', $requestedSubjectId, $subjectName, $categoryName, $subjectLike, $categoryLike);
+      $stmt->execute();
+      $result = $stmt->get_result();
+    }
+  } elseif ($hasPtagsTable && $hasPostPtagsTable) {
+    $sql = "SELECT posts.post_id, posts.user_id, posts.content, posts.created_at, posts.file_path,
+                   COALESCE(user.user_username, '') AS user_username,
+                   GROUP_CONCAT(DISTINCT pt.tag_name ORDER BY pt.tag_name ASC SEPARATOR '||') AS post_tag_names
+            FROM posts
+            LEFT JOIN user ON posts.user_id = user.user_id
+            LEFT JOIN post_ptags ppt ON posts.post_id = ppt.ppt_post_id
+            LEFT JOIN ptags pt ON ppt.ppt_ptag_id = pt.tag_id
+            WHERE LOWER(TRIM(COALESCE(pt.tag_name, ''))) = LOWER(?)
+               OR LOWER(TRIM(COALESCE(pt.tag_name, ''))) = LOWER(?)
+               OR LOWER(COALESCE(posts.content, '')) LIKE ?
+               OR LOWER(COALESCE(posts.content, '')) LIKE ?
+            GROUP BY posts.post_id, posts.user_id, posts.content, posts.created_at, posts.file_path, user.user_username
+            ORDER BY posts.created_at DESC";
+    $stmt = $conn->prepare($sql);
+    if ($stmt) {
+      $stmt->bind_param('ssss', $subjectName, $categoryName, $subjectLike, $categoryLike);
+      $stmt->execute();
+      $result = $stmt->get_result();
+    }
+  } else {
+    $sql = "SELECT posts.post_id, posts.user_id, posts.content, posts.created_at, posts.file_path,
+                   COALESCE(user.user_username, '') AS user_username,
+                   '' AS post_tag_names
+            FROM posts
+            LEFT JOIN user ON posts.user_id = user.user_id
+            WHERE LOWER(COALESCE(posts.content, '')) LIKE ?
+               OR LOWER(COALESCE(posts.content, '')) LIKE ?
+            ORDER BY posts.created_at DESC";
+    $stmt = $conn->prepare($sql);
+    if ($stmt) {
+      $stmt->bind_param('ss', $subjectLike, $categoryLike);
+      $stmt->execute();
+      $result = $stmt->get_result();
+    }
+  }
+} elseif ($hasPtagsTable && $hasPostPtagsTable) {
   $sql = "SELECT posts.post_id, posts.user_id, posts.content, posts.created_at, posts.file_path,
                  COALESCE(user.user_username, '') AS user_username,
                  GROUP_CONCAT(DISTINCT pt.tag_name ORDER BY pt.tag_name ASC SEPARATOR '||') AS post_tag_names
@@ -315,6 +416,7 @@ if ($hasPtagsTable && $hasPostPtagsTable) {
           LEFT JOIN ptags pt ON ppt.ppt_ptag_id = pt.tag_id
           GROUP BY posts.post_id, posts.user_id, posts.content, posts.created_at, posts.file_path, user.user_username
           ORDER BY posts.created_at DESC";
+  $result = $conn->query($sql);
 } else {
   $sql = "SELECT posts.post_id, posts.user_id, posts.content, posts.created_at, posts.file_path,
                  COALESCE(user.user_username, '') AS user_username,
@@ -322,8 +424,8 @@ if ($hasPtagsTable && $hasPostPtagsTable) {
           FROM posts
           LEFT JOIN user ON posts.user_id = user.user_id
           ORDER BY posts.created_at DESC";
+  $result = $conn->query($sql);
 }
-$result = $conn->query($sql);
 
 // Debug helper: append ?debug=1 to URL to see query status
 if (isset($_GET['debug']) && $_GET['debug'] == '1') {
@@ -1158,7 +1260,7 @@ profile svg
   </div>
 
   <!-- Main Content Area -->
-  <main class="main-content">
+  <main class="main-content" data-focused-post-id="<?php echo $focusedPostId > 0 ? intval($focusedPostId) : ''; ?>" data-open-comments-on-load="<?php echo $openCommentsOnLoad ? '1' : '0'; ?>" data-subject-feed-id="<?php echo $subjectFeedContext ? intval($requestedSubjectId) : ''; ?>">
     <div class="page-content">
       <!-- Create Post (inline form) -->
       <div class="posts-section">
@@ -1224,6 +1326,16 @@ profile svg
 
       <!-- Posts Feed -->
       <div class="box2">
+        <?php if ($subjectFeedContext): ?>
+          <div style="margin-bottom:16px;padding:12px 14px;border:1px solid rgba(0,217,126,0.25);border-radius:10px;background:rgba(0,217,126,0.08);color:var(--text-primary);">
+            Showing discussions for <strong><?php echo htmlspecialchars((string) $subjectFeedContext['subject_name']); ?></strong>
+            <?php if (!empty($subjectFeedContext['category_name'])): ?>
+              in <?php echo htmlspecialchars((string) $subjectFeedContext['category_name']); ?>.
+            <?php else: ?>
+              only.
+            <?php endif; ?>
+          </div>
+        <?php endif; ?>
         <div class="post-feed-controls">
           <input type="search" id="postFeedSearch" class="post-feed-search" placeholder="Search posts or users..." autocomplete="off">
           <select id="postFeedTagFilter" class="post-feed-tag-filter" aria-label="Filter posts by tag">
@@ -1243,7 +1355,9 @@ profile svg
                   $displayName = !empty($post['user_username']) ? $post['user_username'] : ('User #' . intval($post['user_id']));
                   $postTagsForData = !empty($post['post_tags']) && is_array($post['post_tags']) ? implode('|', array_map('strval', $post['post_tags'])) : '';
                 ?>
-                <div class="post"
+                 <div class="post"
+                   id="post-<?php echo intval($post['post_id']); ?>"
+                   data-post-id="<?php echo intval($post['post_id']); ?>"
                      data-post-content="<?php echo htmlspecialchars((string)($post['content'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>"
                      data-post-user="<?php echo htmlspecialchars((string)$displayName, ENT_QUOTES, 'UTF-8'); ?>"
                      data-post-tags="<?php echo htmlspecialchars($postTagsForData, ENT_QUOTES, 'UTF-8'); ?>">

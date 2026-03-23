@@ -4,6 +4,12 @@
 
 // All handlers run after DOM is ready
 document.addEventListener('DOMContentLoaded', function () {
+    const mainContent = document.querySelector('.main-content');
+    const pageParams = new URLSearchParams(window.location.search);
+    const focusedPostId = (mainContent?.getAttribute('data-focused-post-id') || pageParams.get('post_id') || '').trim();
+    const openCommentsOnLoad = (mainContent?.getAttribute('data-open-comments-on-load') || '0') === '1' || pageParams.get('open_comments') === '1';
+    const subjectFeedId = (mainContent?.getAttribute('data-subject-feed-id') || pageParams.get('subject_id') || '').trim();
+
     // ===== THEME TOGGLE =====
     const themeToggle = document.getElementById('themeToggle');
     const body = document.body;
@@ -146,16 +152,24 @@ document.addEventListener('DOMContentLoaded', function () {
     const postFeedNoResults = document.getElementById('postFeedNoResults');
     const postCards = Array.from(document.querySelectorAll('#posts-container > .post'));
     const tagFilterStorageKey = 'postFeedTagFilter';
+    const shouldResetFeedFilters = subjectFeedId !== '' || focusedPostId !== '';
 
     if ((postFeedSearchInput || postFeedTagFilter) && postCards.length > 0) {
         if (postFeedTagFilter) {
-            const savedTagFilter = localStorage.getItem(tagFilterStorageKey);
-            if (savedTagFilter) {
+            const savedTagFilter = shouldResetFeedFilters ? '' : localStorage.getItem(tagFilterStorageKey);
+            if (shouldResetFeedFilters) {
+                postFeedTagFilter.value = '';
+                localStorage.removeItem(tagFilterStorageKey);
+            } else if (savedTagFilter) {
                 const matchingOption = Array.from(postFeedTagFilter.options).find(opt => opt.value === savedTagFilter);
                 if (matchingOption) {
                     postFeedTagFilter.value = savedTagFilter;
                 }
             }
+        }
+
+        if (postFeedSearchInput && shouldResetFeedFilters) {
+            postFeedSearchInput.value = '';
         }
 
         const applyPostFeedFilter = () => {
@@ -202,6 +216,31 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         applyPostFeedFilter();
+    }
+
+    if (focusedPostId !== '') {
+        const targetPost = document.querySelector(`#posts-container > .post[data-post-id="${focusedPostId}"]`);
+        if (targetPost) {
+            targetPost.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            targetPost.style.outline = '2px solid var(--primary-color, #00D97E)';
+            targetPost.style.outlineOffset = '4px';
+            targetPost.style.boxShadow = '0 0 0 6px rgba(0, 217, 126, 0.12)';
+
+            window.setTimeout(() => {
+                targetPost.style.outline = '';
+                targetPost.style.outlineOffset = '';
+                targetPost.style.boxShadow = '';
+            }, 4000);
+
+            if (openCommentsOnLoad) {
+                const viewCommentsBtn = targetPost.querySelector('.view-comments-btn');
+                if (viewCommentsBtn) {
+                    window.setTimeout(() => {
+                        viewCommentsBtn.click();
+                    }, 250);
+                }
+            }
+        }
     }
 
     // File label and preview modal logic
