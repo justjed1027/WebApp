@@ -2372,6 +2372,10 @@ body:not(.light-mode) .creator-role { color: #d1d5db; }
   justify-content: center;
 }
 
+.modal-host-controls[hidden] {
+  display: none !important;
+}
+
 .btn-modal-host {
   padding: 10px 16px;
   border-radius: 10px;

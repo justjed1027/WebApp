@@ -636,6 +636,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const hostControls = document.getElementById('modalHostControls');
     if (hostControls) {
       hostControls.hidden = !isHost;
+      hostControls.style.display = isHost ? 'flex' : 'none';
+      hostControls.setAttribute('aria-hidden', isHost ? 'false' : 'true');
     }
 
     const btnUnregister = document.getElementById('btnUnregister');
