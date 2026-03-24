@@ -9,7 +9,7 @@ $db = new DatabaseConnection();
 $conn = $db->connection;
 
 $user_id = $_SESSION['user_id'] ?? null;
-$filter_mode = $_GET['filter'] ?? 'all'; // 'all', 'relevant', 'created'
+$filter_mode = $_GET['filter'] ?? 'all'; // 'all', 'relevant'
 
 // Base query to get all events with their subject and tag info
 // Also include whether the current user is registered for each event (is_registered)
@@ -109,16 +109,19 @@ if ($status === 'past') {
 }
 
 // Base visibility / mode filters
-if ($filter_mode === 'created' && $user_id) {
-    $whereClauses[] = 'e.host_user_id = ?';
-    $bindTypes .= 'i';
-    $bindValues[] = (int)$user_id;
-} elseif ($filter_mode === 'relevant' && $user_id) {
+if ($filter_mode === 'relevant' && $user_id) {
     $whereClauses[] = "(es.es_subject_id IN (SELECT ui_subject_id FROM user_interests WHERE ui_user_id = ?) OR e.events_visibility = 'public')";
     $bindTypes .= 'i';
     $bindValues[] = (int)$user_id;
 } else {
     $whereClauses[] = "(e.events_visibility = 'public' OR e.events_visibility IS NULL)";
+}
+
+// Hosts manage their own events from the calendar page, so exclude hosted events here.
+if ($user_id) {
+    $whereClauses[] = 'e.host_user_id <> ?';
+    $bindTypes .= 'i';
+    $bindValues[] = (int)$user_id;
 }
 
 // Category filter: subject id

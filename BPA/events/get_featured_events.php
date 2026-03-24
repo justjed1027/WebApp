@@ -95,6 +95,8 @@ try {
             SELECT 1 FROM event_participants ep 
             WHERE ep.ep_event_id = e.events_id AND ep.ep_user_id = ?
         )
+        -- Hosts manage their own events from the calendar page
+        AND e.host_user_id <> ?
         -- Event is visible
         AND e.events_visibility = 'public'
     GROUP BY e.events_id
@@ -112,7 +114,7 @@ try {
         throw new Exception("Database prepare failed: " . $conn->error);
     }
 
-    $stmt->bind_param('ii', $user_id, $user_id);
+    $stmt->bind_param('iii', $user_id, $user_id, $user_id);
 
     if (!$stmt->execute()) {
         throw new Exception("Query execution failed: " . $stmt->error);

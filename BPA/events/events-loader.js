@@ -333,148 +333,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 	};
 
 	
-
-	// Setup host controls handlers
-	const setupHostControls = (event) => {
-		const btnEditTags = document.getElementById('btnEditTags');
-		const btnEditDate = document.getElementById('btnEditDate');
-		const btnCloseRegistration = document.getElementById('btnCloseRegistration');
-		const btnDeleteEvent = document.getElementById('btnDeleteEvent');
-
-		// Edit Tags Handler
-		if (btnEditTags) {
-			btnEditTags.onclick = async () => {
-				// Open styled modal instead of prompt
-				if (window.openEditTagsModal) {
-					window.openEditTagsModal(event);
-				} else {
-					alert('Edit tags modal not loaded');
-				}
-			};
-		}
-
-		// Edit Date Handler
-		if (btnEditDate) {
-			btnEditDate.onclick = async () => {
-				// Open styled modal instead of prompts
-				if (window.openEditDateModal) {
-					window.openEditDateModal(event);
-				} else {
-					alert('Edit date modal not loaded');
-				}
-			};
-		}
-
-		// Close Registration Handler
-		if (btnCloseRegistration) {
-			btnCloseRegistration.onclick = async () => {
-				const confirmed = await showConfirm('Close registration for this event? This cannot be undone.');
-				if (!confirmed) return;
-				
-				btnCloseRegistration.disabled = true;
-				btnCloseRegistration.textContent = 'Closing...';
-				
-				try {
-					const response = await fetch('update_event.php', {
-						method: 'POST',
-						headers: { 'Content-Type': 'application/json' },
-						body: JSON.stringify({
-							eventId: event.id,
-							type: 'close_registration'
-						})
-					});
-					
-					const data = await response.json();
-					if (response.ok && data.success) {
-						alert('Registration closed!');
-						const modalRegistration = document.getElementById('modalRegistration');
-						if (modalRegistration) {
-							modalRegistration.textContent = 'Registration closed';
-						}
-					} else {
-						alert('Failed to close registration: ' + (data.message || 'Unknown error'));
-					}
-				} catch (error) {
-					console.error('Error closing registration:', error);
-					alert('Network error closing registration');
-				} finally {
-					btnCloseRegistration.disabled = false;
-					btnCloseRegistration.textContent = 'Close Registration';
-				}
-			};
-		}
-
-		// Delete Event Handler
-		if (btnDeleteEvent) {
-			btnDeleteEvent.onclick = async () => {
-				const confirmed = await showConfirm('Delete this event permanently? All registrations will be lost. This cannot be undone.');
-				if (!confirmed) return;
-				
-				btnDeleteEvent.disabled = true;
-				btnDeleteEvent.textContent = 'Deleting...';
-				
-				try {
-					const response = await fetch('delete_event.php', {
-						method: 'POST',
-						headers: { 'Content-Type': 'application/json' },
-						body: JSON.stringify({
-							eventId: event.id
-						})
-					});
-					
-					const data = await response.json();
-					if (response.ok && data.success) {
-						alert('Event deleted!');
-						closeModal();
-						// Refresh the event list
-						await applyFilters();
-					} else {
-						alert('Failed to delete event: ' + (data.message || 'Unknown error'));
-						btnDeleteEvent.disabled = false;
-						btnDeleteEvent.textContent = 'Delete Event';
-					}
-				} catch (error) {
-					console.error('Error deleting event:', error);
-					alert('Network error deleting event');
-					btnDeleteEvent.disabled = false;
-					btnDeleteEvent.textContent = 'Delete Event';
-				}
-			};
-		}
-	};
-
-	// Get current user ID from PHP session (passed via window.CURRENT_USER_ID)
-	const getCurrentUserId = () => {
-		return window.CURRENT_USER_ID || null;
-	};
-
 	// Open event detail modal
 	const openEventModal = async (event) => {
 		if (!modal) return;
-
-		// Add subjectId for edit modals (use first subject if multiple)
-		event.subjectId = event.subjectIds && event.subjectIds.length > 0 ? event.subjectIds[0] : null;
 
 		const timeRange = getTimeRange(event.startTime, event.endTime);
 		const formattedDate = formatDate(event.date);
 		const tagsHtml = event.tags && event.tags.length
 			? event.tags.map(tag => `<span class="event-tag">#${tag}</span>`).join('')
 			: '<span class="event-tag">#event</span>';
-
-		// Check if current user is the host
-		const currentUserId = getCurrentUserId();
-		const isHost = currentUserId && event.hostUserId && currentUserId === event.hostUserId;
-
-		// Show/hide host controls
-		const hostControls = document.getElementById('modalHostControls');
-		if (hostControls) {
-			if (isHost) {
-				hostControls.hidden = false;
-				setupHostControls(event);
-			} else {
-				hostControls.hidden = true;
-			}
-		}
 
 		// Populate modal
 		const modalImage = document.getElementById('modalImage');
@@ -547,8 +414,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 		if (modalCapacity) modalCapacity.textContent = event.capacity ? `${event.capacity} spots` : 'N/A';
 
 		const modalRegistration = document.getElementById('modalRegistration');
-		if (modalRegistration && event.deadline) {
-			modalRegistration.textContent = `Open until ${formatDate(event.deadline)}`;
+		if (modalRegistration) {
+			modalRegistration.textContent = event.deadline ? `Open until ${formatDate(event.deadline)}` : 'Open';
 		}
 
 		// Update Event Host section with actual user profile
