@@ -160,12 +160,12 @@ function renderSideContent($currentPage = '', $options = []) {
 
         <?php if ($showUpcomingEvents): ?>
         <!-- Upcoming Events Widget -->
-        <div class="side-card">
+        <div class="side-card" id="sideUpcomingEventsCard">
             <div class="side-card-header">
                 <h3 class="side-card-title">Upcoming Events</h3>
                 <a href="../events/events.php" class="side-card-link">See All</a>
             </div>
-            <div class="side-card-body">
+            <div class="side-card-body" id="sideUpcomingEventsBody">
                 <?php 
                 // Fetch upcoming events from database
                 $upcomingEvents = [];

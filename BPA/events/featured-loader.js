@@ -300,6 +300,9 @@ document.addEventListener('DOMContentLoaded', () => {
 	// Check for time slot changes every minute
 	setInterval(checkTimeSlotChange, 60000); // Check every 60 seconds
 
+	// Allow external scripts to soft-refresh featured events.
+	window.refreshFeaturedEvents = loadFeaturedEvents;
+
 	// Initial load
 	loadFeaturedEvents();
 });

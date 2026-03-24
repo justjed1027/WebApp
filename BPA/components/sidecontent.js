@@ -496,4 +496,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   window.addEventListener('scroll', updateMobileTopControls, { passive: true });
+
+  // Allow pages to soft-refresh the Upcoming Events sidebar widget.
+  window.refreshSideUpcomingEvents = async () => {
+    const upcomingBody = document.getElementById('sideUpcomingEventsBody');
+    if (!upcomingBody) return;
+
+    try {
+      const response = await fetch(`${getAppBase()}/components/get_upcoming_events_widget.php`, {
+        credentials: 'same-origin'
+      });
+      const data = await response.json();
+      if (data && data.success && typeof data.html === 'string') {
+        upcomingBody.innerHTML = data.html;
+      }
+    } catch (error) {
+      // Keep existing content if refresh fails.
+    }
+  };
 });
