@@ -29,6 +29,11 @@ $categories_query = "
 ";
 $categories_result = $conn->query($categories_query);
 
+$categories = [];
+while ($row = $categories_result->fetch_assoc()) {
+  $categories[] = $row;
+}
+
 // Fetch subjects grouped by category
 $subjects_query = "
     SELECT subject_id, subject_name, category_id
@@ -82,17 +87,20 @@ if (!empty($_SESSION['user_id'])) {
 <body data-step="3">
   <div class="setup-shell">
   <div class="header"><div class="logo">SkillSwap</div></div>
-  <h1 class="step-title">Creating your Account/Editing Account</h1>
-  <p class="subtitle">What do you want to learn?</p>
+  <h1 class="step-title">Skills Sought After</h1>
+  <p class="subtitle">What skills interest you?</p>
 
-  <?php if ($error === 'interests_required'): ?>
-    <div class="input-card" style="border:1px solid #ef4444; color:#fef2f2; background:rgba(239,68,68,0.08);">
-      Please select at least one interest before continuing.
-    </div>
-  <?php endif; ?>
+  <div
+    class="setup-alert<?php echo $error === 'interests_required' ? ' is-visible' : ''; ?>"
+    id="interestsAlert"
+    role="alert"
+    aria-live="polite"
+  >
+    Please select at least one interest before continuing.
+  </div>
 
   <!-- Form starts here -->
-  <form action="learn_skills.php" method="POST">
+  <form action="learn_skills.php" method="POST" id="learnSkillsForm">
     <div class="form-stack">
       <div class="input-card">
         <div class="panel-wrap">
@@ -102,10 +110,9 @@ if (!empty($_SESSION['user_id'])) {
               <div class="filters">
                 <select id="topicFilter" aria-label="Filter by topic">
                   <option value="all">All Topics</option>
-                  <option value="STEM">STEM</option>
-                  <option value="Arts">Arts</option>
-                  <option value="Languages">Languages</option>
-                  <option value="Business">Business</option>
+                  <?php foreach ($categories as $category): ?>
+                    <option value="<?php echo htmlspecialchars($category['category_name']); ?>"><?php echo htmlspecialchars($category['category_name']); ?></option>
+                  <?php endforeach; ?>
                 </select>
                 <select id="sortBy" aria-label="Sort skills">
                   <option value="popular">Most Popular</option>
@@ -117,10 +124,10 @@ if (!empty($_SESSION['user_id'])) {
 
             <div id="categories" class="grid">
               <?php
-              while ($cat = $categories_result->fetch_assoc()):
+                foreach ($categories as $cat):
                   $cat_id = $cat['category_id'];
                   $cat_name = htmlspecialchars($cat['category_name']);
-                  echo "<div class='category' data-topic='" . htmlspecialchars($cat_name) . "'>";
+                  echo "<div class='category' data-topic='{$cat_name}'>";
                   echo "<h3>{$cat_name}</h3>";
 
                   if (isset($subjects_by_category[$cat_id])) {
@@ -130,7 +137,8 @@ if (!empty($_SESSION['user_id'])) {
                           $is_checked = in_array($subject_id, $selected_interests) ? 'checked' : '';
                           $courseClasses = 'course' . ($is_checked ? ' selected' : '');
                           echo "<label class='{$courseClasses}' data-name='{$subject_name}'>";
-                          echo "<input type='checkbox' name='subjects[]' value='{$subject_id}' {$is_checked}> {$subject_name}";
+                          echo "<input type='checkbox' name='subjects[]' value='{$subject_id}' {$is_checked}>";
+                          echo "<span class='course-label'>{$subject_name}</span>";
                           echo "</label>";
                       }
                   } else {
@@ -138,7 +146,7 @@ if (!empty($_SESSION['user_id'])) {
                   }
 
                   echo "</div>";
-              endwhile;
+              endforeach;
               ?>
             </div>
           </div>

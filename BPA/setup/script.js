@@ -158,25 +158,43 @@ document.addEventListener('DOMContentLoaded', () => {
     const topic = document.getElementById('topicFilter');
     const sort = document.getElementById('sortBy');
     const panel = document.getElementById('coursesPanel');
-    const nextBtn = document.getElementById('interestsNext');
+    const form = document.getElementById('learnSkillsForm');
+    const alert = document.getElementById('interestsAlert');
+    const courseInputs = Array.from(document.querySelectorAll('.course input[type="checkbox"]'));
 
-    const updateNextState = () => {
-      const anyChecked = !!document.querySelector('.course input[type="checkbox"]:checked');
-      if (nextBtn) nextBtn.disabled = !anyChecked;
+    const hasSelectedCourses = () => courseInputs.some(inp => inp.checked);
+
+    const setAlertVisible = (visible) => {
+      if (!alert) return;
+      alert.classList.toggle('is-visible', visible);
     };
 
-    document.querySelectorAll('.course input[type="checkbox"]:checked').forEach(inp => {
-      const label = inp.closest('.course');
-      if (label) label.classList.add('selected');
+    const syncSelectedCourses = () => {
+      const selected = [];
+
+      courseInputs.forEach(inp => {
+        const label = inp.closest('.course');
+        if (!label) return;
+
+        label.classList.toggle('selected', inp.checked);
+
+        if (inp.checked) {
+          selected.push(label.getAttribute('data-name'));
+        }
+      });
+
+      localStorage.setItem('setup_courses', JSON.stringify(selected));
+
+      if (hasSelectedCourses()) {
+        setAlertVisible(false);
+      }
+    };
+
+    courseInputs.forEach(inp => {
+      inp.addEventListener('change', syncSelectedCourses);
     });
 
-    document.querySelectorAll('.course input[type="checkbox"]').forEach(inp => {
-      inp.addEventListener('change', () => {
-        const label = inp.closest('.course');
-        if (label) label.classList.toggle('selected', inp.checked);
-        updateNextState();
-      });
-    });
+    syncSelectedCourses();
 
     // Expand panel on click focus
     if (panel) {
@@ -184,35 +202,18 @@ document.addEventListener('DOMContentLoaded', () => {
       panel.addEventListener('mouseleave', () => panel.classList.remove('expanded'));
     }
 
-    // Make category titles collapsible
-    if (categoriesRoot) {
-      categoriesRoot.querySelectorAll('.category h3').forEach(h => {
-        h.addEventListener('click', () => {
-          const cat = h.closest('.category');
-          cat.classList.toggle('collapsed');
-        });
+    if (form) {
+      form.addEventListener('submit', (event) => {
+        const submitter = event.submitter;
+        if (submitter?.value !== 'next') return;
+
+        if (!hasSelectedCourses()) {
+          event.preventDefault();
+          setAlertVisible(true);
+          alert?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
       });
     }
-
-    // Toggle select on course click
-    document.querySelectorAll('.course').forEach(el => {
-      el.addEventListener('click', (e) => {
-        if (e.target.tagName !== 'INPUT') {
-          const chk = el.querySelector('input[type="checkbox"]');
-          if (chk) chk.checked = !chk.checked;
-        }
-        el.classList.toggle('selected');
-        const name = el.getAttribute('data-name');
-        const selected = JSON.parse(localStorage.getItem('setup_courses') || '[]');
-        if (el.classList.contains('selected')) {
-          if (!selected.includes(name)) selected.push(name);
-        } else {
-          const idx = selected.indexOf(name);
-          if (idx >= 0) selected.splice(idx, 1);
-        }
-        localStorage.setItem('setup_courses', JSON.stringify(selected));
-      });
-    });
 
     const applyFilters = () => {
       const q = (search?.value || '').trim().toLowerCase();
@@ -234,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Sort categories by title when alpha selected
       if (sort && sort.value === 'alpha') {
         const grid = document.getElementById('categories');
-        const sorted = cats.slice().sort((a,b)=>a.querySelector('h3').textContent.localeCompare(b.querySelector('h3').textContent));
+        const sorted = cats.slice().sort((a, b) => a.querySelector('h3').textContent.localeCompare(b.querySelector('h3').textContent));
         sorted.forEach(el => grid.appendChild(el));
       }
       if (sort && sort.value === 'new') {
@@ -249,7 +250,6 @@ document.addEventListener('DOMContentLoaded', () => {
     topic && topic.addEventListener('change', applyFilters);
     sort && sort.addEventListener('change', applyFilters);
     applyFilters();
-    updateNextState();
   }
 
   // PAGE 4: Colors & Theme
