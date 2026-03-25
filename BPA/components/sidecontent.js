@@ -582,41 +582,66 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const openSettingsModal = (event) => {
-    event.preventDefault();
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
     const modal = ensureSettingsModal();
     modal.classList.remove('hidden');
   };
 
   const bindModalEvents = () => {
-    const modal = ensureSettingsModal();
-    const close = () => modal.classList.add('hidden');
-    const confirmBtn = modal.querySelector('[data-action="confirm-settings"]');
-    const cancelBtn = modal.querySelector('[data-action="cancel-settings"]');
-    const closeBtn = modal.querySelector('.settings-close');
+    try {
+      const modal = ensureSettingsModal();
+      if (!modal) return;
+      
+      const close = () => modal.classList.add('hidden');
+      const confirmBtn = modal.querySelector('[data-action="confirm-settings"]');
+      const cancelBtn = modal.querySelector('[data-action="cancel-settings"]');
+      const closeBtn = modal.querySelector('.settings-close');
 
-    if (confirmBtn) {
-      confirmBtn.addEventListener('click', () => {
-        window.location.href = getSetupUrl();
+      if (confirmBtn) {
+        confirmBtn.addEventListener('click', () => {
+          window.location.href = getSetupUrl();
+        });
+      }
+      if (cancelBtn) cancelBtn.addEventListener('click', close);
+      if (closeBtn) closeBtn.addEventListener('click', close);
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) close();
       });
+    } catch (err) {
+      console.error('Error binding modal events:', err);
     }
-    if (cancelBtn) cancelBtn.addEventListener('click', close);
-    if (closeBtn) closeBtn.addEventListener('click', close);
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) close();
-    });
   };
 
   const wireSettingsLinks = () => {
-    const links = Array.from(document.querySelectorAll('.nav-link'));
-    links.forEach((link) => {
-      const tooltip = (link.getAttribute('data-tooltip') || '').toLowerCase();
-      const text = (link.textContent || '').toLowerCase();
-      if (tooltip === 'settings' || tooltip === 'edit user' || text.includes('settings') || text.includes('edit user')) {
-        link.addEventListener('click', openSettingsModal);
-        link.setAttribute('role', 'button');
-        link.setAttribute('href', '#');
+    try {
+      const links = Array.from(document.querySelectorAll('.nav-link'));
+      let foundSettings = false;
+      links.forEach((link) => {
+        const tooltip = (link.getAttribute('data-tooltip') || '').toLowerCase();
+        const text = (link.textContent || '').toLowerCase();
+        if (tooltip === 'settings' || tooltip === 'edit user' || text.includes('settings') || text.includes('edit user')) {
+          link.addEventListener('click', openSettingsModal);
+          link.setAttribute('role', 'button');
+          link.setAttribute('href', '#');
+          foundSettings = true;
+        }
+      });
+      
+      // Fallback: also look for elements by aria-label or direct data-tooltip attribute
+      if (!foundSettings) {
+        document.addEventListener('click', (e) => {
+          const target = e.target.closest('[data-tooltip="Edit User"], [aria-label="Edit User"]');
+          if (target) {
+           openSettingsModal(e);
+          }
+        });
       }
-    });
+    } catch (err) {
+      console.error('Error wiring settings links:', err);
+    }
   };
 
   applyLocalPreferences();
