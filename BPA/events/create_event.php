@@ -35,6 +35,12 @@ $conn = $db->connection;
 
 // Get the current user ID from session
 $hostUserId = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : null;
+if (!$hostUserId) {
+    http_response_code(401);
+    echo json_encode(['success' => false, 'message' => 'Authentication required']);
+    $db->closeConnection();
+    exit;
+}
 
 // Map and sanitize incoming values
 $title = trim($data['title'] ?? '');
@@ -64,6 +70,35 @@ if (empty($contactEmail)) $contactEmail = null;
 $startTime = $data['startTime'] ?? null;
 $endTime = $data['endTime'] ?? null;
 $subjectId = (int)($data['category'] ?? 0);
+
+if ($subjectId <= 0) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'A valid category is required']);
+    $db->closeConnection();
+    exit;
+}
+
+// Security check: users can only create events in subjects they marked as skills.
+$skillCheckSql = 'SELECT 1 FROM user_skills WHERE us_user_id = ? AND us_subject_id = ? LIMIT 1';
+$skillCheckStmt = $conn->prepare($skillCheckSql);
+if (!$skillCheckStmt) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'DB prepare failed', 'error' => $conn->error]);
+    $db->closeConnection();
+    exit;
+}
+
+$skillCheckStmt->bind_param('ii', $hostUserId, $subjectId);
+$skillCheckStmt->execute();
+$skillAllowed = $skillCheckStmt->get_result();
+if (!$skillAllowed || $skillAllowed->num_rows === 0) {
+    $skillCheckStmt->close();
+    http_response_code(403);
+    echo json_encode(['success' => false, 'message' => 'You can only create events for subjects in your skills']);
+    $db->closeConnection();
+    exit;
+}
+$skillCheckStmt->close();
 
 // Additional validations
 try {

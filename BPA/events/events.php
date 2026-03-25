@@ -39,13 +39,36 @@ if (!empty($_SESSION['user_id'])) {
 
 ?>
 <?php
-// Load subjects for the Create Event category list
-$subjects = [];
+// Load all subjects for browse filters
+$allSubjects = [];
 $subRes = $conn->query("SELECT subject_id, subject_name FROM subjects ORDER BY subject_name ASC");
 if ($subRes && $subRes->num_rows > 0) {
   while ($s = $subRes->fetch_assoc()) {
-    $subjects[] = $s;
+    $allSubjects[] = $s;
   }
+}
+
+// Load only the logged-in user's skill subjects for Create Event
+$createSubjects = [];
+$currentUserId = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
+$skillSql = "
+  SELECT DISTINCT s.subject_id, s.subject_name
+  FROM user_skills us
+  INNER JOIN subjects s ON us.us_subject_id = s.subject_id
+  WHERE us.us_user_id = ?
+  ORDER BY s.subject_name ASC
+";
+$skillStmt = $conn->prepare($skillSql);
+if ($skillStmt) {
+  $skillStmt->bind_param('i', $currentUserId);
+  $skillStmt->execute();
+  $skillRes = $skillStmt->get_result();
+  if ($skillRes && $skillRes->num_rows > 0) {
+    while ($s = $skillRes->fetch_assoc()) {
+      $createSubjects[] = $s;
+    }
+  }
+  $skillStmt->close();
 }
 ?>
 <?php require_once '../components/sidecontent.php'; ?>
@@ -199,7 +222,7 @@ if ($subRes && $subRes->num_rows > 0) {
           </div>
           <select class="events-category">
             <option>All Categories</option>
-            <?php foreach ($subjects as $sub): ?>
+            <?php foreach ($allSubjects as $sub): ?>
               <option value="<?php echo htmlspecialchars($sub['subject_id']); ?>"><?php echo htmlspecialchars($sub['subject_name']); ?></option>
             <?php endforeach; ?>
           </select>
@@ -332,8 +355,12 @@ if ($subRes && $subRes->num_rows > 0) {
           <div class="form-group">
             <label class="form-label" for="eventCategory">Category <span class="required">*</span></label>
             <select id="eventCategory" class="form-select" required>
-              <option value="">Select category</option>
-              <?php foreach ($subjects as $sub): ?>
+              <?php if (empty($createSubjects)): ?>
+                <option value="" selected disabled>No skill subjects available</option>
+              <?php else: ?>
+                <option value="">Select category</option>
+              <?php endif; ?>
+              <?php foreach ($createSubjects as $sub): ?>
                 <option value="<?php echo htmlspecialchars($sub['subject_id']); ?>"><?php echo htmlspecialchars($sub['subject_name']); ?></option>
               <?php endforeach; ?>
             </select>
