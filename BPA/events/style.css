@@ -2691,3 +2691,23 @@ body:not(.light-mode) .pagination-btn:hover:not(:disabled) {
 body:not(.light-mode) .page-info {
   color: #9ca3af;
 }
+
+.image-upload-preview {
+  margin-top: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #f9fafb;
+}
+
+.image-upload-preview img {
+  display: block;
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+}
+
+body:not(.light-mode) .image-upload-preview {
+  border-color: #333;
+  background: #111827;
+}

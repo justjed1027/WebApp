@@ -12,12 +12,24 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$raw = file_get_contents('php://input');
-$data = json_decode($raw, true);
-if (!is_array($data)) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Invalid JSON']);
-    exit;
+$contentType = isset($_SERVER['CONTENT_TYPE']) ? strtolower($_SERVER['CONTENT_TYPE']) : '';
+$isJsonRequest = strpos($contentType, 'application/json') !== false;
+
+if ($isJsonRequest) {
+    $raw = file_get_contents('php://input');
+    $data = json_decode($raw, true);
+    if (!is_array($data)) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'Invalid JSON']);
+        exit;
+    }
+} else {
+    $data = $_POST;
+    if (!is_array($data)) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'Invalid form submission']);
+        exit;
+    }
 }
 
 // Validate required fields
@@ -46,16 +58,85 @@ if (!$hostUserId) {
 $title = trim($data['title'] ?? '');
 $desc = trim($data['description'] ?? '');
 $events_date = $data['date'] ?? null;
-$img = trim($data['image'] ?? '');
-if (empty($img)) $img = null;
+$placeholderImage = 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&h=600&fit=crop';
+$img = trim((string)($data['image'] ?? ''));
+$organizer = trim((string)($data['organization'] ?? ''));
+if ($organizer === '') {
+    $organizer = null;
+}
 $location = trim($data['location'] ?? '');
 $capacity = !empty($data['capacity']) && is_numeric($data['capacity']) ? (int)$data['capacity'] : null;
+
+if (isset($_FILES['eventImageFile']) && (int)$_FILES['eventImageFile']['error'] !== UPLOAD_ERR_NO_FILE) {
+    $file = $_FILES['eventImageFile'];
+    if ((int)$file['error'] !== UPLOAD_ERR_OK) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'Image upload failed']);
+        $db->closeConnection();
+        exit;
+    }
+
+    if ((int)$file['size'] > 5 * 1024 * 1024) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'Image must be 5MB or smaller']);
+        $db->closeConnection();
+        exit;
+    }
+
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mime = $finfo ? finfo_file($finfo, $file['tmp_name']) : false;
+    if ($finfo) finfo_close($finfo);
+
+    $allowedMime = [
+        'image/jpeg' => 'jpg',
+        'image/png' => 'png',
+        'image/webp' => 'webp',
+        'image/gif' => 'gif'
+    ];
+
+    if (!$mime || !isset($allowedMime[$mime])) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'Only JPG, PNG, WEBP, and GIF images are allowed']);
+        $db->closeConnection();
+        exit;
+    }
+
+    $uploadDir = __DIR__ . '/uploads';
+    if (!is_dir($uploadDir) && !mkdir($uploadDir, 0755, true)) {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'message' => 'Failed to create upload directory']);
+        $db->closeConnection();
+        exit;
+    }
+
+    $randomPart = bin2hex(random_bytes(8));
+    $filename = 'event_' . time() . '_' . $randomPart . '.' . $allowedMime[$mime];
+    $destination = $uploadDir . '/' . $filename;
+
+    if (!move_uploaded_file($file['tmp_name'], $destination)) {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'message' => 'Failed to save uploaded image']);
+        $db->closeConnection();
+        exit;
+    }
+
+    $img = 'uploads/' . $filename;
+}
+
+if ($img === '') {
+    $img = $placeholderImage;
+}
 
 // tags may be sent as an array of tag IDs (preferred) or as a legacy string
 $tagIds = [];
 if (isset($data['tags'])) {
     if (is_array($data['tags'])) {
         $tagIds = array_map('intval', $data['tags']);
+    } elseif (is_string($data['tags']) && strlen(trim($data['tags'])) > 0 && $data['tags'][0] === '[') {
+        $decoded = json_decode($data['tags'], true);
+        if (is_array($decoded)) {
+            $tagIds = array_map('intval', $decoded);
+        }
     } elseif (is_string($data['tags']) && strlen(trim($data['tags'])) > 0) {
         $parts = preg_split('/[\s,]+/', trim($data['tags']));
         foreach ($parts as $p) {

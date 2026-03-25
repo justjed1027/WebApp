@@ -8,6 +8,21 @@ header('Content-Type: application/json; charset=utf-8');
 $db = new DatabaseConnection();
 $conn = $db->connection;
 
+$placeholderImage = 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&h=600&fit=crop';
+$resolveCalendarImage = static function ($value) use ($placeholderImage) {
+    $img = trim((string)$value);
+    if ($img === '') {
+        return $placeholderImage;
+    }
+
+    // Events upload paths are stored relative to /events.
+    if (strpos($img, 'uploads/') === 0) {
+        return '../events/' . $img;
+    }
+
+    return $img;
+};
+
 $user_id = $_SESSION['user_id'] ?? null;
 
 if (!$user_id) {
@@ -107,6 +122,7 @@ while ($row = $result->fetch_assoc()) {
             ? '../' . substr($row['profile_filepath'], 4) 
             : $row['profile_filepath'];
     }
+    $row['events_img'] = $resolveCalendarImage($row['events_img']);
     $events[] = $row;
 }
 

@@ -373,8 +373,12 @@ if ($skillStmt) {
           </div>
           
           <div class="form-group">
-            <label class="form-label" for="eventImage">Event Image URL</label>
-            <input type="url" id="eventImage" class="form-input" placeholder="https://example.com/image.jpg">
+            <label class="form-label" for="eventImageFile">Event Image</label>
+            <input type="file" id="eventImageFile" class="form-input" accept="image/*">
+            <span class="form-hint">Upload JPG, PNG, WEBP, or GIF (max 5MB)</span>
+            <div class="image-upload-preview" id="eventImagePreviewWrap" hidden>
+              <img id="eventImagePreview" alt="Selected event image preview">
+            </div>
           </div>
         </div>
         

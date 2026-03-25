@@ -411,19 +411,13 @@ document.addEventListener('DOMContentLoaded', () => {
     return formatTime(startTime || endTime);
   };
 
-  // Get default event image
+  // Resolve stored image path for calendar route without fallback checks.
   const getEventImage = (event) => {
-    if (event.events_img) return event.events_img;
-    // Default images based on subjects
-    const subject = (event.subjects || '').toLowerCase();
-    if (subject.includes('computer') || subject.includes('programming')) {
-      return 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=1000&h=280&fit=crop';
-    } else if (subject.includes('data') || subject.includes('science')) {
-      return 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1000&h=280&fit=crop';
-    } else if (subject.includes('design') || subject.includes('ui') || subject.includes('ux')) {
-      return 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1000&h=280&fit=crop';
-    }
-    return 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1000&h=280&fit=crop';
+    const raw = (event && event.events_img ? String(event.events_img) : '').trim();
+    if (!raw) return '';
+    if (/^(?:https?:)?\/\//i.test(raw) || raw.startsWith('/') || raw.startsWith('../')) return raw;
+    if (raw.startsWith('uploads/')) return `../events/${raw}`;
+    return raw;
   };
 
   // Get primary subject tag

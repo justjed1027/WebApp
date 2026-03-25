@@ -11,6 +11,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 		return;
 	}
 
+	const EVENT_PLACEHOLDER_IMAGE = 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&h=600&fit=crop';
+
 	// Format time helper - handles TIME format (HH:MM:SS)
 	const formatTime = (timeStr) => {
 		if (!timeStr) return '';
@@ -200,7 +202,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 		return `
 			<div class="event-card" data-event-id="${event.id}">
 				<div class="event-image-container">
-					<img src="${event.image || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=250&fit=crop'}" alt="${event.title}" class="event-img" loading="lazy">
+					<img src="${event.image || EVENT_PLACEHOLDER_IMAGE}" alt="${event.title}" class="event-img" loading="lazy" onerror="this.onerror=null;this.src='${EVENT_PLACEHOLDER_IMAGE}';">
 				</div>
 				<div class="event-info">
 					<h3 class="event-title">${event.title}</h3>
@@ -266,7 +268,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 		// Populate modal
 		const modalImage = document.getElementById('modalImage');
 		if (modalImage) {
-			modalImage.src = event.image || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&h=600&fit=crop';
+			modalImage.src = event.image || EVENT_PLACEHOLDER_IMAGE;
+			modalImage.onerror = () => {
+				modalImage.onerror = null;
+				modalImage.src = EVENT_PLACEHOLDER_IMAGE;
+			};
 			modalImage.alt = event.title;
 		}
 

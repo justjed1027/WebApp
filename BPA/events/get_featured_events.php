@@ -12,6 +12,21 @@ require_once '../database/DatabaseConnection.php';
 $db = new DatabaseConnection();
 $conn = $db->connection;
 
+$placeholderImage = 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&h=600&fit=crop';
+$resolveFeaturedImage = static function ($value) use ($placeholderImage) {
+    $img = trim((string)$value);
+    if ($img === '') {
+        return $placeholderImage;
+    }
+
+    // Stored uploads are relative to /events, so they can be used as-is on events pages.
+    if (strpos($img, 'uploads/') === 0) {
+        return $img;
+    }
+
+    return $img;
+};
+
 // Check connection
 if (!$conn) {
     http_response_code(500);
@@ -129,7 +144,7 @@ try {
             'title' => $row['events_title'],
             'description' => $row['events_description'],
             'date' => $row['events_date'],
-            'image' => $row['events_img'] ?: 'https://via.placeholder.com/600x400?text=Event+Image',
+            'image' => $resolveFeaturedImage($row['events_img']),
             'location' => $row['events_location'],
             'capacity' => $row['events_capacity'],
             'organization' => $row['events_organization'],

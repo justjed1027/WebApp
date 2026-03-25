@@ -7,6 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
 	const fabButton = document.getElementById('fabCreateEvent');
 	const cancelButton = document.getElementById('btnCancelCreate');
 	const form = document.getElementById('createEventForm');
+	const imageFileInput = document.getElementById('eventImageFile');
+	const imagePreviewWrap = document.getElementById('eventImagePreviewWrap');
+	const imagePreview = document.getElementById('eventImagePreview');
+	let imagePreviewObjectUrl = null;
 
 	// Tags multi-select element
 	const tagSelect = document.getElementById('eventTags');
@@ -66,6 +70,26 @@ document.addEventListener('DOMContentLoaded', () => {
 		// load initial tags if category already selected
 		if (categorySelect.value) loadTagsForSubject(categorySelect.value);
 	}
+
+	if (imageFileInput && imagePreviewWrap && imagePreview) {
+		imageFileInput.addEventListener('change', () => {
+			const file = imageFileInput.files && imageFileInput.files[0] ? imageFileInput.files[0] : null;
+			if (!file || !file.type.startsWith('image/')) {
+				if (imagePreviewObjectUrl) {
+					URL.revokeObjectURL(imagePreviewObjectUrl);
+					imagePreviewObjectUrl = null;
+				}
+				imagePreview.removeAttribute('src');
+				imagePreviewWrap.hidden = true;
+				return;
+			}
+
+			if (imagePreviewObjectUrl) URL.revokeObjectURL(imagePreviewObjectUrl);
+			imagePreviewObjectUrl = URL.createObjectURL(file);
+			imagePreview.src = imagePreviewObjectUrl;
+			imagePreviewWrap.hidden = false;
+		});
+	}
 	
 	if (!modal || !fabButton) return;
 
@@ -82,6 +106,12 @@ document.addEventListener('DOMContentLoaded', () => {
 		form.reset();
 		// clear dynamic tag list so state resets between opens
 		if (tagSelect) tagSelect.innerHTML = '';
+		if (imagePreviewObjectUrl) {
+			URL.revokeObjectURL(imagePreviewObjectUrl);
+			imagePreviewObjectUrl = null;
+		}
+		if (imagePreview) imagePreview.removeAttribute('src');
+		if (imagePreviewWrap) imagePreviewWrap.hidden = true;
 	};
 
 	// Event listeners
@@ -267,7 +297,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			title: document.getElementById('eventTitle').value,
 			category: document.getElementById('eventCategory').value,
 			description: document.getElementById('eventDescription').value,
-			image: document.getElementById('eventImage').value || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&h=600&fit=crop',
 			date: document.getElementById('eventDate').value,
 			startTime: document.getElementById('eventStartTime').value,
 			endTime: document.getElementById('eventEndTime').value,
@@ -358,17 +387,43 @@ document.addEventListener('DOMContentLoaded', () => {
 			errors.push('Capacity must be between 1 and 500.');
 		}
 
+		const imageFile = imageFileInput && imageFileInput.files ? imageFileInput.files[0] : null;
+		if (imageFile) {
+			if (!imageFile.type || !imageFile.type.startsWith('image/')) {
+				errors.push('Uploaded file must be an image.');
+			}
+			if (imageFile.size > 5 * 1024 * 1024) {
+				errors.push('Image size must be 5MB or less.');
+			}
+		}
+
 		// If there are validation errors, show them all at once
 		if (errors.length > 0) {
 			showValidationErrors(errors);
 			return;
 		}
 
+		const payload = new FormData();
+		payload.append('title', formData.title);
+		payload.append('category', formData.category);
+		payload.append('description', formData.description);
+		payload.append('date', formData.date);
+		payload.append('startTime', formData.startTime);
+		payload.append('endTime', formData.endTime);
+		payload.append('location', formData.location);
+		payload.append('capacity', formData.capacity);
+		payload.append('visibility', formData.visibility);
+		payload.append('requireApproval', formData.requireApproval ? '1' : '0');
+		payload.append('featured', formData.featured ? '1' : '0');
+		payload.append('registrationDeadline', formData.registrationDeadline);
+		payload.append('contactEmail', formData.contactEmail);
+		payload.append('tags', JSON.stringify(formData.tags || []));
+		if (imageFile) payload.append('eventImageFile', imageFile);
+
 		// Send to backend
 		fetch('create_event.php', {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(formData)
+			body: payload
 		})
 		.then(async (r) => {
 			let data = null;

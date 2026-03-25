@@ -8,6 +8,21 @@ header('Content-Type: application/json; charset=utf-8');
 $db = new DatabaseConnection();
 $conn = $db->connection;
 
+$placeholderImage = 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&h=600&fit=crop';
+$resolveEventsImage = static function ($value) use ($placeholderImage) {
+    $img = trim((string)$value);
+    if ($img === '') {
+        return $placeholderImage;
+    }
+
+    // Stored uploads are relative to /events, so they can be used as-is on events pages.
+    if (strpos($img, 'uploads/') === 0) {
+        return $img;
+    }
+
+    return $img;
+};
+
 $user_id = $_SESSION['user_id'] ?? null;
 $filter_mode = $_GET['filter'] ?? 'all'; // 'all', 'relevant'
 
@@ -213,7 +228,7 @@ while ($row = $result->fetch_assoc()) {
         'title' => $row['events_title'],
         'description' => $row['events_description'],
         'date' => $row['events_date'],
-        'image' => $row['events_img'],
+        'image' => $resolveEventsImage($row['events_img']),
         'location' => $row['events_location'],
         'capacity' => $row['events_capacity'],
         'organization' => $row['events_organization'],
