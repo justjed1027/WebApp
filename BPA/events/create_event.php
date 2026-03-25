@@ -85,7 +85,6 @@ if (isset($_FILES['eventImageFile']) && (int)$_FILES['eventImageFile']['error'] 
 
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
     $mime = $finfo ? finfo_file($finfo, $file['tmp_name']) : false;
-    if ($finfo) finfo_close($finfo);
 
     $allowedMime = [
         'image/jpeg' => 'jpg',
