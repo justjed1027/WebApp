@@ -272,10 +272,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const settingsBtn = shell.querySelector('.top-nav-settings');
     if (settingsBtn && settingsLink) {
-      settingsBtn.addEventListener('click', (event) => {
-        event.preventDefault();
-        settingsLink.click();
-      });
+      // Direct listener for the top nav button
+      settingsBtn.addEventListener('click', openSettingsModal);
+      // Also set up click delegation on the sidebar link
+      settingsLink.addEventListener('click', openSettingsModal);
     }
 
     themeBtn.addEventListener('click', () => {
@@ -616,39 +616,23 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const wireSettingsLinks = () => {
-    try {
-      const links = Array.from(document.querySelectorAll('.nav-link'));
-      let foundSettings = false;
-      links.forEach((link) => {
-        const tooltip = (link.getAttribute('data-tooltip') || '').toLowerCase();
-        const text = (link.textContent || '').toLowerCase();
-        if (tooltip === 'settings' || tooltip === 'edit user' || text.includes('settings') || text.includes('edit user')) {
-          link.addEventListener('click', openSettingsModal);
-          link.setAttribute('role', 'button');
-          link.setAttribute('href', '#');
-          foundSettings = true;
-        }
-      });
-      
-      // Fallback: also look for elements by aria-label or direct data-tooltip attribute
-      if (!foundSettings) {
-        document.addEventListener('click', (e) => {
-          const target = e.target.closest('[data-tooltip="Edit User"], [aria-label="Edit User"]');
-          if (target) {
-           openSettingsModal(e);
-          }
-        });
+    // Find and wire all "Edit User" buttons in the sidebar
+    const editUserButtons = document.querySelectorAll('[data-tooltip="Edit User"]');
+    editUserButtons.forEach((btn) => {
+      // Check if already wired to prevent multiple listeners
+      if (!btn._settingsListenerAttached) {
+        btn.addEventListener('click', openSettingsModal);
+        btn._settingsListenerAttached = true;
       }
-    } catch (err) {
-      console.error('Error wiring settings links:', err);
-    }
+    });
   };
 
   applyLocalPreferences();
-  loadPreferencesFromDatabase();
-
+  
   bindModalEvents();
-  wireSettingsLinks();
+  wireSettingsLinks();  // Call early, before loadPreferencesFromDatabase
+  
+  loadPreferencesFromDatabase();
   ensureMobileSidebar();
   ensureMobileBrand();
   syncMobileSidebarState();
@@ -693,9 +677,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   window.addEventListener('scroll', updateMobileTopControls, { passive: true });
-<<<<<<< HEAD
-  window.addEventListener('scroll', updateTopNavScroll, { passive: true });
-=======
 
   // Allow pages to soft-refresh the Upcoming Events sidebar widget.
   window.refreshSideUpcomingEvents = async () => {
@@ -714,5 +695,4 @@ document.addEventListener('DOMContentLoaded', () => {
       // Keep existing content if refresh fails.
     }
   };
->>>>>>> test1
 });
