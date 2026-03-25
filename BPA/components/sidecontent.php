@@ -160,12 +160,12 @@ function renderSideContent($currentPage = '', $options = []) {
 
         <?php if ($showUpcomingEvents): ?>
         <!-- Upcoming Events Widget -->
-        <div class="side-card">
+        <div class="side-card" id="sideUpcomingEventsCard">
             <div class="side-card-header">
                 <h3 class="side-card-title">Upcoming Events</h3>
                 <a href="../events/events.php" class="side-card-link">See All</a>
             </div>
-            <div class="side-card-body">
+            <div class="side-card-body" id="sideUpcomingEventsBody">
                 <?php 
                 // Fetch upcoming events from database
                 $upcomingEvents = [];
@@ -194,6 +194,7 @@ function renderSideContent($currentPage = '', $options = []) {
                             SELECT 1 FROM event_participants ep 
                             WHERE ep.ep_event_id = e.events_id AND ep.ep_user_id = ?
                         )
+                        AND e.host_user_id <> ?
                         AND e.events_visibility = 'public'
                     GROUP BY e.events_id
                     ORDER BY e.events_date ASC
@@ -204,7 +205,7 @@ function renderSideContent($currentPage = '', $options = []) {
                     
                     $stmt = $db->prepare($sql);
                     if ($stmt) {
-                        $stmt->bind_param("ii", $currentUserId, $currentUserId);
+                        $stmt->bind_param("iii", $currentUserId, $currentUserId, $currentUserId);
                         $stmt->execute();
                         $result = $stmt->get_result();
                         

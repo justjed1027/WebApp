@@ -8,8 +8,23 @@ header('Content-Type: application/json; charset=utf-8');
 $db = new DatabaseConnection();
 $conn = $db->connection;
 
+$placeholderImage = 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&h=600&fit=crop';
+$resolveEventsImage = static function ($value) use ($placeholderImage) {
+    $img = trim((string)$value);
+    if ($img === '') {
+        return $placeholderImage;
+    }
+
+    // Stored uploads are relative to /events, so they can be used as-is on events pages.
+    if (strpos($img, 'uploads/') === 0) {
+        return $img;
+    }
+
+    return $img;
+};
+
 $user_id = $_SESSION['user_id'] ?? null;
-$filter_mode = $_GET['filter'] ?? 'all'; // 'all', 'relevant', 'created'
+$filter_mode = $_GET['filter'] ?? 'all'; // 'all', 'relevant'
 
 // Base query to get all events with their subject and tag info
 // Also include whether the current user is registered for each event (is_registered)
@@ -66,6 +81,7 @@ $timeFilter = "(TIMESTAMP(e.events_date, COALESCE(e.events_start, '23:59:59')) >
 $search = isset($_GET['q']) ? trim($_GET['q']) : '';
 $category = isset($_GET['category']) ? trim($_GET['category']) : '';
 $status = isset($_GET['status']) ? trim($_GET['status']) : 'upcoming';
+$tags = isset($_GET['tags']) ? trim($_GET['tags']) : '';
 
 // Build dynamic WHERE clauses and bind parameters safely
 $whereClauses = [];
@@ -90,6 +106,13 @@ if ($status === 'past') {
     $whereClauses[] = $timeFilter;
     $whereClauses[] = "NOT (" . $deadlinePassedExpr . ")";
     
+    // Exclude events the user is already registered for
+    if ($user_id) {
+        $whereClauses[] = "NOT EXISTS(SELECT 1 FROM event_participants ep_exclude WHERE ep_exclude.ep_event_id = e.events_id AND ep_exclude.ep_user_id = ?)";
+        $bindTypes .= 'i';
+        $bindValues[] = (int)$user_id;
+    }
+    
     // Hide full capacity events from users who are NOT registered
     // Show event if: (capacity is null) OR (spots available) OR (user is registered)
     $capacityFilter = "(e.events_capacity IS NULL OR 
@@ -101,16 +124,19 @@ if ($status === 'past') {
 }
 
 // Base visibility / mode filters
-if ($filter_mode === 'created' && $user_id) {
-    $whereClauses[] = 'e.host_user_id = ?';
-    $bindTypes .= 'i';
-    $bindValues[] = (int)$user_id;
-} elseif ($filter_mode === 'relevant' && $user_id) {
+if ($filter_mode === 'relevant' && $user_id) {
     $whereClauses[] = "(es.es_subject_id IN (SELECT ui_subject_id FROM user_interests WHERE ui_user_id = ?) OR e.events_visibility = 'public')";
     $bindTypes .= 'i';
     $bindValues[] = (int)$user_id;
 } else {
     $whereClauses[] = "(e.events_visibility = 'public' OR e.events_visibility IS NULL)";
+}
+
+// Hosts manage their own events from the calendar page, so exclude hosted events here.
+if ($user_id) {
+    $whereClauses[] = 'e.host_user_id <> ?';
+    $bindTypes .= 'i';
+    $bindValues[] = (int)$user_id;
 }
 
 // Category filter: subject id
@@ -120,6 +146,26 @@ if ($category !== '') {
         $whereClauses[] = 'es.es_subject_id = ?';
         $bindTypes .= 'i';
         $bindValues[] = (int)$category;
+    }
+}
+
+// Tag filter: requires event to include each selected tag id.
+// Example: tags=1,3 means event must have both tag 1 and tag 3.
+if ($tags !== '') {
+    $tagParts = explode(',', $tags);
+    $tagIds = [];
+    foreach ($tagParts as $tagPart) {
+        $tagPart = trim($tagPart);
+        if ($tagPart !== '' && ctype_digit($tagPart)) {
+            $tagIds[] = (int)$tagPart;
+        }
+    }
+
+    $tagIds = array_values(array_unique($tagIds));
+    foreach ($tagIds as $tagId) {
+        $whereClauses[] = 'EXISTS (SELECT 1 FROM events_tags et_filter WHERE et_filter.et_events_id = e.events_id AND et_filter.et_tags_id = ?)';
+        $bindTypes .= 'i';
+        $bindValues[] = $tagId;
     }
 }
 
@@ -182,7 +228,7 @@ while ($row = $result->fetch_assoc()) {
         'title' => $row['events_title'],
         'description' => $row['events_description'],
         'date' => $row['events_date'],
-        'image' => $row['events_img'],
+        'image' => $resolveEventsImage($row['events_img']),
         'location' => $row['events_location'],
         'capacity' => $row['events_capacity'],
         'organization' => $row['events_organization'],

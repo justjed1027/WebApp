@@ -2358,9 +2358,44 @@ body:not(.light-mode) .creator-role { color: #d1d5db; }
   padding: 28px 40px;
   border-top: 1px solid var(--border-color);
   display: flex;
+  flex-wrap: wrap;
   gap: 14px;
   justify-content: center;
   background: linear-gradient(to bottom, transparent, rgba(26, 26, 26, 0.3));
+}
+
+.modal-host-controls {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.modal-host-controls[hidden] {
+  display: none !important;
+}
+
+.btn-modal-host {
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border: 1px solid var(--border-color);
+  background: var(--background-hover);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-modal-host:hover {
+  transform: translateY(-1px);
+  border-color: var(--primary-color);
+}
+
+.btn-modal-host.danger {
+  color: #ff6b6b;
+  border-color: rgba(255, 107, 107, 0.5);
 }
 
 .btn-modal-unregister {
@@ -2438,6 +2473,182 @@ body.light-mode .modal-detail-row:hover {
 body.light-mode .modal-footer {
   border-top-color: #e0e0e0;
   background: linear-gradient(to bottom, transparent, rgba(249, 250, 251, 0.5));
+}
+
+/* ===== CALENDAR HOST EDIT MODALS ===== */
+.cal-edit-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cal-edit-modal[hidden] {
+  display: none;
+}
+
+.cal-edit-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease;
+}
+
+.cal-edit-content {
+  position: relative;
+  background: var(--background-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 0;
+  width: min(94vw, 520px);
+  max-height: 85vh;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: modalSlideUp 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.cal-edit-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 28px 20px;
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.cal-edit-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.cal-edit-body {
+  padding: 24px 28px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.cal-edit-hint {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  margin: 0 0 18px;
+}
+
+.cal-edit-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.cal-edit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cal-edit-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.cal-edit-label .required {
+  color: #ef4444;
+}
+
+.cal-edit-input {
+  background: var(--background-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.938rem;
+  color: var(--text-primary);
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+  color-scheme: dark;
+}
+
+.cal-edit-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 217, 126, 0.12);
+}
+
+body.light-mode .cal-edit-input {
+  color-scheme: light;
+  background: #f8fafc;
+  color: #1a1a1a;
+}
+
+.cal-edit-error {
+  margin-top: 10px;
+  padding: 10px 14px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: 8px;
+  color: #ef4444;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.cal-tag-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.cal-tag-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: var(--background-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.cal-tag-checkbox:hover {
+  border-color: var(--primary-color);
+  color: var(--text-primary);
+}
+
+.cal-tag-checkbox input[type="checkbox"] {
+  accent-color: var(--primary-color);
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.cal-tag-checkbox:has(input:checked) {
+  background: var(--primary-light);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.cal-edit-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding: 20px 28px;
+  border-top: 1px solid var(--border-color);
+  flex-shrink: 0;
 }
 
 /* ===== CONFIRMATION MODAL ===== */

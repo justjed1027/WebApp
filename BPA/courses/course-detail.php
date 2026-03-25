@@ -76,7 +76,7 @@ $result = $stmt->get_result();
 $studentsFluent = $result->fetch_assoc()['count'];
 $stmt->close();
 
-// Fetch events for this subject (excluding events user is registered for)
+// Fetch events for this subject (excluding events user is registered for or hosting)
 $eventsQuery = "
   SELECT 
     e.events_id, e.events_title, e.events_date, e.events_start, e.events_end,
@@ -98,11 +98,12 @@ $eventsQuery = "
     AND (e.events_visibility = 'public' OR e.events_visibility IS NULL)
     AND (e.events_capacity IS NULL OR (SELECT COUNT(*) FROM event_participants ep3c WHERE ep3c.ep_event_id = e.events_id) < e.events_capacity)
     AND NOT EXISTS(SELECT 1 FROM event_participants ep3 WHERE ep3.ep_event_id = e.events_id AND ep3.ep_user_id = ?)
+    AND e.host_user_id <> ?
   GROUP BY e.events_id
   ORDER BY e.events_date ASC
 ";
 $stmt = $conn->prepare($eventsQuery);
-$stmt->bind_param("iii", $user_id, $subject_id, $user_id);
+$stmt->bind_param("iiii", $user_id, $subject_id, $user_id, $user_id);
 $stmt->execute();
 $eventsResult = $stmt->get_result();
 $events = [];

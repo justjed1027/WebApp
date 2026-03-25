@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	let featuredEvents = [];
 	let autoplayInterval = null;
 	let cachedTimeSlot = null;
+	const EVENT_PLACEHOLDER_IMAGE = 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&h=600&fit=crop';
 
 	// Format date helper
 	const formatDate = (dateStr) => {
@@ -50,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		return `
 			<article class="featured-event-card" role="group" aria-roledescription="slide" aria-label="${index + 1} of ${total}" style="min-width: 100%; flex-shrink: 0;">
 				<div class="featured-event-image-container">
-					<img src="${event.image}" alt="${event.title}" class="featured-event-img" loading="lazy">
+					<img src="${event.image || EVENT_PLACEHOLDER_IMAGE}" alt="${event.title}" class="featured-event-img" loading="lazy" onerror="this.onerror=null;this.src='${EVENT_PLACEHOLDER_IMAGE}';">
 				</div>
 				<div class="featured-event-info">
 					<div class="featured-event-header">
@@ -299,6 +300,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	// Check for time slot changes every minute
 	setInterval(checkTimeSlotChange, 60000); // Check every 60 seconds
+
+	// Allow external scripts to soft-refresh featured events.
+	window.refreshFeaturedEvents = loadFeaturedEvents;
 
 	// Initial load
 	loadFeaturedEvents();

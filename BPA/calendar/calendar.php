@@ -268,6 +268,12 @@ unset($_calDb);
       </div>
 
       <div class="modal-footer">
+        <div class="modal-host-controls" id="modalHostControls" hidden>
+          <button class="btn-modal-host" id="btnEditTags" type="button">Edit Tags</button>
+          <button class="btn-modal-host" id="btnEditDate" type="button">Edit Date</button>
+          <button class="btn-modal-host" id="btnCloseRegistration" type="button">Close Registration</button>
+          <button class="btn-modal-host danger" id="btnDeleteEvent" type="button">Delete Event</button>
+        </div>
         <button class="btn-modal-unregister" id="btnUnregister">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
@@ -276,6 +282,75 @@ unset($_calDb);
           Unregister from Event
         </button>
       </div>
+    </div>
+  </div>
+
+  <!-- Edit Tags Modal (Calendar Host) -->
+  <div class="cal-edit-modal" id="calEditTagsModal" hidden>
+    <div class="cal-edit-overlay" id="calEditTagsOverlay"></div>
+    <div class="cal-edit-content">
+      <div class="cal-edit-header">
+        <h2 class="cal-edit-title">Edit Event Tags</h2>
+        <button class="modal-close" id="calEditTagsClose" aria-label="Close">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+          </svg>
+        </button>
+      </div>
+      <form id="calEditTagsForm" novalidate>
+        <div class="cal-edit-body">
+          <p class="cal-edit-hint">Select tags relevant to this event&apos;s category.</p>
+          <div class="cal-tag-selector" id="calTagsSelector"></div>
+        </div>
+        <div class="cal-edit-actions">
+          <button type="button" class="btn-confirmation-cancel" id="calEditTagsCancel">Cancel</button>
+          <button type="submit" class="btn-confirmation-confirm">Save Tags</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Date Modal (Calendar Host) -->
+  <div class="cal-edit-modal" id="calEditDateModal" hidden>
+    <div class="cal-edit-overlay" id="calEditDateOverlay"></div>
+    <div class="cal-edit-content">
+      <div class="cal-edit-header">
+        <h2 class="cal-edit-title">Edit Event Schedule</h2>
+        <button class="modal-close" id="calEditDateClose" aria-label="Close">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+          </svg>
+        </button>
+      </div>
+      <form id="calEditDateForm" novalidate>
+        <div class="cal-edit-body">
+          <div class="cal-edit-field-row">
+            <div class="cal-edit-field">
+              <label class="cal-edit-label" for="calEditDate">Event Date <span class="required">*</span></label>
+              <input type="date" id="calEditDate" class="cal-edit-input" name="date" required>
+            </div>
+            <div class="cal-edit-field">
+              <label class="cal-edit-label" for="calEditStartTime">Start Time <span class="required">*</span></label>
+              <input type="time" id="calEditStartTime" class="cal-edit-input" name="startTime" required>
+            </div>
+          </div>
+          <div class="cal-edit-field-row">
+            <div class="cal-edit-field">
+              <label class="cal-edit-label" for="calEditEndTime">End Time <span class="required">*</span></label>
+              <input type="time" id="calEditEndTime" class="cal-edit-input" name="endTime" required>
+            </div>
+            <div class="cal-edit-field">
+              <label class="cal-edit-label" for="calEditDeadline">Registration Deadline <span class="required">*</span></label>
+              <input type="date" id="calEditDeadline" class="cal-edit-input" name="deadline" required>
+            </div>
+          </div>
+          <p class="cal-edit-error" id="calEditDateError" hidden></p>
+        </div>
+        <div class="cal-edit-actions">
+          <button type="button" class="btn-confirmation-cancel" id="calEditDateCancel">Cancel</button>
+          <button type="submit" class="btn-confirmation-confirm">Save Changes</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -298,6 +373,9 @@ unset($_calDb);
     </div>
   </div>
 
+  <script>
+    window.CURRENT_USER_ID = <?php echo json_encode($_SESSION['user_id'] ?? null); ?>;
+  </script>
   <script src="calendar.js"></script>
   <script src="../components/sidecontent.js"></script>
 </body>

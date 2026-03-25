@@ -8,6 +8,21 @@ header('Content-Type: application/json; charset=utf-8');
 $db = new DatabaseConnection();
 $conn = $db->connection;
 
+$placeholderImage = 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&h=600&fit=crop';
+$resolveCalendarImage = static function ($value) use ($placeholderImage) {
+    $img = trim((string)$value);
+    if ($img === '') {
+        return $placeholderImage;
+    }
+
+    // Events upload paths are stored relative to /events.
+    if (strpos($img, 'uploads/') === 0) {
+        return '../events/' . $img;
+    }
+
+    return $img;
+};
+
 $user_id = $_SESSION['user_id'] ?? null;
 
 if (!$user_id) {
@@ -15,8 +30,8 @@ if (!$user_id) {
     exit;
 }
 
-// Get all upcoming events that the user is registered for
-// Events must have a future start time and the user must be a participant
+// Get all upcoming events that the user is registered for OR hosting.
+// Host events are included even if registration is closed so hosts can still manage them.
 $sql = "
 SELECT 
     e.events_id,
@@ -41,9 +56,10 @@ SELECT
     GROUP_CONCAT(DISTINCT s.subject_name SEPARATOR ', ') as subjects,
     GROUP_CONCAT(DISTINCT es.es_subject_id SEPARATOR ',') as subject_ids,
     GROUP_CONCAT(DISTINCT t.tag_name SEPARATOR ', ') as tags,
-    GROUP_CONCAT(DISTINCT t.tag_id SEPARATOR ',') as tag_ids
+    GROUP_CONCAT(DISTINCT t.tag_id SEPARATOR ',') as tag_ids,
+    CASE WHEN ep_user.ep_user_id IS NULL THEN 0 ELSE 1 END AS is_registered
 FROM events e
-INNER JOIN event_participants ep ON e.events_id = ep.ep_event_id
+LEFT JOIN event_participants ep_user ON e.events_id = ep_user.ep_event_id AND ep_user.ep_user_id = ?
 LEFT JOIN event_subjects es ON e.events_id = es.es_event_id
 LEFT JOIN subjects s ON es.es_subject_id = s.subject_id
 LEFT JOIN events_tags et ON e.events_id = et.et_events_id
@@ -51,9 +67,16 @@ LEFT JOIN tags t ON et.et_tags_id = t.tag_id
  LEFT JOIN user u ON e.host_user_id = u.user_id
  LEFT JOIN profile p ON e.host_user_id = p.user_id
 WHERE 
-    ep.ep_user_id = ?
-    AND TIMESTAMP(e.events_date, COALESCE(e.events_start, '23:59:59')) > NOW()
-    AND (e.events_deadline IS NULL OR TIMESTAMP(e.events_deadline, '23:59:59') > NOW())
+    TIMESTAMP(e.events_date, COALESCE(e.events_start, '23:59:59')) > NOW()
+    AND (
+        ep_user.ep_user_id IS NOT NULL
+        OR e.host_user_id = ?
+    )
+    AND (
+        e.host_user_id = ?
+        OR e.events_deadline IS NULL
+        OR TIMESTAMP(e.events_deadline, '23:59:59') > NOW()
+    )
 GROUP BY 
     e.events_id,
     e.events_title,
@@ -72,7 +95,8 @@ GROUP BY
     u.user_username,
     p.user_firstname,
     p.user_lastname,
-    p.profile_filepath
+    p.profile_filepath,
+    is_registered
 ORDER BY e.events_date ASC, e.events_start ASC
 LIMIT 10
 ";
@@ -83,7 +107,7 @@ if (!$stmt) {
     exit;
 }
 
-$stmt->bind_param('i', $user_id);
+$stmt->bind_param('iii', $user_id, $user_id, $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -91,13 +115,14 @@ $events = [];
 while ($row = $result->fetch_assoc()) {
     // Determine if user is the host
     $row['is_host'] = ($row['host_user_id'] == $user_id);
-    $row['is_registered'] = true; // Always true since we're filtering by registration
+    $row['is_registered'] = ((int)$row['is_registered'] === 1);
     // Format profile picture path
     if (!empty($row['profile_filepath'])) {
         $row['profile_filepath'] = (strpos($row['profile_filepath'], 'BPA/') === 0) 
             ? '../' . substr($row['profile_filepath'], 4) 
             : $row['profile_filepath'];
     }
+    $row['events_img'] = $resolveCalendarImage($row['events_img']);
     $events[] = $row;
 }
 
