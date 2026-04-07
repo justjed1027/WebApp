@@ -31,7 +31,7 @@
               </div>
               <div class="hero-buttons">
                   <a href="..//signup/signup.php" class="btn btn-primary">Get Started</a>
-                  <a href="../about/learn-more.php" class="btn btn-secondary">Learn More</a>
+                  <a href="#features" class="btn btn-secondary">Learn More</a>
               </div>
             </div>
         </main>
@@ -214,7 +214,7 @@
                 <ul>
                     <li><a href="../signup/signup.php">Sign Up</a></li>
                     <li><a href="../login/login.php">Login</a></li>
-                    <li><a href="../about/learn-more.php">Learn More</a></li>
+                    <li><a href="">Learn More</a></li>
                 </ul>
             </div>
             <div class="footer-section">
